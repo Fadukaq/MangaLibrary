@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manga Details</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/manga-details.css">
+    <link rel="stylesheet" href="/css/manga-details-animation.css">
+</head>
+<body>
+<header th:insert="~{blocks/header :: header}"></header>
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card mt-4 ">
+                <div class="row g-0">
+                    <div class="col-md-4 bg-dark">
+                        <div class="mx-3 mt-2 d-flex justify-content-center align-items-center">
+                            <img th:src="${manga.mangaPosterImg}" class="img-fluid rounded-start" alt="mangaPosterImg Image">
+                        </div>
+                        <div class="card-body bg-dark">
+                            <div class="d-flex flex-column">
+                                <a th:href="@{'/manga/reading/' + ${manga.id}}" class="btn btn-primary mb-2">Читаю</a>
+                                <a th:href="@{'/manga/want-read/' + ${manga.id}}" class="btn btn-warning mb-2" >Буду Читать</a>
+                                <a th:href="@{'/manga/recited/' + ${manga.id}}" class="btn btn-success mb-2">Прочитано</a>
+                                <a th:href="@{'/manga/read-stopped/' + ${manga.id}}" class="btn btn-danger">Бросил</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8 bg-dark">
+                        <div class="card-body text-white bg-dark">
+                            <h5 class="card-title text-primary">Назва: <span th:text="${manga.mangaName}"></span></h5>
+                            <hr>
+                            <h6 class="card-subtitle mb-2 ">Опис: <span th:text="${manga.mangaDescription}"></span></h6>
+                            <hr>
+                            <p class="card-text">
+                                <span>Жанри: </span>
+                                <span th:each="genre, iterStat : ${manga.genres}">
+                                <a th:href="@{'/genre/' + ${genre.genreName}}"><span th:text="${genre.genreName}"></span></a></span>
+                            </p>
+                            <hr>
+                            <h6 class="card-subtitle mb-2 text-success">Автор манги:</h6>
+                            <p class="card-text"><span th:text="${manga.mangaAuthor}"></span></p>
+                            <hr>
+                            <h6 class="card-subtitle mb-2 text-info">Рік виходу:</h6>
+                            <p class="card-text"><span th:text="${manga.releaseYear}"></span></p>
+                            <hr>
+                            <form th:action="@{/manga/page/{id}(id=${id})}" method="post" style="margin-right: 10px;">
+                                <input type="hidden" name="id" th:value="${manga.id}">
+                                <button class="btn btn-primary" type="submit">Почати читати</button>
+                            </form>
+                            <hr th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
+                            <div class="btn-group" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
+                                <a th:href="@{/manga/edit/{id}(id=${id})}" class="btn btn-warning">Редагувати</a>
+                                <form th:action="@{/manga/delete/{id}(id=${id})}" method="post" style="margin-left: 10px;">
+                                    <button class="btn btn-danger" type="submit">Видалити</button>
+                                </form>
+                            </div>
+                            <hr>
+                            <a th:href="@{/manga}" class="btn btn-primary">Повернутись</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:if="${notificationMessage}" class="alert alert-success alert-dismissible fade show hide-delay fixed-right" role="alert">
+        <span th:text="${notificationMessage}"></span>
+    </div>
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 mx-5 d-flex align-items-center">
+            <span class="mb-3 mb-md-0 text-white rounded">© 2024 Company, Inc</span>
+        </div>
+    </footer>
+</body>
+</html>

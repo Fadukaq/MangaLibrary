@@ -1,0 +1,18 @@
+    body {
+    overflow-x: hidden;
+}
+        .card-text a {
+    color: white;
+    text-decoration: none;
+    background-color: #522878;
+    padding: 0.2em 0.4em;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s ease;
+}
+
+.card-text a:hover {
+    background-color: #8636cf; /* Цвет фона при наведении */
+}
+    hr{
+    color:#8957ff;
+    }

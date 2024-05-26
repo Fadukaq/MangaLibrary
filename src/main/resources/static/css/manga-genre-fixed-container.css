@@ -1,0 +1,22 @@
+ .fixed-right-container {
+    position: fixed;
+    right: 20px; /* Расположение справа */
+    bottom: 20px; /* Отступ снизу */
+    z-index: 1000;
+}
+
+.fixed-right-container a {
+    display: block; /* Расположение элементов в блочном формате */
+    margin-bottom: 10px; /* Отступ между элементами */
+    width: 150px;
+}
+        .sty a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .sty a:hover {
+        border-radius:3px;
+        padding-left: 10px;
+        padding-right: 10px;
+        background-color:#8e5eff;
+        }

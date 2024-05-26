@@ -1,0 +1,10 @@
+a {
+            text-decoration: none;
+            padding: 0.2em 0.4em;
+            border-radius: 0.25rem;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color:#46047d;
+        }

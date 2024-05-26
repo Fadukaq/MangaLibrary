@@ -1,0 +1,18 @@
+.hide-delay {
+    animation: hideAnimation 4s forwards;
+}
+
+@keyframes hideAnimation {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+.fixed-right {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+}

@@ -1,0 +1,19 @@
+.form-control {
+  border: 1px solid #2f0296;
+    color: white;
+    background-color: #302b3b;
+}
+.form-control:hover {
+    border-color: #4e00ff;
+}
+
+
+.form-control:focus{
+    color:white;
+    background-color: #302b3b;
+    border-color: #5000ff;
+    box-shadow: 0 0 0 2px #5000ff;
+}
+        .form-control::placeholder {
+    color: #999;
+}
