@@ -22,7 +22,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/registration").permitAll()
+                        .requestMatchers("/", "/registration","/manga","/activate/*", "/images/**","/css/**").permitAll()
                         .requestMatchers("/manga/add").hasAuthority("ADMIN")
                         .requestMatchers("/manga/edit/{id}").hasAuthority("ADMIN")
                         .requestMatchers("/manga/delete/{id}").hasAuthority("ADMIN")
@@ -46,7 +46,7 @@ public class WebSecurityConfig {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
                 .passwordEncoder(new BCryptPasswordEncoder())
-                .usersByUsernameQuery("select user_name, user_password, 'true' as enabled from User where user_name=?")
+                .usersByUsernameQuery("select user_name, user_password, enabled from User where user_name=?")
                 .authoritiesByUsernameQuery("select user_name, user_role from user where user_name=?");
     }
 }

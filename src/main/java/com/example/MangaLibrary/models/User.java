@@ -3,6 +3,7 @@ package com.example.MangaLibrary.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Email;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,11 @@ public class User {
     @Size(min=2,max=255, message = "Поле пароль має складатися від 2 до 255 символів")
     private String userPassword;
     private String userRole;
-
+    @NotEmpty(message = "Поле пошта не повинно бути порожнім")
+    @Email(message = "Поле email повинно бути дійсним")
+    private String email;
+    private boolean enabled;
+    private String verificationToken;
     @ElementCollection
     private List<String> mangaReading = new ArrayList<>();
 
@@ -100,5 +105,29 @@ public class User {
 
     public void setMangaRecited(List<String> mangaRecited) {
         this.mangaRecited = mangaRecited;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
     }
 }

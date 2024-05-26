@@ -29,6 +29,12 @@
             <h2 class="mb-3">Регістрація</h2>
             <form th:action="@{/registration}" th:method="POST" th:object="${user}">
                 <div class="mb-3">
+                    <label for="email" class="form-label" title="Після реєстрації не забудьте у пошті активувати аккаунт!">Пошта: <span style="color:red">*</span></label>
+                    <input type="email" name="email" id="email" class="form-control">
+                    <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">email error</div>
+                </div>
+
+                <div class="mb-3">
                     <label for="userName" class="form-label">Ім'я користувача:</label>
                     <input type="text" name="userName" id="userName" class="form-control">
                     <div style="color:red" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}">userName error</div>

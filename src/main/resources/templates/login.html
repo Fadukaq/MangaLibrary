@@ -39,10 +39,13 @@
                 </div>
                 <div th:if="${param.error}" class="text-danger mb-3">
                     Невірне ім'я користувача або пароль.
+                    <br>
+                    Або ваш аккаунт не активований.
                 </div>
                 <div th:if="${param.logout}" class="text-success mb-3">
                     Ви вийшли з системи.
                 </div>
+                <div th:if="${errorMessage}" th:text="${errorMessage}" class="error"></div>
                 <button type="submit" class="btn btn-primary">Увійти</button>
             </form>
         </div>

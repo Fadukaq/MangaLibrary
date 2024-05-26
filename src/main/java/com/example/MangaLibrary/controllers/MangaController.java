@@ -39,7 +39,6 @@ public class MangaController {
     private MangaRepo mangaRepo;
     @Autowired
     private GenreRepo genreRepo;
-
     @Autowired
     private UserRepo userRepo;
     @Autowired
