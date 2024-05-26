@@ -77,13 +77,13 @@ public class UserController {
     public String activate(Model model, @PathVariable String code){
         boolean isActivated = userService.activateUser(code);
         if(isActivated){
-            model.addAttribute("message", "User successfully activated");
+            model.addAttribute("message", "Користувача успішно активовано!");
         }else {
-            model.addAttribute("message", "Activation code is not found");
+            model.addAttribute("message", "Код активації не знайдено.");
         }
         model.addAttribute("isActivated", isActivated);
         return "home";
-    }
+    } //rename attributeValue
     @GetMapping("/profile/{userName}")
     public String userProfile(@PathVariable String userName, Model model) {
         User user = userRepo.findByUserName(userName);
