@@ -11,12 +11,12 @@ public class UserService {
 
     public boolean activateUser(String code) {
         User user = userRepo.findByVerificationToken(code);
-        if(user ==null){
+        if(user == null){
             return false;
         }
         user.setVerificationToken(null);
         user.setEnabled(true);
         userRepo.save(user);
-        return false;
+        return true;
     }
 }

@@ -1,0 +1,31 @@
+ @keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        display: none;
+    }
+}
+
+.alert {
+    font-size: 18px; /* Adjust the size as needed */
+    padding: 10px;
+    margin-top: 10px;
+    animation: fadeOut 5s forwards; /* 5 seconds duration, change as needed */
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}

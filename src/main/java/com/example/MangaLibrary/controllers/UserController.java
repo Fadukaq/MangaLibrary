@@ -66,7 +66,7 @@ public class UserController {
         userRepo.save(user);
         if(!user.getEmail().isEmpty()){
             String message = String.format(
-                    "Hello, %s! \n"+
+                    "Привіт, %s! \n"+
                             "Ласкаво просимо до MangaLibrary. Будь ласка, перейдіть за цим посиланням, щоб активувати акаунт: http://localhost:8080/activate/%s", user.getUserName(),user.getVerificationToken()
             );
             mailSender.send(user.getEmail(), "Активація облікового запису", message);
@@ -81,7 +81,8 @@ public class UserController {
         }else {
             model.addAttribute("message", "Activation code is not found");
         }
-        return "login";
+        model.addAttribute("isActivated", isActivated);
+        return "home";
     }
     @GetMapping("/profile/{userName}")
     public String userProfile(@PathVariable String userName, Model model) {
