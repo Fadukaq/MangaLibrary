@@ -1,6 +1,6 @@
 package com.example.MangaLibrary.controllers;
-import com.example.MangaLibrary.helper.MangaForm;
-import com.example.MangaLibrary.helper.ProjectDirectoryLocator;
+import com.example.MangaLibrary.helper.manga.MangaForm;
+import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.models.Genre;
 import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
@@ -20,10 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,7 +39,7 @@ public class MangaController {
     @Autowired
     private UserRepo userRepo;
     @Autowired
-    private ProjectDirectoryLocator directoryLocator;
+    private MangaLibraryManager mangaLibraryManager;
     private static final int PAGE_SIZE = 6;
     @GetMapping("/manga")
     public String mangas(
@@ -53,11 +50,6 @@ public class MangaController {
         Page<Manga> mangaPage = mangaRepo.findAll(pageable);
 
         List<Manga> mangaList = mangaPage.getContent();
-        for (Manga manga : mangaList) {
-            String imageUrl = "/images/mangas/" + manga.getMangaPosterImg();
-            manga.setMangaPosterImg(imageUrl);
-        }
-
         int totalPages = mangaPage.getTotalPages();
         if (page > totalPages) {
             return "redirect:/manga?page=" + totalPages;
@@ -139,11 +131,11 @@ public class MangaController {
                 .collect(Collectors.toList());
         mangaForm.getManga().setGenres(selectedGenres);
 
-        String rootPath = directoryLocator.getResourcePath();
-        String mangaFolderPath = createFolderForManga(mangaForm.getManga(), rootPath);
-        String posterPath = createPosterManga(mangaForm.getMangaImage().getPosterImage(), mangaForm.getManga(), mangaFolderPath);
+        String rootPath = mangaLibraryManager.getResourcePath();
+        String mangaFolderPath = mangaLibraryManager.createFolderForManga(mangaForm.getManga(), rootPath);
+        String posterPath = mangaLibraryManager.createPosterManga(mangaForm.getMangaImage().getPosterImage(), mangaForm.getManga(), mangaFolderPath);
         mangaForm.getManga().setMangaPosterImg(posterPath);
-        List<String> pagesImages = createPagesManga(mangaForm.getMangaImage().getPagesImage(), mangaForm.getManga(), mangaFolderPath);
+        List<String> pagesImages = mangaLibraryManager.createPagesManga(mangaForm.getMangaImage().getPagesImage(), mangaForm.getManga(), mangaFolderPath);
         String pagesImagesAsString = String.join(",", pagesImages);
         mangaForm.getManga().setMangaPages(pagesImagesAsString);
 
@@ -163,7 +155,9 @@ public class MangaController {
 
             for (int i = 0; i < mangaPages.length; i++) {
                 mangaPagesWithFullPath[i] = "/images/mangas/" + mangaFolder + "/" + mangaPages[i];
+                manga.setMangaPages(mangaPagesWithFullPath[i]);
             }
+
             model.addAttribute("mangaPages", mangaPagesWithFullPath);
             model.addAttribute("id", mangaId); // Передача id в модель
 
@@ -178,8 +172,6 @@ public class MangaController {
         Optional<Manga> optionalManga = mangaRepo.findById(id);
         if (optionalManga.isPresent()) {
             Manga manga = optionalManga.get();
-            String imageUrl = "/images/mangas/" + manga.getMangaPosterImg();
-            manga.setMangaPosterImg(imageUrl);
             model.addAttribute("manga", manga);
             return "manga/manga-details";
         } else {
@@ -195,16 +187,16 @@ public class MangaController {
 
         String mangaName = mangaToDelete.getMangaName().replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
 
-        String rootPath = directoryLocator.getResourcePath();
+        String rootPath = mangaLibraryManager.getResourcePath();
         File sourceFolder = new File(rootPath + File.separator + mangaName);
         if (sourceFolder.exists()) {
-            deleteFolder(sourceFolder);
+            mangaLibraryManager.deleteFolder(sourceFolder);
         }
 
-        String targetRootPath = directoryLocator.getTargetPath();
+        String targetRootPath = mangaLibraryManager.getTargetPath();
         File targetFolder = new File(targetRootPath + File.separator + mangaName);
         if (targetFolder.exists()) {
-            deleteFolder(targetFolder);
+            mangaLibraryManager.deleteFolder(targetFolder);
         }
 
         Iterable<User> usersIterable = userRepo.findAll();
@@ -302,10 +294,6 @@ public class MangaController {
                 model.addAttribute("noResults", true);
                 model.addAttribute("searchQuery", searchQuery);
             } else {
-                for (Manga manga : mangaList) {
-                    String imageUrl = "/images/mangas/" + manga.getMangaPosterImg();
-                    manga.setMangaPosterImg(imageUrl);
-                }
                 model.addAttribute("noResults", false);
                 model.addAttribute("mangas", mangaList);
                 model.addAttribute("currentPage", foundMangas.getNumber());
@@ -323,7 +311,7 @@ public class MangaController {
         String username = authentication.getName();
         User user = userRepo.findByUserName(username);
 
-        removeMangaFromOtherLists(user, id);
+        mangaLibraryManager.removeMangaFromOtherLists(user, id);
 
         user.getMangaReading().add(String.valueOf(id));
         userRepo.save(user);
@@ -337,7 +325,7 @@ public class MangaController {
         String username = authentication.getName();
         User user = userRepo.findByUserName(username);
 
-        removeMangaFromOtherLists(user, id);
+        mangaLibraryManager.removeMangaFromOtherLists(user, id);
 
         user.getMangaWantToRead().add(String.valueOf(id));
         userRepo.save(user);
@@ -352,7 +340,7 @@ public class MangaController {
         String username = authentication.getName();
         User user = userRepo.findByUserName(username);
 
-        removeMangaFromOtherLists(user, id);
+        mangaLibraryManager.removeMangaFromOtherLists(user, id);
 
         user.getMangaRecited().add(String.valueOf(id));
         userRepo.save(user);
@@ -366,7 +354,7 @@ public class MangaController {
         String username = authentication.getName();
         User user = userRepo.findByUserName(username);
 
-        removeMangaFromOtherLists(user, id);
+        mangaLibraryManager.removeMangaFromOtherLists(user, id);
         user.getMangaStoppedReading().add(String.valueOf(id));
         userRepo.save(user);
         redirectAttributes.addFlashAttribute("notificationMessage", "Манга добавлена в список 'Бросил'");
@@ -377,139 +365,12 @@ public class MangaController {
     @GetMapping("/random")
     public String getRandomMangaId(Model model) {
 
-        Long randomMangaId = getRandomMangaId();
+        Long randomMangaId = mangaLibraryManager.getRandomMangaId();
 
         model.addAttribute("randomMangaId", randomMangaId);
         if(randomMangaId==null) {
             return "redirect:/manga";
         }
         return "redirect:/manga/" + randomMangaId;
-    }
-
-    private String createFolderForManga(Manga thisManga, String rootPath) {
-        String mangaFolderName = thisManga.getMangaName().replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
-        File mangaFolder = new File(rootPath + File.separator + mangaFolderName);
-
-        String targetRootPath = directoryLocator.getTargetPath();;
-        File mangaFolderTarget = new File(targetRootPath + File.separator + mangaFolderName);
-
-        if (!mangaFolder.exists() || !mangaFolderTarget.exists()) {
-            mangaFolder.mkdirs();
-            mangaFolderTarget.mkdirs();
-        }
-
-        return mangaFolder.getAbsolutePath();
-    }
-
-    private String createPosterManga(MultipartFile posterImg,Manga thisManga,String mangaFolderPath)
-    {
-        try {
-            byte[] bytes = posterImg.getBytes();
-            String cleanMangaName = thisManga.getMangaName().replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
-
-            String fileName = cleanMangaName + "_Poster.png";
-
-            File targetFile = new File(mangaFolderPath + "/" + fileName);
-            FileOutputStream outputStream = new FileOutputStream(targetFile);
-            outputStream.write(bytes);
-            outputStream.close();
-
-            String targetRootPath = directoryLocator.getTargetPath();
-            File targetFolder = new File(targetRootPath + File.separator + cleanMangaName);
-            if (!targetFolder.exists()) {
-                targetFolder.mkdirs();
-            }
-            File sourseFile = new File(targetFolder + File.separator + fileName);
-            FileOutputStream targetOutputStream = new FileOutputStream(sourseFile);
-            targetOutputStream.write(bytes);
-            targetOutputStream.close();
-
-            return cleanMangaName+File.separator+fileName;
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            return "redirect:/manga/add";
-        }
-    }
-
-    public List<String> createPagesManga(List<MultipartFile> pagesManga, Manga thisManga, String mangaFolderPath) throws IOException {
-        List<String> pagePaths = new ArrayList<>();
-        String cleanMangaName = thisManga.getMangaName().replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
-
-        File sourceFolder = new File(mangaFolderPath);
-        if (!sourceFolder.exists()) {
-            sourceFolder.mkdirs();
-        }
-
-        // Создаем папку для страниц манги в директории target
-        String targetRootPath = directoryLocator.getTargetPath();
-        File targetFolder = new File(targetRootPath + File.separator + cleanMangaName);
-        if (!targetFolder.exists()) {
-            targetFolder.mkdirs();
-        }
-
-        for (int i = 0; i < pagesManga.size(); i++) {
-            String fileName = cleanMangaName + "_Page" + (i + 1) + ".png";
-
-            File sourceFile = new File(sourceFolder + File.separator + fileName);
-            pagesManga.get(i).transferTo(sourceFile);
-
-            File targetFile = new File(targetFolder + File.separator + fileName);
-            Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-            pagePaths.add(fileName);
-        }
-
-        return pagePaths;
-    }
-
-
-
-    private void removeMangaFromOtherLists(User user, Long id) {
-        // Удаление манги из списка mangaReading, если она там присутствует
-        if (user.getMangaReading().contains(String.valueOf(id))) {
-            user.getMangaReading().remove(String.valueOf(id));
-        }
-
-        // Удаление манги из списка mangaStoppedReading, если она там присутствует
-        if (user.getMangaStoppedReading().contains(String.valueOf(id))) {
-            user.getMangaStoppedReading().remove(String.valueOf(id));
-        }
-
-        // Удаление манги из списка mangaRecited, если она там присутствует
-        if (user.getMangaRecited().contains(String.valueOf(id))) {
-            user.getMangaRecited().remove(String.valueOf(id));
-        }
-        // Удаление манги из списка getMangaWantToRead, если она там присутствует
-        if (user.getMangaWantToRead().contains(String.valueOf(id))) {
-            user.getMangaWantToRead().remove(String.valueOf(id));
-        }
-    }
-    private void deleteFolder(File folder) {
-        File[] files = folder.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    deleteFolder(file);
-                } else {
-                    file.delete();
-                }
-            }
-        }
-        folder.delete();
-    }
-
-
-    private Long getRandomMangaId() {
-        Iterable<Manga> mangas = mangaRepo.findAll();
-        List<Manga> mangaList = StreamSupport.stream(mangas.spliterator(), false)
-                .collect(Collectors.toList());
-        if (mangaList.isEmpty()) {
-            return null;
-        }
-        Random random = new Random();
-        int randomIndex = random.nextInt(mangaList.size());
-        Manga randomManga = mangaList.get(randomIndex);
-        return randomManga.getId();
     }
 }

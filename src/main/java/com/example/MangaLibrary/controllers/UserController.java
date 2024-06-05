@@ -1,15 +1,12 @@
 package com.example.MangaLibrary.controllers;
-import com.example.MangaLibrary.helper.MangaForm;
-import com.example.MangaLibrary.helper.ProfilePicture;
-import com.example.MangaLibrary.helper.ProjectDirectoryLocator;
-import com.example.MangaLibrary.helper.UserForm;
+import com.example.MangaLibrary.helper.MangaLibraryManager;
+import com.example.MangaLibrary.helper.user.UserForm;
 import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
 import com.example.MangaLibrary.service.MailSender;
 import com.example.MangaLibrary.services.UserService;
-import com.mysql.cj.util.StringUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
@@ -39,7 +35,7 @@ public class UserController {
     @Autowired
     private MailSender mailSender;
     @Autowired
-    private ProjectDirectoryLocator directoryLocator;
+    private MangaLibraryManager directoryLocator;
     @GetMapping("/registration")
     public String registration(User user) {
         return "registration";
@@ -100,12 +96,6 @@ public class UserController {
         User user = userRepo.findByUserName(userName);
         if (user != null) {
             model.addAttribute("user", user);
-            /*String rootPath = directoryLocator.getResourcePathProfilePicture();
-            directoryLocator.createFolderForProfile(user, rootPath) ;
-
-            String profilePicturePath = directoryLocator.loadProfilePicture(null,user, rootPath);
-            user.setProfilePicture(profilePicturePath);
-            userRepo.save(user);*/
 
             List<Long> readingMangaIds = user.getMangaReading().stream()
                     .map(Long::valueOf)

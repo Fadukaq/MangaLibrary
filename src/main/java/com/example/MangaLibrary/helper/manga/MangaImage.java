@@ -1,4 +1,4 @@
-package com.example.MangaLibrary.helper;
+package com.example.MangaLibrary.helper.manga;
 
 
 import org.springframework.web.multipart.MultipartFile;

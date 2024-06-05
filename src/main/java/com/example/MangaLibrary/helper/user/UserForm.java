@@ -1,4 +1,4 @@
-package com.example.MangaLibrary.helper;
+package com.example.MangaLibrary.helper.user;
 
 import com.example.MangaLibrary.models.User;
 import jakarta.validation.Valid;

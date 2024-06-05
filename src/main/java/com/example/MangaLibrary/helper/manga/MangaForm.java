@@ -1,4 +1,4 @@
-package com.example.MangaLibrary.helper;
+package com.example.MangaLibrary.helper.manga;
 
 import com.example.MangaLibrary.models.Genre;
 import com.example.MangaLibrary.models.Manga;
