@@ -8,3 +8,20 @@ a {
         a:hover {
             background-color:#46047d;
         }
+        .profile-picture {
+            width: 150px;  /* Adjust size as needed */
+            height: 150px; /* Adjust size as needed */
+            border-radius: 50%; /* Make it circular */
+            border: 5px solid #7e55a4; /* Add a border */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow */
+            transition: transform 0.2s; /* Smooth transition for hover effect */
+        }
+
+        /* Optional hover effect */
+        .profile-picture:hover {
+            transform: scale(1.05); /* Slightly enlarge the picture on hover */
+        }
+
+        .ml-3 {
+            margin-left: 1rem; /* Adjust spacing between the image and text */
+        }
