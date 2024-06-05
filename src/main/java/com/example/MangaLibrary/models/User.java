@@ -16,7 +16,7 @@ public class User {
     @NotEmpty(message = "Поле ім'я юзера не повинно бути порожнім")
     @Size(min=2,max=120, message = "Ім'я юзера має складатися від 2 до 120 символів")
     private String userName;
-
+    private String ProfilePicture;
     @NotEmpty(message = "Поле пароль не повинно бути порожнім")
     @Size(min=2,max=255, message = "Поле пароль має складатися від 2 до 255 символів")
     private String userPassword;
@@ -26,6 +26,9 @@ public class User {
     private String email;
     private boolean enabled;
     private String verificationToken;
+    //@NotEmpty(message = "Поле про себе не повинно бути порожнім")
+    //@Size(min=2,max=120, message = "Поле про себе має складатися від 2 до 120 символів")
+    private String about;
     @ElementCollection
     private List<String> mangaReading = new ArrayList<>();
 
@@ -129,5 +132,13 @@ public class User {
 
     public void setVerificationToken(String verificationToken) {
         this.verificationToken = verificationToken;
+    }
+
+    public String getProfilePicture() {
+        return ProfilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        ProfilePicture = profilePicture;
     }
 }

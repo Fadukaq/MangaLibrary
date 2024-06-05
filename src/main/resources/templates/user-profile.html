@@ -15,12 +15,16 @@
                 <div class="card-header bg-primary text-white">
                     <h5 class="card-title">User Profile</h5>
                 </div>
-                <div class="card-body bg-dark text-white d-flex justify-content-between">
-                    <div>
-                        <p class="card-text"><strong>Username:</strong> <span th:text="${user.userName}"></span></p>
-                        <p class="card-text "><strong>UserRole:</strong> <span th:text="${user.userRole}"></span></p>
+                <div class="card-body bg-dark text-white d-flex">
+                    <div class="d-flex align-items-center">
+                        <img th:src="${user.profilePicture}" alt="User Profile Picture" class="profile-picture">
+                        <div class="ml-3">
+                            <p class="card-text"><strong>Username:</strong> <span th:text="${user.userName}"></span></p>
+                            <p class="card-text"><strong>UserRole:</strong> <span th:text="${user.userRole}"></span></p>
+                        </div>
                     </div>
-                </div><div class="card-footer bg-dark">
+                </div>
+                <div class="card-footer bg-dark">
                 <details class="card card-body border-primary-subtle bg-dark mb-3">
                     <summary class="card-title text-primary">
                         <h6>Читаю:</h6>

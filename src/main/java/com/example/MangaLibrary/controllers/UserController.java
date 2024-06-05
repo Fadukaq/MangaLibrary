@@ -1,4 +1,8 @@
 package com.example.MangaLibrary.controllers;
+import com.example.MangaLibrary.helper.MangaForm;
+import com.example.MangaLibrary.helper.ProfilePicture;
+import com.example.MangaLibrary.helper.ProjectDirectoryLocator;
+import com.example.MangaLibrary.helper.UserForm;
 import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.MangaRepo;
@@ -34,13 +38,15 @@ public class UserController {
     private MangaRepo mangaRepo;
     @Autowired
     private MailSender mailSender;
+    @Autowired
+    private ProjectDirectoryLocator directoryLocator;
     @GetMapping("/registration")
     public String registration(User user) {
         return "registration";
     }
 
     @PostMapping("/registration")
-    public String addUser(@ModelAttribute("user") @Valid User user, BindingResult result, Map<String, Object> model, Model _model) {
+    public String addUser(@ModelAttribute("userForm") @Valid UserForm userForm, @ModelAttribute("user") @Valid User user, BindingResult result, Map<String, Object> model, Model _model) {
         if (result.hasErrors()) {
             return "registration";
         }
@@ -58,6 +64,11 @@ public class UserController {
 
         String plainPassword = user.getUserPassword();
         String hashedPassword = passwordEncoder.encode(plainPassword);
+
+        String rootPath = directoryLocator.getResourcePathProfilePicture();
+        directoryLocator.createFolderForProfile(user, rootPath) ;
+        String profilePicturePath = directoryLocator.loadProfilePicture(null,user, rootPath);
+        user.setProfilePicture(profilePicturePath);
 
         user.setUserPassword(hashedPassword);
         user.setUserRole("USER"); //USER || ADMIN
@@ -85,10 +96,17 @@ public class UserController {
         return "home";
     } //rename attributeValue
     @GetMapping("/profile/{userName}")
-    public String userProfile(@PathVariable String userName, Model model) {
+    public String userProfile(@ModelAttribute("userForm") @Valid UserForm userForm,@PathVariable String userName, Model model) {
         User user = userRepo.findByUserName(userName);
         if (user != null) {
             model.addAttribute("user", user);
+            /*String rootPath = directoryLocator.getResourcePathProfilePicture();
+            directoryLocator.createFolderForProfile(user, rootPath) ;
+
+            String profilePicturePath = directoryLocator.loadProfilePicture(null,user, rootPath);
+            user.setProfilePicture(profilePicturePath);
+            userRepo.save(user);*/
+
             List<Long> readingMangaIds = user.getMangaReading().stream()
                     .map(Long::valueOf)
                     .collect(Collectors.toList());
@@ -124,4 +142,6 @@ public class UserController {
             return "error";
         }
     }
+
+
 }
