@@ -1,0 +1,23 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+main {
+    padding: 2em;
+}
+.anime-img {
+    max-width: 100%;
+    height: auto;
+}
+.anime-links {
+    list-style-type: none;
+    padding: 0;
+}
+.anime-links li {
+    margin: 0.5em 0;
+}
+.anime-links a {
+    text-decoration: none;
+    color: #ff6600;
+}
