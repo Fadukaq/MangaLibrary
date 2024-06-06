@@ -14,17 +14,6 @@
     <div th:if="${message}">
         <div th:classappend="${isActivated} ? 'alert alert-success' : 'alert alert-error'" th:text="${message}"></div>
     </div>
-    <div>
-        <section>
-            <h2>Популярные аниме-сайты</h2>
-            <ul class="anime-links">
-                <li><a href="https://www.crunchyroll.com" target="_blank">Crunchyroll</a></li>
-                <li><a href="https://www.funimation.com" target="_blank">Funimation</a></li>
-                <li><a href="https://www.anime-planet.com" target="_blank">Anime-Planet</a></li>
-                <li><a href="https://myanimelist.net" target="_blank">MyAnimeList</a></li>
-            </ul>
-        </section>
-    </div>
 </div>
 <div th:insert="~{/blocks/footer :: footer}"></div>
 </body>
