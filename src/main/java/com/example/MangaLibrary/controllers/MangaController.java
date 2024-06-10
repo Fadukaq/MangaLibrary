@@ -231,10 +231,7 @@ public class MangaController {
             MangaForm mangaForm = new MangaForm();
             mangaForm.setManga(manga);
 
-            model.addAttribute("mangaDescription",manga.getMangaDescription() );
-            model.addAttribute("mangaReleaseYear", manga.getReleaseYear());
-            model.addAttribute("mangaAuthor", manga.getMangaAuthor());
-            model.addAttribute("oldGenres", manga.getGenres());
+            model.addAttribute("manga", manga);
             model.addAttribute("maxYear", maxYear);
             model.addAttribute("genres", genres);
             model.addAttribute("mangaForm", mangaForm); // Передаем объект MangaForm в модель

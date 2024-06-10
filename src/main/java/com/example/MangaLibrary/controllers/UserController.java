@@ -1,5 +1,6 @@
 package com.example.MangaLibrary.controllers;
 import com.example.MangaLibrary.helper.MangaLibraryManager;
+import com.example.MangaLibrary.helper.manga.MangaForm;
 import com.example.MangaLibrary.helper.user.UserForm;
 import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
@@ -9,17 +10,21 @@ import com.example.MangaLibrary.service.MailSender;
 import com.example.MangaLibrary.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.security.Principal;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+
 @Controller
 public class UserController {
     @Autowired
@@ -40,7 +45,7 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-    public String addUser(@ModelAttribute("userForm") @Valid UserForm userForm, @ModelAttribute("user") @Valid User user, BindingResult result, Map<String, Object> model, Model _model) {
+    public String addUser(@ModelAttribute("user") @Valid User user, BindingResult result, Map<String, Object> model, Model _model) {
         if (result.hasErrors()) {
             return "registration";
         }
@@ -90,7 +95,7 @@ public class UserController {
         return "home";
     } //rename attributeValue
     @GetMapping("/profile/{userName}")
-    public String userProfile(@ModelAttribute("userForm") @Valid UserForm userForm,@PathVariable String userName, Model model) {
+    public String userProfile(@PathVariable String userName, Model model) {
         User user = userRepo.findByUserName(userName);
         if (user != null) {
             model.addAttribute("user", user);
@@ -131,5 +136,30 @@ public class UserController {
         }
     }
 
+    @GetMapping("/user-edit-profile/{userId}")
+    public String userEditProfile(@PathVariable("userId") Long userId , Model model){
+        Optional<User> userOptional = userRepo.findById(userId);
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            if(!Objects.equals(user.getUserName(), username)){
+                model.addAttribute("errorMessage", "У вас немає доступу змінювати цей профіль!");
+                return "error";
+            }
+            UserForm userForm = new UserForm();
+            userForm.setUser(user);
 
+            model.addAttribute("user",user);
+            model.addAttribute("userProfilePicture",user.getProfilePicture());
+            model.addAttribute("userForm", userForm); // Передаем объект UserForm в модель
+            return "user-edit-profile";
+        }
+        return "user-profile";
+    }
+    @PostMapping("/user-edit-profile/{userId}")
+    public String userEditProfilePost(Model model){
+
+        return "user-edit-profile";
+    }
 }

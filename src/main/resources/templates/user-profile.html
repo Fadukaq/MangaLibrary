@@ -21,7 +21,12 @@
                         <div class="ml-3">
                             <p class="card-text"><strong>Username:</strong> <span th:text="${user.userName}"></span></p>
                             <p class="card-text"><strong>UserRole:</strong> <span th:text="${user.userRole}"></span></p>
+                            <p class="card-text"><strong>About:</strong> <span th:text="${user.about}"></span></p>
                         </div>
+                    </div>
+                    <div  th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.principal.username == user.userName})"
+                            class="position-absolute end-0 mt-2 me-3">
+                        <a th:href="@{'/user-edit-profile/' + ${user.id}}" class="btn btn-light">Edit</a>
                     </div>
                 </div>
                 <div class="card-footer bg-dark">
