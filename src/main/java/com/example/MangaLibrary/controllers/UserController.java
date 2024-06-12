@@ -9,6 +9,7 @@ import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
 import com.example.MangaLibrary.service.MailSender;
 import com.example.MangaLibrary.service.UserService;
+import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -189,10 +190,17 @@ public class UserController {
                     String userPath = directoryLocator.loadProfilePicture(userForm.getProfilePicture().getProfileImage(), userForm.getUser(), rootPath);
                     userToUpdate.setProfilePicture(userPath);
                 }
-                if(changePasswordCheckbox){
+                if (changePasswordCheckbox && userPasswordNew != null && userPasswordNew.length() >= 2 && userPasswordNew.length() <= 255) {
                     String hashedPassword = passwordEncoder.encode(userPasswordNew);
-
                     userToUpdate.setUserPassword(hashedPassword);
+                }else if (changePasswordCheckbox) {
+                    model.addAttribute("changePasswordCheckbox", "on");
+
+                    model.addAttribute("errorPassword", "Поле Новий пароль повинно бути від 2 символів до 255!");
+                    model.addAttribute("user", userForm.getUser());
+                    model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
+                    model.addAttribute("userForm", userForm);
+                    return "user-edit-profile";
                 }
 
                 userToUpdate.setAbout(userForm.getUser().getAbout());

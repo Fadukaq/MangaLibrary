@@ -1,3 +1,7 @@
+document.addEventListener("DOMContentLoaded", function() {
+    toggleNewPasswordField();
+});
+
 function toggleNewPasswordField() {
     var checkbox = document.getElementById('changePasswordCheckbox');
     var newPasswordField = document.getElementById('newPasswordField').querySelector('input');

@@ -23,7 +23,7 @@
         <div style="color:red" th:if="${#fields.hasErrors('user.about')}" th:errors="*{user.about}">user about error</div>
         <hr>
         <div class="form-check">
-            <input name="changePasswordCheckbox" class="form-check-input" type="checkbox" id="changePasswordCheckbox" onclick="toggleNewPasswordField()">
+            <input name="changePasswordCheckbox" class="form-check-input" type="checkbox" id="changePasswordCheckbox" onclick="toggleNewPasswordField()" th:checked="${changePasswordCheckbox}">
             <label class="form-check-label" for="changePasswordCheckbox">
                 Change Password
             </label>
@@ -31,8 +31,7 @@
         <div id="newPasswordField" style="display: none;">
             <label class="form-label" title="Введіть ваш новий пароль!">Новий пароль: <span style="color:red">*</span></label>
             <input type="password" name="userPasswordNew" placeholder="Введіть ваш новий пароль" class="form-control" autocomplete="off" disabled>
-            <p style="color:red" th:if="${errorMessage}" th:text="${errorMessage}"></p>
-            <hr>
+            <p style="color:red" th:if="${errorPassword}" th:text="${errorPassword}"></p>
         </div>
         <hr>
         <label class="form-label" title="Введіть ваш пароль щоб зберегти всі зміненні дані!">Пароль: <span style="color:red">*</span></label>
