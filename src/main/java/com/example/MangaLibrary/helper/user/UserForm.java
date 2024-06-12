@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 
 public class UserForm {
     @Valid
-    User user;
+    private User user;
     @Valid
     private ProfilePicture profilePicture;
     public User getUser() {

@@ -271,13 +271,12 @@ public class MangaController {
 
         Manga mangaToUpdate = mangaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid manga Id:" + id));
-
         mangaToUpdate.setMangaDescription(mangaForm.getManga().getMangaDescription());
         mangaToUpdate.setReleaseYear(mangaForm.getManga().getReleaseYear());
         mangaToUpdate.setMangaAuthor(mangaForm.getManga().getMangaAuthor());
         mangaToUpdate.setGenres(mangaForm.getManga().getGenres());
 
-        mangaRepo.save(mangaToUpdate);
+        //mangaRepo.save(mangaToUpdate);
         return "redirect:/manga";
     }
     @GetMapping("/search")

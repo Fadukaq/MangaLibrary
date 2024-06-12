@@ -1,4 +1,4 @@
-package com.example.MangaLibrary.services;
+package com.example.MangaLibrary.service;
 
 import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.UserRepo;

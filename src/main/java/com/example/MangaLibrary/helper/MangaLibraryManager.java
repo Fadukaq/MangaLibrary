@@ -191,15 +191,13 @@ public class MangaLibraryManager {
         }
         return userFolder.getAbsolutePath();
     }
-    public String loadProfilePicture(MultipartFile profilePicture, User thisUser, String userFolderPath)
-    {
+    public String loadProfilePicture(MultipartFile profilePicture, User thisUser, String userFolderPath) {
         try {
             String cleanUserName = thisUser.getUserName().replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
-
             String fileName = cleanUserName + "_Profile.png";
             File targetFile = new File(userFolderPath + "/" + cleanUserName + "/" + fileName);
 
-            if (profilePicture == null || profilePicture.isEmpty()) {
+            if (profilePicture == null || profilePicture.isEmpty() && thisUser.getProfilePicture() == null) {
                 ClassPathResource defaultImageResource = new ClassPathResource("static/images/defaultProfilePicture/defaultAvatar.png");
                 File defaultImageFile = defaultImageResource.getFile();
 
@@ -219,8 +217,7 @@ public class MangaLibraryManager {
                 Files.copy(defaultImageFile.toPath(), targetClassesFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
                 return "/images/profilePicture/" + cleanUserName + "/" + fileName;
-            }
-            else {
+            } else{
                 byte[] bytes = profilePicture.getBytes();
                 try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
                     outputStream.write(bytes);
@@ -231,6 +228,7 @@ public class MangaLibraryManager {
                 if (!targetFolder.exists()) {
                     targetFolder.mkdirs();
                 }
+
                 File sourceFile = new File(targetFolder + File.separator + fileName);
                 try (FileOutputStream targetOutputStream = new FileOutputStream(sourceFile)) {
                     targetOutputStream.write(bytes);
@@ -240,13 +238,13 @@ public class MangaLibraryManager {
                 if (!targetClassesDirectory.exists()) {
                     targetClassesDirectory.mkdirs();
                 }
+
                 File targetClassesFile = new File(targetClassesDirectory + "/" + fileName);
                 Files.copy(targetFile.toPath(), targetClassesFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
                 return "/images/profilePicture/" + cleanUserName + "/" + fileName;
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return "redirect:/manga";
         }

@@ -26,7 +26,7 @@
                     </div>
                     <div  th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.principal.username == user.userName})"
                             class="position-absolute end-0 mt-2 me-3">
-                        <a th:href="@{'/user-edit-profile/' + ${user.id}}" class="btn btn-light">Edit</a>
+                        <a th:href="@{'/profile/edit/' + ${user.id}}" class="btn btn-light">Edit</a>
                     </div>
                 </div>
                 <div class="card-footer bg-dark">

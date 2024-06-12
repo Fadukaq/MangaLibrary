@@ -1,4 +1,5 @@
 package com.example.MangaLibrary.controllers;
+import com.example.MangaLibrary.config.SecurityConfig;
 import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.helper.manga.MangaForm;
 import com.example.MangaLibrary.helper.user.UserForm;
@@ -7,19 +8,18 @@ import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
 import com.example.MangaLibrary.service.MailSender;
-import com.example.MangaLibrary.services.UserService;
+import com.example.MangaLibrary.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -39,6 +39,9 @@ public class UserController {
     private MailSender mailSender;
     @Autowired
     private MangaLibraryManager directoryLocator;
+    @Autowired
+    private SecurityConfig securityConfig;
+
     @GetMapping("/registration")
     public String registration(User user) {
         return "registration";
@@ -136,30 +139,74 @@ public class UserController {
         }
     }
 
-    @GetMapping("/user-edit-profile/{userId}")
-    public String userEditProfile(@PathVariable("userId") Long userId , Model model){
-        Optional<User> userOptional = userRepo.findById(userId);
+    @GetMapping("/profile/edit/{id}")
+    public String userEditProfile(@PathVariable("id") long id ,
+                                    Model model){
+        Optional<User> userOptional = userRepo.findById(id);
         if(userOptional.isPresent()){
             User user = userOptional.get();
+            UserForm userForm = new UserForm();
+            userForm.setUser(user);
+
+            model.addAttribute("user",user);
+            model.addAttribute("userForm", userForm);
+            model.addAttribute("userProfilePicture",user.getProfilePicture());
+
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             if(!Objects.equals(user.getUserName(), username)){
                 model.addAttribute("errorMessage", "У вас немає доступу змінювати цей профіль!");
                 return "error";
             }
-            UserForm userForm = new UserForm();
-            userForm.setUser(user);
 
-            model.addAttribute("user",user);
-            model.addAttribute("userProfilePicture",user.getProfilePicture());
-            model.addAttribute("userForm", userForm); // Передаем объект UserForm в модель
             return "user-edit-profile";
         }
         return "user-profile";
     }
-    @PostMapping("/user-edit-profile/{userId}")
-    public String userEditProfilePost(Model model){
+    @PostMapping("/profile/edit/{id}")
+    public String userEditProfilePost(@PathVariable("id") long id, @Valid @ModelAttribute("userForm") UserForm userForm,
+                                        BindingResult bindingResult,
+                                        @RequestParam String currentPassword,
+                                        @RequestParam(name = "userPasswordNew", required = false) String userPasswordNew,
+                                        @RequestParam(name = "changePasswordCheckbox", required = false) boolean changePasswordCheckbox,
+                                        RedirectAttributes redirectAttributes,
+                                        Model model){
+            if(bindingResult.hasErrors()){
+                model.addAttribute("user",userForm.getUser());
+                model.addAttribute("userProfilePicture",userForm.getUser().getProfilePicture());
+                model.addAttribute("userForm", userForm);
+                model.addAttribute("validationErrors", bindingResult.getAllErrors());
+                return "user-edit-profile";
+            }
+            User userToUpdate = userRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+            String realUserPassword = userToUpdate.getUserPassword();
+            boolean isPasswordMatch = passwordEncoder.matches(currentPassword, realUserPassword);
 
+            if(isPasswordMatch){
+                if(!userForm.getProfilePicture().getProfileImage().isEmpty()){
+                    String rootPath = directoryLocator.getResourcePathProfilePicture();
+                    String userPath = directoryLocator.loadProfilePicture(userForm.getProfilePicture().getProfileImage(), userForm.getUser(), rootPath);
+                    userToUpdate.setProfilePicture(userPath);
+                }
+                if(changePasswordCheckbox){
+                    String hashedPassword = passwordEncoder.encode(userPasswordNew);
+
+                    userToUpdate.setUserPassword(hashedPassword);
+                }
+
+                userToUpdate.setAbout(userForm.getUser().getAbout());
+
+                model.addAttribute("user",userForm.getUser());
+                redirectAttributes.addAttribute("userName", userForm.getUser().getUserName());
+                userRepo.save(userToUpdate);
+                return "redirect:/profile/{userName}";
+            }else{
+                model.addAttribute("errorMessage", "Обов'язково введіть правильний пароль!");
+            }
+            model.addAttribute("user",userForm.getUser());
+            model.addAttribute("userProfilePicture",userForm.getUser().getProfilePicture());
+            model.addAttribute("userForm", userForm); // Передаем объект UserForm в модель
         return "user-edit-profile";
     }
 }

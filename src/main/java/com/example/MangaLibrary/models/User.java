@@ -27,7 +27,7 @@ public class User {
     private boolean enabled;
     private String verificationToken;
     @NotEmpty(message = "Поле про себе не повинно бути порожнім")
-    @Size(min=2,max=120, message = "Поле про себе має складатися від 2 до 120 символів")
+    @Size(min=2,max=256, message = "Поле про себе має складатися від 2 до 120 символів")
     private String about;
     @ElementCollection
     private List<String> mangaReading = new ArrayList<>();

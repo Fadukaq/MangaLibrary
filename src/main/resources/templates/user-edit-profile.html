@@ -10,26 +10,40 @@
 <body>
 <header th:insert="~{blocks/header :: header}"></header>
 <div class="container mt-5">
-    <form method="POST" th:action="@{/user/user-edit-profile/{id}(id=${id})}" th:object="${userForm}">
+    <form method="POST" th:action="@{/profile/edit/{id}(id=${id})}" th:object="${userForm}" enctype="multipart/form-data">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" th:field="*{user}" />
         <img th:src="${userProfilePicture}" alt="User Profile Picture" class="profile-picture">
         <br><br>
         <span style="background-color: #ff9100; color: white; padding: 5px; border: 2px solid black; border-radius: 5px;">Max size picture 5MB</span><br><br>
-        <input type="file" th:field="*{profilePicture.profileImage}" accept="image/jpeg, image/png,">    <!-- Img User!-->
-        <div style="color:red" th:if="${#fields.hasErrors('profilePicture.profileImage')}" th:errors="*{profilePicture.profileImage}">profileImage error</div>
+        <input type="file" name="profilePicture.profileImage" accept="image/jpeg, image/png">    <!-- Img User!-->
         <hr>
         <label class="form-label" title="Розкажіть щось про себе!">Про себе: <span style="color:red">*</span></label>
         <textarea name="user.about" placeholder="Введіть щось про себе" class="form-control" th:text="*{user.about}" autocomplete="off"></textarea> <!-- About User!-->
         <div style="color:red" th:if="${#fields.hasErrors('user.about')}" th:errors="*{user.about}">user about error</div>
         <hr>
+        <div class="form-check">
+            <input name="changePasswordCheckbox" class="form-check-input" type="checkbox" id="changePasswordCheckbox" onclick="toggleNewPasswordField()">
+            <label class="form-check-label" for="changePasswordCheckbox">
+                Change Password
+            </label>
+        </div>
+        <div id="newPasswordField" style="display: none;">
+            <label class="form-label" title="Введіть ваш новий пароль!">Новий пароль: <span style="color:red">*</span></label>
+            <input type="password" name="userPasswordNew" placeholder="Введіть ваш новий пароль" class="form-control" autocomplete="off" disabled>
+            <p style="color:red" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+            <hr>
+        </div>
+        <hr>
         <label class="form-label" title="Введіть ваш пароль щоб зберегти всі зміненні дані!">Пароль: <span style="color:red">*</span></label>
-        <input type="text" name="user.userPassword" placeholder="Введіть ваш пароль" class="form-control" autocomplete="off"> <!-- Old Password User!-->
-        <div style="color:red" th:if="${#fields.hasErrors('user.userPassword')}" th:errors="*{user.userPassword}">user userPassword error</div>
+        <input type="password" name="currentPassword"  placeholder="Введіть ваш пароль" class="form-control" autocomplete="off">
+        <p style="color:red" th:if="${errorMessage}" th:text="${errorMessage}"></p>
         <hr>
         <button type="submit" class="btn btn-success">Зберегти</button>
-        <a href="/manga" class="btn btn-primary">Повернутись</a>
+        <a th:href="@{/profile/{userName}(userName=${user.userName})}" class="btn btn-primary">Повернутись</a>
     </form>
 </div>
 <div th:insert="~{/blocks/footer :: footer}"></div>
+<script src="/js/change-password.js"></script>
 </body>
 </html>
