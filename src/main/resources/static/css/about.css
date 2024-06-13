@@ -1,0 +1,40 @@
+body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #e91e63;
+        }
+        p {
+        font-size:20px;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        .highlight {
+            color: #e91e63;
+            font-weight: bold;
+        }
+        .container h1{
+            margin-top:10px;
+        }
+        .author-card {
+            background-color: #2c2a4a;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px #673fe2;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            transition: transform 0.3s ease;
+        }
+
+        .author-section {
+            flex-basis: 45%;
+        }
+        .author-card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 4px 6px #673fe2;
+        }
