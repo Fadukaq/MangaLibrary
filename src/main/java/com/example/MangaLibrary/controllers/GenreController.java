@@ -100,10 +100,7 @@ public class GenreController {
         } else
         {
             List<Manga> mangaList = mangaPage.getContent();
-            for (Manga manga : mangaList) {
-                String imageUrl = "/images/mangas/" + manga.getMangaPosterImg();
-                manga.setMangaPosterImg(imageUrl);
-            }
+
             model.addAttribute("noResults", false);
             model.addAttribute("genreName", genreName);
             model.addAttribute("id", getGenreId.getId());

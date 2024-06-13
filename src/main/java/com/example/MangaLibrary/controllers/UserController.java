@@ -50,9 +50,9 @@ public class UserController {
 
     @PostMapping("/registration")
     public String addUser(@ModelAttribute("user") @Valid User user, BindingResult result, Map<String, Object> model, Model _model) {
-        if (result.hasErrors()) {
+        /*if (result.hasErrors()) {
             return "registration";
-        }
+        }*/
 
         User userFromDb = userRepo.findByUserName(user.getUserName());
         User mailFromDb = userRepo.findByEmail(user.getEmail());
@@ -76,6 +76,7 @@ public class UserController {
         user.setUserPassword(hashedPassword);
         user.setUserRole("USER"); //USER || ADMIN
         user.setEnabled(false);
+        user.setAbout("...");
         user.setVerificationToken(UUID.randomUUID().toString());
         userRepo.save(user);
         if(!user.getEmail().isEmpty()){

@@ -276,7 +276,7 @@ public class MangaController {
         mangaToUpdate.setMangaAuthor(mangaForm.getManga().getMangaAuthor());
         mangaToUpdate.setGenres(mangaForm.getManga().getGenres());
 
-        //mangaRepo.save(mangaToUpdate);
+        mangaRepo.save(mangaToUpdate);
         return "redirect:/manga";
     }
     @GetMapping("/search")
