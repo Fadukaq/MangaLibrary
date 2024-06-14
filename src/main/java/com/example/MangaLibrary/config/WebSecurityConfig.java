@@ -22,7 +22,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/registration","/manga","/activate/*", "/images/**","/css/**").permitAll()
+                        .requestMatchers("/", "/registration","/manga","/activate/*", "/about" ,"/images/**","/css/**").permitAll()
                         .requestMatchers("/manga/add").hasAuthority("ADMIN")
                         .requestMatchers("/manga/edit/{id}").hasAuthority("ADMIN")
                         .requestMatchers("/manga/delete/{id}").hasAuthority("ADMIN")

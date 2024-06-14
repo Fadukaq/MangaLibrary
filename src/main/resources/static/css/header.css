@@ -1,0 +1,50 @@
+body {
+      background-color: #2b2a2a;
+      color: white;
+    }
+
+    .nav-link:hover {
+      color: white !important;
+      border-radius: 8px;
+      background-color: #522878;
+    }
+
+    .form-control-search {
+  border: 1px solid #2f0296;
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: white;
+  background-color: #302b3b;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control-search:hover {
+  border-color: #4e00ff;
+}
+
+.form-control-search:focus {
+  color: white;
+  background-color: #302b3b;
+  border-color: #290085;
+  outline: none;
+    box-shadow: 0 0 0 3px #5000ff;
+}
+
+.form-control-search:valid {
+    color: white; /* Цвет текста */
+    background-color: #302b3b; /* Фоновый цвет */
+}
+
+.form-control-search::placeholder {
+  color: #999;
+}
+    .custom-btn {
+      background-color: #7c1fff;
+      color: #ffffff;
+      border: 1px solid #42009e;
+  }
+.custom-btn:hover {
+      background-color: #5d00de;
+  }
