@@ -217,4 +217,14 @@ public class UserController {
             model.addAttribute("userForm", userForm); // Передаем объект UserForm в модель
         return "user-edit-profile";
     }
+    @GetMapping("/admin-panel")
+    public String adminPanelGet(Model model)
+    {
+        return "admin-panel";
+    }
+    @PostMapping("/admin-panel")
+    public String adminPanelPost(Model model)
+    {
+        return "admin-panel";
+    }
 }

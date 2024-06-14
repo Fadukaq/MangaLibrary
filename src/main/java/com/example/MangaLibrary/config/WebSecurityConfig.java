@@ -29,6 +29,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/genre/add").hasAuthority("ADMIN")
                         .requestMatchers("/genre/edit/{id}").hasAuthority("ADMIN")
                         .requestMatchers("/genre/delete/{id}").hasAuthority("ADMIN")
+                        .requestMatchers("/admin-panel").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
