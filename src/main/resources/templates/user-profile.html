@@ -66,26 +66,34 @@
                                         <p class="isEmptyMessage">Список 'Читаю' пустий</p>
                                     </div>
                                     <div th:unless="${#lists.isEmpty(readingManga)}" th:each="manga : ${readingManga}">
-                                        <a th:href="@{/manga/{id}(id=${manga.id})}">
-                                            <div class="card_manga mb-3">
-                                                <div class="row no-gutters">
-                                                    <div class="col-md-2">
-                                                        <img th:src="${manga.mangaPosterImg}" class="card-img" alt="...">
-                                                    </div>
-                                                    <div class="col-md-10">
-                                                        <div class="card-body">
-                                                            <div class="top-right">
-                                                                <img class="evoStar" src="/images/icons/star_icon.png" alt="">
-                                                                <span th:text="8"></span>
+                                        <div class="card_manga_container position-relative">
+                                            <a th:href="@{/manga/{id}(id=${manga.id})}">
+                                                <div class="card_manga mb-3">
+                                                    <div class="row no-gutters">
+                                                        <div class="col-md-2">
+                                                            <img th:src="${manga.mangaPosterImg}" class="card-img" alt="...">
+                                                        </div>
+                                                        <div class="col-md-10">
+                                                            <div class="card-body">
+                                                                <div class="top-right">
+                                                                    <img class="evoStar" src="/images/icons/star_icon.png" alt="">
+                                                                    <span th:text="8"></span>
+                                                                </div>
+                                                                <h5 class="card-title" th:text="${manga.mangaName}"></h5>
+                                                                <span class="card-text" style="font-size:18px; font-weight: bold; color:#BCA3D3" th:text="${manga.mangaAuthor}"></span>
+                                                                <p class="card-text" th:text="${#strings.length(manga.mangaDescription) > 124 ? #strings.substring(manga.mangaDescription, 0, 124) + '...' : manga.mangaDescription}"></p>
                                                             </div>
-                                                            <h5 class="card-title" th:text="${manga.mangaName}"></h5>
-                                                            <span class="card-text" style="font-size:18px; font-weight: bold; color:#BCA3D3" th:text="${manga.mangaAuthor}"></span>
-                                                            <p class="card-text" th:text="${#strings.length(manga.mangaDescription) > 124 ? #strings.substring(manga.mangaDescription, 0, 124) + '...' : manga.mangaDescription}"></p>
                                                         </div>
                                                     </div>
+                                                    <form th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.principal.username == user.userName})"
+                                                            class="position-absolute top-0 end-0 mt-2 custom-mr"
+                                                            th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
+                                                            method="post">
+                                                        <button class="btn btn-danger" type="submit">X</button>
+                                                    </form>
                                                 </div>
-                                            </div>
-                                        </a>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="plan" role="tabpanel" aria-labelledby="plan-tab">
@@ -111,6 +119,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <form th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.principal.username == user.userName})"
+                                                        class="position-absolute top-0 end-0 mt-2 custom-mr"
+                                                        th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
+                                                        method="post">
+                                                    <button class="btn btn-danger" type="submit">X</button>
+                                                </form>
                                             </div>
                                         </a>
                                     </div>
@@ -138,6 +152,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <form th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.principal.username == user.userName})"
+                                                        class="position-absolute top-0 end-0 mt-2 custom-mr"
+                                                        th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
+                                                        method="post">
+                                                    <button class="btn btn-danger" type="submit">X</button>
+                                                </form>
                                             </div>
                                         </a>
                                     </div>
@@ -165,6 +185,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <form th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.principal.username == user.userName})"
+                                                        class="position-absolute top-0 end-0 mt-2 custom-mr"
+                                                        th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
+                                                        method="post">
+                                                    <button class="btn btn-danger" type="submit">X</button>
+                                                </form>
                                             </div>
                                         </a>
                                     </div>
@@ -192,24 +218,6 @@
     </div>
 </footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        // Обработчик события для переключения вкладок
-        $('#mainTab a').on('shown.bs.tab', function(e) {
-            var activeTab = $(e.target).attr('href');
-
-            // Скрыть содержимое вкладки "Списки"
-            $('#listsSubTabContent').hide();
-
-            // Показать соответствующее содержимое для выбранной вкладки
-            if (activeTab === '#lists') {
-                $('#listsSubTabContent').show();
-            } else {
-                $(activeTab).show();
-            }
-        });
-    });
-</script>
 <script src="/js/loadFirstListUser.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>

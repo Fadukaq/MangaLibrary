@@ -7,6 +7,8 @@ import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.GenreRepo;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
+import com.example.MangaLibrary.service.MangaService;
+import com.example.MangaLibrary.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -41,6 +43,10 @@ public class MangaController {
     @Autowired
     private MangaLibraryManager mangaLibraryManager;
     private static final int PAGE_SIZE = 6;
+    @Autowired
+    UserService userService;
+    @Autowired
+    MangaService mangaService;
     @GetMapping("/manga")
     public String mangas(
             @RequestParam(name = "page", defaultValue = "1", required = false) int page,
@@ -73,73 +79,23 @@ public class MangaController {
         return "manga/manga-add";
     }
     @PostMapping("/manga/add")
-    public String addManga(@ModelAttribute("mangaForm") @Valid MangaForm mangaForm, BindingResult bindingResult,Model model) throws IOException {
-        List<Long> genreIds = mangaForm.getGenres().stream()
-                .map(Genre::getId)
-                .collect(Collectors.toList());
+    public String addManga(@ModelAttribute("mangaForm") @Valid MangaForm mangaForm, BindingResult bindingResult, Model model) throws IOException {
+        int maxYear = Year.now().getValue();
+        List<Genre> genres = genreRepo.findAll();
+        model.addAttribute("maxYear", maxYear);
+        model.addAttribute("genres", genres);
 
-        MultipartFile posterImage = mangaForm.getMangaImage().getPosterImage();
-        long fileSizePosterInBytes = posterImage.getSize();
-        double fileSizePosterInMB = (double) fileSizePosterInBytes / (1024 * 1024);
-
-        List<MultipartFile> pagesImg = mangaForm.getMangaImage().getPagesImage();
-        long fileSizePagesInBytes = 0;
-        if (pagesImg != null) {
-            for (MultipartFile pageImage : pagesImg) {
-                fileSizePagesInBytes += pageImage.getSize();
-            }
-        }
-        double fileSizePagesInMB = (double) fileSizePagesInBytes / (1024 * 1024);
-
-        if (bindingResult.hasErrors()
-                || (genreIds.isEmpty())
-                || (mangaForm.getMangaImage().getPosterImage().isEmpty())
-                || (mangaForm.getMangaImage().getPagesImage().isEmpty()
-                || (fileSizePosterInMB > 5)
-                || (fileSizePagesInMB > 10))) {
-            int maxYear = Year.now().getValue();
-            List<Genre> genres = genreRepo.findAll();
-            model.addAttribute("maxYear", maxYear);
-            model.addAttribute("genres", genres);
-
-            if (genreIds.isEmpty()) {
-                bindingResult.rejectValue("genres", "error.genres", "Будь ласка, оберіть хоча б один жанр.");
-            }
-
-            if (mangaForm.getMangaImage().getPosterImage().isEmpty()) {
-                bindingResult.rejectValue("mangaImage.posterImage", "error.missingFile", "Постер манги не був загруженний.");
-            }
-            if(fileSizePosterInMB > 5) {
-                bindingResult.rejectValue("mangaImage.posterImage", "error.fileSize", "Розмір завантажуваної картинки перевищує 5 МБ");
-            }
-            if(fileSizePagesInMB > 10) {
-                bindingResult.rejectValue("mangaImage.pagesImage", "error.fileSize", "Розмір завантажуванних картинок перевищує 10 МБ");
-            }
-            if (mangaForm.getMangaImage().getPagesImage() == null || mangaForm.getMangaImage().getPagesImage().stream().anyMatch(file -> file.getSize() == 0)) {
-                bindingResult.rejectValue("mangaImage.pagesImage", "error.missingFile", "Сторінки манги не були загружені.");
-            }
-
+        if (!mangaService.isValidAddMangaForm(mangaForm, bindingResult)) {
             return "manga/manga-add";
         }
-        Manga existingManga = mangaRepo.findByMangaName(mangaForm.getManga().getMangaName());
-        if (existingManga != null) {
-            bindingResult.rejectValue("manga.mangaName", "error.manga", "Манга з такою назвою вже існує");
+
+        try {
+            mangaService.saveManga(mangaForm);
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("manga.mangaName", "error.manga", e.getMessage());
             return "manga/manga-add";
         }
-        Iterable<Genre> genreIterable = genreRepo.findAllById(genreIds);
-        List<Genre> selectedGenres = StreamSupport.stream(genreIterable.spliterator(), false)
-                .collect(Collectors.toList());
-        mangaForm.getManga().setGenres(selectedGenres);
 
-        String rootPath = mangaLibraryManager.getResourcePath();
-        String mangaFolderPath = mangaLibraryManager.createFolderForManga(mangaForm.getManga(), rootPath);
-        String posterPath = mangaLibraryManager.createPosterManga(mangaForm.getMangaImage().getPosterImage(), mangaForm.getManga(), mangaFolderPath);
-        mangaForm.getManga().setMangaPosterImg(posterPath);
-        List<String> pagesImages = mangaLibraryManager.createPagesManga(mangaForm.getMangaImage().getPagesImage(), mangaForm.getManga(), mangaFolderPath);
-        String pagesImagesAsString = String.join(",", pagesImages);
-        mangaForm.getManga().setMangaPages(pagesImagesAsString);
-
-        mangaRepo.save(mangaForm.getManga());
         return "redirect:/manga";
     }
 
@@ -167,6 +123,7 @@ public class MangaController {
             return "error";
         }
     }
+
     @GetMapping("/manga/{id}")
     public String mangaDetails(@PathVariable(value = "id") long id, Model model) {
         Optional<Manga> optionalManga = mangaRepo.findById(id);
@@ -186,40 +143,16 @@ public class MangaController {
         mangaRepo.delete(mangaToDelete);
 
         String mangaName = mangaToDelete.getMangaName().replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
-
-        String rootPath = mangaLibraryManager.getResourcePath();
-        File sourceFolder = new File(rootPath + File.separator + mangaName);
-        if (sourceFolder.exists()) {
-            mangaLibraryManager.deleteFolder(sourceFolder);
-        }
-
-        String targetRootPath = mangaLibraryManager.getTargetPath();
-        File targetFolder = new File(targetRootPath + File.separator + mangaName);
-        if (targetFolder.exists()) {
-            mangaLibraryManager.deleteFolder(targetFolder);
-        }
+        mangaService.deleteFolder(mangaName);
 
         Iterable<User> usersIterable = userRepo.findAll();
         List<User> users = new ArrayList<>();
         usersIterable.forEach(users::add);
 
-        for (User user : users) {
-            if (user.getMangaReading().contains(String.valueOf(id))) {
-                user.getMangaReading().remove(String.valueOf(id));
-            }
-            if (user.getMangaWantToRead().contains(String.valueOf(id))) {
-                user.getMangaWantToRead().remove(String.valueOf(id));
-            }
-            if (user.getMangaStoppedReading().contains(String.valueOf(id))) {
-                user.getMangaStoppedReading().remove(String.valueOf(id));
-            }
-            if (user.getMangaRecited().contains(String.valueOf(id))) {
-                user.getMangaRecited().remove(String.valueOf(id));
-            }
-            userRepo.save(user);
-        }
+        userService.deleteMangaFromUsersList(users, id);
         return "redirect:/manga";
     }
+
     @GetMapping("/manga/edit/{id}")
     public String mangaEdit(@PathVariable("id") long id, Model model) {
 
@@ -240,23 +173,13 @@ public class MangaController {
             return "redirect:/manga";
         }
     }
-
     @PostMapping("/manga/edit/{id}")
     public String mangaPostUpdate(@PathVariable("id") long id, @ModelAttribute("mangaForm") @Valid MangaForm mangaForm,
                                     BindingResult bindingResult, Model model) {
         List<Long> genreIds = mangaForm.getManga().getGenres().stream()
                 .map(Genre::getId)
-                .collect(Collectors.toList());
-        if(    ((mangaForm.getManga().getMangaDescription().isEmpty()) ||
-                mangaForm.getManga().getMangaDescription().length() < 10 || mangaForm.getManga().getMangaDescription().length() > 2048)
-                ||
-                ((mangaForm.getManga().getMangaAuthor().isEmpty())||
-                mangaForm.getManga().getMangaAuthor().length() < 5 || mangaForm.getManga().getMangaAuthor().length() > 256)
-                ||
-                mangaForm.getManga().getReleaseYear().isEmpty()
-                ||
-                (genreIds.isEmpty())) {
-
+                .toList();
+        if(!mangaService.isValidUpdateMangaForm(mangaForm, bindingResult)) {
             int maxYear = Year.now().getValue();
             List<Genre> genres = genreRepo.findAll();
             model.addAttribute("id", id);
@@ -268,21 +191,14 @@ public class MangaController {
             }
             return "manga/manga-edit";
         }
+        mangaService.updateManga(id,mangaForm);
 
-        Manga mangaToUpdate = mangaRepo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid manga Id:" + id));
-        mangaToUpdate.setMangaDescription(mangaForm.getManga().getMangaDescription());
-        mangaToUpdate.setReleaseYear(mangaForm.getManga().getReleaseYear());
-        mangaToUpdate.setMangaAuthor(mangaForm.getManga().getMangaAuthor());
-        mangaToUpdate.setGenres(mangaForm.getManga().getGenres());
-
-        mangaRepo.save(mangaToUpdate);
         return "redirect:/manga";
     }
     @GetMapping("/search")
     public String postSearch(@RequestParam("q") String searchQuery,
-                             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-                             Model model) {
+                                @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                                Model model) {
         if (!searchQuery.isEmpty()) {
             Page<Manga> foundMangas = mangaRepo.findByMangaNameContainingIgnoreCase(searchQuery, PageRequest.of(page - 1,PAGE_SIZE, Sort.by("id").descending()));
             List<Manga> mangaList = foundMangas.getContent();
