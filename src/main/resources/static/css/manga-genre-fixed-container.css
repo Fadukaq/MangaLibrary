@@ -1,13 +1,13 @@
  .fixed-right-container {
     position: fixed;
-    right: 20px; /* Расположение справа */
-    bottom: 20px; /* Отступ снизу */
+    right: 20px;
+    bottom: 150px;
     z-index: 1000;
 }
 
 .fixed-right-container a {
-    display: block; /* Расположение элементов в блочном формате */
-    margin-bottom: 10px; /* Отступ между элементами */
+    display: block;
+    margin-bottom: 10px;
     width: 150px;
 }
         .sty a {

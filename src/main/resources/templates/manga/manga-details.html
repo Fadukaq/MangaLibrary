@@ -28,7 +28,7 @@
                     </div>
                     <div class="col-md-8 bg-dark">
                         <div class="card-body text-white bg-dark">
-                            <h5 class="card-title text-primary">Назва: <span th:text="${manga.mangaName}"></span></h5>
+                            <h5 class="card-title">Назва: <span th:text="${manga.mangaName}"></span></h5>
                             <hr>
                             <h6 class="card-subtitle mb-2 ">Опис: <span th:text="${manga.mangaDescription}"></span></h6>
                             <hr>
@@ -38,10 +38,10 @@
                                 <a th:href="@{'/genre/' + ${genre.genreName}}"><span th:text="${genre.genreName}"></span></a></span>
                             </p>
                             <hr>
-                            <h6 class="card-subtitle mb-2 text-success">Автор манги:</h6>
+                            <h6 class="card-subtitle mb-2">Автор манги:</h6>
                             <p class="card-text"><span th:text="${manga.mangaAuthor}"></span></p>
                             <hr>
-                            <h6 class="card-subtitle mb-2 text-info">Рік виходу:</h6>
+                            <h6 class="card-subtitle mb-2">Рік виходу:</h6>
                             <p class="card-text"><span th:text="${manga.releaseYear}"></span></p>
                             <hr>
                             <form th:action="@{/manga/page/{id}(id=${id})}" method="post" style="margin-right: 10px;">
@@ -66,10 +66,7 @@
     <div th:if="${notificationMessage}" class="alert alert-success alert-dismissible fade show hide-delay fixed-right" role="alert">
         <span th:text="${notificationMessage}"></span>
     </div>
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-        <div class="col-md-4 mx-5 d-flex align-items-center">
-            <span class="mb-3 mb-md-0 text-white rounded">© 2024 Company, Inc</span>
-        </div>
-    </footer>
+
+<footer class="mt-5" th:insert="~{/blocks/footer :: footer}"></footer>
 </body>
 </html>

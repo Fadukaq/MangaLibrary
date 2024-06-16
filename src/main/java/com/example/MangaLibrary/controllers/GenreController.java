@@ -93,10 +93,8 @@ public class GenreController {
         Genre getGenreId = genreRepo.findByGenreName(genreName);
 
         if (mangaPage.isEmpty()) {
-            model.addAttribute("id", getGenreId.getId());
             model.addAttribute("genreName", genreName);
             model.addAttribute("noResults", true);
-            model.addAttribute("genreName", genreName);
         } else
         {
             List<Manga> mangaList = mangaPage.getContent();
