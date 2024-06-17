@@ -9,16 +9,16 @@
 </head>
 <body>
 <header th:insert="~{blocks/header :: header}"></header>
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
     <div class="row">
         <div th:each="el : ${mangas}" class="col-md-6 col-lg-4 mb-4">
             <div class="card bg-dark text-white h-100">
                 <a th:href="@{'/manga/' + ${el.id}}" class="d-flex justify-content-center align-items-center mt-3">
-                    <img th:src="@{${el.mangaPosterImg}}" class="card-img-top" alt="manga image" style="width: 350px; height: 450px;">
+                    <img th:src="@{${el.mangaPosterImg}}" class="card-img-top" alt="manga image">
                 </a>
                 <div class="card-body d-flex flex-column justify-content-center align-items-center sty">
                     <a th:href="@{'/manga/' + ${el.id}}">
-                    <h5 class="card-title text-center" th:text="${el.mangaName}"></h5>
+                        <h5 class="card-title text-center" th:text="${el.mangaName}"></h5>
                     </a>
                 </div>
             </div>

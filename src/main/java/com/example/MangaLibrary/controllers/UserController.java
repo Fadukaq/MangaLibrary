@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -72,7 +73,7 @@ public class UserController {
             model.addAttribute("message", "Код активації не знайдено.");
         }
         model.addAttribute("isActivated", isActivated);
-        return "home";
+        return "main/home";
     }
 
     @GetMapping("/profile/{userName}")
@@ -86,10 +87,10 @@ public class UserController {
             model.addAttribute("recitedManga", recitedManga);
             model.addAttribute("wantToReadManga", wantToReadManga);
             model.addAttribute("stoppedReadingManga", stoppedReadingManga);
-            return "user-profile";
+            return "user/user-profile";
         } else {
             model.addAttribute("errorMessage", "Пользователь с именем: " + userName + " не найден");
-            return "error";
+            return "main/error";
         }
     }
 
@@ -110,12 +111,12 @@ public class UserController {
             String username = authentication.getName();
             if(!Objects.equals(user.getUserName(), username)){
                 model.addAttribute("errorMessage", "У вас немає доступу змінювати цей профіль!");
-                return "error";
+                return "main/error";
             }
 
-            return "user-edit-profile";
+            return "user/user-edit-profile";
         }
-        return "user-profile";
+        return "user/user-profile";
     }
 
     @PostMapping("/profile/edit/{id}")
@@ -131,7 +132,7 @@ public class UserController {
             model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
             model.addAttribute("userForm", userForm);
             model.addAttribute("validationErrors", bindingResult.getAllErrors());
-            return "user-edit-profile";
+            return "user/user-edit-profile";
         }
 
         User updatedUser = userService.updateUserProfile(id, userForm, currentPassword, userPasswordNew, changePasswordCheckbox);
@@ -141,7 +142,7 @@ public class UserController {
             model.addAttribute("user", userForm.getUser());
             model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
             model.addAttribute("userForm", userForm);
-            return "user-edit-profile";
+            return "user/user-edit-profile";
         }
 
         if (changePasswordCheckbox && userPasswordNew != null && (userPasswordNew.length() < 2 || userPasswordNew.length() > 255)) {
@@ -150,7 +151,7 @@ public class UserController {
             model.addAttribute("user", userForm.getUser());
             model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
             model.addAttribute("userForm", userForm);
-            return "user-edit-profile";
+            return "user/user-edit-profile";
         }
 
         model.addAttribute("user", updatedUser);
@@ -170,11 +171,11 @@ public class UserController {
     @GetMapping("/admin-panel")
     public String adminPanelGet(Model model)
     {
-        return "admin-panel";
+        return "user/admin-panel";
     }
     @PostMapping("/admin-panel")
     public String adminPanelPost(Model model)
     {
-        return "admin-panel";
+        return "user/admin-panel";
     }
 }

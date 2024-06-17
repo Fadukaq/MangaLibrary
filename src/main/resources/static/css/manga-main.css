@@ -2,16 +2,25 @@
     color: inherit;
     text-decoration: none;
 }
-.card{
+
+.card {
     box-shadow: 0 2px 4px #673fe2;
+    overflow: hidden;
 }
 
 .card img {
     border-radius: 10px;
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    max-height: 450px;
+    object-fit: cover;
 }
+
 .card img:hover {
     border: 2px solid #8e5eff;
 }
+
 .card .sty a:hover {
     border-radius: 10px;
     padding-left: 10px;

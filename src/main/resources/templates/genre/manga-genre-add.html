@@ -9,7 +9,7 @@
 </head>
 <body>
 <header th:insert="~{blocks/header :: header}"></header>
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
     <form action="/genre/add" th:method="POST" th:object="${genre}">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <input type="text" name="genreName" placeholder="Введіть жанр манги" class="form-control" autocomplete="off">

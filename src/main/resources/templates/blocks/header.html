@@ -3,7 +3,9 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script src="/js/burger-menu.js"></script>
+  <style>
 
+  </style>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">MangaLibrary</a>
@@ -16,7 +18,7 @@
             <a href="/" class="nav-link active" aria-current="page">Home</a>
           </li>
           <li class="nav-item">
-            <a href="/manga" class="nav-link">Mangas</a>
+            <a href="/manga" class="nav-link">Manga</a>
           </li>
           <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
             <a href="/manga/add" class="nav-link">Add Manga</a>
@@ -44,7 +46,7 @@
         <ul class="navbar-nav ms-auto burger-menu">
           <li th:if="${#authorization.expression('isAuthenticated()')}" class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <span class="navbar-toggler-icon"></span>
+              <img th:src="@{${userImageUrl}}" alt="User Image" class="user-image">
             </a>
             <ul class="dropdown-menu dropdown-menu-start">
               <li class="nav-item">

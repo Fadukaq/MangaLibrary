@@ -120,7 +120,7 @@ public class MangaController {
             return "manga/manga-page";
         } else {
             model.addAttribute("errorMessage", "Такой манги не найдено!");
-            return "error";
+            return "main/error";
         }
     }
 
@@ -133,7 +133,7 @@ public class MangaController {
             return "manga/manga-details";
         } else {
             model.addAttribute("errorMessage", "Такой манги не найдено!");
-            return "error";
+            return "main/error";
         }
     }
 

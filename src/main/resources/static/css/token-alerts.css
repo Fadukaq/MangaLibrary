@@ -12,10 +12,10 @@
 }
 
 .alert {
-    font-size: 18px; /* Adjust the size as needed */
+    font-size: 18px;
     padding: 10px;
     margin-top: 10px;
-    animation: fadeOut 5s forwards; /* 5 seconds duration, change as needed */
+    animation: fadeOut 5s forwards;
 }
 
 .alert-success {

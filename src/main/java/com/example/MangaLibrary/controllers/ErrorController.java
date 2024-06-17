@@ -12,7 +12,7 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
 
     @GetMapping("/error")
     public ModelAndView handleError(HttpServletRequest request) {
-        ModelAndView modelAndView = new ModelAndView("error");
+        ModelAndView modelAndView = new ModelAndView("main/error");
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         if (status != null) {
             int statusCode = Integer.parseInt(status.toString());

@@ -16,7 +16,7 @@
 </head>
 <body>
 <header th:insert="~{blocks/header :: header}"></header>
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
     <div class="row">
         <div th:if="${noResults}" class="text-center p-4 customBorder">
             <h2>По вашему запросу: <span th:text="${searchQuery}"></span> ничего не найдено!</h2>
@@ -50,7 +50,6 @@
                 </li>
             </ul>
         </nav>
-
     </div>
 </div>
 
