@@ -179,6 +179,25 @@ public class UserController {
         redirectAttributes.addAttribute("userName", updatedUser.getUserName());
         return "redirect:/profile/{userName}";
     }
+
+    @GetMapping("/profile/settings/{userName}")
+    public String userSettings(@PathVariable("userName") String userName ,
+                                    Model model){
+        User user = userRepo.findByUserName(userName);
+        if(user != null){
+            model.addAttribute("user",user);
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            if(!Objects.equals(user.getUserName(), username)){
+                model.addAttribute("errorMessage", "У вас немає доступу до налаштувань цього профілю!");
+                return "main/error";
+            }
+            return "user/user-settings";
+        }
+        return "user/user-profile";
+    }
+
     @PostMapping("/profile/delete-from-list/{mangaId}")
     public String deleteFromListPost(@PathVariable("mangaId") long mangaId, Principal principal, Model model){
         String username = principal.getName();

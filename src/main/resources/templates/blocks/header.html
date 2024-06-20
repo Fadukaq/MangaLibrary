@@ -53,7 +53,7 @@
                 <a th:href="@{/profile/{username}(username=${#authentication.principal.username})}" class="dropdown-item">Профіль</a>
               </li>
               <li class="nav-item">
-                <a href="#" class="dropdown-item">Налаштування</a>
+                <a th:href="@{/profile/settings/{username}(username=${#authentication.principal.username})}" class="dropdown-item">Налаштування</a>
               </li>
               <li class="nav-item">
                 <form th:action="@{/logout}" method="post" class="d-inline">
