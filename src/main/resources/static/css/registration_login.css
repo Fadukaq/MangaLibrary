@@ -13,3 +13,11 @@
         .form-control::placeholder {
             color: #999;
         }
+.reset-btn{
+    text-decoration: none;
+    color:#B960FF;
+}
+.reset-btn:hover{
+    text-decoration: underline;
+    color:#A93CFF;
+}

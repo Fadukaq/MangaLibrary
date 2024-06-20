@@ -7,6 +7,7 @@ import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -131,6 +132,15 @@ public class UserService {
             user.getMangaStoppedReading().removeIf(id -> id.equals(String.valueOf(mangaId)));
             user.getMangaRecited().removeIf(id -> id.equals(String.valueOf(mangaId)));
             userRepo.save(user);
+        }
+    }
+    public String getErrorMessage(AuthenticationException exception) {
+        String message = exception.getMessage();
+        if (message.equalsIgnoreCase("User is disabled")) {
+            return "Ваш акаунт не активований.";
+        }
+        else {
+            return "Невірне ім'я користувача або пароль.";
         }
     }
 

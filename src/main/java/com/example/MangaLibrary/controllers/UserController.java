@@ -6,12 +6,16 @@ import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
 import com.example.MangaLibrary.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -63,6 +67,23 @@ public class UserController {
         userService.createUser(user);
         return "redirect:/login";
     }
+    @GetMapping("/login")
+    public String login(@RequestParam(value = "error", required = false) String error,
+                        HttpServletRequest request, Model model) {
+        if (error != null) {
+            HttpSession session = request.getSession(false);
+            String errorMessage = null;
+            if (session != null) {
+                AuthenticationException authException = (AuthenticationException) session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+                if (authException != null) {
+                    errorMessage = userService.getErrorMessage(authException);
+                }
+            }
+            model.addAttribute("errorMessage", errorMessage);
+        }
+        return "login";
+    }
+
 
     @GetMapping("/activate/{code}")
     public String activate(Model model, @PathVariable String code){

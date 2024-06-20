@@ -227,7 +227,7 @@ public class MangaController {
 
         user.getMangaReading().add(String.valueOf(id));
         userRepo.save(user);
-        redirectAttributes.addFlashAttribute("notificationMessage", "Манга добавлена в список 'Читаю'");
+        redirectAttributes.addFlashAttribute("notificationMessage", "Мангу додано до списку 'Читаю'");
 
         return "redirect:/manga/" + id;
     }
@@ -241,7 +241,7 @@ public class MangaController {
 
         user.getMangaWantToRead().add(String.valueOf(id));
         userRepo.save(user);
-        redirectAttributes.addFlashAttribute("notificationMessage", "Манга добавлена в список 'Буду читать'");
+        redirectAttributes.addFlashAttribute("notificationMessage", "Мангу додано до списку 'Буду читати'");
 
         return "redirect:/manga/" + id;
     }
@@ -256,7 +256,7 @@ public class MangaController {
 
         user.getMangaRecited().add(String.valueOf(id));
         userRepo.save(user);
-        redirectAttributes.addFlashAttribute("notificationMessage", "Манга добавлена в список 'Прочитал'");
+        redirectAttributes.addFlashAttribute("notificationMessage", "Мангу додано до списку 'Припинив читати'");
 
         return "redirect:/manga/" + id;    }
 
@@ -269,7 +269,7 @@ public class MangaController {
         mangaLibraryManager.removeMangaFromOtherLists(user, id);
         user.getMangaStoppedReading().add(String.valueOf(id));
         userRepo.save(user);
-        redirectAttributes.addFlashAttribute("notificationMessage", "Манга добавлена в список 'Бросил'");
+        redirectAttributes.addFlashAttribute("notificationMessage", "Мангу додано до списку 'Прочитав'");
 
         return "redirect:/manga/" + id;
     }

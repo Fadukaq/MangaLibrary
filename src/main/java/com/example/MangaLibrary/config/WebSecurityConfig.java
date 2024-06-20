@@ -9,9 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 import javax.sql.DataSource;
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -22,7 +20,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/registration","/manga","/activate/*", "/about" ,"/images/**","/css/**","/js/**").permitAll()
+                        .requestMatchers("/", "/registration", "/manga", "/activate/*", "/about","/faq","/contact-us" , "/images/**", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/manga/add").hasAuthority("ADMIN")
                         .requestMatchers("/manga/edit/{id}").hasAuthority("ADMIN")
                         .requestMatchers("/manga/delete/{id}").hasAuthority("ADMIN")
@@ -34,6 +32,7 @@ public class WebSecurityConfig {
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
+                        .failureUrl("/login?error=true")
                         .defaultSuccessUrl("/manga", true)
                         .permitAll()
                 )

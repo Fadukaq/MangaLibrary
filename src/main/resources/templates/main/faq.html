@@ -8,7 +8,7 @@
 </head>
 <body>
 <header th:insert="~{blocks/header :: header}"></header>
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
     <div class="accordion custom-accordion" id="faqAccordion">
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingOne">
@@ -136,7 +136,20 @@
                 </div>
             </div>
         </div>
-
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTen">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTen" aria-expanded="false" aria-controls="collapseTen">
+                    Пише ваш акаунт не активований, що це означає?
+                </button>
+            </h2>
+            <div id="collapseTen" class="accordion-collapse collapse" aria-labelledby="headingTen" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Якщо під час спроби увійти в обліковий запис вам пише, що ваш обліковий запис не активований, є 2 причини. <br>
+                    1. Ви не активували свій акаунт за допомогою пошти, яку ви писали під час реєстрації. <br>
+                    2. Ваш акаунт було заблоковано через порушення правил сайту.
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
