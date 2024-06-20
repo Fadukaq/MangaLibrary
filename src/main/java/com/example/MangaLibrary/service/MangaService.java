@@ -12,8 +12,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -116,11 +121,11 @@ public class MangaService {
                 .collect(Collectors.toList());
         mangaForm.getManga().setGenres(selectedGenres);
 
-        String rootPath = mangaLibraryManager.getResourcePath();
-        String mangaFolderPath = mangaLibraryManager.createFolderForManga(mangaForm.getManga(), rootPath);
-        String posterPath = mangaLibraryManager.createPosterManga(mangaForm.getMangaImage().getPosterImage(), mangaForm.getManga(), mangaFolderPath);
+        String rootPath = mangaLibraryManager.getResourcePathManga();
+        String mangaFolderPath = createFolderForManga(mangaForm.getManga(), rootPath);
+        String posterPath = createPosterManga(mangaForm.getMangaImage().getPosterImage(), mangaForm.getManga(), mangaFolderPath);
         mangaForm.getManga().setMangaPosterImg(posterPath);
-        List<String> pagesImages = mangaLibraryManager.createPagesManga(mangaForm.getMangaImage().getPagesImage(), mangaForm.getManga(), mangaFolderPath);
+        List<String> pagesImages = createPagesManga(mangaForm.getMangaImage().getPagesImage(), mangaForm.getManga(), mangaFolderPath);
         String pagesImagesAsString = String.join(",", pagesImages);
         mangaForm.getManga().setMangaPages(pagesImagesAsString);
 
@@ -139,17 +144,120 @@ public class MangaService {
     }
     public void deleteFolder(String mangaName)
     {
-        String rootPath = mangaLibraryManager.getResourcePath();
+        String rootPath = mangaLibraryManager.getResourcePathManga();
         File sourceFolder = new File(rootPath + File.separator + mangaName);
         if (sourceFolder.exists()) {
-            mangaLibraryManager.deleteFolder(sourceFolder);
+            deleteThisFolder(sourceFolder);
         }
 
-        String targetRootPath = mangaLibraryManager.getTargetPath();
+        String targetRootPath = mangaLibraryManager.getTargetPathManga();
         File targetFolder = new File(targetRootPath + File.separator + mangaName);
         if (targetFolder.exists()) {
-            mangaLibraryManager.deleteFolder(targetFolder);
+            deleteThisFolder(targetFolder);
         }
     }
 
+    public String createFolderForManga(Manga thisManga, String rootPath) {
+        String mangaFolderName = thisManga.getMangaName().replaceAll("\\s", "_")
+                .replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
+        File mangaFolder = new File(rootPath + File.separator + mangaFolderName);
+
+        String targetRootPath = mangaLibraryManager.getTargetPathManga();
+        File mangaFolderTarget = new File(targetRootPath + File.separator + mangaFolderName);
+
+        if (!mangaFolder.exists() || !mangaFolderTarget.exists()) {
+            mangaFolder.mkdirs();
+            mangaFolderTarget.mkdirs();
+        }
+
+        return mangaFolder.getAbsolutePath();
+    }
+
+    public List<String> createPagesManga(List<MultipartFile> pagesManga, Manga thisManga, String mangaFolderPath) throws IOException {
+        List<String> pagePaths = new ArrayList<>();
+        String cleanMangaName = thisManga.getMangaName()
+                .replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
+
+        File sourceFolder = new File(mangaFolderPath);
+        if (!sourceFolder.exists()) {
+            sourceFolder.mkdirs();
+        }
+        String targetRootPath = mangaLibraryManager.getTargetPathManga();
+        File targetFolder = new File(targetRootPath + File.separator + cleanMangaName);
+        if (!targetFolder.exists()) {
+            targetFolder.mkdirs();
+        }
+        for (int i = 0; i < pagesManga.size(); i++) {
+            String fileName = cleanMangaName + "_Page" + (i + 1) + ".png";
+
+            File sourceFile = new File(sourceFolder + File.separator + fileName);
+            pagesManga.get(i).transferTo(sourceFile);
+
+            File targetFile = new File(targetFolder + File.separator + fileName);
+            Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            pagePaths.add(fileName);
+        }
+        return pagePaths;
+    }
+
+    public String createPosterManga(MultipartFile posterImg,Manga thisManga,String mangaFolderPath) {
+        try {
+            byte[] bytes = posterImg.getBytes();
+            String cleanMangaName = thisManga.getMangaName()
+                    .replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
+
+            String fileName = cleanMangaName + "_Poster.png";
+
+            File targetFile = new File(mangaFolderPath + "/" + fileName);
+            FileOutputStream outputStream = new FileOutputStream(targetFile);
+            outputStream.write(bytes);
+            outputStream.close();
+
+            String targetRootPath = mangaLibraryManager.getTargetPathManga();
+            File targetFolder = new File(targetRootPath + File.separator + cleanMangaName);
+            if (!targetFolder.exists()) {
+                targetFolder.mkdirs();
+            }
+            File sourseFile = new File(targetFolder + File.separator + fileName);
+            FileOutputStream targetOutputStream = new FileOutputStream(sourseFile);
+            targetOutputStream.write(bytes);
+            targetOutputStream.close();
+
+            return "/images/mangas/" + cleanMangaName + File.separator + fileName;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return "redirect:/manga/add";
+        }
+    }
+
+    public Long getRandomMangaId() {
+        Iterable<Manga> mangas = mangaRepo.findAll();
+        List<Manga> mangaList = StreamSupport.stream(mangas.spliterator(), false)
+                .collect(Collectors.toList());
+        if (mangaList.isEmpty()) {
+            return null;
+        }
+        Random random = new Random();
+        int randomIndex = random.nextInt(mangaList.size());
+        Manga randomManga = mangaList.get(randomIndex);
+        return randomManga.getId();
+    }
+
+    public void deleteThisFolder(File folder) {
+        File[] files = folder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteThisFolder(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        folder.delete();
+    }
+
 }
+

@@ -115,7 +115,7 @@ public class MangaController {
             }
 
             model.addAttribute("mangaPages", mangaPagesWithFullPath);
-            model.addAttribute("id", mangaId); // Передача id в модель
+            model.addAttribute("id", mangaId);
 
             return "manga/manga-page";
         } else {
@@ -129,14 +129,43 @@ public class MangaController {
         Optional<Manga> optionalManga = mangaRepo.findById(id);
         if (optionalManga.isPresent()) {
             Manga manga = optionalManga.get();
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            User user = userRepo.findByUserName(username);
+
+            boolean isInReadingList = user.getMangaReading().contains(String.valueOf(id));
+            boolean isInWantToReadList = user.getMangaWantToRead().contains(String.valueOf(id));
+            boolean isInRecitedList = user.getMangaRecited().contains(String.valueOf(id));
+            boolean isInReadStoppedList = user.getMangaStoppedReading().contains(String.valueOf(id));
+
             model.addAttribute("manga", manga);
+            model.addAttribute("isInReadingList", isInReadingList);
+            model.addAttribute("isInWantToReadList", isInWantToReadList);
+            model.addAttribute("isInRecitedList", isInRecitedList);
+            model.addAttribute("isInReadStoppedList", isInReadStoppedList);
             return "manga/manga-details";
         } else {
             model.addAttribute("errorMessage", "Такой манги не найдено!");
             return "main/error";
         }
     }
+    @PostMapping("/manga/add-to-list")
+    public String addMangaToList(@RequestParam("listType") String listType,
+                                    @RequestParam("mangaId") Long mangaId,
+                                    RedirectAttributes redirectAttributes) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepo.findByUserName(username);
+        if(user!=null){
+            userService.deleteMangaFromUserList(user, mangaId);
 
+            userService.addMangaToList(user, listType, mangaId, redirectAttributes);
+
+            userRepo.save(user);
+        }
+        return "redirect:/manga/" + mangaId;
+    }
     @PostMapping("/manga/delete/{id}")
     public String MangaPostDelete(@PathVariable(value ="id") long id,Model model) {
         Manga mangaToDelete = mangaRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Id:" + id));
@@ -217,67 +246,12 @@ public class MangaController {
         }
         return "redirect:/manga";
     }
-    @GetMapping("/manga/reading/{id}")
-    public String addMangaToReadingList(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepo.findByUserName(username);
 
-        mangaLibraryManager.removeMangaFromOtherLists(user, id);
-
-        user.getMangaReading().add(String.valueOf(id));
-        userRepo.save(user);
-        redirectAttributes.addFlashAttribute("notificationMessage", "Мангу додано до списку 'Читаю'");
-
-        return "redirect:/manga/" + id;
-    }
-    @GetMapping("/manga/want-read/{id}")
-    public String addMangaToWantReadList(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepo.findByUserName(username);
-
-        mangaLibraryManager.removeMangaFromOtherLists(user, id);
-
-        user.getMangaWantToRead().add(String.valueOf(id));
-        userRepo.save(user);
-        redirectAttributes.addFlashAttribute("notificationMessage", "Мангу додано до списку 'Буду читати'");
-
-        return "redirect:/manga/" + id;
-    }
-
-    @GetMapping("/manga/recited/{id}")
-    public String addMangaToRecitedList(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepo.findByUserName(username);
-
-        mangaLibraryManager.removeMangaFromOtherLists(user, id);
-
-        user.getMangaRecited().add(String.valueOf(id));
-        userRepo.save(user);
-        redirectAttributes.addFlashAttribute("notificationMessage", "Мангу додано до списку 'Припинив читати'");
-
-        return "redirect:/manga/" + id;    }
-
-    @GetMapping("/manga/read-stopped/{id}")
-    public String addMangaToReadStoppedList(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepo.findByUserName(username);
-
-        mangaLibraryManager.removeMangaFromOtherLists(user, id);
-        user.getMangaStoppedReading().add(String.valueOf(id));
-        userRepo.save(user);
-        redirectAttributes.addFlashAttribute("notificationMessage", "Мангу додано до списку 'Прочитав'");
-
-        return "redirect:/manga/" + id;
-    }
 
     @GetMapping("/random")
     public String getRandomMangaId(Model model) {
 
-        Long randomMangaId = mangaLibraryManager.getRandomMangaId();
+        Long randomMangaId = mangaService.getRandomMangaId();
 
         model.addAttribute("randomMangaId", randomMangaId);
         if(randomMangaId==null) {
