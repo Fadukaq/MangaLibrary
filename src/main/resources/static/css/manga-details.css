@@ -20,3 +20,15 @@
     hr{
     color:#8957ff;
     }
+    .custom-select {
+        text-align:center;
+        background-color: #343a40;
+        color: white;
+    }
+    .custom-select option {
+        text-align:start;
+        background-color: #393040;
+    }
+    .custom-select option:checked {
+        text-align: center;
+    }
