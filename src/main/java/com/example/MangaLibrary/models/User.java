@@ -40,7 +40,8 @@ public class User {
 
     @ElementCollection
     private List<String> mangaRecited = new ArrayList<>();
-
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserSettings userSettings;
     public User() {}
     public User(User user) {
         this.userName = user.getUserName();
@@ -148,5 +149,13 @@ public class User {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public UserSettings getUserSettings() {
+        return userSettings;
+    }
+
+    public void setUserSettings(UserSettings userSettings) {
+        this.userSettings = userSettings;
     }
 }

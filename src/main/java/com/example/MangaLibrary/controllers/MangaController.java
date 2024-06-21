@@ -7,6 +7,7 @@ import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.GenreRepo;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
+import com.example.MangaLibrary.repo.UserSettingsRepo;
 import com.example.MangaLibrary.service.MangaService;
 import com.example.MangaLibrary.service.UserService;
 import jakarta.validation.Valid;
@@ -39,6 +40,8 @@ public class MangaController {
     @Autowired
     private GenreRepo genreRepo;
     @Autowired
+    private UserSettingsRepo userSettingsRepo;
+    @Autowired
     private UserRepo userRepo;
     @Autowired
     private MangaLibraryManager mangaLibraryManager;
@@ -52,9 +55,9 @@ public class MangaController {
             @RequestParam(name = "page", defaultValue = "1", required = false) int page,
             Model model
     ) {
+
         Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending());
         Page<Manga> mangaPage = mangaRepo.findAll(pageable);
-
         List<Manga> mangaList = mangaPage.getContent();
         int totalPages = mangaPage.getTotalPages();
         if (page > totalPages) {

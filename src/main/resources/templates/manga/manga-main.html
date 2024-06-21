@@ -7,6 +7,14 @@
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/manga-main.css">
     <link rel="stylesheet" href="/css/pagination.css">
+    <style th:inline="javascript">
+        body {
+            background:
+            linear-gradient(rgba(0, 0, 0, 0.5), rgba(   0, 0, 0, 0.5)),
+            url([[${backGroundImgUser}]]) no-repeat center center fixed;
+            background-size: cover;
+        }
+    </style>
 </head>
 <body>
 <header th:insert="~{blocks/header :: header}"></header>

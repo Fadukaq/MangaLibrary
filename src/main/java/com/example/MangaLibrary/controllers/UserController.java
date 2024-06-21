@@ -108,6 +108,7 @@ public class UserController {
             model.addAttribute("recitedManga", recitedManga);
             model.addAttribute("wantToReadManga", wantToReadManga);
             model.addAttribute("stoppedReadingManga", stoppedReadingManga);
+
             return "user/user-profile";
         } else {
             model.addAttribute("errorMessage", "Пользователь с именем: " + userName + " не найден");

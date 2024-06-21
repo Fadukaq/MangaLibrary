@@ -4,8 +4,10 @@ import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.helper.user.UserForm;
 import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
+import com.example.MangaLibrary.models.UserSettings;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
+import com.example.MangaLibrary.repo.UserSettingsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.AuthenticationException;
@@ -29,6 +31,8 @@ public class UserService {
     @Autowired UserRepo userRepo;
     @Autowired MangaRepo mangaRepo;
     @Autowired
+    private UserSettingsRepo userSettingsRepo;
+    @Autowired
     private MangaRepo mangaRepository;
     @Autowired
     private MangaLibraryManager directoryLocator;
@@ -36,6 +40,7 @@ public class UserService {
     private MailSender mailSender;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     public void createUser(User user){
 
         String plainPassword = user.getUserPassword();
@@ -45,6 +50,12 @@ public class UserService {
         createFolderForProfile(user, rootPath) ;
         String profilePicturePath = loadProfilePicture(null,user, rootPath);
         user.setProfilePicture(profilePicturePath);
+        UserSettings userSettings = new UserSettings();
+
+        userSettings.setBackgroundImage("/images/settingsPicture/defaultBackGroundSettings.jpg");
+        userSettings.setProfilePrivacy("public");
+        user.setUserSettings(userSettings);
+        userSettings.setUser(user);
 
         user.setUserPassword(hashedPassword);
         user.setUserRole("USER");
