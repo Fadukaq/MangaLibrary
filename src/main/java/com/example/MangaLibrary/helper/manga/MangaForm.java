@@ -37,4 +37,12 @@ public class MangaForm {
     public void setGenres(List<Genre> genres) {
         this.genres = genres;
     }
+
+    public MangaImage getBackGroundImg() {
+        return backGroundImg;
+    }
+
+    public void setBackGroundImg(MangaImage backGroundImg) {
+        this.backGroundImg = backGroundImg;
+    }
 }

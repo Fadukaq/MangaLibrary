@@ -125,9 +125,12 @@ public class MangaService {
         String mangaFolderPath = createFolderForManga(mangaForm.getManga(), rootPath);
         String posterPath = createPosterManga(mangaForm.getMangaImage().getPosterImage(), mangaForm.getManga(), mangaFolderPath);
         mangaForm.getManga().setMangaPosterImg(posterPath);
-        if(mangaForm.getMangaImage().getBackGroundMangaImg() !=null ){
+        if(!mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()){
             String backGroundPath = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), mangaForm.getManga(), mangaFolderPath);
             mangaForm.getManga().setMangaBackGround(backGroundPath);
+        }
+        else{
+            mangaForm.getManga().setMangaBackGround("/images/mangas/defaultBackGroundManga.jpg");
         }
         List<String> pagesImages = createPagesManga(mangaForm.getMangaImage().getPagesImage(), mangaForm.getManga(), mangaFolderPath);
         String pagesImagesAsString = String.join(",", pagesImages);
@@ -235,7 +238,7 @@ public class MangaService {
             return "redirect:/manga/add";
         }
     }
-    public String createBackGroundManga(MultipartFile backgroundImg,Manga thisManga,String mangaFolderPath) {
+    public String createBackGroundManga(MultipartFile backgroundImg, Manga thisManga,String mangaFolderPath) {
         try {
             byte[] bytes = backgroundImg.getBytes();
             String cleanMangaName = thisManga.getMangaName()

@@ -9,7 +9,9 @@
     <link rel="stylesheet" href="/css/manga-details-animation.css">
     <style th:inline="javascript">
         body {
-            background: url([[${manga.mangaBackGround}]]) no-repeat center center fixed;
+            background:
+            linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+            url([[${manga.mangaBackGround}]]) no-repeat center center fixed;
             background-size: cover;
         }
     </style>

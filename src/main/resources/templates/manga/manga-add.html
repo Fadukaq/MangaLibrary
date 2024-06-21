@@ -45,7 +45,7 @@
         <div style="color:red" th:if="${#fields.hasErrors('mangaImage.pagesImage')}" th:errors="*{mangaImage.pagesImage}">pagesImage error</div>
         <br>
         <hr>
-        <p>Задній фон манги, якщо є. Ідеальний розмір 1</p>
+        <p>Задній фон манги, якщо є.</p>
         <input type="file" th:field="*{mangaImage.backGroundMangaImg}" accept="image/jpeg, image/png," multiple>
         <div style="color:red" th:if="${#fields.hasErrors('mangaImage.backGroundMangaImg')}" th:errors="*{mangaImage.backGroundMangaImg}">mangaImage.backGroundMangaImg error</div>
         <br>
