@@ -35,14 +35,19 @@
         </div>
         <div style="color:red" th:if="${#fields.hasErrors('genres')}" th:errors="*{genres}">genres error</div>
         <hr>
-        <span style="background-color: #ff9100; color: white; padding: 5px; border: 2px solid black; border-radius: 5px;">Max size files 5MB</span><br><br>
+        <p>Постер манги</p>
         <input type="file" th:field="*{mangaImage.posterImage}" accept="image/jpeg, image/png,">
         <div style="color:red" th:if="${#fields.hasErrors('mangaImage.posterImage')}" th:errors="*{mangaImage.posterImage}">posterImage error</div>
         <br>
         <hr>
-        <span style="background-color: #ff9100; color: white; padding: 5px; border: 2px solid black; border-radius: 5px;">Max size files 10MB</span><br><br>
+        <p>Картинки манги</p>
         <input type="file" th:field="*{mangaImage.pagesImage}" accept="image/jpeg, image/png," multiple>
         <div style="color:red" th:if="${#fields.hasErrors('mangaImage.pagesImage')}" th:errors="*{mangaImage.pagesImage}">pagesImage error</div>
+        <br>
+        <hr>
+        <p>Задній фон манги, якщо є. Ідеальний розмір 1</p>
+        <input type="file" th:field="*{mangaImage.backGroundMangaImg}" accept="image/jpeg, image/png," multiple>
+        <div style="color:red" th:if="${#fields.hasErrors('mangaImage.backGroundMangaImg')}" th:errors="*{mangaImage.backGroundMangaImg}">mangaImage.backGroundMangaImg error</div>
         <br>
         <hr>
         <button type="submit" class="btn btn-success">Додати мангу</button>

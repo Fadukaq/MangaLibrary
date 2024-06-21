@@ -125,6 +125,10 @@ public class MangaService {
         String mangaFolderPath = createFolderForManga(mangaForm.getManga(), rootPath);
         String posterPath = createPosterManga(mangaForm.getMangaImage().getPosterImage(), mangaForm.getManga(), mangaFolderPath);
         mangaForm.getManga().setMangaPosterImg(posterPath);
+        if(mangaForm.getMangaImage().getBackGroundMangaImg() !=null ){
+            String backGroundPath = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), mangaForm.getManga(), mangaFolderPath);
+            mangaForm.getManga().setMangaBackGround(backGroundPath);
+        }
         List<String> pagesImages = createPagesManga(mangaForm.getMangaImage().getPagesImage(), mangaForm.getManga(), mangaFolderPath);
         String pagesImagesAsString = String.join(",", pagesImages);
         mangaForm.getManga().setMangaPages(pagesImagesAsString);
@@ -229,6 +233,36 @@ public class MangaService {
         catch (IOException e) {
             e.printStackTrace();
             return "redirect:/manga/add";
+        }
+    }
+    public String createBackGroundManga(MultipartFile backgroundImg,Manga thisManga,String mangaFolderPath) {
+        try {
+            byte[] bytes = backgroundImg.getBytes();
+            String cleanMangaName = thisManga.getMangaName()
+                    .replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
+
+            String fileName = cleanMangaName + "_BackGround.png";
+
+            File targetFile = new File(mangaFolderPath + "/" + fileName);
+            FileOutputStream outputStream = new FileOutputStream(targetFile);
+            outputStream.write(bytes);
+            outputStream.close();
+
+            String targetRootPath = mangaLibraryManager.getTargetPathManga();
+            File targetFolder = new File(targetRootPath + File.separator + cleanMangaName);
+            if (!targetFolder.exists()) {
+                targetFolder.mkdirs();
+            }
+            File sourseFile = new File(targetFolder + File.separator + fileName);
+            FileOutputStream targetOutputStream = new FileOutputStream(sourseFile);
+            targetOutputStream.write(bytes);
+            targetOutputStream.close();
+
+            return "/images/mangas/" + cleanMangaName + File.separator + fileName;
+        }
+        catch (IOException e) {
+        e.printStackTrace();
+        return "redirect:/manga/add";
         }
     }
 

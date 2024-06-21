@@ -34,6 +34,7 @@ public class Manga {
     String mangaPosterImg;
 
     String mangaPages;
+    String mangaBackGround;
 
     @NotEmpty(message = "Рік релізу не повинно бути порожнім")
     private String releaseYear;
@@ -112,5 +113,13 @@ public class Manga {
 
     public void setGenres(List<Genre> genres) {
         this.genres = genres;
+    }
+
+    public String getMangaBackGround() {
+        return mangaBackGround;
+    }
+
+    public void setMangaBackGround(String mangaBackGround) {
+        this.mangaBackGround = mangaBackGround;
     }
 }

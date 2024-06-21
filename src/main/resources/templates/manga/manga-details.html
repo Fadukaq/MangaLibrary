@@ -7,10 +7,17 @@
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/manga-details.css">
     <link rel="stylesheet" href="/css/manga-details-animation.css">
+    <style th:inline="javascript">
+        body {
+            background: url([[${manga.mangaBackGround}]]) no-repeat center center fixed;
+            background-size: cover;
+        }
+    </style>
+
 </head>
 <body>
 <header th:insert="~{blocks/header :: header}"></header>
-    <div class="row mb-5">
+    <div class="row mt-5 mb-5">
         <div class="col-lg-8 mx-auto">
             <div class="card mt-4 ">
                 <div class="row g-0">

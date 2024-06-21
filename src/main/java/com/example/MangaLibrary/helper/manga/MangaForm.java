@@ -11,6 +11,7 @@ public class MangaForm {
     private Manga manga;
     @Valid
     private MangaImage mangaImage;
+    private MangaImage backGroundImg;
     @Valid
     private List<Genre> genres;
     public Manga getManga() {
