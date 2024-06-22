@@ -37,7 +37,7 @@ body {
             box-shadow: 0 4px 6px #673fe2;
         }
 .email-hidden {
-    display: none; /* Скрыть элемент по умолчанию */
+    display: none;
 }
 .showEmail{
     cursor:pointer;
