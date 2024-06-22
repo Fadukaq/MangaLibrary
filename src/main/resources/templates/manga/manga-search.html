@@ -8,17 +8,12 @@
     <link rel="stylesheet" href="/css/manga-main.css">
     <link rel="stylesheet" href="/css/pagination.css">
     <link rel="stylesheet" href="/css/customMessageBorder.css">
-    <style th:inline="javascript">
-        body {
-            background:
-            linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-            url([[${backGroundImgUser}]]) no-repeat center center fixed;
-            background-size: cover;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/loader.css">
 </head>
-<body>
+<body class="loading">
+<div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
+<input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="container mt-5 mb-5">
     <div class="row">
         <div th:if="${noResults}" class="text-center p-4 customBorder">
@@ -58,6 +53,7 @@
 
 
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
+<script src="/js/loader-spinner.js"></script>
 
 </body>
 </html>

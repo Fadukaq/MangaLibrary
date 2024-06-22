@@ -261,7 +261,7 @@ public class MangaService {
             targetOutputStream.write(bytes);
             targetOutputStream.close();
 
-            return "/images/mangas/" + cleanMangaName + File.separator + fileName;
+            return "/images/mangas/" + cleanMangaName + "/" + fileName;
         }
         catch (IOException e) {
         e.printStackTrace();

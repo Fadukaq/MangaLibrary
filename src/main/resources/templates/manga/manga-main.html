@@ -7,23 +7,17 @@
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/manga-main.css">
     <link rel="stylesheet" href="/css/pagination.css">
-    <style th:inline="javascript">
-        body {
-            background:
-            linear-gradient(rgba(0, 0, 0, 0.5), rgba(   0, 0, 0, 0.5)),
-            url([[${backGroundImgUser}]]) no-repeat center center fixed;
-            background-size: cover;
-        }
-    </style>
 </head>
-<body>
+<body class="loading">
+<div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
+<input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="container mt-5 mb-5">
     <div class="row">
         <div th:each="el : ${mangas}" class="col-md-6 col-lg-4 mb-4">
             <div class="card bg-dark text-white h-100">
                 <a th:href="@{'/manga/' + ${el.id}}" class="d-flex justify-content-center align-items-center mt-3">
-                    <img th:src="@{${el.mangaPosterImg}}" class="card-img-top" alt="manga image">
+                    <img th:src="@{${el.mangaPosterImg}}" class="card-img-top" alt="manga image" loading="lazy">
                 </a>
                 <div class="card-body d-flex flex-column justify-content-center align-items-center sty">
                     <a th:href="@{'/manga/' + ${el.id}}">
@@ -54,5 +48,6 @@
     </nav>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
+<script src="/js/loader-spinner.js"></script>
 </body>
 </html>

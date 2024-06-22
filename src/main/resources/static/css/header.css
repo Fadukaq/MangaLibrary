@@ -1,6 +1,10 @@
 body {
-  background-color: #2b2a2a;
-  color: white;
+  background-color: rgba(79, 77, 77, 1);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color:white;
 }
 
 .nav-link:hover {

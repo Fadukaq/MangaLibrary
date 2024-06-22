@@ -6,17 +6,12 @@
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/user-profile.css">
     <link rel="stylesheet" href="/css/form-styles.css">
-    <style th:inline="javascript">
-        body {
-            background:
-            linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-            url([[${backGroundImgUser}]]) no-repeat center center fixed;
-            background-size: cover;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/loader.css">
 </head>
-<body>
+<body class="loading">
+<div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
+<input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -224,6 +219,7 @@
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/loadFirstListUser.js"></script>
+<script src="/js/loader-spinner.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>

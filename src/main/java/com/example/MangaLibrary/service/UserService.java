@@ -8,6 +8,7 @@ import com.example.MangaLibrary.models.UserSettings;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
 import com.example.MangaLibrary.repo.UserSettingsRepo;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.AuthenticationException;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -40,6 +42,8 @@ public class UserService {
     private MailSender mailSender;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    private String userBackgroundImageUrl;
+
 
     public void createUser(User user){
 
@@ -52,7 +56,7 @@ public class UserService {
         user.setProfilePicture(profilePicturePath);
         UserSettings userSettings = new UserSettings();
 
-        userSettings.setBackgroundImage("/images/settingsPicture/defaultBackGroundSettings.jpg");
+        userSettings.setBackgroundImage("/images/settingsPicture/backGroundSettings1.jpg");
         userSettings.setProfilePrivacy("public");
         user.setUserSettings(userSettings);
         userSettings.setUser(user);
@@ -256,5 +260,4 @@ public class UserService {
             return "redirect:/manga";
         }
     }
-
 }

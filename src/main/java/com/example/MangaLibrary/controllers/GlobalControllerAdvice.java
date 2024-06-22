@@ -27,14 +27,10 @@ public class GlobalControllerAdvice {
     public void addBackGroundUser(Authentication authentication, Model model) {
         if (authentication != null && authentication.isAuthenticated()) {
             User user = userRepo.findByUserName(authentication.getName());
-            if(user != null)
-            {
+            if (user != null) {
                 model.addAttribute("userImageUrl", user.getProfilePicture());
                 Optional<UserSettings> userSettingsOptional = userSettingsRepo.findByUser(user);
-                if (userSettingsOptional.isPresent()) {
-                    UserSettings userSettings = userSettingsOptional.get();
-                    model.addAttribute("backGroundImgUser", userSettings.getBackgroundImage());
-                }
+                userSettingsOptional.ifPresent(userSettings -> model.addAttribute("backGroundImgUser", userSettings.getBackgroundImage()));
             }
         }
     }

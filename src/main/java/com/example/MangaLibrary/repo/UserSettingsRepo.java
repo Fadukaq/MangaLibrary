@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface UserSettingsRepo extends JpaRepository<UserSettings, Long> {
     Optional<UserSettings> findByUser(User user);
+
+    Optional<UserSettings> findFirstByOrderById();
 }
