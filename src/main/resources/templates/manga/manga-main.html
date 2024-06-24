@@ -15,20 +15,22 @@
 <div class="container mt-5 mb-5">
     <div class="row">
         <div th:each="el : ${mangas}" class="col-md-6 col-lg-4 mb-4">
-            <div class="card bg-dark text-white h-100">
-                <a th:href="@{'/manga/' + ${el.id}}" class="d-flex justify-content-center align-items-center mt-3">
-                    <img th:src="@{${el.mangaPosterImg}}" class="card-img-top" alt="manga image" loading="lazy">
+            <div class="custom-container position-relative">
+                <a th:href="@{'/manga/' + ${el.id}}" class="d-flex justify-content-center align-items-center position-relative">
+                    <img th:src="@{${el.mangaPosterImg}}" class="img-fluid" alt="manga image" loading="lazy">
+                    <div class="custom-title text-center position-absolute w-100" th:text="${el.mangaName}"></div>
+                    <div class="overlay d-flex flex-column justify-content-center align-items-center">
+                        <h5 class="overlay-title text-center mb-2" th:text="${el.mangaName}"></h5>
+                        <p class="overlay-description text-center mb-0">
+                            <span style="color:white;" th:text="${#strings.length(el.mangaDescription) > 125 ? #strings.substring(el.mangaDescription, 0, 125) + '...' : el.mangaDescription}"></span>
+                        </p>
+                    </div>
                 </a>
-                <div class="card-body d-flex flex-column justify-content-center align-items-center sty">
-                    <a th:href="@{'/manga/' + ${el.id}}">
-                        <h5 class="card-title text-center" th:text="${el.mangaName}"></h5>
-                    </a>
-                </div>
             </div>
         </div>
     </div>
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
+
+    <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${page.number == 0 ? 'disabled' : ''}">
                 <a class="page-link" th:href="@{/manga(page=${page.number})}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>

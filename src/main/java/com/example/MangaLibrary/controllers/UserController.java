@@ -3,8 +3,10 @@ import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.helper.user.UserForm;
 import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
+import com.example.MangaLibrary.models.UserSettings;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
+import com.example.MangaLibrary.repo.UserSettingsRepo;
 import com.example.MangaLibrary.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -13,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
@@ -24,8 +25,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Controller
 public class UserController {
@@ -39,6 +38,8 @@ public class UserController {
     private MangaRepo mangaRepo;
     @Autowired
     private MangaLibraryManager directoryLocator;
+    @Autowired
+    private UserSettingsRepo userSettingsRepo;
     private List<Manga> readingManga = new ArrayList<>();
     private List<Manga> recitedManga = new ArrayList<>();
     private List<Manga> wantToReadManga = new ArrayList<>();
@@ -186,8 +187,12 @@ public class UserController {
                                     Model model){
         User user = userRepo.findByUserName(userName);
         if(user != null){
+            UserSettings userSettings = userSettingsRepo.findByUser(user);
             model.addAttribute("user",user);
-
+            model.addAttribute("userSettings", userSettings);
+            if (userSettings != null && userSettings.getBackgroundImage() != null) {
+                model.addAttribute("GetBackGroundImgUser", userSettings.getBackgroundImage());
+            }
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             if(!Objects.equals(user.getUserName(), username)){
@@ -198,7 +203,28 @@ public class UserController {
         }
         return "user/user-profile";
     }
-
+    @PostMapping("/profile/settings/{userName}")
+    public String userSettingsPost(@PathVariable("userName") String userName,
+                                    @RequestParam("selectedImage") String selectedImage,
+                                    @RequestParam("profilePrivacy") String profilePrivacy,
+                                    Model model) {
+        User user = userRepo.findByUserName(userName);
+            if(user != null) {
+                UserSettings userSettings = userSettingsRepo.findByUser(user);
+                if(!selectedImage.isEmpty())
+                {
+                    String relativeImagePath = selectedImage.substring(selectedImage.indexOf("/images"));
+                    userSettings.setBackgroundImage(relativeImagePath);
+                }
+                userSettings.setProfilePrivacy(profilePrivacy);
+                user.setUserSettings(userSettings);
+                userSettings.setUser(user);
+                userRepo.save(user);
+                model.addAttribute("user", user);
+                return "redirect:/manga";
+            }
+        return "redirect:/manga";
+    }
     @PostMapping("/profile/delete-from-list/{mangaId}")
     public String deleteFromListPost(@PathVariable("mangaId") long mangaId, Principal principal, Model model){
         String username = principal.getName();

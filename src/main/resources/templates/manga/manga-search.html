@@ -17,18 +17,20 @@
 <div class="container mt-5 mb-5">
     <div class="row">
         <div th:if="${noResults}" class="text-center p-4 customBorder">
-            <h2>По вашему запросу: <span th:text="${searchQuery}"></span> ничего не найдено!</h2>
+            <h2>За вашим запитом: <span th:text="${searchQuery}"></span> нічого не знайдено!</h2>
         </div>
         <div th:each="el : ${mangas}" class="col-md-6 col-lg-4 mb-4">
-            <div class="card text-white bg-dark h-100">
-                <a th:href="@{'/manga/' + ${el.id}}" class="d-flex justify-content-center align-items-center mt-3">
-                    <img th:src="@{${el.mangaPosterImg}}" class="card-img-top" alt="manga image" style="width: 350px; height: 450px;">
+            <div class="custom-container position-relative">
+                <a th:href="@{'/manga/' + ${el.id}}" class="d-flex justify-content-center align-items-center position-relative">
+                    <img th:src="@{${el.mangaPosterImg}}" class="img-fluid" alt="manga image" loading="lazy">
+                    <div class="custom-title text-center position-absolute w-100" th:text="${el.mangaName}"></div>
+                    <div class="overlay d-flex flex-column justify-content-center align-items-center">
+                        <h5 class="overlay-title text-center mb-2" th:text="${el.mangaName}"></h5>
+                        <p class="overlay-description text-center mb-0">
+                            <span style="color:white;" th:text="${#strings.length(el.mangaDescription) > 125 ? #strings.substring(el.mangaDescription, 0, 125) + '...' : el.mangaDescription}"></span>
+                        </p>
+                    </div>
                 </a>
-                <div class="card-body d-flex flex-column justify-content-center align-items-center sty">
-                    <a th:href="@{'/manga/' + ${el.id}}">
-                        <h5 class="card-title text-center" th:text="${el.mangaName}"></h5>
-                    </a>
-                </div>
             </div>
         </div>
         <nav aria-label="Page navigation" th:if="${!noResults}" >

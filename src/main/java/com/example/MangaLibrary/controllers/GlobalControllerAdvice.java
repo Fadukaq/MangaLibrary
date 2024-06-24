@@ -29,8 +29,8 @@ public class GlobalControllerAdvice {
             User user = userRepo.findByUserName(authentication.getName());
             if (user != null) {
                 model.addAttribute("userImageUrl", user.getProfilePicture());
-                Optional<UserSettings> userSettingsOptional = userSettingsRepo.findByUser(user);
-                userSettingsOptional.ifPresent(userSettings -> model.addAttribute("backGroundImgUser", userSettings.getBackgroundImage()));
+                UserSettings userSettingsOptional = userSettingsRepo.findByUser(user);
+                model.addAttribute("backGroundImgUser", userSettingsOptional.getBackgroundImage());
             }
         }
     }

@@ -54,8 +54,8 @@ public class UserService {
         createFolderForProfile(user, rootPath) ;
         String profilePicturePath = loadProfilePicture(null,user, rootPath);
         user.setProfilePicture(profilePicturePath);
-        UserSettings userSettings = new UserSettings();
 
+        UserSettings userSettings = new UserSettings();
         userSettings.setBackgroundImage("/images/settingsPicture/backGroundSettings1.jpg");
         userSettings.setProfilePrivacy("public");
         user.setUserSettings(userSettings);

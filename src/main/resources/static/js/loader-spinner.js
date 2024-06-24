@@ -1,6 +1,12 @@
-var backgroundImageUrl = document.getElementById('backGroundImg').value || '/images/settingsPicture/backGroundSettings1.jpg';
 var loader = document.getElementById('loader');
 document.addEventListener('DOMContentLoaded', function() {
+    var backgroundImageUrl = '/images/settingsPicture/backGroundSettings1.jpg';
+
+    var backGroundImgElement = document.getElementById('backGroundImg');
+    if (backGroundImgElement && backGroundImgElement.value) {
+        backgroundImageUrl = backGroundImgElement.value;
+    }
+
     var body = document.body;
     body.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("' + backgroundImageUrl + '")';
     body.style.backgroundSize = 'cover';

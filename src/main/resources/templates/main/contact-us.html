@@ -7,13 +7,14 @@
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/loader.css">
-</head>
+    <link rel="stylesheet" href="/css/transparent-container.css">
+    </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
-<div class="container mt-5 mb-5 updateText">
-    <div class="containerInfo">
+<div class="container mt-5 mb-5 updateText ">
+    <div class="containerInfo transparent-container">
         <h4 class="text-center">Ви можете з нами зв'язатися якщо:
             <br>1. Ви хочете оскаржити своє блокування.
             <br>2. Ви хочете повідомити про помилку на сайті.

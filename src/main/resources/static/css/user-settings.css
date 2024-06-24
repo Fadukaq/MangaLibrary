@@ -1,0 +1,35 @@
+.backgroundImg img {
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.backgroundImg img:hover {
+    border: 2px solid #8e5eff;
+    cursor: pointer;
+}
+.selected {
+    border: 2px solid #8e5eff;
+}
+#profilePrivacy {
+    background-color: #f3e5f5;
+    border: 2px solid #9c27b0;
+    color: #4a148c;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+#profilePrivacy:focus {
+    outline: none;
+    border-color: #7b1fa2;
+}
+
+#profilePrivacy option {
+    background-color: #f3e5f5;
+    color: #4a148c;
+}
