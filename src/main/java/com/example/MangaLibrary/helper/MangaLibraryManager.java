@@ -39,6 +39,17 @@ public class MangaLibraryManager {
 
         return fullPath.toString();
     }
+    public String getResourcePathOfThisManga(String mangaName) {
+        String cleanMangaName = mangaName.replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
+
+        Path projectDir = Paths.get("").toAbsolutePath();
+
+        Path mangasPath = Paths.get("src", "main", "resources", "static", "images", "mangas",cleanMangaName);
+
+        Path fullPath = projectDir.resolve(mangasPath);
+
+        return fullPath.toString();
+    }
     public String getTargetPathManga() {
         String targetRootPath = new File("")
                 .getAbsolutePath() + File.separator

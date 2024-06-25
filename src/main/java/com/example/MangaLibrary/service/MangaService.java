@@ -146,7 +146,11 @@ public class MangaService {
         mangaToUpdate.setReleaseYear(mangaForm.getManga().getReleaseYear());
         mangaToUpdate.setMangaAuthor(mangaForm.getManga().getMangaAuthor());
         mangaToUpdate.setGenres(mangaForm.getManga().getGenres());
-
+        if (mangaForm.getMangaImage().getBackGroundMangaImg() != null && !mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()) {
+            String mangaFolderPath = mangaLibraryManager.getResourcePathOfThisManga(mangaToUpdate.getMangaName());
+            String StringBackGroundImg = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), mangaToUpdate,mangaFolderPath);
+            mangaToUpdate.setMangaBackGround(StringBackGroundImg);
+        }
         mangaRepo.save(mangaToUpdate);
     }
     public void deleteFolder(String mangaName)

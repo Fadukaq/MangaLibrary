@@ -206,14 +206,15 @@ public class MangaController {
             model.addAttribute("manga", manga);
             model.addAttribute("maxYear", maxYear);
             model.addAttribute("genres", genres);
-            model.addAttribute("mangaForm", mangaForm); // Передаем объект MangaForm в модель
+            model.addAttribute("mangaForm", mangaForm);
             return "manga/manga-edit";
         } else {
             return "redirect:/manga";
         }
     }
     @PostMapping("/manga/edit/{id}")
-    public String mangaPostUpdate(@PathVariable("id") long id, @ModelAttribute("mangaForm") @Valid MangaForm mangaForm,
+    public String mangaPostUpdate(@PathVariable("id") long id,
+                                    @ModelAttribute("mangaForm") @Valid MangaForm mangaForm,
                                     BindingResult bindingResult, Model model) {
         List<Long> genreIds = mangaForm.getManga().getGenres().stream()
                 .map(Genre::getId)
@@ -231,7 +232,6 @@ public class MangaController {
             return "manga/manga-edit";
         }
         mangaService.updateManga(id,mangaForm);
-
         return "redirect:/manga";
     }
     @GetMapping("/search")

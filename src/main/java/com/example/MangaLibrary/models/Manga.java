@@ -35,7 +35,6 @@ public class Manga {
 
     String mangaPages;
     String mangaBackGround;
-
     @NotEmpty(message = "Рік релізу не повинно бути порожнім")
     private String releaseYear;
 
@@ -48,7 +47,6 @@ public class Manga {
         this.mangaPages = manga.getMangaPages();
         this.releaseYear = manga.getReleaseYear();
     }
-
 
     public long getId() {
         return id;
@@ -97,7 +95,6 @@ public class Manga {
     public void setMangaPages(String mangaPages) {
         this.mangaPages = mangaPages;
     }
-
 
     public String getReleaseYear() {
         return releaseYear;
