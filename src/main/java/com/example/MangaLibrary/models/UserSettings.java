@@ -14,6 +14,7 @@ public class UserSettings {
 
     private String backgroundImage;
     private String profilePrivacy;
+    private String readStyle;
 
     public Long getId() {
         return id;
@@ -45,5 +46,13 @@ public class UserSettings {
 
     public void setProfilePrivacy(String profilePrivacy) {
         this.profilePrivacy = profilePrivacy;
+    }
+
+    public String getReadStyle() {
+        return readStyle;
+    }
+
+    public void setReadStyle(String readStyle) {
+        this.readStyle = readStyle;
     }
 }

@@ -10,7 +10,7 @@
 .selected {
     border: 2px solid #8e5eff;
 }
-#profilePrivacy {
+.custom-select {
     background-color: #f3e5f5;
     border: 2px solid #9c27b0;
     color: #4a148c;
@@ -24,12 +24,12 @@
     cursor: pointer;
 }
 
-#profilePrivacy:focus {
+.custom-select:focus {
     outline: none;
     border-color: #7b1fa2;
 }
 
-#profilePrivacy option {
+.custom-select option {
     background-color: #f3e5f5;
     color: #4a148c;
 }

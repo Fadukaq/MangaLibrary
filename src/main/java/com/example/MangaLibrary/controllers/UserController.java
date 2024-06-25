@@ -209,6 +209,7 @@ public class UserController {
     public String userSettingsPost(@PathVariable("userName") String userName,
                                     @RequestParam("selectedImage") String selectedImage,
                                     @RequestParam("profilePrivacy") String profilePrivacy,
+                                    @RequestParam("readStyle") String readStyle,
                                     Model model) {
         User user = userRepo.findByUserName(userName);
             if(user != null) {
@@ -219,11 +220,12 @@ public class UserController {
                     userSettings.setBackgroundImage(relativeImagePath);
                 }
                 userSettings.setProfilePrivacy(profilePrivacy);
+                userSettings.setReadStyle(readStyle);
                 user.setUserSettings(userSettings);
                 userSettings.setUser(user);
                 userRepo.save(user);
                 model.addAttribute("user", user);
-                return "redirect:/manga";
+                return "redirect:/profile/settings/"+userName;
             }
         return "redirect:/manga";
     }

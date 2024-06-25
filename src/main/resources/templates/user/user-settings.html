@@ -44,9 +44,15 @@
         </div>
         <br>
         <label for="profilePrivacy">Privacy:</label>
-        <select id="profilePrivacy" name="profilePrivacy">
+        <select class="custom-select" id="profilePrivacy" name="profilePrivacy">
             <option value="public" th:selected="${userSettings.profilePrivacy == 'public'}">Public</option>
             <option value="private" th:selected="${userSettings.profilePrivacy == 'private'}">Private</option>
+        </select>
+        <br>
+        <label class="mt-4" for="readStyle">Style:</label>
+        <select class="custom-select" id="readStyle" name="readStyle">
+            <option value="scroll-down" th:selected="${userSettings.readStyle == 'scroll-down'}">Scroll Down</option>
+            <option value="left-to-right" th:selected="${userSettings.readStyle == 'left-to-right'}">Left-to-Right</option>
         </select>
         <br>
         <button type="submit" class="btn btn-success mt-3">Сохранить</button>

@@ -55,6 +55,7 @@ public class UserService {
         UserSettings userSettings = new UserSettings();
         userSettings.setBackgroundImage("/images/settingsPicture/backGroundSettings1.jpg");
         userSettings.setProfilePrivacy("public");
+        userSettings.setReadStyle("left-to-right");
         user.setUserSettings(userSettings);
         userSettings.setUser(user);
 
