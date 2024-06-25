@@ -1,5 +1,6 @@
 package com.example.MangaLibrary.controllers;
 import com.example.MangaLibrary.helper.MangaLibraryManager;
+import com.example.MangaLibrary.helper.user.UserAgreementRequest;
 import com.example.MangaLibrary.helper.user.UserForm;
 import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -23,7 +25,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.security.Principal;
 import java.util.*;
@@ -210,6 +211,7 @@ public class UserController {
                                     @RequestParam("selectedImage") String selectedImage,
                                     @RequestParam("profilePrivacy") String profilePrivacy,
                                     @RequestParam("readStyle") String readStyle,
+                                    @RequestParam(value = "adultContentAgreement", required = false) Boolean adultContentAgreement,
                                     Model model) {
         User user = userRepo.findByUserName(userName);
             if(user != null) {
@@ -221,6 +223,11 @@ public class UserController {
                 }
                 userSettings.setProfilePrivacy(profilePrivacy);
                 userSettings.setReadStyle(readStyle);
+                if (adultContentAgreement == null) {
+                    userSettings.setAdultContentAgreement(false);
+                } else {
+                    userSettings.setAdultContentAgreement(adultContentAgreement);
+                }
                 user.setUserSettings(userSettings);
                 userSettings.setUser(user);
                 userRepo.save(user);
@@ -252,5 +259,16 @@ public class UserController {
     public String adminPanelPost(Model model)
     {
         return "user/admin-panel";
+    }
+
+    @PostMapping("/adult-content-agreement")
+    @ResponseBody
+    public ResponseEntity<?> setAdultContentAgreement(@RequestBody UserAgreementRequest request, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            userService.setAdultContentAgreement(username, request.isAgreement());
+            return ResponseEntity.ok(Map.of("success", true));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "User not authenticated"));
     }
 }

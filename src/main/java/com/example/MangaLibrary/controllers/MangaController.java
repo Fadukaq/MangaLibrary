@@ -4,6 +4,7 @@ import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.models.Genre;
 import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
+import com.example.MangaLibrary.models.UserSettings;
 import com.example.MangaLibrary.repo.GenreRepo;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
@@ -133,10 +134,13 @@ public class MangaController {
         Optional<Manga> optionalManga = mangaRepo.findById(id);
         if (optionalManga.isPresent()) {
             Manga manga = optionalManga.get();
+            UserSettings userSettings = new UserSettings();
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             User user = userRepo.findByUserName(username);
+
+            userSettings = userSettingsRepo.findByUser(user);
 
             boolean isInReadingList = user.getMangaReading().contains(String.valueOf(id));
             boolean isInWantToReadList = user.getMangaWantToRead().contains(String.valueOf(id));
@@ -144,13 +148,14 @@ public class MangaController {
             boolean isInReadStoppedList = user.getMangaStoppedReading().contains(String.valueOf(id));
 
             model.addAttribute("manga", manga);
+            model.addAttribute("userSettings", userSettings);
             model.addAttribute("isInReadingList", isInReadingList);
             model.addAttribute("isInWantToReadList", isInWantToReadList);
             model.addAttribute("isInRecitedList", isInRecitedList);
             model.addAttribute("isInReadStoppedList", isInReadStoppedList);
             return "manga/manga-details";
         } else {
-            model.addAttribute("errorMessage", "Такой манги не найдено!");
+            model.addAttribute("errorMessage", "Такої манги не знайдено!");
             return "main/error";
         }
     }

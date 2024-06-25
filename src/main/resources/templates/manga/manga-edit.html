@@ -37,6 +37,11 @@
         <div style="color:red" th:if="${#fields.hasErrors('genres')}" th:errors="*{genres}">genres error</div>
         <br>
         <hr>
+        <div class="form-check">
+            <input type="checkbox" th:field="*{manga.adultContent}" th:value="${manga.adultContent}" id="adultContent" class="form-check-input">
+            <label for="adultContent" class="form-check-label">18+</label>
+        </div>
+        <hr>
         <p>Задній фон манги, якщо є.</p>
         <input type="file" th:field="*{mangaImage.backGroundMangaImg}" accept="image/jpeg, image/png," multiple>
         <br>

@@ -38,6 +38,8 @@ public class Manga {
     @NotEmpty(message = "Рік релізу не повинно бути порожнім")
     private String releaseYear;
 
+    private Boolean adultContent;
+
     public Manga() {}
     public Manga(Manga manga) {
         this.mangaName = manga.getMangaName();
@@ -118,5 +120,13 @@ public class Manga {
 
     public void setMangaBackGround(String mangaBackGround) {
         this.mangaBackGround = mangaBackGround;
+    }
+
+    public Boolean getAdultContent() {
+        return adultContent;
+    }
+
+    public void setAdultContent(Boolean adultContent) {
+        this.adultContent = adultContent;
     }
 }

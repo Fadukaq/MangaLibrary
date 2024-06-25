@@ -135,7 +135,6 @@ public class MangaService {
         List<String> pagesImages = createPagesManga(mangaForm.getMangaImage().getPagesImage(), mangaForm.getManga(), mangaFolderPath);
         String pagesImagesAsString = String.join(",", pagesImages);
         mangaForm.getManga().setMangaPages(pagesImagesAsString);
-
         mangaRepo.save(mangaForm.getManga());
     }
     public void updateManga(long id, MangaForm mangaForm) {
@@ -146,6 +145,7 @@ public class MangaService {
         mangaToUpdate.setReleaseYear(mangaForm.getManga().getReleaseYear());
         mangaToUpdate.setMangaAuthor(mangaForm.getManga().getMangaAuthor());
         mangaToUpdate.setGenres(mangaForm.getManga().getGenres());
+        mangaToUpdate.setAdultContent(mangaForm.getManga().getAdultContent());
         if (mangaForm.getMangaImage().getBackGroundMangaImg() != null && !mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()) {
             String mangaFolderPath = mangaLibraryManager.getResourcePathOfThisManga(mangaToUpdate.getMangaName());
             String StringBackGroundImg = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), mangaToUpdate,mangaFolderPath);

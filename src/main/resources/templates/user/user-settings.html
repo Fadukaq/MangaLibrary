@@ -55,7 +55,13 @@
             <option value="left-to-right" th:selected="${userSettings.readStyle == 'left-to-right'}">Left-to-Right</option>
         </select>
         <br>
-        <button type="submit" class="btn btn-success mt-3">Сохранить</button>
+        <div class="form-check mt-4">
+            <label class="form-check-label" for="adultContentAgreement">
+                Я згоден із контентом для дорослих (18+)
+            </label>
+            <input class="form-check-input" type="checkbox" id="adultContentAgreement" name="adultContentAgreement" th:checked="${userSettings.adultContentAgreement}" />
+        </div>
+        <button type="submit" class="btn btn-success mt-3">Зберегти</button>
     </form>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>

@@ -15,7 +15,7 @@ public class UserSettings {
     private String backgroundImage;
     private String profilePrivacy;
     private String readStyle;
-
+    private Boolean adultContentAgreement;
     public Long getId() {
         return id;
     }
@@ -54,5 +54,13 @@ public class UserSettings {
 
     public void setReadStyle(String readStyle) {
         this.readStyle = readStyle;
+    }
+
+    public Boolean getAdultContentAgreement() {
+        return adultContentAgreement;
+    }
+
+    public void setAdultContentAgreement(Boolean adultContentAgreement) {
+        this.adultContentAgreement = adultContentAgreement;
     }
 }

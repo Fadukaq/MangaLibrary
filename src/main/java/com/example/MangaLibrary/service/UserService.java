@@ -56,6 +56,7 @@ public class UserService {
         userSettings.setBackgroundImage("/images/settingsPicture/backGroundSettings1.jpg");
         userSettings.setProfilePrivacy("public");
         userSettings.setReadStyle("left-to-right");
+        userSettings.setAdultContentAgreement(false);
         user.setUserSettings(userSettings);
         userSettings.setUser(user);
 
@@ -253,5 +254,11 @@ public class UserService {
             e.printStackTrace();
             return "redirect:/manga";
         }
+    }
+    public void setAdultContentAgreement(String username, boolean agreement) {
+        User user = userRepo.findByUserName(username);
+        UserSettings userSettings = userSettingsRepo.findByUser(user);
+        userSettings.setAdultContentAgreement(agreement);
+        userSettingsRepo.save(userSettings);
     }
 }
