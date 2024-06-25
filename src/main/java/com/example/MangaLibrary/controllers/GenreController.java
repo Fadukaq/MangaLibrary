@@ -25,17 +25,19 @@ public class GenreController {
     @Autowired
     private GenreRepo genreRepo;
     private static final int PAGE_SIZE = 6;
+
     @GetMapping("/genre-list")
     public String genreList(Model model) {
         List<Genre> genreList = genreRepo.findAll();
-
         model.addAttribute("genreList", genreList);
         return "genre/manga-genre-list";
     }
+
     @GetMapping("/genre/add")
     public String genreAdd(Genre thisGenre) {
         return "genre/manga-genre-add";
     }
+
     @PostMapping("/genre/add")
     public String addPostGenre(@ModelAttribute("genre") @Valid Genre thisGenre, BindingResult result) {
         if (result.hasErrors()) {
@@ -51,11 +53,11 @@ public class GenreController {
         genreRepo.save(genre);
         return "redirect:/manga";
     }
+
     @GetMapping("/genre/edit/{id}")
     public String genreEdit(@PathVariable("id") Long id, Model model) {
         Genre genre = genreRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid genre Id:" + id));
-
         model.addAttribute("genre", genre);
         return "genre/manga-genre-edit";
     }
@@ -76,7 +78,7 @@ public class GenreController {
     }
 
     @PostMapping("/genre/delete/{id}")
-    public String GenrePostDelete(@PathVariable(value ="id") long id,Model model) {
+    public String GenrePostDelete(@PathVariable(value ="id") long id, Model model) {
         Genre genreToDelete = genreRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Id:" + id));
         genreRepo.delete(genreToDelete);
         return "redirect:/manga";
@@ -93,26 +95,45 @@ public class GenreController {
         Genre getGenreId = genreRepo.findByGenreName(genreName);
 
         if (mangaPage.isEmpty()) {
-            model.addAttribute("id", getGenreId.getId());
             model.addAttribute("genreName", genreName);
             model.addAttribute("noResults", true);
-            model.addAttribute("genreName", genreName);
-        } else
-        {
+        } else {
             List<Manga> mangaList = mangaPage.getContent();
-            for (Manga manga : mangaList) {
-                String imageUrl = "/images/mangas/" + manga.getMangaPosterImg();
-                manga.setMangaPosterImg(imageUrl);
-            }
             model.addAttribute("noResults", false);
             model.addAttribute("genreName", genreName);
             model.addAttribute("id", getGenreId.getId());
             model.addAttribute("mangas", mangaList);
             model.addAttribute("page", mangaPage);
         }
-
         return "genre/manga-genre-view";
     }
 
+    @GetMapping("/genre/search")
+    public String genreSearch(
+            @RequestParam(name = "genreNames", required = false) String genreNames,
+            @RequestParam(name = "page", defaultValue = "1", required = false) int page,
+            Model model
+    ) {
+        if (genreNames == null || genreNames.isEmpty()) {
+            model.addAttribute("noResults", true);
+            return "genre/manga-genre-view";
+        }
 
+        String[] genresArray = genreNames.split(",");
+        Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending());
+        Page<Manga> mangaPage = mangaRepo.findAllByGenreNames(genresArray, genresArray.length, pageable);
+
+        if (mangaPage.isEmpty()) {
+            model.addAttribute("genreNames", genreNames);
+            model.addAttribute("noResults", true);
+        } else {
+            List<Manga> mangaList = mangaPage.getContent();
+            model.addAttribute("noResults", false);
+            model.addAttribute("genreNames", genreNames);
+            model.addAttribute("mangas", mangaList);
+            model.addAttribute("page", mangaPage);
+        }
+
+        return "genre/manga-genre-view";
+    }
 }
