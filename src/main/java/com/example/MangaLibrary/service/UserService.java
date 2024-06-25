@@ -8,14 +8,12 @@ import com.example.MangaLibrary.models.UserSettings;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
 import com.example.MangaLibrary.repo.UserSettingsRepo;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -167,23 +164,19 @@ public class UserService {
         }
     }
 
-    public void addMangaToList(User user, String listType, Long mangaId, RedirectAttributes redirectAttributes) {
+    public void addMangaToList(User user, String listType, Long mangaId) {
         switch (listType) {
             case "reading":
                 user.getMangaReading().add(String.valueOf(mangaId));
-                redirectAttributes.addFlashAttribute("notificationMessage", "Мангу додано до списку 'Читаю'");
                 break;
             case "want-read":
                 user.getMangaWantToRead().add(String.valueOf(mangaId));
-                redirectAttributes.addFlashAttribute("notificationMessage", "Мангу додано до списку 'Буду читати'");
                 break;
             case "recited":
                 user.getMangaRecited().add(String.valueOf(mangaId));
-                redirectAttributes.addFlashAttribute("notificationMessage", "Мангу додано до списку 'Прочитано'");
                 break;
             case "read-stopped":
                 user.getMangaStoppedReading().add(String.valueOf(mangaId));
-                redirectAttributes.addFlashAttribute("notificationMessage", "Мангу додано до списку 'Бросил'");
                 break;
             default:
                 break;

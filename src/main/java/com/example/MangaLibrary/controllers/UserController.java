@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.security.Principal;
 import java.util.*;
@@ -112,7 +114,7 @@ public class UserController {
 
             return "user/user-profile";
         } else {
-            model.addAttribute("errorMessage", "Пользователь с именем: " + userName + " не найден");
+            model.addAttribute("errorMessage", "Користувач: " + userName + " не знайдений");
             return "main/error";
         }
     }
@@ -226,14 +228,18 @@ public class UserController {
         return "redirect:/manga";
     }
     @PostMapping("/profile/delete-from-list/{mangaId}")
-    public String deleteFromListPost(@PathVariable("mangaId") long mangaId, Principal principal, Model model){
+    public String deleteFromListPost(@PathVariable("mangaId") long mangaId,
+                                        Principal principal,
+                                        @RequestParam("panel") String panel) {
         String username = principal.getName();
-        if(username != null){
+        if (username!= null) {
             User user = userRepo.findByUserName(username);
             userService.deleteMangaFromUserList(user, mangaId);
             userRepo.save(user);
+
+            return "redirect:/profile/" + username + panel;
         }
-        return "redirect:/profile/" + username;
+        return "redirect:/error";
     }
     @GetMapping("/admin-panel")
     public String adminPanelGet(Model model)

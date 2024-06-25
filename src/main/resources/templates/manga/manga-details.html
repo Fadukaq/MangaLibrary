@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/manga-details.css">
     <link rel="stylesheet" href="/css/manga-details-animation.css">
     <link rel="stylesheet" href="/css/loader.css">
+    <link rel="stylesheet" href="/css/transparent-container.css">
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
@@ -23,13 +24,13 @@
                         </div>
                         <div class="card-body bg-dark">
                             <div class="d-flex flex-column">
-                                <form id="addMangaForm" action="#" th:action="@{/manga/add-to-list}" th:object="${manga}" method="post">
+                                <form id="addMangaForm" action="#" th:action="@{/manga/add-to-list}" th:object="${manga}" method="post" onsubmit="return false;">
                                     <select name="listType" id="listTypeSelect" class="form-select mb-2 custom-select">
-                                        <option value="" disabled th:selected="${!isInReadingList && !isInWantToReadList && !isInRecitedList && !isInReadStoppedList}" >Выберите список</option>
+                                        <option value="" disabled th:selected="${!isInReadingList && !isInWantToReadList && !isInRecitedList && !isInReadStoppedList}" >Виберіть список</option>
                                         <option value="reading" th:selected="${isInReadingList}">Читаю</option>
                                         <option value="want-read" th:selected="${isInWantToReadList}">Буду читати</option>
                                         <option value="recited" th:selected="${isInRecitedList}">Прочитано</option>
-                                        <option value="read-stopped" th:selected="${isInReadStoppedList}">Бросил</option>
+                                        <option value="read-stopped" th:selected="${isInReadStoppedList}">Привинив</option>
                                     </select>
                                     <input type="hidden" name="mangaId" th:value="${manga.id}" />
                                 </form>

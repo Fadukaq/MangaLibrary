@@ -13,6 +13,7 @@ import com.example.MangaLibrary.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -154,20 +155,26 @@ public class MangaController {
         }
     }
     @PostMapping("/manga/add-to-list")
-    public String addMangaToList(@RequestParam("listType") String listType,
-                                    @RequestParam("mangaId") Long mangaId,
-                                    RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> addMangaToList(@RequestParam("listType") String listType,
+                                                                @RequestParam("mangaId") Long mangaId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userRepo.findByUserName(username);
-        if(user!=null){
+        Map<String, Object> response = new HashMap<>();
+
+        if(user != null) {
             userService.deleteMangaFromUserList(user, mangaId);
-
-            userService.addMangaToList(user, listType, mangaId, redirectAttributes);
-
+            userService.addMangaToList(user, listType, mangaId);
             userRepo.save(user);
+            response.put("success", true);
+            response.put("message", "Манга успішно додана у список");
+        } else {
+            response.put("success", false);
+            response.put("message", "Користувач не знайдений");
         }
-        return "redirect:/manga/" + mangaId;
+
+        return ResponseEntity.ok(response);
     }
     @PostMapping("/manga/delete/{id}")
     public String MangaPostDelete(@PathVariable(value ="id") long id,Model model) {

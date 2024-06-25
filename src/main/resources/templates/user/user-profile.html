@@ -93,6 +93,7 @@
                                                             class="position-absolute top-0 end-0 mt-2 custom-mr"
                                                             th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
                                                             method="post">
+                                                        <input type="hidden" name="panel" th:value="'#reading'" />
                                                         <button class="btn btn-danger" type="submit">X</button>
                                                     </form>
                                                 </div>
@@ -127,6 +128,7 @@
                                                         class="position-absolute top-0 end-0 mt-2 custom-mr"
                                                         th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
                                                         method="post">
+                                                    <input type="hidden" name="panel" th:value="'#plan'" />
                                                     <button class="btn btn-danger" type="submit">X</button>
                                                 </form>
                                             </div>
@@ -160,6 +162,7 @@
                                                         class="position-absolute top-0 end-0 mt-2 custom-mr"
                                                         th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
                                                         method="post">
+                                                    <input type="hidden" name="panel" th:value="'#dropped'" />
                                                     <button class="btn btn-danger" type="submit">X</button>
                                                 </form>
                                             </div>
@@ -193,6 +196,7 @@
                                                         class="position-absolute top-0 end-0 mt-2 custom-mr"
                                                         th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
                                                         method="post">
+                                                    <input type="hidden" name="panel" th:value="'#recited'" />
                                                     <button class="btn btn-danger" type="submit">X</button>
                                                 </form>
                                             </div>
@@ -220,7 +224,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/loadFirstListUser.js"></script>
 <script src="/js/loader-spinner.js"></script>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
