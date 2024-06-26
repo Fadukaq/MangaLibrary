@@ -219,21 +219,28 @@ public class UserController {
             return "redirect:/manga";
         }
 
-        if (!userService.validateUserSettings(userSettings, bindingResult)) {
+        UserSettings existingSettings = user.getUserSettings();
+
+        String relativeImagePath = selectedImage.substring(selectedImage.indexOf("/images"));
+        if (!userService.validateUserSettings(userSettings, relativeImagePath, bindingResult)) {
             model.addAttribute("user", user);
             model.addAttribute("userSettings", userSettings);
-            model.addAttribute("GetBackGroundImgUser", userSettings.getBackgroundImage());
+            model.addAttribute("GetBackGroundImgUser", selectedImage);
             return "user/user-settings";
         }
 
-        if (!selectedImage.isEmpty()) {
-            String relativeImagePath = selectedImage.substring(selectedImage.indexOf("/images"));
+        if (existingSettings != null) {
+            existingSettings.setBackgroundImage(relativeImagePath);
+            existingSettings.setAdultContentAgreement(adultContentAgreement != null && adultContentAgreement);
+            existingSettings.setProfilePrivacy(userSettings.getProfilePrivacy());
+            existingSettings.setReadStyle(userSettings.getReadStyle());
+        } else {
             userSettings.setBackgroundImage(relativeImagePath);
+            userSettings.setAdultContentAgreement(adultContentAgreement != null && adultContentAgreement);
+            user.setUserSettings(userSettings);
+            userSettings.setUser(user);
         }
-        userSettings.setAdultContentAgreement(adultContentAgreement != null && adultContentAgreement);
 
-        user.setUserSettings(userSettings);
-        userSettings.setUser(user);
         userRepo.save(user);
 
         return "redirect:/profile/settings/" + userName;

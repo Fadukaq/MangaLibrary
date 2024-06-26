@@ -265,10 +265,10 @@ public class UserService {
         userSettingsRepo.save(userSettings);
     }
 
-    public boolean validateUserSettings(UserSettings userSettings, BindingResult bindingResult) {
+    public boolean validateUserSettings(UserSettings userSettings,String imgPath, BindingResult bindingResult) {
         boolean isValid = true;
 
-        if (userSettings.getBackgroundImage() == null || !isValidBackgroundImg(userSettings.getBackgroundImage())) {
+        if (!isValidBackgroundImg(imgPath)) {
             bindingResult.rejectValue("backgroundImage", "error.backgroundImage",
                     "Виберіть правильне зображення і не змінюйте його розташування!");
             isValid = false;
@@ -290,6 +290,9 @@ public class UserService {
     }
 
     private boolean isValidBackgroundImg(String backGroundImg) {
+        if (backGroundImg == null) {
+            return false;
+        }
         return
                 backGroundImg.equals("/images/settingsPicture/backGroundSettings1.jpg") ||
                 backGroundImg.equals("/images/settingsPicture/backGroundSettings2.jpg") ||
