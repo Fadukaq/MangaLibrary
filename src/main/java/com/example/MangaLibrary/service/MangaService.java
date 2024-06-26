@@ -1,13 +1,16 @@
 package com.example.MangaLibrary.service;
 
+import ch.qos.logback.core.model.Model;
 import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.helper.manga.MangaForm;
 import com.example.MangaLibrary.models.Genre;
 import com.example.MangaLibrary.models.Manga;
+import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.GenreRepo;
 import com.example.MangaLibrary.repo.MangaRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,9 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -30,6 +31,8 @@ public class MangaService {
     private GenreRepo genreRepo;
     @Autowired
     private MangaRepo mangaRepo;
+    private static final Map<String, String> statusTranslation = new HashMap<>();
+
     public boolean isValidAddMangaForm(MangaForm mangaForm, BindingResult bindingResult) {
         List<Long> genreIds = mangaForm.getGenres().stream()
                 .map(Genre::getId)
@@ -47,7 +50,11 @@ public class MangaService {
             }
         }
         double fileSizePagesInMB = (double) fileSizePagesInBytes / (1024 * 1024);
-
+        String mangaStatus = mangaForm.getManga().getMangaStatus();
+        if (mangaStatus == null || mangaStatus.isEmpty() || !isValidMangaStatus(mangaStatus)) {
+            bindingResult.rejectValue("manga.mangaStatus", "error.mangaStatus", "Оберіть коректний статус манги (release, ongoing, completed).");
+            return false;
+        }
         if (bindingResult.hasErrors()
                 || genreIds.isEmpty()
                 || mangaForm.getMangaImage().getPosterImage().isEmpty()
@@ -104,8 +111,15 @@ public class MangaService {
             bindingResult.rejectValue("genres", "error.genres", "Будь ласка, оберіть хоча б один жанр.");
             isValid = false;
         }
-
+        String mangaStatus = mangaForm.getManga().getMangaStatus();
+        if (mangaStatus == null || mangaStatus.isEmpty() || !isValidMangaStatus(mangaStatus)) {
+            bindingResult.rejectValue("manga.mangaStatus", "error.mangaStatus", "Оберіть коректний статус манги (release, ongoing, completed).");
+            isValid = false;
+        }
         return isValid;
+    }
+    private boolean isValidMangaStatus(String status) {
+        return status.equals("release") || status.equals("ongoing") || status.equals("completed");
     }
     public void saveManga(MangaForm mangaForm) throws IOException {
         Manga existingManga = mangaRepo.findByMangaName(mangaForm.getManga().getMangaName());
@@ -146,6 +160,7 @@ public class MangaService {
         mangaToUpdate.setMangaAuthor(mangaForm.getManga().getMangaAuthor());
         mangaToUpdate.setGenres(mangaForm.getManga().getGenres());
         mangaToUpdate.setAdultContent(mangaForm.getManga().getAdultContent());
+        mangaToUpdate.setMangaStatus(mangaForm.getManga().getMangaStatus());
         if (mangaForm.getMangaImage().getBackGroundMangaImg() != null && !mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()) {
             String mangaFolderPath = mangaLibraryManager.getResourcePathOfThisManga(mangaToUpdate.getMangaName());
             String StringBackGroundImg = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), mangaToUpdate,mangaFolderPath);
@@ -300,5 +315,33 @@ public class MangaService {
         folder.delete();
     }
 
+    public String getMangaTranslatedStatus(String status)
+    {
+        statusTranslation.put("release", "Реліз");
+        statusTranslation.put("ongoing", "Онгоїнг");
+        statusTranslation.put("completed", "Завершено");
+        return statusTranslation.getOrDefault(status, status);
+    }
+    public static void addMangaStatusAttributes(User user, Long mangaId, ModelMap model) {
+        List<List<String>> userLists = List.of(
+                user.getMangaReading(),
+                user.getMangaWantToRead(),
+                user.getMangaRecited(),
+                user.getMangaStoppedReading()
+        );
+
+        String[] attributeNames = {
+                "isInReadingList",
+                "isInWantToReadList",
+                "isInRecitedList",
+                "isInReadStoppedList"
+        };
+
+        String mangaIdStr = String.valueOf(mangaId);
+        for (int i = 0; i < userLists.size(); i++) {
+            boolean isInList = userLists.get(i).contains(mangaIdStr);
+            model.addAttribute(attributeNames[i], isInList);
+        }
+    }
 }
 

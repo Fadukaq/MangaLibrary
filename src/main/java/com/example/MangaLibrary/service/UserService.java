@@ -13,6 +13,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -20,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -260,5 +263,45 @@ public class UserService {
         UserSettings userSettings = userSettingsRepo.findByUser(user);
         userSettings.setAdultContentAgreement(agreement);
         userSettingsRepo.save(userSettings);
+    }
+
+    public boolean validateUserSettings(UserSettings userSettings, BindingResult bindingResult) {
+        boolean isValid = true;
+
+        if (userSettings.getBackgroundImage() == null || !isValidBackgroundImg(userSettings.getBackgroundImage())) {
+            bindingResult.rejectValue("backgroundImage", "error.backgroundImage",
+                    "Виберіть правильне зображення і не змінюйте його розташування!");
+            isValid = false;
+        }
+
+        if (!isValidProfilePrivacy(userSettings.getProfilePrivacy())) {
+            bindingResult.rejectValue("profilePrivacy", "error.profilePrivacy",
+                    "Виберіть правильну опцію для приватності профілю і не змінюйте внутрішні дані!");
+            isValid = false;
+        }
+
+        if (!isValidReadStyles(userSettings.getReadStyle())) {
+            bindingResult.rejectValue("readStyle", "error.readStyle",
+                    "Виберіть правильну опцію для стилю читання і не змінюйте внутрішні дані!");
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    private boolean isValidBackgroundImg(String backGroundImg) {
+        return
+                backGroundImg.equals("/images/settingsPicture/backGroundSettings1.jpg") ||
+                backGroundImg.equals("/images/settingsPicture/backGroundSettings2.jpg") ||
+                backGroundImg.equals("/images/settingsPicture/backGroundSettings3.jpg") ||
+                backGroundImg.equals("/images/settingsPicture/backGroundSettings4.jpg") ||
+                backGroundImg.equals("/images/settingsPicture/backGroundSettings5.jpg") ||
+                backGroundImg.equals("/images/settingsPicture/backGroundSettings6.jpg");
+    }
+    private boolean isValidProfilePrivacy(String privacy) {
+        return privacy.equals("public") || privacy.equals("private");
+    }
+    private boolean isValidReadStyles(String readStyle) {
+        return readStyle.equals("scroll-down") || readStyle.equals("left-to-right");
     }
 }

@@ -18,6 +18,7 @@ public class Manga {
     @NotEmpty(message = "Опис манги не повинно бути порожнім")
     @Size(min=10,max=2048, message = "Опис манги має складатися від 10 до 2048 символів")
     String mangaDescription;
+    String mangaStatus;
 
     @ManyToMany
     @JoinTable(
@@ -128,5 +129,13 @@ public class Manga {
 
     public void setAdultContent(Boolean adultContent) {
         this.adultContent = adultContent;
+    }
+
+    public String getMangaStatus() {
+        return mangaStatus;
+    }
+
+    public void setMangaStatus(String mangaStatus) {
+        this.mangaStatus = mangaStatus;
     }
 }

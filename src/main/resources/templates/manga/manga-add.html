@@ -45,6 +45,15 @@
                 <label for="adultContent" class="form-check-label">18+</label>
             </div>
             <hr>
+            <label for="mangaStatus">Статус манги:</label>
+            <select class="custom-select" id="mangaStatus" name="manga.mangaStatus">
+                <option value="release" selected>Реліз</option>
+                <option value="ongoing">Онгоїнг</option>
+                <option value="completed">Завершено</option>
+            </select>
+            <br>
+            <span th:if="${#fields.hasErrors('manga.mangaStatus')}" th:errors="*{manga.mangaStatus}" class="text-danger"></span>
+            <hr>
             <p>Постер манги</p>
             <input type="file" th:field="*{mangaImage.posterImage}" accept="image/jpeg, image/png,">
             <div style="color:red" th:if="${#fields.hasErrors('mangaImage.posterImage')}" th:errors="*{mangaImage.posterImage}">posterImage error</div>

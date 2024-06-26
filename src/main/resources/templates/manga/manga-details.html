@@ -50,7 +50,7 @@
                             <div class="d-flex flex-column">
                                 <form id="addMangaForm" action="#" th:action="@{/manga/add-to-list}" th:object="${manga}" method="post" onsubmit="return false;">
                                     <select name="listType" id="listTypeSelect" class="form-select mb-2 custom-select">
-                                        <option value="" disabled th:selected="${!isInReadingList && !isInWantToReadList && !isInRecitedList && !isInReadStoppedList}" >Виберіть список</option>
+                                        <option value="" disabled th:selected="${!isInReadingList && !isInWantToReadList && !isInRecitedList && !isInReadStoppedList}">Виберіть список</option>
                                         <option value="reading" th:selected="${isInReadingList}">Читаю</option>
                                         <option value="want-read" th:selected="${isInWantToReadList}">Буду читати</option>
                                         <option value="recited" th:selected="${isInRecitedList}">Прочитано</option>
@@ -78,6 +78,9 @@
                             <hr>
                             <h6 class="card-subtitle mb-2">Рік виходу:</h6>
                             <p class="card-text"><span th:text="${manga.releaseYear}"></span></p>
+                            <hr>
+                            <h6 class="card-subtitle mb-2">Статус манги:</h6>
+                            <p class="card-text"><span th:text="${translatedMangaStatus}"></span></p>
                             <hr>
                             <form th:action="@{/manga/page/{id}(id=${id})}" method="post" style="margin-right: 10px;">
                                 <input type="hidden" name="id" th:value="${manga.id}">

@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Principal;
 import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,6 +54,7 @@ public class MangaController {
     UserService userService;
     @Autowired
     MangaService mangaService;
+
     @GetMapping("/manga")
     public String mangas(
             @RequestParam(name = "page", defaultValue = "1", required = false) int page,
@@ -130,7 +133,7 @@ public class MangaController {
     }
 
     @GetMapping("/manga/{id}")
-    public String mangaDetails(@PathVariable(value = "id") long id, Model model) {
+    public String getManga(@PathVariable Long id, ModelMap model, Principal principal) {
         Optional<Manga> optionalManga = mangaRepo.findById(id);
         if (optionalManga.isPresent()) {
             Manga manga = optionalManga.get();
@@ -142,17 +145,13 @@ public class MangaController {
 
             userSettings = userSettingsRepo.findByUser(user);
 
-            boolean isInReadingList = user.getMangaReading().contains(String.valueOf(id));
-            boolean isInWantToReadList = user.getMangaWantToRead().contains(String.valueOf(id));
-            boolean isInRecitedList = user.getMangaRecited().contains(String.valueOf(id));
-            boolean isInReadStoppedList = user.getMangaStoppedReading().contains(String.valueOf(id));
+            String translatedStatus = mangaService.getMangaTranslatedStatus(manga.getMangaStatus());
+
+            MangaService.addMangaStatusAttributes(user, id, model);
 
             model.addAttribute("manga", manga);
+            model.addAttribute("translatedMangaStatus", translatedStatus);
             model.addAttribute("userSettings", userSettings);
-            model.addAttribute("isInReadingList", isInReadingList);
-            model.addAttribute("isInWantToReadList", isInWantToReadList);
-            model.addAttribute("isInRecitedList", isInRecitedList);
-            model.addAttribute("isInReadStoppedList", isInReadStoppedList);
             return "manga/manga-details";
         } else {
             model.addAttribute("errorMessage", "Такої манги не знайдено!");
@@ -228,6 +227,7 @@ public class MangaController {
             int maxYear = Year.now().getValue();
             List<Genre> genres = genreRepo.findAll();
             model.addAttribute("id", id);
+            model.addAttribute("manga", mangaForm.getManga());
             model.addAttribute("maxYear", maxYear);
             model.addAttribute("genres", genres);
             model.addAttribute("mangaForm", mangaForm);

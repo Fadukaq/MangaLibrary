@@ -209,32 +209,34 @@ public class UserController {
     @PostMapping("/profile/settings/{userName}")
     public String userSettingsPost(@PathVariable("userName") String userName,
                                     @RequestParam("selectedImage") String selectedImage,
-                                    @RequestParam("profilePrivacy") String profilePrivacy,
-                                    @RequestParam("readStyle") String readStyle,
                                     @RequestParam(value = "adultContentAgreement", required = false) Boolean adultContentAgreement,
+                                    @ModelAttribute("userSettings") UserSettings userSettings,
+                                    BindingResult bindingResult,
                                     Model model) {
+
         User user = userRepo.findByUserName(userName);
-            if(user != null) {
-                UserSettings userSettings = userSettingsRepo.findByUser(user);
-                if(!selectedImage.isEmpty())
-                {
-                    String relativeImagePath = selectedImage.substring(selectedImage.indexOf("/images"));
-                    userSettings.setBackgroundImage(relativeImagePath);
-                }
-                userSettings.setProfilePrivacy(profilePrivacy);
-                userSettings.setReadStyle(readStyle);
-                if (adultContentAgreement == null) {
-                    userSettings.setAdultContentAgreement(false);
-                } else {
-                    userSettings.setAdultContentAgreement(adultContentAgreement);
-                }
-                user.setUserSettings(userSettings);
-                userSettings.setUser(user);
-                userRepo.save(user);
-                model.addAttribute("user", user);
-                return "redirect:/profile/settings/"+userName;
-            }
-        return "redirect:/manga";
+        if (user == null) {
+            return "redirect:/manga";
+        }
+
+        if (!userService.validateUserSettings(userSettings, bindingResult)) {
+            model.addAttribute("user", user);
+            model.addAttribute("userSettings", userSettings);
+            model.addAttribute("GetBackGroundImgUser", userSettings.getBackgroundImage());
+            return "user/user-settings";
+        }
+
+        if (!selectedImage.isEmpty()) {
+            String relativeImagePath = selectedImage.substring(selectedImage.indexOf("/images"));
+            userSettings.setBackgroundImage(relativeImagePath);
+        }
+        userSettings.setAdultContentAgreement(adultContentAgreement != null && adultContentAgreement);
+
+        user.setUserSettings(userSettings);
+        userSettings.setUser(user);
+        userRepo.save(user);
+
+        return "redirect:/profile/settings/" + userName;
     }
     @PostMapping("/profile/delete-from-list/{mangaId}")
     public String deleteFromListPost(@PathVariable("mangaId") long mangaId,

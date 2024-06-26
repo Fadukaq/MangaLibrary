@@ -16,7 +16,7 @@
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="container transparent-container mt-5 mb-5">
     <h1>Settings</h1>
-    <form method="POST" th:action="@{/profile/settings/{userName}(userName=${user.userName})}">
+    <form method="POST" th:action="@{/profile/settings/{userName}(userName=${user.userName})}" th:object="${userSettings}">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <input type="hidden" id="selectedImageInput" name="selectedImage">
         <input type="hidden" id="GetBackGroundImgUser" th:value="${GetBackGroundImgUser}" />
@@ -42,18 +42,22 @@
                 </div>
             </div>
         </div>
+        <span style="font-weight: bold; color: red" th:if="${#fields.hasErrors('backgroundImage')}" th:errors="*{backgroundImage}"></span>
+        <br>
         <br>
         <label for="profilePrivacy">Privacy:</label>
         <select class="custom-select" id="profilePrivacy" name="profilePrivacy">
             <option value="public" th:selected="${userSettings.profilePrivacy == 'public'}">Public</option>
             <option value="private" th:selected="${userSettings.profilePrivacy == 'private'}">Private</option>
         </select>
+        <span style="font-weight: bold; color: red" th:if="${#fields.hasErrors('profilePrivacy')}" th:errors="*{profilePrivacy}"></span>
         <br>
         <label class="mt-4" for="readStyle">Style:</label>
         <select class="custom-select" id="readStyle" name="readStyle">
             <option value="scroll-down" th:selected="${userSettings.readStyle == 'scroll-down'}">Scroll Down</option>
             <option value="left-to-right" th:selected="${userSettings.readStyle == 'left-to-right'}">Left-to-Right</option>
         </select>
+        <span style="font-weight: bold; color: red" th:if="${#fields.hasErrors('readStyle')}" th:errors="*{readStyle}"></span>
         <br>
         <div class="form-check mt-4">
             <label class="form-check-label" for="adultContentAgreement">

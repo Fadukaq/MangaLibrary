@@ -17,3 +17,26 @@
         .form-control::placeholder {
     color: #999;
 }
+.custom-select {
+    background-color: #f3e5f5;
+    border: 2px solid #9c27b0;
+    color: #4a148c;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.custom-select:focus {
+    outline: none;
+    border-color: #7b1fa2;
+}
+
+.custom-select option {
+    background-color: #f3e5f5;
+    color: #4a148c;
+}
