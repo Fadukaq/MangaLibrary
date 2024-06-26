@@ -1,4 +1,28 @@
- .card-text a {
+/* Стиль для выделенной карточки */
+.selected-card {
+    background-color: #d3d3d3; /* Светло-серый цвет для выделенной карточки */
+    transition: background-color 0.3s;
+}
+
+/* Стиль для жанровых карточек */
+.genre-card {
+    background-color: #FF9340; /* Новый цвет карточек */
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+/* Увеличение карточки при наведении */
+.genre-card:hover {
+    cursor: pointer;
+    transform: scale(1.05); /* Увеличение при наведении */
+}
+
+/* Отступ снизу для основного содержимого */
+.content {
+    padding-bottom: 100px; /* Значение отступа снизу для предотвращения перекрытия с футером */
+}
+
+/* Стиль для ссылок внутри карточек */
+.card-text a {
     color: white;
     text-decoration: none;
     background-color: #522878;
@@ -6,6 +30,7 @@
     border-radius: 0.25rem;
     transition: background-color 0.3s ease;
 }
+
 .card-text a:hover {
     background-color: #8636cf; /* Цвет фона при наведении */
 }
