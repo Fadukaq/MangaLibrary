@@ -271,7 +271,7 @@ public class MangaController {
                     foundMangas = mangaRepo.findByMangaStatusContainingIgnoreCase(searchQuery, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending()));
                     break;
                 default:
-                    model.addAttribute("errorMessage", "Немає такого типу поїску!");
+                    model.addAttribute("errorMessage", "Немає такого типу пошуку!");
                     return "main/error";
             }
             List<Manga> mangaList = foundMangas.getContent();
