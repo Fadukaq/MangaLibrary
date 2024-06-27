@@ -225,7 +225,8 @@ public class UserController {
         if (!userService.validateUserSettings(userSettings, relativeImagePath, bindingResult)) {
             model.addAttribute("user", user);
             model.addAttribute("userSettings", userSettings);
-            model.addAttribute("GetBackGroundImgUser", selectedImage);
+            model.addAttribute("GetBackGroundImgUser", existingSettings.getBackgroundImage());
+            model.addAttribute("selectedImage", existingSettings.getBackgroundImage());
             return "user/user-settings";
         }
 
