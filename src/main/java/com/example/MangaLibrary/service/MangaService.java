@@ -78,7 +78,10 @@ public class MangaService {
             if (mangaForm.getMangaImage().getPagesImage() == null || mangaForm.getMangaImage().getPagesImage().stream().anyMatch(file -> file.getSize() == 0)) {
                 bindingResult.rejectValue("mangaImage.pagesImage", "error.missingFile", "Сторінки манги не були загружені.");
             }
-
+            if(mangaForm.getManga().getAuthor() == null)
+            {
+                bindingResult.rejectValue("manga.author", "error.author", "Виберіть автора манги.");
+            }
             return false;
         }
 
@@ -96,12 +99,6 @@ public class MangaService {
             isValid = false;
         }
 
-        if (mangaForm.getManga().getMangaAuthor().isEmpty() ||
-                mangaForm.getManga().getMangaAuthor().length() < 5 || mangaForm.getManga().getMangaAuthor().length() > 256) {
-            bindingResult.rejectValue("manga.mangaAuthor", "error.mangaAuthor", "Ім'я автора манги повинно містити від 5 до 256 символів.");
-            isValid = false;
-        }
-
         if (mangaForm.getManga().getReleaseYear().isEmpty()) {
             bindingResult.rejectValue("manga.releaseYear", "error.releaseYear", "Оберіть рік випуску манги.");
             isValid = false;
@@ -114,6 +111,11 @@ public class MangaService {
         String mangaStatus = mangaForm.getManga().getMangaStatus();
         if (mangaStatus == null || mangaStatus.isEmpty() || !isValidMangaStatus(mangaStatus)) {
             bindingResult.rejectValue("manga.mangaStatus", "error.mangaStatus", "Оберіть коректний статус манги (release, ongoing, completed).");
+            isValid = false;
+        }
+        if(mangaForm.getManga().getAuthor() == null)
+        {
+            bindingResult.rejectValue("manga.author", "error.author", "Виберіть автора манги.");
             isValid = false;
         }
         return isValid;
@@ -157,8 +159,8 @@ public class MangaService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid manga Id:" + id));
         mangaToUpdate.setMangaDescription(mangaForm.getManga().getMangaDescription());
         mangaToUpdate.setReleaseYear(mangaForm.getManga().getReleaseYear());
-        mangaToUpdate.setMangaAuthor(mangaForm.getManga().getMangaAuthor());
         mangaToUpdate.setGenres(mangaForm.getManga().getGenres());
+        mangaToUpdate.setAuthor(mangaForm.getManga().getAuthor());
         mangaToUpdate.setAdultContent(mangaForm.getManga().getAdultContent());
         mangaToUpdate.setMangaStatus(mangaForm.getManga().getMangaStatus());
         if (mangaForm.getMangaImage().getBackGroundMangaImg() != null && !mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()) {

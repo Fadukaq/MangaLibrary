@@ -26,9 +26,20 @@
             <input type="number" name="manga.releaseYear" placeholder="Введіть рік релізу манги(YYYY)" class="form-control" min="1902" th:max="${maxYear}" autocomplete="off">
             <div style="color:red" th:if="${#fields.hasErrors('manga.releaseYear')}" th:errors="*{manga.releaseYear}">releaseYear error</div>
             <br>
-            <input type="text" name="manga.mangaAuthor" placeholder="Введіть автора манги" class="form-control" autocomplete="off">
-            <div style="color:red" th:if="${#fields.hasErrors('manga.mangaAuthor')}" th:errors="*{manga.mangaAuthor}">mangaName error</div>
+            <div class="form-group">
+                <label>Виберіть автора манги:</label><br> <br>
+                <div class="row">
+                    <div th:each="author, iterStat : ${authors}" class="col-md-4">
+                        <input type="radio" th:id="'author_' + ${author.id}" th:field="*{manga.author}" th:value="${author.id}" class="form-check-input">
+                        <label th:for="'author_' + ${author.id}" th:text="${author.name}" class="form-check-label"></label>
+                        <br th:unless="${iterStat.last}">
+                    </div>
+                </div>
+            </div>
+            <div style="color:red" th:if="${#fields.hasErrors('manga.author')}"th:errors="*{manga.author}" ></div>
             <br>
+            <a style="color:white" href="/author/add">Немає нужного автора?</a>
+            <hr>
             <h4>Виберіть жанри:</h4>
             <div class="row">
                 <div class="col-md-6" th:each="genre : ${genres}">
@@ -39,6 +50,7 @@
                 </div>
             </div>
             <div style="color:red" th:if="${#fields.hasErrors('genres')}" th:errors="*{genres}">genres error</div>
+            <a style="color:white" href="/genre/add">Немає нужного жанру?</a>
             <hr>
             <div class="form-check">
                 <input type="checkbox" th:field="*{manga.adultContent}" id="adultContent" class="form-check-input">

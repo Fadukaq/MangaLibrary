@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Genre View</title>
+    <title>Author Mangas</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/manga-genre-fixed-container.css">
     <link rel="stylesheet" href="/css/customMessageBorder.css">
     <link rel="stylesheet" href="/css/loader.css">
+    <link rel="stylesheet" href="/css/author-info.css">
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
@@ -17,15 +18,31 @@
 <header th:insert="~{blocks/header :: header}"></header>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="container mt-2 mb-5">
-    <div class="row mt-2">
-        <div th:if="${noResults}" class="text-center p-4 customBorder">
-            <h2>Манги за жанром: <span th:text="${genreName}"></span> не найдено!</h2>
+    <div  class="row mt-2">
+        <div th:if="${!noAuthor}" class="col-md-12">
+            <div class="card mb-4 author-card">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <img id="authorImage" th:src="${author.urlPicture}" class="card-img author-img" alt="author image" onerror="this.onerror=null;this.src='https://www.riseandfall.xyz/unrevealed.png';">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title highlight" th:text="${author.name}"></h5>
+                            <p class="card-text mt-3" style="color:white;" th:text="${author.biography}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${noAuthor}" class="text-center p-4 customBorder">
+            <h2>Автора не знайдено!</h2>
             <a href="/manga" type="button" class="btn btn-outline-info mt-2">Повернутись</a>
         </div>
-        <div th:if="${!noResults}" class="text-center p-4 mb-5 customBorder">
-            <h2>Знайдено манги за жанром: <span th:text="${genreName}"></span>.</h2>
+        <div th:if="${!noAuthor} and ${noMangas}" class="text-center p-4 mt-4 customBorder">
+            <h2>Манги за автором: <span th:text="${author.name}"></span> не знайдено!</h2>
+            <a href="/manga" type="button" class="btn btn-outline-info mt-2">Повернутись</a>
         </div>
-        <div th:each="el : ${mangas}" class="col-md-6 col-lg-4 mb-4">
+        <div th:if="${!noMangas}"  th:each="el : ${mangas}" class="col-md-6 col-lg-4 mb-4">
             <div class="custom-container position-relative">
                 <a th:href="@{'/manga/' + ${el.id}}" class="d-flex justify-content-center align-items-center position-relative">
                     <img th:src="@{${el.mangaPosterImg}}" class="img-fluid" alt="manga image" loading="lazy">
@@ -39,38 +56,36 @@
                 </a>
             </div>
         </div>
-        <nav aria-label="Page navigation" th:if="${!noResults}">
+        <nav aria-label="Page navigation" th:if="${!noMangas}">
             <ul class="pagination justify-content-center mt-4">
                 <li class="page-item" th:classappend="${page.number == 0 ? 'disabled' : ''}">
-                    <a class="page-link" th:href="@{/genre/{genreName}(genreName=${genreName}, page=${page.number})}" aria-label="Previous">
+                    <a class="page-link" th:href="@{/author/{id}(id=${author.id}, page=${page.number})}" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
                 <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}" th:classappend="${pageNumber - 1 == page.number ? 'active' : ''}">
-                    <a class="page-link" th:href="@{/genre/{genreName}(genreName=${genreName}, page=${pageNumber})}" th:text="${pageNumber}"></a>
+                    <a class="page-link" th:href="@{/author/{id}(id=${author.id}, page=${pageNumber})}" th:text="${pageNumber}"></a>
                 </li>
                 <li class="page-item" th:classappend="${page.number + 1 == page.totalPages ? 'disabled' : ''}">
-                    <a class="page-link" th:href="@{/genre/{genreName}(genreName=${genreName}, page=${page.number + 2})}" aria-label="Next">
+                    <a class="page-link" th:href="@{/author/{id}(id=${author.id}, page=${page.number + 2})}" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
             </ul>
         </nav>
-
     </div>
     <div class="fixed-right-container">
         <div th:if="(${#authentication.authorities[0].authority == 'ADMIN'})">
-            <form th:action="@{/genre/delete/{id}(id=${id})}" method="post">
-                <button class="btn btn-danger mb-2" type="submit" style="width: 150px;">Видалити</button>
-            </form>
-            <a th:href="@{/genre/edit/{id}(id=${id})}" class="btn btn-warning">Редагувати жанр</a>
-        </div>
+             <form th:action="@{/author/delete/{id}(id=${author.id})}" method="post">
+                 <button class="btn btn-danger mb-2" type="submit" style="width: 150px;">Видалити</button>
+             </form>
+             <a th:href="@{/author/edit/{id}(id=${author.id})}" class="btn btn-warning">Редагувати автора</a>
+         </div>
         <a th:href="@{/manga}" class="btn btn-primary mt-5">Повернутись</a>
     </div>
-
 </div>
+
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="/js/loader-spinner.js"></script>
-
 </body>
 </html>

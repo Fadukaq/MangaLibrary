@@ -1,5 +1,6 @@
 package com.example.MangaLibrary.helper.manga;
 
+import com.example.MangaLibrary.models.Author;
 import com.example.MangaLibrary.models.Genre;
 import com.example.MangaLibrary.models.Manga;
 import jakarta.validation.Valid;
@@ -14,6 +15,8 @@ public class MangaForm {
     private MangaImage backGroundImg;
     @Valid
     private List<Genre> genres;
+    @Valid
+    private Author author;
     public Manga getManga() {
         return manga;
     }
@@ -44,5 +47,13 @@ public class MangaForm {
 
     public void setBackGroundImg(MangaImage backGroundImg) {
         this.backGroundImg = backGroundImg;
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
     }
 }

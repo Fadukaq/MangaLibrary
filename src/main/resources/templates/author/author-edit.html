@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Author Edit</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
+    <link rel="stylesheet" href="/css/form-styles.css">
+    <link rel="stylesheet" href="/css/loader.css">
+    <link rel="stylesheet" href="/css/transparent-container.css">
+</head>
+<body class="loading">
+<div th:insert="~{blocks/loader :: loader}"></div>
+<header th:insert="~{blocks/header :: header}"></header>
+<input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
+<div class="container mt-5 mb-5">
+    <div class="transparent-container">
+        <form th:action="@{/author/edit/{id}(id=${author.id})}" th:method="POST" th:object="${author}">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <input type="hidden" name="id" th:value="${author.id}" />
+            <input type="text" name="name" placeholder="Введіть Ім'я автора манги" class="form-control" th:value="${author.name}" autocomplete="off">
+            <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">name error</div>
+            <hr>
+            <br>
+            <input type="text" name="urlPicture" placeholder="Введіть Посилання на картинку автора манги" th:value="${author.urlPicture}" class="form-control" autocomplete="off">
+            <div style="color:red" th:if="${#fields.hasErrors('urlPicture')}" th:errors="*{urlPicture}">urlPicture error</div>
+            <hr>
+            <br>
+            <textarea name="biography" placeholder="Введіть Біографію автора манги" class="form-control" th:text="${author.biography}" autocomplete="off"></textarea>
+            <div style="color:red" th:if="${#fields.hasErrors('biography')}" th:errors="*{biography}">biography error</div>
+            <hr>
+            <br>
+            <button type="submit" class="btn btn-success">Редагувати автора</button>
+            <a href="/manga" class="btn btn-primary">Повернутись</a>
+        </form>
+    </div>
+</div>
+
+<footer th:insert="~{/blocks/footer :: footer}"></footer>
+<script src="/js/loader-spinner.js"></script>
+</body>
+</html>

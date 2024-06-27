@@ -1,0 +1,44 @@
+.author-card {
+    max-width: 900px;
+    margin: auto;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.author-img {
+    height: 300px;
+    width: 100%;
+    object-fit: cover;
+}
+.card-body {
+    padding: 20px;
+}
+.card-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+.card-text {
+    font-size: 1rem;
+    line-height: 1.4;
+}
+.updateText p {
+    font-size:20px;
+    line-height: 1.6;
+    margin: 20px 0;
+}
+.highlight {
+    color: #e91e63;
+    font-weight: bold;
+}
+.author-card {
+    background-color: #2c2a4a;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px #673fe2;
+    padding: 20px;
+    display: flex;
+    justify-content: space-around;
+    transition: transform 0.3s ease;
+}
+.author-card:hover {
+    box-shadow: 0 4px 6px #673fe2;
+}

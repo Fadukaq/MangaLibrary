@@ -67,21 +67,37 @@
                             <hr>
                             <h6 class="card-subtitle mb-2 ">Опис: <span th:text="${manga.mangaDescription}"></span></h6>
                             <hr>
-                            <p class="card-text">
+                            <div class="card-text">
                                 <span>Жанри: </span>
-                                <span th:each="genre, iterStat : ${manga.genres}">
-                                <a th:href="@{'/genre/' + ${genre.genreName}}"><span th:text="${genre.genreName}"></span></a></span>
-                            </p>
-                            <hr>
-                            <h6 class="card-subtitle mb-2">Автор манги:</h6>
-                            <p class="card-text"><span th:text="${manga.mangaAuthor}"></span></p>
-                            <hr>
-                            <h6 class="card-subtitle mb-2">Рік виходу:</h6>
-                            <p class="card-text"><span th:text="${manga.releaseYear}"></span></p>
-                            <hr>
-                            <h6 class="card-subtitle mb-2">Статус манги:</h6>
-                            <p class="card-text"><span th:text="${translatedMangaStatus}"></span></p>
-                            <hr>
+                                <div class="genre-container">
+                                    <div class="genre-list">
+            <span th:if="${manga.genres}">
+                <span th:each="genre, iterStat : ${manga.genres}" class="genre-item">
+                    <a th:href="@{'/search?q=' + ${genre.genreName} + '&type=genre'}" class="link">
+                        <span th:text="${genre.genreName}"></span>
+                    </a>
+                </span>
+            </span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h6 class="mb-2">Автор манги:</h6>
+                                <span th:if="${manga.author != null}">
+                                    <a th:href="@{'/author/' + ${manga.author.id}}" class="link">
+                                        <span th:text="${manga.author.name}"></span>
+                                    </a>
+                                </span>
+                                <span th:unless="${manga.author != null}">undefined</span>
+                                <hr>
+                                <h6 class="card-subtitle mb-2">Рік виходу:</h6>
+                                <p class="card-text">
+                                    <a th:href="@{'/search?q=' + ${manga.releaseYear} + '&type=releaseYear'}" class="link"><span th:text="${manga.releaseYear}"></span></a>
+                                </p>
+                                <hr>
+                                <h6 class="card-subtitle mb-2">Статус манги:</h6>
+                                <a th:href="@{'/search?q=' + ${manga.mangaStatus} + '&type=mangaStatus'}" class="link"><span th:text="${translatedMangaStatus}"></span></a>
+                                <hr>
+                            </div>
                             <form th:action="@{/manga/page/{id}(id=${id})}" method="post" style="margin-right: 10px;">
                                 <input type="hidden" name="id" th:value="${manga.id}">
                                 <button class="btn btn-primary" type="submit">Почати читати</button>

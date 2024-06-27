@@ -20,6 +20,9 @@
             <a href="/manga/add" class="nav-link">Add Manga</a>
           </li>
           <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
+            <a href="/author/add" class="nav-link">Add Author</a>
+          </li>
+          <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
             <a href="/genre/add" class="nav-link">Add Genre</a>
           </li>
           <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
@@ -37,6 +40,7 @@
         </ul>
         <form th:if="${#authorization.expression('isAuthenticated()')}" class="d-flex" action="/search" method="get">
           <input class="form-control form-control-search me-2" type="search" placeholder="Пошук манги" aria-label="Search" name="q" autocomplete="off">
+          <input type="hidden" name="type" value="title">
           <button class="btn custom-btn" type="submit">Пошук</button>
         </form>
         <ul class="navbar-nav ms-auto burger-menu">

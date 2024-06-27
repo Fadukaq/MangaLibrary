@@ -17,7 +17,7 @@
     <div class="row">
         <div th:each="genre : ${genreList}" class="col-md-6 col-lg-4 mb-4">
             <p class="card-text">
-                <a th:href="@{'/genre/' + ${genre.genreName}}" th:text="${genre.genreName}"></a>
+                <a th:href="@{'/search?q=' + ${genre.genreName} + '&type=genre'}" class="link"><span th:text="${genre.genreName}"></span></a>
             </p>
         </div>
     </div>

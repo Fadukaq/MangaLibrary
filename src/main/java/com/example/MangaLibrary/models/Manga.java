@@ -28,9 +28,9 @@ public class Manga {
     )
         private List<Genre> genres;
 
-    @NotEmpty(message = "Автор манги не повинно бути порожнім")
-    @Size(min=5,max=256, message = "Автор манги має складатися від 5 до 256 символів")
-    String mangaAuthor;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Author author;
 
     String mangaPosterImg;
 
@@ -45,7 +45,6 @@ public class Manga {
     public Manga(Manga manga) {
         this.mangaName = manga.getMangaName();
         this.mangaDescription = manga.getMangaDescription();
-        this.mangaAuthor = manga.getMangaAuthor();
         this.mangaPosterImg = manga.getMangaPosterImg();
         this.mangaPages = manga.getMangaPages();
         this.releaseYear = manga.getReleaseYear();
@@ -73,14 +72,6 @@ public class Manga {
 
     public void setMangaDescription(String mangaDescription) {
         this.mangaDescription = mangaDescription;
-    }
-
-    public String getMangaAuthor() {
-        return mangaAuthor;
-    }
-
-    public void setMangaAuthor(String mangaAuthor) {
-        this.mangaAuthor = mangaAuthor;
     }
 
     public String getMangaPosterImg() {
@@ -137,5 +128,13 @@ public class Manga {
 
     public void setMangaStatus(String mangaStatus) {
         this.mangaStatus = mangaStatus;
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
     }
 }

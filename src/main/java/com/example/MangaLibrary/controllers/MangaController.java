@@ -1,14 +1,8 @@
 package com.example.MangaLibrary.controllers;
 import com.example.MangaLibrary.helper.manga.MangaForm;
 import com.example.MangaLibrary.helper.MangaLibraryManager;
-import com.example.MangaLibrary.models.Genre;
-import com.example.MangaLibrary.models.Manga;
-import com.example.MangaLibrary.models.User;
-import com.example.MangaLibrary.models.UserSettings;
-import com.example.MangaLibrary.repo.GenreRepo;
-import com.example.MangaLibrary.repo.MangaRepo;
-import com.example.MangaLibrary.repo.UserRepo;
-import com.example.MangaLibrary.repo.UserSettingsRepo;
+import com.example.MangaLibrary.models.*;
+import com.example.MangaLibrary.repo.*;
 import com.example.MangaLibrary.service.MangaService;
 import com.example.MangaLibrary.service.UserService;
 import jakarta.validation.Valid;
@@ -48,6 +42,8 @@ public class MangaController {
     @Autowired
     private UserRepo userRepo;
     @Autowired
+    private AuthorRepo authorRepo;
+    @Autowired
     private MangaLibraryManager mangaLibraryManager;
     private static final int PAGE_SIZE = 6;
     @Autowired
@@ -82,16 +78,21 @@ public class MangaController {
         int maxYear = Year.now().getValue();
         model.addAttribute("maxYear", maxYear);
         List<Genre> genres = genreRepo.findAll();
-        model.addAttribute("genres", genres);
+        List<Author> authors = authorRepo.findAll();
 
+        model.addAttribute("authors", authors);
+        model.addAttribute("genres", genres);
         return "manga/manga-add";
     }
     @PostMapping("/manga/add")
     public String addManga(@ModelAttribute("mangaForm") @Valid MangaForm mangaForm, BindingResult bindingResult, Model model) throws IOException {
         int maxYear = Year.now().getValue();
         List<Genre> genres = genreRepo.findAll();
+        List<Author> authors = authorRepo.findAll();
+
         model.addAttribute("maxYear", maxYear);
         model.addAttribute("genres", genres);
+        model.addAttribute("authors", authors);
 
         if (!mangaService.isValidAddMangaForm(mangaForm, bindingResult)) {
             return "manga/manga-add";
@@ -137,8 +138,8 @@ public class MangaController {
         Optional<Manga> optionalManga = mangaRepo.findById(id);
         if (optionalManga.isPresent()) {
             Manga manga = optionalManga.get();
-            UserSettings userSettings = new UserSettings();
 
+            UserSettings userSettings = new UserSettings();
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             User user = userRepo.findByUserName(username);
@@ -202,6 +203,9 @@ public class MangaController {
         Optional<Manga> optionalManga = mangaRepo.findById(id);
         int maxYear = Year.now().getValue();
         List<Genre> genres = genreRepo.findAll();
+        List<Author> authors = authorRepo.findAll();
+
+
         if (optionalManga.isPresent()) {
             Manga manga = optionalManga.get();
             MangaForm mangaForm = new MangaForm();
@@ -210,6 +214,7 @@ public class MangaController {
             model.addAttribute("manga", manga);
             model.addAttribute("maxYear", maxYear);
             model.addAttribute("genres", genres);
+            model.addAttribute("authors", authors);
             model.addAttribute("mangaForm", mangaForm);
             return "manga/manga-edit";
         } else {
@@ -223,13 +228,17 @@ public class MangaController {
         List<Long> genreIds = mangaForm.getManga().getGenres().stream()
                 .map(Genre::getId)
                 .toList();
+
         if(!mangaService.isValidUpdateMangaForm(mangaForm, bindingResult)) {
             int maxYear = Year.now().getValue();
             List<Genre> genres = genreRepo.findAll();
+            List<Author> authors = authorRepo.findAll();
+
             model.addAttribute("id", id);
             model.addAttribute("manga", mangaForm.getManga());
             model.addAttribute("maxYear", maxYear);
             model.addAttribute("genres", genres);
+            model.addAttribute("authors", authors);
             model.addAttribute("mangaForm", mangaForm);
             if (genreIds.isEmpty()) {
                 bindingResult.rejectValue("genres", "error.genres", "Будь ласка, оберіть хоча б один жанр.");
@@ -239,16 +248,37 @@ public class MangaController {
         mangaService.updateManga(id,mangaForm);
         return "redirect:/manga";
     }
-    @GetMapping("/search")
-    public String postSearch(@RequestParam("q") String searchQuery,
-                                @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-                                Model model) {
+        @GetMapping("/search")
+    public String search(@RequestParam("q") String searchQuery,
+                            @RequestParam("type") String searchType,
+                            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                            Model model) {
         if (!searchQuery.isEmpty()) {
-            Page<Manga> foundMangas = mangaRepo.findByMangaNameContainingIgnoreCase(searchQuery, PageRequest.of(page - 1,PAGE_SIZE, Sort.by("id").descending()));
+            Page<Manga> foundMangas;
+            switch (searchType) {
+                case "title":
+                    foundMangas = mangaRepo.findByMangaNameContainingIgnoreCase(searchQuery, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending()));
+                    break;
+                case "genre":
+                    Genre genre = genreRepo.findByGenreName(searchQuery);
+                    foundMangas = mangaRepo.findByGenresGenreNameContainingIgnoreCase(searchQuery, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending()));
+                    model.addAttribute("genreId", genre.getId());
+                    break;
+                case "releaseYear":
+                    foundMangas = mangaRepo.findByReleaseYear(searchQuery, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending()));
+                    break;
+                case "mangaStatus":
+                    foundMangas = mangaRepo.findByMangaStatusContainingIgnoreCase(searchQuery, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending()));
+                    break;
+                default:
+                    model.addAttribute("errorMessage", "Немає такого типу поїску!");
+                    return "main/error";
+            }
             List<Manga> mangaList = foundMangas.getContent();
             if (mangaList.isEmpty()) {
                 model.addAttribute("noResults", true);
                 model.addAttribute("searchQuery", searchQuery);
+
             } else {
                 model.addAttribute("noResults", false);
                 model.addAttribute("mangas", mangaList);
@@ -256,12 +286,11 @@ public class MangaController {
                 model.addAttribute("totalPages", foundMangas.getTotalPages());
                 model.addAttribute("searchQuery", searchQuery);
             }
-
-            return "manga/manga-search";
+            model.addAttribute("searchType", searchType);
+            return "manga/manga-search-result";
         }
         return "redirect:/manga";
     }
-
 
     @GetMapping("/random")
     public String getRandomMangaId(Model model) {
