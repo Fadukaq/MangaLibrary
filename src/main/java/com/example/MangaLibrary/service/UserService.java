@@ -273,8 +273,8 @@ public class UserService {
 
     public void sendResetCode(User user, String resetCode) {
         String message = String.format(
-                "Привіт, %s! \n"+
-                        "Ваш reset code: %s!", user.getUserName(), resetCode
+                "Вітаю, %s! \n"+
+                        "Код для оновлення паролю Reset Code: %s!", user.getUserName(), resetCode
         );
         mailSender.send(user.getEmail(), "Відновлення паролю", message);
     }
