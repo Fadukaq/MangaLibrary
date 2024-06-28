@@ -9,30 +9,6 @@
     <link rel="stylesheet" href="/css/manga-details-animation.css">
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/transparent-container.css">
-    <style>
-        .nav-tabs .nav-link {
-            color: #ffffff;
-            background-color: #522878;
-            border: none;
-            margin-right: 5px;
-        }
-
-        .nav-tabs .nav-link:hover {
-            background-color: #a445ff;
-        }
-
-        .nav-tabs .nav-link.active {
-            background-color: #ab59ff;
-            color: #ffffff;
-            border: none;
-        }
-
-        .tab-content {
-            background-color: rgba(35, 0, 73, 0.1);
-            padding: 20px;
-            border-radius: 0 0 8px 8px;
-        }
-    </style>
     <meta name="_csrf" th:content="${_csrf.token}" />
 </head>
 <body class="loading">
@@ -100,7 +76,7 @@
                                         <button class="btn btn-primary w-100" type="submit">Почати читати</button>
                                     </form>
                                     <div class="admin-actions mt-4" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
-                                        <hr style="margin-top:43px;">
+                                        <hr>
                                         <a th:href="@{/manga/edit/{id}(id=${id})}" class="btn w-100 mt-1 mb-3 btn-warning me-2">Редагувати</a>
                                         <form th:action="@{/manga/delete/{id}(id=${id})}" method="post" class="d-inline" onsubmit="return confirmDelete()">
                                             <button class="btn btn-danger w-100" type="submit">Видалити</button>

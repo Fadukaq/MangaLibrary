@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -76,6 +77,8 @@ public class UserService {
             mailSender.send(user.getEmail(), "Активація облікового запису", message);
         }
     }
+
+
     public boolean activateUser(String code) {
         User user = userRepo.findByVerificationToken(code);
         if(user == null){
@@ -129,8 +132,8 @@ public class UserService {
                 userToUpdate.setProfilePicture(userPath);
             }
 
-            if (changePasswordCheckbox && userPasswordNew != null && userPasswordNew.length() >= 2 && userPasswordNew.length() <= 255) {
-                String hashedPassword = passwordEncoder.encode(userPasswordNew);
+            if (changePasswordCheckbox && isValidResetPass(userPasswordNew)) {
+                String hashedPassword = hashPassword(userPasswordNew);
                 userToUpdate.setUserPassword(hashedPassword);
             }
 
@@ -141,6 +144,9 @@ public class UserService {
             return null;
         }
         return userToUpdate;
+    }
+    public String hashPassword(String pass){
+        return passwordEncoder.encode(pass);
     }
     public void deleteMangaFromUserList(User user, Long mangaId) {
         Manga manga = mangaRepository.findById(mangaId)
@@ -265,6 +271,21 @@ public class UserService {
         userSettingsRepo.save(userSettings);
     }
 
+    public void sendResetCode(User user, String resetCode) {
+        String message = String.format(
+                "Привіт, %s! \n"+
+                        "Ваш reset code: %s!", user.getUserName(), resetCode
+        );
+        mailSender.send(user.getEmail(), "Відновлення паролю", message);
+    }
+    public void sendResetSuccess(User user) {
+
+        mailSender.send(user.getEmail(), "Відновлення паролю",  "Ваш пароль було оновленно!");
+    }
+    public String generateResetCode() {
+        return String.format("%06d", new Random().nextInt(999999));
+    }
+
     public boolean validateUserSettings(UserSettings userSettings,String imgPath, BindingResult bindingResult) {
         boolean isValid = true;
 
@@ -306,5 +327,12 @@ public class UserService {
     }
     private boolean isValidReadStyles(String readStyle) {
         return readStyle.equals("scroll-down") || readStyle.equals("left-to-right");
+    }
+    public boolean isValidResetPass(String pass) {
+        if (pass == null || pass.isEmpty()) {
+            return false;
+        }
+        int length = pass.length();
+        return length >= 10 && length <= 255;
     }
 }

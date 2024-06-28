@@ -76,6 +76,28 @@ hr {
     text-align: center;
 }
 .custom-select:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    border-color: #a26cff;
+    box-shadow: 0 0 0 0.2rem rgba(75, 0, 255, 0.6);
 }
+    .nav-tabs .nav-link {
+        color: #ffffff;
+        background-color: #522878;
+        border: none;
+        margin-right: 5px;
+    }
+
+    .nav-tabs .nav-link:hover {
+        background-color: #a445ff;
+    }
+
+    .nav-tabs .nav-link.active {
+        background-color: #ab59ff;
+        color: #ffffff;
+        border: none;
+    }
+
+    .tab-content {
+        background-color: rgba(35, 0, 73, 0.1);
+        padding: 20px;
+        border-radius: 0 0 8px 8px;
+    }

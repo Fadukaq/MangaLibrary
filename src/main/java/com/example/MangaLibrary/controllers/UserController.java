@@ -171,9 +171,9 @@ public class UserController {
             return "user/user-edit-profile";
         }
 
-        if (changePasswordCheckbox && userPasswordNew != null && (userPasswordNew.length() < 2 || userPasswordNew.length() > 255)) {
+        if (changePasswordCheckbox &&(!userService.isValidResetPass(userPasswordNew))) {
             model.addAttribute("changePasswordCheckbox", "on");
-            model.addAttribute("errorPassword", "Поле Новий пароль повинно бути від 2 символів до 255!");
+            model.addAttribute("errorPassword", "Поле Новий пароль повинно бути від 10 символів до 255!");
             model.addAttribute("user", userForm.getUser());
             model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
             model.addAttribute("userForm", userForm);
@@ -269,6 +269,66 @@ public class UserController {
     public String adminPanelPost(Model model)
     {
         return "user/admin-panel";
+    }
+
+    @GetMapping("/reset-password")
+    public String resetPasswordGet(@RequestParam(name = "email", required = false) String email,
+                                    @RequestParam(name = "resetCode", required = false) String resetCode,
+                                    Model model) {
+        if (email != null || resetCode != null) {
+            model.addAttribute("email", email);
+            model.addAttribute("resetCode", resetCode);
+        }
+        return "user/user-reset-password";
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPasswordPost(@RequestParam("email") String email,
+                                    @RequestParam(value = "resetCode", required = false) String resetCode,
+                                    @RequestParam(value = "newPassword", required = false) String newPassword,
+                                    @RequestParam(value = "action") String action,
+                                    Model model) {
+        User user = userRepo.findByEmail(email);
+
+        if (user == null) {
+            model.addAttribute("errorEmail", "Email not found.");
+            return "user/user-reset-password";
+        }
+
+        if ("getResetCode".equals(action)) {
+            String generatedCode = userService.generateResetCode();
+            user.setResetCode(generatedCode);
+            userRepo.save(user);
+            userService.sendResetCode(user, user.getResetCode());
+            model.addAttribute("successEmail", "Reset code sent to your email.");
+        } else if ("resetPassword".equals(action)) {
+            if (resetCode != null && resetCode.equals(user.getResetCode())) {
+                if (newPassword != null) {
+                    if (!userService.isValidResetPass(newPassword)) {
+                        model.addAttribute("email", email);
+                        model.addAttribute("resetCode", resetCode);
+                        model.addAttribute("errorPassword", "Пароль має складатися від 10 до 255 символів і не бути порожнім.");
+                        return "user/user-reset-password";
+                    }
+                    String hashedPass = userService.hashPassword(newPassword);
+                    user.setUserPassword(hashedPass);
+                    user.setResetCode(null);
+                    userRepo.save(user);
+                    userService.sendResetSuccess(user);
+                    model.addAttribute("successPassword", "Password successfully reset.");
+                    return "redirect:/login";
+                } else {
+
+                    model.addAttribute("successCode", "Code verified. Enter new password.");
+                }
+            } else {
+                model.addAttribute("errorCode", "Invalid reset code.");
+            }
+        }
+
+        model.addAttribute("email", email);
+        model.addAttribute("resetCode", resetCode);
+        return "user/user-reset-password";
     }
 
     @PostMapping("/adult-content-agreement")

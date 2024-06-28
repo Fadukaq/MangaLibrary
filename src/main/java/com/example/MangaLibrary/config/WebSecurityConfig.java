@@ -20,13 +20,16 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/registration", "/manga", "/activate/*", "/about","/faq","/contact-us" , "/images/**", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/", "/registration", "/manga", "/activate/*", "/reset-password" ,"/about","/faq","/contact-us" , "/images/**", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/manga/add").hasAuthority("ADMIN")
                         .requestMatchers("/manga/edit/{id}").hasAuthority("ADMIN")
                         .requestMatchers("/manga/delete/{id}").hasAuthority("ADMIN")
                         .requestMatchers("/genre/add").hasAuthority("ADMIN")
                         .requestMatchers("/genre/edit/{id}").hasAuthority("ADMIN")
                         .requestMatchers("/genre/delete/{id}").hasAuthority("ADMIN")
+                        .requestMatchers("/author/add").hasAuthority("ADMIN")
+                        .requestMatchers("/author/edit/{id}").hasAuthority("ADMIN")
+                        .requestMatchers("/author/delete/{id}").hasAuthority("ADMIN")
                         .requestMatchers("/admin-panel").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
