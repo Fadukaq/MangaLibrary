@@ -14,11 +14,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @NotEmpty(message = "Поле ім'я юзера не повинно бути порожнім")
-    @Size(min=2,max=120, message = "Ім'я юзера має складатися від 2 до 120 символів")
+    @Size(min=5,max=120, message = "Ім'я юзера має складатися від 5 до 120 символів")
     private String userName;
     private String ProfilePicture;
     @NotEmpty(message = "Поле пароль не повинно бути порожнім")
-    @Size(min=2,max=255, message = "Поле пароль має складатися від 2 до 255 символів")
+    @Size(min=10,max=255, message = "Поле пароль має складатися від 10 до 255 символів")
     private String userPassword;
     private String userRole;
     @NotEmpty(message = "Поле пошта не повинно бути порожнім")
@@ -27,7 +27,7 @@ public class User {
     private boolean enabled;
     private String verificationToken;
     @NotEmpty(message = "Поле про себе не повинно бути порожнім")
-    @Size(min=2,max=256, message = "Поле про себе має складатися від 2 до 120 символів")
+    @Size(min=2,max=256, message = "Поле про себе має складатися від 2 до 256 символів")
     private String about ="...";
     @ElementCollection
     private List<String> mangaReading = new ArrayList<>();

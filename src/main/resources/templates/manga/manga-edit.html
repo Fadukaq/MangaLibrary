@@ -68,7 +68,7 @@
         <br>
         <hr>
         <button type="submit" class="btn btn-success mt-3">Редагувати мангу</button>
-        <a href="/manga" class="btn btn-primary mt-3">Повернутись</a>
+        <a th:href="@{/manga/{id}(id=${id})}" class="btn btn-primary mt-3">Повернутись</a>
     </form>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>

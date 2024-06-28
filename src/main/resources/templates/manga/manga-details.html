@@ -9,6 +9,30 @@
     <link rel="stylesheet" href="/css/manga-details-animation.css">
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/transparent-container.css">
+    <style>
+        .nav-tabs .nav-link {
+            color: #ffffff;
+            background-color: #522878;
+            border: none;
+            margin-right: 5px;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: #a445ff;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #ab59ff;
+            color: #ffffff;
+            border: none;
+        }
+
+        .tab-content {
+            background-color: rgba(35, 0, 73, 0.1);
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+        }
+    </style>
     <meta name="_csrf" th:content="${_csrf.token}" />
 </head>
 <body class="loading">
@@ -38,88 +62,109 @@
     </div>
 </div>
 <input type="hidden" id="backGroundImg" name="manga.mangaBackGround" th:value="${manga.mangaBackGround}" />
-        <div class="row mt-5 mb-5">
-        <div class="col-lg-8 mx-auto">
-            <div class="card mt-4 ">
-                <div class="row g-0">
-                    <div class="col-md-4 bg-dark">
-                        <div class="mangaPoster mx-3 mt-2 d-flex justify-content-center align-items-center">
-                            <img th:src="${manga.mangaPosterImg}" class="img-fluid rounded-start" alt="mangaPosterImg Image">
-                        </div>
-                        <div class="card-body bg-dark">
-                            <div class="d-flex flex-column">
-                                <form id="addMangaForm" action="#" th:action="@{/manga/add-to-list}" th:object="${manga}" method="post" onsubmit="return false;">
-                                    <select name="listType" id="listTypeSelect" class="form-select mb-2 custom-select">
-                                        <option value="" disabled th:selected="${!isInReadingList && !isInWantToReadList && !isInRecitedList && !isInReadStoppedList}">Виберіть список</option>
-                                        <option value="reading" th:selected="${isInReadingList}">Читаю</option>
-                                        <option value="want-read" th:selected="${isInWantToReadList}">Буду читати</option>
-                                        <option value="recited" th:selected="${isInRecitedList}">Прочитано</option>
-                                        <option value="read-stopped" th:selected="${isInReadStoppedList}">Привинив</option>
-                                    </select>
-                                    <input type="hidden" name="mangaId" th:value="${manga.id}" />
-                                </form>
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="manga-details-container p-4 rounded shadow-lg">
+                <ul class="nav nav-tabs justify-content-center" id="mangaTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="info-tab" data-bs-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Інфо</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="chapters-tab" data-bs-toggle="tab" href="#chapters" role="tab" aria-controls="chapters" aria-selected="false">Глави</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="similar-tab" data-bs-toggle="tab" href="#similar" role="tab" aria-controls="similar" aria-selected="false">Схожі</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="mangaTabsContent">
+                    <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="manga-poster mb-3">
+                                    <img th:src="${manga.mangaPosterImg}" class="img-fluid rounded" alt="Manga Poster">
+                                </div>
+                                <div class="manga-actions">
+                                    <form id="addMangaForm" action="#" th:action="@{/manga/add-to-list}" th:object="${manga}" method="post" onsubmit="return false;">
+                                        <select name="listType" id="listTypeSelect" class="form-select mb-3 custom-select">
+                                            <option value="" disabled th:selected="${!isInReadingList && !isInWantToReadList && !isInRecitedList && !isInReadStoppedList}">Виберіть список</option>
+                                            <option value="reading" th:selected="${isInReadingList}">Читаю</option>
+                                            <option value="want-read" th:selected="${isInWantToReadList}">Буду читати</option>
+                                            <option value="recited" th:selected="${isInRecitedList}">Прочитано</option>
+                                            <option value="read-stopped" th:selected="${isInReadStoppedList}">Привинив</option>
+                                        </select>
+                                        <input type="hidden" name="mangaId" th:value="${manga.id}" />
+                                    </form>
+                                    <form th:action="@{/manga/page/{id}(id=${id})}" method="post" class="mb-3">
+                                        <input type="hidden" name="id" th:value="${manga.id}">
+                                        <button class="btn btn-primary w-100" type="submit">Почати читати</button>
+                                    </form>
+                                    <div class="admin-actions mt-4" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
+                                        <hr style="margin-top:43px;">
+                                        <a th:href="@{/manga/edit/{id}(id=${id})}" class="btn w-100 mt-1 mb-3 btn-warning me-2">Редагувати</a>
+                                        <form th:action="@{/manga/delete/{id}(id=${id})}" method="post" class="d-inline" onsubmit="return confirmDelete()">
+                                            <button class="btn btn-danger w-100" type="submit">Видалити</button>
+                                        </form>
+                                    </div>
+                                    <hr>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-8 bg-dark">
-                        <div class="card-body text-white bg-dark">
-                            <h5 class="card-title">Назва: <span th:text="${manga.mangaName}"></span></h5>
-                            <hr>
-                            <h6 class="card-subtitle mb-2 ">Опис: <span th:text="${manga.mangaDescription}"></span></h6>
-                            <hr>
-                            <div class="card-text">
-                                <span>Жанри: </span>
-                                <div class="genre-container">
-                                    <div class="genre-list">
-            <span th:if="${manga.genres}">
-                <span th:each="genre, iterStat : ${manga.genres}" class="genre-item">
-                    <a th:href="@{'/search?q=' + ${genre.genreName} + '&type=genre'}" class="link">
-                        <span th:text="${genre.genreName}"></span>
-                    </a>
-                </span>
-            </span>
+                            <div class="col-md-8">
+                                <h2 class="manga-title mb-3" th:text="${manga.mangaName}"></h2>
+                                <div class="manga-info">
+                                    <p class="manga-description" th:text="${manga.mangaDescription}"></p>
+                                    <hr>
+                                    <div class="manga-genres mb-3">
+                                        <h5>Жанри:</h5>
+                                        <div class="genre-list">
+                                    <span th:each="genre : ${manga.genres}" class="genre-item">
+                                        <a th:href="@{'/search?q=' + ${genre.genreName} + '&type=genre'}" class="link">
+                                            <span th:text="${genre.genreName}"></span>
+                                        </a>
+                                    </span>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="manga-author mb-3">
+                                        <h5>Автор манги:</h5>
+                                        <span th:if="${manga.author != null}">
+                                    <a th:href="@{'/author/' + ${manga.author.id}}" class="link" th:text="${manga.author.name}"></a>
+                                </span>
+                                        <span th:unless="${manga.author != null}">undefined</span>
+                                    </div>
+                                    <hr>
+                                    <div class="manga-year mb-3">
+                                        <h5>Рік виходу:</h5>
+                                        <a th:href="@{'/search?q=' + ${manga.releaseYear} + '&type=releaseYear'}" class="link" th:text="${manga.releaseYear}"></a>
+                                    </div>
+                                    <hr>
+                                    <div class="manga-status mb-3">
+                                        <h5>Статус манги:</h5>
+                                        <a th:href="@{'/search?q=' + ${manga.mangaStatus} + '&type=mangaStatus'}" class="link" th:text="${translatedMangaStatus}"></a>
                                     </div>
                                 </div>
-                                <hr>
-                                <h6 class="mb-2">Автор манги:</h6>
-                                <span th:if="${manga.author != null}">
-                                    <a th:href="@{'/author/' + ${manga.author.id}}" class="link">
-                                        <span th:text="${manga.author.name}"></span>
-                                    </a>
-                                </span>
-                                <span th:unless="${manga.author != null}">undefined</span>
-                                <hr>
-                                <h6 class="card-subtitle mb-2">Рік виходу:</h6>
-                                <p class="card-text">
-                                    <a th:href="@{'/search?q=' + ${manga.releaseYear} + '&type=releaseYear'}" class="link"><span th:text="${manga.releaseYear}"></span></a>
-                                </p>
-                                <hr>
-                                <h6 class="card-subtitle mb-2">Статус манги:</h6>
-                                <a th:href="@{'/search?q=' + ${manga.mangaStatus} + '&type=mangaStatus'}" class="link"><span th:text="${translatedMangaStatus}"></span></a>
-                                <hr>
                             </div>
-                            <form th:action="@{/manga/page/{id}(id=${id})}" method="post" style="margin-right: 10px;">
-                                <input type="hidden" name="id" th:value="${manga.id}">
-                                <button class="btn btn-primary" type="submit">Почати читати</button>
-                            </form>
-                            <hr th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
-                            <div class="btn-group" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
-                                <a th:href="@{/manga/edit/{id}(id=${id})}" class="btn btn-warning">Редагувати</a>
-                                <form th:action="@{/manga/delete/{id}(id=${id})}" method="post" style="margin-left: 10px;">
-                                    <button class="btn btn-danger" type="submit">Видалити</button>
-                                </form>
-                            </div>
-                            <hr>
-                            <a th:href="@{/manga}" class="btn btn-primary">Повернутись</a>
                         </div>
                     </div>
+                    <div class="tab-pane fade" id="chapters" role="tabpanel" aria-labelledby="chapters-tab">
+                        <h5>Список глав</h5>
+                        <ul>
+                            <li><a href="#">Глава 1</a></li>
+                            <li><a href="#">Глава 2</a></li>
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="similar" role="tabpanel" aria-labelledby="similar-tab">
+                        <h5>Схожі манги</h5>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
-    <div th:if="${notificationMessage}" class="alert alert-success alert-dismissible fade show hide-delay fixed-right" role="alert">
-        <span th:text="${notificationMessage}"></span>
-    </div>
+</div>
+<div th:if="${notificationMessage}" class="alert alert-success alert-dismissible fade show hide-delay fixed-right" role="alert">
+    <span th:text="${notificationMessage}"></span>
+</div>
 
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -127,6 +172,8 @@
 <script src="/js/loader-spinner.js"></script>
 <script src="/js/listTypeSelect.js"></script>
 <script src="/js/burger-menu.js"></script>
+<script src="/js/confirmDelete.js"></script>
+<script src="/js/manga-details.js"></script>
 <script th:if="${manga.adultContent and not userSettings.adultContentAgreement}" src="/js/adultContentAlert.js"></script>
 </body>
 </html>

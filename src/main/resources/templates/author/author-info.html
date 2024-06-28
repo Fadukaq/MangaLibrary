@@ -76,16 +76,17 @@
     </div>
     <div class="fixed-right-container">
         <div th:if="(${#authentication.authorities[0].authority == 'ADMIN'})">
-             <form th:action="@{/author/delete/{id}(id=${author.id})}" method="post">
-                 <button class="btn btn-danger mb-2" type="submit" style="width: 150px;">Видалити</button>
-             </form>
-             <a th:href="@{/author/edit/{id}(id=${author.id})}" class="btn btn-warning">Редагувати автора</a>
-         </div>
+            <form th:action="@{/author/delete/{id}(id=${author.id})}" method="post" onsubmit="return confirmDelete()">
+                <button class="btn btn-danger mb-2" type="submit" style="width: 150px;" >Видалити</button>
+            </form>
+            <a th:href="@{/author/edit/{id}(id=${author.id})}" class="btn btn-warning">Редагувати автора</a>
+        </div>
         <a th:href="@{/manga}" class="btn btn-primary mt-5">Повернутись</a>
     </div>
 </div>
 
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="/js/loader-spinner.js"></script>
+<script src="/js/confirmDelete.js"></script>
 </body>
 </html>

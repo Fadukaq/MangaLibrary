@@ -246,7 +246,7 @@ public class MangaController {
             return "manga/manga-edit";
         }
         mangaService.updateManga(id,mangaForm);
-        return "redirect:/manga";
+        return "redirect:/manga/"+id;
     }
         @GetMapping("/search")
     public String search(@RequestParam("q") String searchQuery,

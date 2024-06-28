@@ -21,9 +21,6 @@
         <div th:if="${noResults}" class="text-center p-4 customBorder">
             <h2>За вашим запитом: <span th:text="${searchQuery}"></span> нічого не знайдено!</h2>
         </div>
-        <div th:if="${!noResults}" class="text-center p-4 mb-5 customBorder">
-            <h2>Знайдено манги за запитом: <span th:text="${searchQuery}"></span>.</h2>
-        </div>
         <div th:each="el : ${mangas}" class="col-md-6 col-lg-4 mb-4">
             <div class="custom-container position-relative">
                 <a th:href="@{'/manga/' + ${el.id}}" class="d-flex justify-content-center align-items-center position-relative">
@@ -58,18 +55,17 @@
     </div>
     <div class="fixed-right-container" th:if="${searchType == 'genre'}">
         <div th:if="${#authentication.authorities[0].authority == 'ADMIN'}">
-            <form th:action="@{'/genre/delete/' + ${genreId}}" method="post">
+            <form th:action="@{'/genre/delete/' + ${genreId}}" method="post" onsubmit="return confirmDelete()">
                 <button class="btn btn-danger mb-2" type="submit" style="width: 150px;">Видалити</button>
             </form>
             <a th:href="@{'/genre/edit/' + ${genreId}}" class="btn btn-warning">Редагувати</a>
         </div>
-        <a th:href="@{/manga}" class="btn btn-primary mt-5">Повернутись</a>
     </div>
 
 </div>
 
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="/js/loader-spinner.js"></script>
-
+<script src="/js/confirmDelete.js"></script>
 </body>
 </html>

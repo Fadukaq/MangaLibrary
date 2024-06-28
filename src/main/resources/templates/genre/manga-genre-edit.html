@@ -22,7 +22,7 @@
             <div style="color:red" th:if="${#fields.hasErrors('genreName')}" th:errors="*{genreName}">genreName error</div>
             <br>
             <button type="submit" class="btn btn-success">Редагувати жанр</button>
-            <a href="/manga" class="btn btn-primary">Повернутись</a>
+            <a th:href="@{'/search?q=' + ${genre.genreName} + '&type=genre'}" class="btn btn-primary    ">Повернутись</a>
         </form>
     </div>
 </div>
