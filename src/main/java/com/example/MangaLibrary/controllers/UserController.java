@@ -304,6 +304,9 @@ public class UserController {
             }
             if (enabled != null) {
                 userService.updateUserEnabledStatus(userId, enabledValue);
+                //if(enabled.equals("false")) {
+                    //userService.deleteAllCommentsByUserId(userId);
+                //}
             }
         }
 

@@ -1,40 +1,27 @@
 $(document).ready(function() {
-    var $noResultsMessage = $('#noResultsMessage');
-
     $('#search').on('input', function() {
-        var searchTerm = $(this).val().toLowerCase();
-        var activeTab = $('.tab-pane.active');
-        var hasResults = false;
+        var searchText = $(this).val().toLowerCase();
 
-        activeTab.find('.card_manga_container').each(function() {
-            var $this = $(this);
-            var mangaTitle = $this.find('.card-title').text().toLowerCase();
-            var mangaAuthor = $this.find('.card-text[style*="color:#BCA3D3"]').text().toLowerCase();
-            var mangaDescription = $this.find('.card-text:last').text().toLowerCase();
+        $('.tab-pane.active .card_manga').each(function() {
+            var $card = $(this);
+            var cardText = $card.find('.card-title').text().toLowerCase() + ' ' +
+            $card.find('.card-text[style*="color:#BCA3D3"]').text().toLowerCase() + ' ' +
+            $card.find('.card-text:last').text().toLowerCase();
 
-            if (mangaTitle.includes(searchTerm) ||
-            mangaAuthor.includes(searchTerm) ||
-            mangaDescription.includes(searchTerm)) {
-                $this.show();
-                hasResults = true;
+            if (cardText.includes(searchText)) {
+                $card.show();
             } else {
-                $this.hide();
+                $card.hide();
             }
         });
 
-        if (!hasResults) {
-            if (!activeTab.find('#noResultsMessage').length) {
-                activeTab.append($noResultsMessage);
-            }
+        var visibleCards = $('.tab-pane.active .card_manga:visible');
+        var $noResultsMessage = $('.tab-pane.active #noResultsMessage');
+
+        if (visibleCards.length === 0) {
             $noResultsMessage.show();
         } else {
             $noResultsMessage.hide();
         }
-    });
-
-    $('.nav-link').on('click', function() {
-        $('#search').val('');
-        $('.card_manga_container').show();
-        $noResultsMessage.hide();
     });
 });
