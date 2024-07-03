@@ -261,16 +261,55 @@ public class UserController {
         return "redirect:/error";
     }
     @GetMapping("/admin-panel")
-    public String adminPanelGet(Model model)
-    {
+    public String adminPanelGet(@RequestParam(name = "username", required = false) String username, Model model) {
+        List<User> users;
+        if (username != null && !username.isEmpty()) {
+            users = userRepo.findByUserNameContaining(username);
+        } else {
+            users = userRepo.findAll();
+        }
+        model.addAttribute("users", users);
+        model.addAttribute("username", username);
         return "user/admin-panel";
     }
     @PostMapping("/admin-panel")
     public String adminPanelPost(Model model)
     {
+        List<User> users = userRepo.findAll();
+        model.addAttribute("users", users);
         return "user/admin-panel";
     }
 
+    @PostMapping("/admin-panel/update-user")
+    public String updateUser(Long userId, String role, String enabled, Model model) {
+        Optional<User> optionalUser = userRepo.findById(userId);
+        if (optionalUser.isPresent()) {
+            User userToUpdate = optionalUser.get();
+            String currentUserName = userService.getCurrentUserName();
+
+            if (userToUpdate.getUserName().equals(currentUserName) && userToUpdate.getUserRole().equals("ADMIN")) {
+                model.addAttribute("users", userRepo.findAll());
+                return "redirect:/admin-panel";
+            }
+
+            Boolean enabledValue = Boolean.valueOf(enabled);
+
+            if (!userService.isValidateRoleAndEnabled(userToUpdate, role, enabled)) {
+                model.addAttribute("users", userRepo.findAll());
+                return "redirect:/admin-panel";
+            }
+
+            if (role != null && userToUpdate.isEnabled()) {
+                userService.updateUserRole(userId, role);
+            }
+            if (enabled != null) {
+                userService.updateUserEnabledStatus(userId, enabledValue);
+            }
+        }
+
+        model.addAttribute("users", userRepo.findAll());
+        return "user/admin-panel";
+    }
     @GetMapping("/reset-password")
     public String resetPasswordGet(@RequestParam(name = "email", required = false) String email,
                                     @RequestParam(name = "resetCode", required = false) String resetCode,

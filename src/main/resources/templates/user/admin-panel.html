@@ -1,13 +1,25 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
-    <title th:text="${title}"></title>
+    <title>Admin Panel</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
+    <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/token-alerts.css">
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/transparent-container.css">
+    <style>
+        .link a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #924aff;
+        }
+        .link a:hover {
+            text-decoration: underline;
+            color: #6a00a1;
+        }
+    </style>
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
@@ -15,8 +27,62 @@
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="container mt-5 mb-5">
     <div class="transparent-container">
-        <h1>Admin Panel</h1>
-        <p>This is admin panel</p>
+        <h1 class="highlight">Admin Panel</h1>
+
+        <form th:action="@{/admin-panel}" method="get" class="mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Пошук по імені" name="username"
+                        aria-label="Search by username" aria-describedby="button-search">
+                <button class="btn btn-outline-info" type="submit" id="button-search">Пошук</button>
+            </div>
+        </form>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Enabled</th>
+                <th>About</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td class="link">
+                    <a th:href="@{/profile/{userName}(userName=${user.userName})}">
+                        <span th:text="${user.userName}"></span>
+                    </a>
+                </td>
+                <td th:text="${user.email}"></td>
+                <td>
+                    <form th:action="@{/admin-panel/update-user}" method="post">
+                        <input type="hidden" name="userId" th:value="${user.id}" />
+                        <select name="role" class="form-select"
+                                th:disabled="${#authentication.name} == ${user.userName} or ${!user.enabled}"
+                                onchange="this.form.submit()">
+                            <option th:value="USER" th:text="'USER'" th:selected="${user.userRole == 'USER'}"></option>
+                            <option th:value="ADMIN" th:text="'ADMIN'" th:selected="${user.userRole == 'ADMIN'}"></option>
+                        </select>
+                    </form>
+                </td>
+                <td>
+                    <form th:action="@{/admin-panel/update-user}" method="post">
+                        <input type="hidden" name="userId" th:value="${user.id}" />
+                        <select name="enabled" class="form-select"
+                                th:disabled="${user.userRole == 'ADMIN'} or (${#authentication.name} == ${user.userName} and ${user.userRole} == 'ADMIN')"
+                                onchange="this.form.submit()">
+                            <option th:value="true" th:text="'Enabled'" th:selected="${user.enabled}"></option>
+                            <option th:value="false" th:text="'Disabled'" th:selected="${!user.enabled}"></option>
+                        </select>
+                    </form>
+                </td>
+                <td th:text="${user.about}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>

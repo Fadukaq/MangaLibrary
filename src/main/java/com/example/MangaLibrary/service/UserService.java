@@ -8,9 +8,12 @@ import com.example.MangaLibrary.models.UserSettings;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
 import com.example.MangaLibrary.repo.UserSettingsRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -22,10 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -334,5 +334,44 @@ public class UserService {
         }
         int length = pass.length();
         return length >= 10 && length <= 255;
+    }
+
+    public String getCurrentUserName() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else {
+            return principal.toString();
+        }
+    }
+
+    @Transactional
+    public void updateUserRole(Long userId, String role) {
+        Optional<User> user = userRepo.findById(userId);
+        if(user.isPresent())
+        {
+            User useToUpdate = user.get();
+            useToUpdate.setUserRole(role);
+            userRepo.save(useToUpdate);
+        }
+    }
+    @Transactional
+    public void updateUserEnabledStatus(Long userId, Boolean enabled) {
+        Optional<User> user = userRepo.findById(userId);
+        if (user.isPresent()) {
+            User userToUpdate = user.get();
+            userToUpdate.setEnabled(enabled);
+            userRepo.save(userToUpdate);
+        }
+    }
+
+    public boolean isValidateRoleAndEnabled(User user, String role, String enabled) {
+        if (role != null && (role.equals("ADMIN") || role.equals("USER"))) {
+            return true;
+        }
+        if (enabled != null && (enabled.equals("true") || enabled.equals("false")) && !"ADMIN".equals(user.getUserRole())) {
+            return true;
+        }
+        return false;
     }
 }
