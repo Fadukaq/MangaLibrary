@@ -48,6 +48,10 @@
                     </ul>
                     <div class="tab-content" id="mainTabContent">
                         <div class="tab-pane tab-lists fade show active" id="lists" role="tabpanel" aria-labelledby="lists-tab">
+                            <div class="search-container mb-3">
+                                <input type="text" id="search" class="form-control" placeholder="Пошук в поточному списку...">
+                            </div>
+                            <p class="text-center" id="noResultsMessage" style="display: none; color: #e91e63;">Немає результатів</p>
                             <ul class="nav nav-pills flex-column flex-sm-row mt-3" id="listsSubTab" role="tablist">
                                 <li class="nav-item flex-sm-fill text-sm-center">
                                     <a class="nav-link active" id="reading-tab" href="#reading" data-toggle="pill" role="tab" aria-controls="reading" aria-selected="true">Читаю</a>
@@ -219,6 +223,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/loadFirstListUser.js"></script>
 <script src="/js/loader-spinner.js"></script>
+<script src="/js/searchMangaInList.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
