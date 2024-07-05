@@ -5,6 +5,7 @@
     border-radius: 10px;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 8px rgba(92, 0, 255, 0.6);
+    height: 450px;
 }
 .custom-container:hover {
     border: 1px solid #8e5eff;
@@ -12,15 +13,11 @@
 
 .custom-container img {
     border-radius: 10px;
-    width: 100%;
-    max-width: 350px;
-    height: auto;
-    max-height: 450px;
+    width: 350px;
+    height: 450px;
     object-fit: cover;
     display: block;
 }
-
-
 
 .custom-title {
     position: absolute;

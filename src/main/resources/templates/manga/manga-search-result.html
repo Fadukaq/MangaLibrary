@@ -54,7 +54,7 @@
         </nav>
     </div>
     <div class="fixed-right-container" th:if="${searchType == 'genre'}">
-        <div th:if="${#authentication.authorities[0].authority == 'ADMIN'}">
+        <div th:if="(${#authentication.authorities[0].authority == 'ADMIN'}) or (${#authentication.authorities[0].authority == 'MangaModerator'})">
             <form th:action="@{'/genre/delete/' + ${genreId}}" method="post" onsubmit="return confirmDelete()">
                 <button class="btn btn-danger mb-2" type="submit" style="width: 150px;">Видалити</button>
             </form>

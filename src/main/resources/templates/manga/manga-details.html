@@ -75,7 +75,7 @@
                                         <input type="hidden" name="id" th:value="${manga.id}">
                                         <button class="btn btn-primary w-100" type="submit">Почати читати</button>
                                     </form>
-                                    <div class="admin-actions mt-4" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
+                                    <div class="admin-actions mt-4" th:if="(${#authentication.authorities[0].authority == 'ADMIN'}) or (${#authentication.authorities[0].authority == 'MangaModerator'})">
                                         <hr>
                                         <a th:href="@{/manga/edit/{id}(id=${id})}" class="btn w-100 mt-1 mb-3 btn-warning me-2">Редагувати</a>
                                         <form th:action="@{/manga/delete/{id}(id=${id})}" method="post" class="d-inline" onsubmit="return confirmDelete()">

@@ -16,13 +16,13 @@
           <li class="nav-item">
             <a href="/manga" class="nav-link">Manga</a>
           </li>
-          <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
+          <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})">
             <a href="/manga/add" class="nav-link">Add Manga</a>
           </li>
-          <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
+          <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})">
             <a href="/author/add" class="nav-link">Add Author</a>
           </li>
-          <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
+          <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})">
             <a href="/genre/add" class="nav-link">Add Genre</a>
           </li>
           <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">

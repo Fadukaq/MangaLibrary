@@ -366,7 +366,7 @@ public class UserService {
     }
 
     public boolean isValidateRoleAndEnabled(User user, String role, String enabled) {
-        if (role != null && (role.equals("ADMIN") || role.equals("USER"))) {
+        if (role != null && (role.equals("ADMIN") || role.equals("USER") || role.equals("MangaModerator"))) {
             return true;
         }
         if (enabled != null && (enabled.equals("true") || enabled.equals("false")) && !"ADMIN".equals(user.getUserRole())) {
