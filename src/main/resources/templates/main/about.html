@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/transparent-container.css">
+    <link rel="stylesheet" href="/css/token-alerts.css">
 </head>
 <body class="loading">
 <div id="loader">
@@ -33,13 +34,16 @@
     <div class="master-card">
         <div class="author-section">
             <h2 class="highlight">Дизайнери:</h2>
-            <p>Любенко Владислав <br> Крижановская Уляна <br> Кощавка Максим Олексійович</p>
+            <p>Любенко Владислав <br> Кощавка Максим Олексійович</p>
         </div>
         <div class="author-section">
             <h2 class="highlight">Программісти:</h2>
             <p>Сайдакар Іван Іванович<br>Бондарєв Артем Дмитрович</p>
         </div>
     </div>
+</div>
+<div th:if="${message}" class="message-container fixed-right">
+    <div th:classappend="${isActivated} ? 'alert alert-success' : 'alert alert-error'" th:text="${message}"></div>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="/js/loader-spinner.js"></script>

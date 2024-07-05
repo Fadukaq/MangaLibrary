@@ -98,7 +98,7 @@ public class UserController {
             model.addAttribute("message", "Код активації не знайдено.");
         }
         model.addAttribute("isActivated", isActivated);
-        return "main/home";
+        return "main/about";
     }
 
     @GetMapping("/profile/{userName}")

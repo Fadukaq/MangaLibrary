@@ -33,7 +33,7 @@ public class MainController {
         Set<Long> addedMangaIds = new HashSet<>();
 
         int maxGenres = 5;
-        int maxResults = 8;
+        int maxResults = 4;
 
         for (Genre genre : allGenres) {
             if (mangaByGenre.size() >= maxGenres) {

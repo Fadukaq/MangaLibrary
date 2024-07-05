@@ -29,3 +29,8 @@
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
+.fixed-right {
+    position: fixed;
+    right: 20px;
+    bottom: 175px;
+}
