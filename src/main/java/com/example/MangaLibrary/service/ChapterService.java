@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,6 +72,20 @@ public class ChapterService {
     }
 
     public void editChapter(ChapterForm chapterForm, Manga manga, Chapter chapter) throws IOException {
+        String oldTitle = chapter.getTitle();
+        String newTitle = chapterForm.getChapter().getTitle();
+
+        if (!oldTitle.equals(newTitle)) {
+            String cleanMangaName = cleanStringForUrl(manga.getMangaName());
+            String oldFolderPath = getChapterFolderPath(cleanMangaName, oldTitle);
+            String newFolderPath = getChapterFolderPath(cleanMangaName, newTitle);
+            renameChapterFolder(oldFolderPath, newFolderPath);
+
+            String oldResourceFolderPath = getResourceChapterFolderPath(cleanMangaName, oldTitle);
+            String newResourceFolderPath = getResourceChapterFolderPath(cleanMangaName, newTitle);
+            renameChapterFolder(oldResourceFolderPath, newResourceFolderPath);
+        }
+
         chapter.setTitle(chapterForm.getChapter().getTitle());
         chapter.setCreationTime(LocalDateTime.now());
 
@@ -84,7 +99,23 @@ public class ChapterService {
         chapter.setChapterPages(String.join(",", imageUrls));
         chapterRepo.save(chapter);
     }
+    private String getChapterFolderPath(String cleanMangaName, String chapterTitle) {
+        return mangaLibraryManager.getTargetPathManga() + File.separator +
+                cleanMangaName + File.separator + "chapters" + File.separator + chapterTitle;
+    }
+    private String getResourceChapterFolderPath(String cleanMangaName, String chapterTitle) {
+        return "src/main/resources/static/images/mangas/" + cleanMangaName + "/chapters/" + chapterTitle;
+    }
 
+    private void renameChapterFolder(String oldPath, String newPath) throws IOException {
+        Path source = Paths.get(oldPath);
+        Path target = Paths.get(newPath);
+        if (Files.exists(source) && !Files.exists(target)) {
+            Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+        } else if (!Files.exists(source)) {
+            Files.createDirectories(target);
+        }
+    }
     public void deleteChapter(Long mangaId, Long chapterId) throws IOException {
         Optional<Manga> mangaOptional = mangaRepo.findById(mangaId);
         Optional<Chapter> chapterOptional = chapterRepo.findById(chapterId);

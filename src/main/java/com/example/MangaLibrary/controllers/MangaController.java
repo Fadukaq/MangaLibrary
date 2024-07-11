@@ -142,7 +142,7 @@ public class MangaController {
             chapterService.addChapter(chapterForm, manga);
             redirectAttributes.addFlashAttribute("message", "Chapter added successfully");
         }
-        return "redirect:/manga";
+        return "redirect:/manga/"+mangaId+"#chapters";
     }
 
     @GetMapping("/manga/{mangaId}/chapter/{chapterId}")
