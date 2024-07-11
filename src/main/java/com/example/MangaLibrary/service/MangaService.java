@@ -42,14 +42,6 @@ public class MangaService {
         long fileSizePosterInBytes = posterImage.getSize();
         double fileSizePosterInMB = (double) fileSizePosterInBytes / (1024 * 1024);
 
-        List<MultipartFile> pagesImg = mangaForm.getMangaImage().getPagesImage();
-        long fileSizePagesInBytes = 0;
-        if (pagesImg != null) {
-            for (MultipartFile pageImage : pagesImg) {
-                fileSizePagesInBytes += pageImage.getSize();
-            }
-        }
-        double fileSizePagesInMB = (double) fileSizePagesInBytes / (1024 * 1024);
         String mangaStatus = mangaForm.getManga().getMangaStatus();
         if (mangaStatus == null || mangaStatus.isEmpty() || !isValidMangaStatus(mangaStatus)) {
             bindingResult.rejectValue("manga.mangaStatus", "error.mangaStatus", "Оберіть коректний статус манги (release, ongoing, completed).");
@@ -58,9 +50,7 @@ public class MangaService {
         if (bindingResult.hasErrors()
                 || genreIds.isEmpty()
                 || mangaForm.getMangaImage().getPosterImage().isEmpty()
-                || mangaForm.getMangaImage().getPagesImage().isEmpty()
-                || fileSizePosterInMB > 5
-                || fileSizePagesInMB > 10) {
+                || fileSizePosterInMB > 5) {
 
             if (genreIds.isEmpty()) {
                 bindingResult.rejectValue("genres", "error.genres", "Будь ласка, оберіть хоча б один жанр.");
@@ -71,12 +61,6 @@ public class MangaService {
             }
             if (fileSizePosterInMB > 5) {
                 bindingResult.rejectValue("mangaImage.posterImage", "error.fileSize", "Розмір завантажуваної картинки перевищує 5 МБ");
-            }
-            if (fileSizePagesInMB > 10) {
-                bindingResult.rejectValue("mangaImage.pagesImage", "error.fileSize", "Розмір завантажуванних картинок перевищує 10 МБ");
-            }
-            if (mangaForm.getMangaImage().getPagesImage() == null || mangaForm.getMangaImage().getPagesImage().stream().anyMatch(file -> file.getSize() == 0)) {
-                bindingResult.rejectValue("mangaImage.pagesImage", "error.missingFile", "Сторінки манги не були загружені.");
             }
             if(mangaForm.getManga().getAuthor() == null)
             {
@@ -148,9 +132,6 @@ public class MangaService {
         else{
             mangaForm.getManga().setMangaBackGround("/images/mangas/defaultBackGroundManga.jpg");
         }
-        List<String> pagesImages = createPagesManga(mangaForm.getMangaImage().getPagesImage(), mangaForm.getManga(), mangaFolderPath);
-        String pagesImagesAsString = String.join(",", pagesImages);
-        mangaForm.getManga().setMangaPages(pagesImagesAsString);
         mangaRepo.save(mangaForm.getManga());
     }
     public void updateManga(long id, MangaForm mangaForm) {
@@ -199,34 +180,6 @@ public class MangaService {
         }
 
         return mangaFolder.getAbsolutePath();
-    }
-
-    public List<String> createPagesManga(List<MultipartFile> pagesManga, Manga thisManga, String mangaFolderPath) throws IOException {
-        List<String> pagePaths = new ArrayList<>();
-        String cleanMangaName = thisManga.getMangaName()
-                .replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
-
-        File sourceFolder = new File(mangaFolderPath);
-        if (!sourceFolder.exists()) {
-            sourceFolder.mkdirs();
-        }
-        String targetRootPath = mangaLibraryManager.getTargetPathManga();
-        File targetFolder = new File(targetRootPath + File.separator + cleanMangaName);
-        if (!targetFolder.exists()) {
-            targetFolder.mkdirs();
-        }
-        for (int i = 0; i < pagesManga.size(); i++) {
-            String fileName = cleanMangaName + "_Page" + (i + 1) + ".png";
-
-            File sourceFile = new File(sourceFolder + File.separator + fileName);
-            pagesManga.get(i).transferTo(sourceFile);
-
-            File targetFile = new File(targetFolder + File.separator + fileName);
-            Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-            pagePaths.add(fileName);
-        }
-        return pagePaths;
     }
 
     public String createPosterManga(MultipartFile posterImg,Manga thisManga,String mangaFolderPath) {

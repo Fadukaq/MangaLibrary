@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,7 +35,9 @@ public class Manga {
 
     String mangaPosterImg;
 
-    String mangaPages;
+    @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Chapter> chapter = new ArrayList<>();
+
     String mangaBackGround;
     @NotEmpty(message = "Рік релізу не повинно бути порожнім")
     private String releaseYear;
@@ -46,7 +49,6 @@ public class Manga {
         this.mangaName = manga.getMangaName();
         this.mangaDescription = manga.getMangaDescription();
         this.mangaPosterImg = manga.getMangaPosterImg();
-        this.mangaPages = manga.getMangaPages();
         this.releaseYear = manga.getReleaseYear();
     }
 
@@ -80,14 +82,6 @@ public class Manga {
 
     public void setMangaPosterImg(String mangaPosterImg) {
         this.mangaPosterImg = mangaPosterImg;
-    }
-
-    public String getMangaPages() {
-        return mangaPages;
-    }
-
-    public void setMangaPages(String mangaPages) {
-        this.mangaPages = mangaPages;
     }
 
     public String getReleaseYear() {
@@ -136,5 +130,13 @@ public class Manga {
 
     public void setAuthor(Author author) {
         this.author = author;
+    }
+
+    public List<Chapter> getChapter() {
+        return chapter;
+    }
+
+    public void setChapter(List<Chapter> chapter) {
+        this.chapter = chapter;
     }
 }

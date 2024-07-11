@@ -50,7 +50,7 @@
                 </div>
             </div>
             <div style="color:red" th:if="${#fields.hasErrors('genres')}" th:errors="*{genres}">genres error</div>
-            <a style="color:white" href="/genre/add">Немає нужного жанру?</a>
+            <a style="color:white" href="/genre/add">Бажаєте додати власний жанр?</a>
             <hr>
             <div class="form-check">
                 <input type="checkbox" th:field="*{manga.adultContent}" id="adultContent" class="form-check-input">
@@ -69,11 +69,6 @@
             <p>Постер манги</p>
             <input type="file" th:field="*{mangaImage.posterImage}" accept="image/jpeg, image/png,">
             <div style="color:red" th:if="${#fields.hasErrors('mangaImage.posterImage')}" th:errors="*{mangaImage.posterImage}">posterImage error</div>
-            <br>
-            <hr>
-            <p>Картинки манги</p>
-            <input type="file" th:field="*{mangaImage.pagesImage}" accept="image/jpeg, image/png," multiple>
-            <div style="color:red" th:if="${#fields.hasErrors('mangaImage.pagesImage')}" th:errors="*{mangaImage.pagesImage}">pagesImage error</div>
             <br>
             <hr>
             <p>Задній фон манги, якщо є.</p>
