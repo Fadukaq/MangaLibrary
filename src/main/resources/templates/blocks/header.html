@@ -1,12 +1,14 @@
-<div th:fragment="header">
+<div th:fragment="header" class="fixed-header">
   <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/search-form.js"></script>
+  <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">
-      <img src="/images/icons/MangaLibraryIcon.png" alt="MangaLibrary Logo" style="height: 40px;">
+        <img src="/images/icons/MangaLibraryIcon.png" alt="MangaLibrary Logo" style="height: 40px;">
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -14,37 +16,54 @@
       <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a href="/manga" class="nav-link">Manga</a>
-          </li>
-          <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})">
-            <a href="/manga/add" class="nav-link">Add Manga</a>
-          </li>
-          <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})">
-            <a href="/author/add" class="nav-link">Add Author</a>
-          </li>
-          <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})">
-            <a href="/genre/add" class="nav-link">Add Genre</a>
-          </li>
-          <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
-            <a href="/admin-panel" class="nav-link">Admin Panel</a>
+            <a href="/" class="nav-link">Головна</a>
           </li>
           <li class="nav-item">
-            <a href="/genre-list" class="nav-link">Genre List</a>
+            <a href="/manga" class="nav-link">Манга</a>
+          </li>
+          <li class="nav-item dropdown" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})">
+            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Адмін меню
+            </a>
+            <ul class="dropdown-menu dropdown-menu-start">
+              <li class="nav-item">
+                <a class="dropdown-item" href="/manga/add">Добавити мангу</a>
+              </li>
+              <li class="nav-item">
+                <a class="dropdown-item" href="/author/add">Добавити автора</a>
+              </li>
+              <li class="nav-item">
+                <a class="dropdown-item" href="/genre/add">Добавити жанр</a>
+              </li>
+              <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
+                <a class="dropdown-item" href="/admin-panel">Адмін-Панель</a>
+              </li>
+            </ul>
           </li>
           <li class="nav-item">
-            <a href="/random" class="nav-link">Random Manga</a>
+            <a href="/random" class="nav-link" th:if="${#authorization.expression('isAuthenticated()')}">Випадкова манга</a>
           </li>
           <li class="nav-item">
-            <a href="/about" class="nav-link">About</a>
+            <a href="/forum" class="nav-link" th:if="${#authorization.expression('isAuthenticated()')}">Форум</a>
+          </li>
+          <li class="nav-item">
+            <a href="/news" class="nav-link" th:if="${#authorization.expression('isAuthenticated()')}">Новини</a>
           </li>
         </ul>
-        <form th:if="${#authorization.expression('isAuthenticated()')}" class="d-flex" action="/search" method="get">
-          <input class="form-control form-control-search me-2" type="search" placeholder="Пошук манги" aria-label="Search" name="q" autocomplete="off">
-          <input type="hidden" name="type" value="title">
-          <button class="btn custom-btn" type="submit">Пошук</button>
-        </form>
+        <div class="search-container">
+          <button class="search-toggle btn btn-outline-light" aria-label="Пошук">
+            <i class="fas fa-search"></i> Пошук
+          </button>
+          <div class="search-form-container">
+            <form th:if="${#authorization.expression('isAuthenticated()')}" class="d-flex search-form" action="/search" method="get">
+              <input class="form-control form-control-search me-2" type="search" placeholder="Пошук манги" aria-label="Search" name="q" autocomplete="off">
+              <input type="hidden" name="type" value="title">
+              <button class="btn btn-outline-light search-submit ml-2" type="submit">Пошук</button>
+            </form>
+          </div>
+        </div>
         <ul class="navbar-nav ms-auto burger-menu">
-          <li th:if="${#authorization.expression('isAuthenticated()')}"  class="nav-item dropdown">
+          <li th:if="${#authorization.expression('isAuthenticated()')}" class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <img th:src="@{${userImageUrl}}" alt="User Image" class="user-image">
             </a>
@@ -63,14 +82,12 @@
             </ul>
           </li>
           <li class="nav-item" th:unless="${#authorization.expression('isAuthenticated()')}">
-            <a th:href="@{/login}" class="nav-link">Логін</a>
-          </li>
-          <li class="nav-item" th:unless="${#authorization.expression('isAuthenticated()')}">
-            <a th:href="@{/registration}" class="nav-link">Зареєструватись</a>
+            <a th:href="@{/login}" class="nav-link mr-5">
+              <i class="fas fa-user mr-5"></i> Увійти
+            </a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
-
 </div>
