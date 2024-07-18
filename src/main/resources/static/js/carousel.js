@@ -41,19 +41,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextBtn = document.querySelector('.genre-control.next');
     let currentIndex = 0;
 
-    // Обновляет позицию карусели, сдвигая её влево на основании текущего индекса
     function updateCarousel() {
-        const slideWidth = slides[0].offsetWidth; // Ширина одного слайда
+        const slideWidth = slides[0].offsetWidth;
         wrapper.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
     }
 
-    // Переходит к следующему слайду
     function showNextSlide() {
         currentIndex = (currentIndex + 1) % slides.length;
         updateCarousel();
     }
 
-    // Переходит к предыдущему слайду
     function showPrevSlide() {
         currentIndex = (currentIndex - 1 + slides.length) % slides.length;
         updateCarousel();
@@ -62,6 +59,5 @@ document.addEventListener('DOMContentLoaded', function() {
     nextBtn.addEventListener('click', showNextSlide);
     prevBtn.addEventListener('click', showPrevSlide);
 
-    // Обновляем карусель при загрузке страницы
     updateCarousel();
 });

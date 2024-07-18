@@ -29,26 +29,21 @@ public class MainController {
     private GenreRepo genreRepo;
     @GetMapping("/")
     public String home(Model model) {
-        // Получение списка новых манг
         List<Manga> NewMangaList = mangaRepo.findMangasByIdDesc().stream().limit(8).collect(Collectors.toList());
 
-        // Получение всех жанров
         List<Genre> allGenres = genreRepo.findAll();
         Map<String, List<Manga>> mangaByGenre = new LinkedHashMap<>();
         int maxGenres = 3;
         int maxResults = 9;
 
-        // Проход по жанрам
         for (Genre genre : allGenres) {
             if (mangaByGenre.size() >= maxGenres) {
                 break;
             }
 
-            // Получение манг по жанру
             List<Manga> allMangaList = mangaRepo.findMangasByGenreName(genre.getGenreName(), PageRequest.of(0, maxResults * 3).withSort(Sort.by(Sort.Order.desc("id"))));
             List<Manga> mangaList = new ArrayList<>();
 
-            // Собираем манги без фильтрации на уникальность
             for (Manga manga : allMangaList) {
                 mangaList.add(manga);
                 if (mangaList.size() >= maxResults) {
@@ -61,20 +56,57 @@ public class MainController {
             }
         }
 
-        // Удаление жанров, в которых меньше maxResults манг
         mangaByGenre.entrySet().removeIf(entry -> entry.getValue().size() < maxResults);
 
-        // Обновление статуса манг
         for (Map.Entry<String, List<Manga>> entry : mangaByGenre.entrySet()) {
             for (Manga manga : entry.getValue()) {
                 manga.setMangaStatus(mangaService.getMangaTranslatedStatus(manga.getMangaStatus()));
             }
         }
 
-        // Добавление атрибутов в модель
         model.addAttribute("NewMangaList", NewMangaList);
         model.addAttribute("mangaByGenre", mangaByGenre);
         return "main/home";
+        /*
+        List<Manga> NewMangaList = mangaRepo.findMangasByIdDesc().stream().limit(8).collect(Collectors.toList());
+        List<Genre> allGenres = genreRepo.findAll();
+        Map<String, List<Manga>> mangaByGenre = new LinkedHashMap<>();
+        Set<Long> addedMangaIds = new HashSet<>();
+        int maxGenres = 3;
+        int maxResults = 5;
+
+        for (Genre genre : allGenres) {
+            if (mangaByGenre.size() >= maxGenres) {
+                break;
+            }
+
+            List<Manga> allMangaList = mangaRepo.findMangasByGenreName(genre.getGenreName(), PageRequest.of(0, maxResults * 3).withSort(Sort.by(Sort.Order.desc("id"))));
+            List<Manga> uniqueMangaList = new ArrayList<>();
+
+            for (Manga manga : allMangaList) {
+                if (addedMangaIds.add(manga.getId())) {
+                    uniqueMangaList.add(manga);
+                    if (uniqueMangaList.size() >= maxResults) {
+                        break;
+                    }
+                }
+            }
+
+            if (!uniqueMangaList.isEmpty()) {
+                mangaByGenre.put(genre.getGenreName(), uniqueMangaList);
+            }
+        }
+        mangaByGenre.entrySet().removeIf(entry -> entry.getValue().size() < maxResults);
+        for (Map.Entry<String, List<Manga>> entry : mangaByGenre.entrySet()) {
+            for (Manga manga : entry.getValue()) {
+                    manga.setMangaStatus(mangaService.getMangaTranslatedStatus(manga.getMangaStatus()));
+            }
+        }
+
+        model.addAttribute("NewMangaList", NewMangaList);
+        model.addAttribute("mangaByGenre", mangaByGenre);
+        return "main/home";
+        */
     }
 
     @GetMapping("/about")
