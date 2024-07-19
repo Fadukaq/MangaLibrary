@@ -342,19 +342,22 @@ body {
         object-fit: cover;
     }
     .manga-title {
-        font-size: 14px;
+        font-size: 16px;
     }
     .manga-author {
-        font-size: 12px;
+        font-size: 14px;
+    }
+    .manga-status{
+        font-size: 13px;
     }
 }
 
-@media (max-width: 754px) {
+@media (max-width: 830px) {
     .containerGenre {
         min-width: 455px;
         max-width: 455px;
-        min-height: 733px;
-        max-height: 733px;
+        min-height: 633px;
+        max-height: 633px;
         padding: 0 5px;
     }
     .manga-grid {
@@ -372,10 +375,13 @@ body {
         object-fit: cover;
     }
     .manga-title {
-        font-size: 12px;
+        font-size: 15px;
     }
     .manga-author {
-        font-size: 10px;
+        font-size: 13px;
+    }
+    .manga-status{
+        font-size: 13px;
     }
     .manga-grid .manga-card:last-child {
         display: none;
