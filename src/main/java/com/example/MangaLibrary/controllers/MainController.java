@@ -5,6 +5,8 @@ import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.repo.GenreRepo;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.service.MangaService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,52 +31,33 @@ public class MainController {
     private GenreRepo genreRepo;
     @GetMapping("/")
     public String home(Model model) {
-        List<Manga> NewMangaList = mangaRepo.findMangasByIdDesc().stream().limit(8).collect(Collectors.toList());
+        List<Manga> newMangaList = mangaRepo.findMangasByIdDesc().stream().limit(8).collect(Collectors.toList());
 
-        List<Genre> allGenres = genreRepo.findAll();
-        Map<String, List<Manga>> mangaByGenre = new LinkedHashMap<>();
-        int maxGenres = 3;
-        int maxResults = 9;
+        List<Map<String, Object>> newMangaListMap = new ArrayList<>();
+        for (Manga manga : newMangaList) {
+            Map<String, Object> mangaMap = new HashMap<>();
+            mangaMap.put("id", manga.getId());
+            mangaMap.put("mangaName", manga.getMangaName());
+            mangaMap.put("mangaPosterImg", manga.getMangaPosterImg());
 
-        for (Genre genre : allGenres) {
-            if (mangaByGenre.size() >= maxGenres) {
-                break;
-            }
+            List<Map<String, Object>> chaptersMap = manga.getChapter().stream()
+                    .map(chapter -> {
+                        Map<String, Object> chapterMap = new HashMap<>();
+                        chapterMap.put("id", chapter.getId());
+                        chapterMap.put("chapterTitle", chapter.getTitle());
+                        return chapterMap;
+                    })
+                    .collect(Collectors.toList());
+            mangaMap.put("chapters", chaptersMap);
 
-            List<Manga> allMangaList = mangaRepo.findMangasByGenreName(genre.getGenreName(), PageRequest.of(0, maxResults * 3).withSort(Sort.by(Sort.Order.desc("id"))));
-            List<Manga> mangaList = new ArrayList<>();
-
-            for (Manga manga : allMangaList) {
-                mangaList.add(manga);
-                if (mangaList.size() >= maxResults) {
-                    break;
-                }
-            }
-
-            if (!mangaList.isEmpty()) {
-                mangaByGenre.put(genre.getGenreName(), mangaList);
-            }
+            newMangaListMap.add(mangaMap);
         }
 
-        mangaByGenre.entrySet().removeIf(entry -> entry.getValue().size() < maxResults);
-
-        for (Map.Entry<String, List<Manga>> entry : mangaByGenre.entrySet()) {
-            for (Manga manga : entry.getValue()) {
-                manga.setMangaStatus(mangaService.getMangaTranslatedStatus(manga.getMangaStatus()));
-            }
-        }
-
-        model.addAttribute("NewMangaList", NewMangaList);
-        model.addAttribute("mangaByGenre", mangaByGenre);
-        return "main/home";
-        /*
-        List<Manga> NewMangaList = mangaRepo.findMangasByIdDesc().stream().limit(8).collect(Collectors.toList());
         List<Genre> allGenres = genreRepo.findAll();
         Map<String, List<Manga>> mangaByGenre = new LinkedHashMap<>();
         Set<Long> addedMangaIds = new HashSet<>();
         int maxGenres = 3;
-        int maxResults = 5;
-
+        int maxResults = 2; //Should 8-9
         for (Genre genre : allGenres) {
             if (mangaByGenre.size() >= maxGenres) {
                 break;
@@ -97,17 +80,21 @@ public class MainController {
             }
         }
         mangaByGenre.entrySet().removeIf(entry -> entry.getValue().size() < maxResults);
+
         for (Map.Entry<String, List<Manga>> entry : mangaByGenre.entrySet()) {
-            for (Manga manga : entry.getValue()) {
-                    manga.setMangaStatus(mangaService.getMangaTranslatedStatus(manga.getMangaStatus()));
+            System.out.println("Genre: " + entry.getKey() + ", Count: " + entry.getValue().size());
+        }
+        for (List<Manga> mangaList : mangaByGenre.values()) {
+            for (Manga manga : mangaList) {
+                manga.setMangaStatus(mangaService.getMangaTranslatedStatus(manga.getMangaStatus()));
             }
         }
 
-        model.addAttribute("NewMangaList", NewMangaList);
+        model.addAttribute("NewMangaListMap", newMangaListMap);
         model.addAttribute("mangaByGenre", mangaByGenre);
         return "main/home";
-        */
     }
+
 
     @GetMapping("/about")
     public String about(Model model)

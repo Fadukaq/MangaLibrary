@@ -1,63 +1,72 @@
 document.addEventListener('DOMContentLoaded', function() {
-        const carouselElement = document.getElementById('mangaCarousel');
-        const desktopCarousel = document.getElementById('desktopCarousel');
-        const mobileCarousel = document.getElementById('mobileCarousel');
-        let carousel;
+    const getItemsPerSlide = () => window.innerWidth < 999 ? 1 : 4;
 
-        const initializeCarousel = () => {
-            if (carousel) {
-                carousel.dispose();
-            }
-            carousel = new bootstrap.Carousel(carouselElement, {
-                wrap: true,
-                interval: 9999999999
+    const updateCarousel = () => {
+        const itemsPerSlide = getItemsPerSlide();
+        const mangaList = window.mangaList || [];
+
+        if (!mangaList || mangaList.length === 0) {
+            console.error('No manga data found.');
+            return;
+        }
+
+        const chunkedMangaList = [];
+        for (let i = 0; i < mangaList.length; i += itemsPerSlide) {
+            chunkedMangaList.push(mangaList.slice(i, i + itemsPerSlide));
+        }
+
+        const carouselInner = document.getElementById('carouselInner');
+        carouselInner.innerHTML = '';
+
+        chunkedMangaList.forEach((chunk, index) => {
+            const carouselItem = document.createElement('div');
+            carouselItem.classList.add('carousel-item');
+            if (index === 0) carouselItem.classList.add('active');
+
+            const rowDiv = document.createElement('div');
+            rowDiv.classList.add('row', 'justify-content-center');
+            carouselItem.appendChild(rowDiv);
+
+            chunk.forEach(manga => {
+                const colDiv = document.createElement('div');
+                colDiv.classList.add('col-12', 'col-sm-6', 'col-md-4', 'col-lg-3', 'manga-card', 'new-manga-card', 'transparent-container');
+
+                const mangaLink = document.createElement('a');
+                mangaLink.href = `/manga/${manga.id}`;
+                mangaLink.classList.add('manga-link');
+
+                const mangaImage = document.createElement('div');
+                mangaImage.classList.add('manga-image');
+
+                const mangaCover = document.createElement('img');
+                mangaCover.src = manga.mangaPosterImg;
+                mangaCover.alt = 'Manga Cover';
+                mangaCover.classList.add('manga-cover');
+
+                const mangaInfo = document.createElement('div');
+                mangaInfo.classList.add('manga-info');
+
+                const mangaTitle = document.createElement('h3');
+                mangaTitle.classList.add('manga-title');
+                mangaTitle.textContent = manga.mangaName;
+
+                mangaInfo.appendChild(mangaTitle);
+                mangaImage.appendChild(mangaCover);
+                mangaImage.appendChild(mangaInfo);
+                mangaLink.appendChild(mangaImage);
+                colDiv.appendChild(mangaLink);
+                rowDiv.appendChild(colDiv);
             });
-        };
 
-        const updateCarousel = () => {
-            const isMobile = window.matchMedia("(max-width: 768px)").matches;
+            carouselInner.appendChild(carouselItem);
+        });
 
-            if (isMobile) {
-                desktopCarousel.style.display = 'none';
-                mobileCarousel.style.display = 'block';
-                carouselElement.innerHTML = mobileCarousel.innerHTML;
-            } else {
-                desktopCarousel.style.display = 'block';
-                mobileCarousel.style.display = 'none';
-                carouselElement.innerHTML = desktopCarousel.innerHTML;
-            }
-
-            initializeCarousel();
-        };
-
-        updateCarousel();
-        window.addEventListener('resize', updateCarousel);
-    });
-
-document.addEventListener('DOMContentLoaded', function() {
-    const wrapper = document.querySelector('.genre-wrapper');
-    const slides = document.querySelectorAll('.genre-slide');
-    const prevBtn = document.querySelector('.genre-control.prev');
-    const nextBtn = document.querySelector('.genre-control.next');
-    let currentIndex = 0;
-
-    function updateCarousel() {
-        const slideWidth = slides[0].offsetWidth;
-        wrapper.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
-    }
-
-    function showNextSlide() {
-        currentIndex = (currentIndex + 1) % slides.length;
-        updateCarousel();
-    }
-
-    function showPrevSlide() {
-        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-        updateCarousel();
-    }
-
-    nextBtn.addEventListener('click', showNextSlide);
-    prevBtn.addEventListener('click', showPrevSlide);
+        new bootstrap.Carousel(document.querySelector('#mangaCarousel'), {
+            interval: 99999999,
+            wrap: true
+        });
+    };
 
     updateCarousel();
+    window.addEventListener('resize', updateCarousel);
 });

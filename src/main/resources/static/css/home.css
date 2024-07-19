@@ -1,10 +1,10 @@
 .container {
-    max-width: 1800px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 15px;
 }
 .containerGenre {
-    max-width: 1600px;
+    max-width: 1048px;
     margin: 0 auto;
     padding: 0 15px;
 }
@@ -127,16 +127,6 @@ body {
         .carousel-inner {
             overflow: hidden;
         }
-        .carousel-control-prev,
-        .carousel-control-next {
-            width: 5%;
-        }
-
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            background-color: rgba(0, 0, 0, 0.6);
-            border-radius: 10%;
-        }
 
         .manga-card {
             padding: 0 10px;
@@ -147,18 +137,8 @@ body {
             height: auto;
         }
 
-        .carousel-inner {
-            perspective: 1000px;
-        }
-
         .genre-carousel {
             position: relative;
-        }
-
-        .genre-wrapper {
-            display: flex;
-            transition: transform 0.5s ease;
-            width: 100%;
         }
 
         .genre-slide {
@@ -166,30 +146,39 @@ body {
             width: 100%;
         }
 
-        .genre-control {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(160, 103, 255, 0.5);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            z-index: 10;
-        }
-        .genre-control:hover {
-            background: rgba(160, 103, 255, 0.8);
-        }
-        .genre-control.prev {
-            left: -65px;
-        }
-        .genre-control.next {
-            right: -65px;
-        }
-        .manga-grid {
+.genre-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: white;
+    border: none;
+    z-index: 10;
+}
+
+@media (max-width: 768px) {
+    .genre-control {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+.manga-grid {
+            max-width:1024px;
+            min-width:1024px;
+            max-height:650px;
+            min-height:650px;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
             gap: 20px;
+        }
+        .manga-card.featured img {
+            width:375px;
         }
 
         .manga-card.featured {
@@ -224,28 +213,134 @@ body {
                 right: 5px;
             }
         }
-.carousel-control-prev,.carousel-control-next {
+
+.new-manga-control-prev {
+    left: 80px;
+    top: 45%;
+    transform: none;
+}
+
+.new-manga-control-next {
+    right: 80px;
+    top: 45%;
+    transform: none;
+}
+.newManga-section {
+    color: #ffffff;
+    padding: 20px;
+    margin-bottom: 40px;
+}
+
+.new-manga-card {
+    background-color: rgba(37, 37, 37, 0.8);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.new-manga-card .manga-image {
+    position: relative;
+    overflow: hidden;
+    padding-top: 150%;
+}
+
+.new-manga-card .manga-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.new-manga-card .manga-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(37, 37, 37, 0.7);
+    padding: 10px;
+    color: #ffffff;
+}
+
+.new-manga-card .manga-title {
+    font-size: 16px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.new-manga-card .manga-author {
+    font-size: 14px;
+    margin: 5px 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+@media (max-width: 999px) {
+    .desktop-slides {
+        display: none;
+    }
+    .mobile-slides {
+        display: block;
+    }
+}
+
+@media (min-width: 1000px) {
+    .desktop-slides {
+        display: block;
+    }
+    .mobile-slides {
+        display: none;
+    }
+}
+.carousel-control-prev, .carousel-control-next {
     position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 40px; /* adjust the width to your liking */
-    height: 40px; /* adjust the height to your liking */
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.5);
     border: none;
     cursor: pointer;
-    margin: 0; /* reset margin */
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
 }
 
 .carousel-control-prev {
-    left: 10px; /* adjust the margin to your liking */
-    top: 50%; /* keep this to center vertically */
-    transform: none; /* remove this */
+    left: -90px;
 }
 
 .carousel-control-next {
-    right: 10px; /* adjust the margin to your liking */
-    top: 50%; /* keep this to center vertically */
-    transform: none; /* remove this */
+    right: -90px;
+}
+
+@media (max-width: 1500px) {
+    .carousel-control-prev {
+        left: -15px;
+    }
+
+    .carousel-control-next {
+        right: -15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-control-prev, .carousel-control-next {
+        width: 30px;
+        height: 30px;
+    }
+
+    .carousel-control-prev {
+        left: 5px;
+    }
+
+    .carousel-control-next {
+        right: 5px;
+    }
 }

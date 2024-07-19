@@ -16,70 +16,30 @@
 <header th:insert="~{blocks/header :: header}"></header>
 <div class="container mt-5 mb-5">
     <div class="newManga-section text-center">
-        <h2>Нові манги на сайті</h2>
+    <h2>Нові манги на сайті</h2>
         <div id="mangaCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner" >
-                <div id="desktopCarousel">
-                    <div th:each="chunk, chunkStat : ${#numbers.sequence(0, T(java.lang.Math).ceil(NewMangaList.size() / 4) - 1)}">
-                        <div class="carousel-item" th:classappend="${chunkStat.index == 0} ? ' active'">
-                            <div class="row justify-content-center">
-                                <div class="col-3 manga-card new-manga-card transparent-container" th:each="manga, iterStat : ${NewMangaList.subList(chunk * 4, T(java.lang.Math).min((chunk + 1) * 4, NewMangaList.size()))}">
-                                    <a th:href="@{/manga/{id}(id=${manga.id})}" class="manga-link">
-                                        <div class="manga-image" style="position: relative;">
-                                            <img th:src="${manga.mangaPosterImg}" alt="Manga Cover" class="manga-cover">
-                                            <div class="manga-info" style="background-color: rgba(37, 37, 37, 0.7); position: absolute; border-radius: 10px; bottom: 5px; left: 10px; right: 10px; color: #ffffff;">
-                                                <h3 class="manga-title" th:text="${manga.mangaName}" style="font-size: 18px; margin: 0;"></h3>
-                                                <h3 class="manga-author" th:text="${manga.author.name}" style="font-size: 14px; margin: 0;"></h3>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="mobileCarousel" style="display: none;">
-                    <div th:each="chunk, chunkStat : ${#numbers.sequence(0, T(java.lang.Math).ceil(NewMangaList.size() / 1) - 1)}">
-                        <div class="carousel-item" th:classappend="${chunkStat.index == 0} ? ' active'">
-                            <div class="row justify-content-center">
-                                <div class="col-3 manga-card new-manga-card transparent-container" th:each="manga, iterStat : ${NewMangaList.subList(chunk * 1, T(java.lang.Math).min((chunk + 1) * 1, NewMangaList.size()))}">
-                                    <a th:href="@{/manga/{id}(id=${manga.id})}" class="manga-link">
-                                        <div class="manga-image" style="position: relative;">
-                                            <img th:src="${manga.mangaPosterImg}" alt="Manga Cover" class="manga-cover">
-                                            <div class="manga-info" style="background-color: rgba(37, 37, 37, 0.7); position: absolute; border-radius: 10px; bottom: 5px; left: 10px; right: 10px; color: #ffffff;">
-                                                <h3 class="manga-title" th:text="${manga.mangaName}" style="font-size: 18px; margin: 0;"></h3>
-                                                <h3 class="manga-author" th:text="${manga.author.name}" style="font-size: 14px; margin: 0;"></h3>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="carouselInner" class="carousel-inner"></div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#mangaCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#mangaCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#mangaCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#mangaCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
     </div>
 </div>
-<div class="containerGenre">
-    <div class="genre-carousel">
-        <button class="genre-control prev">&lt;</button>
-        <div class="genre-wrapper">
-            <div class="genre-slide" th:each="entry : ${mangaByGenre}">
+<div class="containerGenre mb-5">
+    <div id="genreCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item genre-slide" th:classappend="${iterStat.first ? ' active' : ''}" th:each="entry, iterStat : ${mangaByGenre}">
                 <h2 class="genre-title">
                     <span class="genre-label" th:text="${entry.key}"></span>
                     <a th:href="@{'/search?q=' + ${entry.key} + '&type=genre'}" class="genre-link"> Більше -></a>
                 </h2>
                 <div class="manga-grid">
-                    <div th:class="${mangaStat.first} ? 'manga-card featured' : 'manga-card'"
+                    <div th:class="${mangaStat.first} ? 'manga-card featured first-manga' : 'manga-card'"
                             th:each="manga, mangaStat : ${entry.value}">
                         <a th:href="@{/manga/{id}(id=${manga.id})}">
                             <img th:src="${manga.mangaPosterImg}" alt="Manga Cover" class="manga-cover">
@@ -93,7 +53,14 @@
                 </div>
             </div>
         </div>
-        <button class="genre-control next">&gt;</button>
+        <button class="carousel-control-prev genre-control" type="button" data-bs-target="#genreCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next genre-control" type="button" data-bs-target="#genreCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
@@ -102,5 +69,8 @@
 <script src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
 <script src="/js/carousel.js"></script>
+<script th:inline="javascript">
+    var mangaList = /*[[${NewMangaListMap}]]*/ [];
+</script>
 </body>
 </html>
