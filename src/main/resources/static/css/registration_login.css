@@ -1,0 +1,15 @@
+.form-control {
+    color: white;
+    }
+.form-control{
+ background-color: #302b3b;
+}
+.form-control:focus{
+    color:white;
+    background-color: #302b3b;
+    border-color: #5000ff;
+    box-shadow: 0 0 0 2px #5000ff;
+}
+.form-control::placeholder {
+    color: #999;
+}

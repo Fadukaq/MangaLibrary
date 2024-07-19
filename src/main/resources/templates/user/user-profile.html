@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
+    <link rel="stylesheet" href="/css/user-profile.css">
+    <link rel="stylesheet" href="/css/form-styles.css">
+    <link rel="stylesheet" href="/css/loader.css">
+</head>
+<body class="loading">
+<div th:insert="~{blocks/loader :: loader}"></div>
+<header th:insert="~{blocks/header :: header}"></header>
+<input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
+<div class="container  mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title">User Profile</h5>
+                </div>
+                <div class="card-body bg-dark text-white d-flex">
+                    <div class="d-flex align-items-center">
+                        <img th:src="${user.profilePicture}" alt="User Profile Picture" class="profile-picture">
+                        <div class="ml-3">
+                            <p class="user-card-text"><strong>Username:</strong> <span th:text="${user.userName}"></span></p>
+                            <p class="user-card-text"><strong>UserRole:</strong> <span th:text="${user.userRole}"></span></p>
+                            <p class="user-card-text"><strong>About:</strong> <span th:text="${user.about}"></span></p>
+                        </div>
+                    </div>
+                    <div  th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.principal.username == user.userName})"
+                            class="position-absolute end-0 mt-2 me-3">
+                        <a th:href="@{'/profile/edit/' + ${user.id}}" class="btn btn-light">Edit</a>
+                    </div>
+                </div>
+                <div class="container mt-2">
+                    <ul class="nav nav-tabs" id="mainTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="lists-tab" data-toggle="tab" href="#lists" role="tab" aria-controls="lists" aria-selected="true">Списки</a>
+                        </li>
+                        <!--
+                        <li class="nav-item">
+                            <a class="nav-link" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false">Друзі</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="notifications-tab" data-toggle="tab" href="#notifications" role="tab" aria-controls="notifications" aria-selected="false">Повідомлення</a>
+                        </li>!-->
+                    </ul>
+                    <div class="tab-content" id="mainTabContent">
+                        <div class="tab-pane tab-lists fade show active" id="lists" role="tabpanel" aria-labelledby="lists-tab">
+                            <div class="search-container mb-3">
+                                <input type="text" id="search" class="form-control" placeholder="Пошук в поточному списку...">
+                            </div>
+                            <p class="text-center" id="noResultsMessage" style="display: none; color: #e91e63;">Немає результатів</p>
+                            <ul class="nav nav-pills flex-column flex-sm-row mt-3" id="listsSubTab" role="tablist">
+                                <li class="nav-item flex-sm-fill text-sm-center">
+                                    <a class="nav-link active" id="reading-tab" href="#reading" data-toggle="pill" role="tab" aria-controls="reading" aria-selected="true">Читаю</a>
+                                </li>
+                                <li class="nav-item flex-sm-fill text-sm-center">
+                                    <a class="nav-link" id="plan-tab" href="#plan" data-toggle="pill" role="tab" aria-controls="plan" aria-selected="false">Буду читати</a>
+                                </li>
+                                <li class="nav-item flex-sm-fill text-sm-center">
+                                    <a class="nav-link" id="dropped-tab" href="#dropped" data-toggle="pill" role="tab" aria-controls="dropped" aria-selected="false">Припинив читати</a>
+                                </li>
+                                <li class="nav-item flex-sm-fill text-sm-center">
+                                    <a class="nav-link" id="completed-tab" href="#recited" data-toggle="pill" role="tab" aria-controls="completed" aria-selected="false">Прочитав</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content mt-3" id="listsSubTabContent">
+                                <div class="tab-pane fade" id="reading" role="tabpanel" aria-labelledby="reading-tab">
+                                    <div th:if="${#lists.isEmpty(readingManga)}">
+                                        <p class="isEmptyMessage">Список 'Читаю' пустий</p>
+                                    </div>
+                                    <div th:unless="${#lists.isEmpty(readingManga)}" th:each="manga : ${readingManga}">
+                                        <div class="card_manga_container position-relative">
+                                            <a th:href="@{/manga/{id}(id=${manga.id})}">
+                                                <div class="card_manga mb-3">
+                                                    <div class="row no-gutters">
+                                                        <div class="col-md-2">
+                                                            <img th:src="${manga.mangaPosterImg}" class="card-img" alt="...">
+                                                        </div>
+                                                        <div class="col-md-10">
+                                                            <div class="card-body">
+                                                                <div class="top-right">
+                                                                    <img class="evoStar" src="/images/icons/star_icon.png" alt="">
+                                                                    <span th:text="8"></span>
+                                                                </div>
+                                                                <h5 class="card-title" th:text="${#strings.length(manga.mangaName) > 40 ? #strings.substring(manga.mangaName, 0, 40) + '...' : manga.mangaName}"></h5>
+                                                                <span class="card-text" style="font-size:18px; font-weight: bold; color:#BCA3D3" th:text="${manga.author.name}"></span>
+                                                                <p class="card-text" th:text="${#strings.length(manga.mangaDescription) > 124 ? #strings.substring(manga.mangaDescription, 0, 124) + '...' : manga.mangaDescription}"></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <form th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.principal.username == user.userName})"
+                                                            class="position-absolute top-0 end-0 mt-2 custom-mr"
+                                                            th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
+                                                            method="post">
+                                                        <input type="hidden" name="panel" th:value="'#reading'" />
+                                                        <button class="btn btn-danger" type="submit">X</button>
+                                                    </form>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="plan" role="tabpanel" aria-labelledby="plan-tab">
+                                    <div th:if="${#lists.isEmpty(wantToReadManga)}">
+                                        <p class="isEmptyMessage">Список 'Буду читати' пустий</p>
+                                    </div>
+                                    <div th:unless="${#lists.isEmpty(wantToReadManga)}" th:each="manga : ${wantToReadManga}">
+                                        <a th:href="@{/manga/{id}(id=${manga.id})}">
+                                            <div class="card_manga mb-3">
+                                                <div class="row no-gutters">
+                                                    <div class="col-md-2">
+                                                        <img th:src="${manga.mangaPosterImg}" class="card-img" alt="...">
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <div class="card-body">
+                                                            <div class="top-right">
+                                                                <img class="evoStar" src="/images/icons/star_icon.png" alt="">
+                                                                <span th:text="8"></span>
+                                                            </div>
+                                                            <h5 class="card-title" th:text="${#strings.length(manga.mangaName) > 40 ? #strings.substring(manga.mangaName, 0, 40) + '...' : manga.mangaName}"></h5>
+                                                            <span class="card-text" style="font-size:18px; font-weight: bold; color:#BCA3D3" th:text="${manga.author.name}"></span>
+                                                            <p class="card-text" th:text="${#strings.length(manga.mangaDescription) > 124 ? #strings.substring(manga.mangaDescription, 0, 124) + '...' : manga.mangaDescription}"></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <form th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.principal.username == user.userName})"
+                                                        class="position-absolute top-0 end-0 mt-2 custom-mr"
+                                                        th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
+                                                        method="post">
+                                                    <input type="hidden" name="panel" th:value="'#plan'" />
+                                                    <button class="btn btn-danger" type="submit">X</button>
+                                                </form>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="dropped" role="tabpanel" aria-labelledby="dropped-tab">
+                                    <div th:if="${#lists.isEmpty(stoppedReadingManga)}">
+                                        <p class="isEmptyMessage">Список 'Припинив читати' пустий</p>
+                                    </div>
+                                    <div th:unless="${#lists.isEmpty(stoppedReadingManga)}" th:each="manga : ${stoppedReadingManga}">
+                                        <a th:href="@{/manga/{id}(id=${manga.id})}">
+                                            <div class="card_manga mb-3">
+                                                <div class="row no-gutters">
+                                                    <div class="col-md-2">
+                                                        <img th:src="${manga.mangaPosterImg}" class="card-img" alt="...">
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <div class="card-body">
+                                                            <div class="top-right">
+                                                                <img class="evoStar" src="/images/icons/star_icon.png" alt="">
+                                                                <span th:text="8"></span>
+                                                            </div>
+                                                            <h5 class="card-title" th:text="${#strings.length(manga.mangaName) > 40 ? #strings.substring(manga.mangaName, 0, 40) + '...' : manga.mangaName}"></h5>
+                                                            <span class="card-text" style="font-size:18px; font-weight: bold; color:#BCA3D3" th:text="${manga.author.name}"></span>
+                                                            <p class="card-text" th:text="${#strings.length(manga.mangaDescription) > 124 ? #strings.substring(manga.mangaDescription, 0, 124) + '...' : manga.mangaDescription}"></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <form th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.principal.username == user.userName})"
+                                                        class="position-absolute top-0 end-0 mt-2 custom-mr"
+                                                        th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
+                                                        method="post">
+                                                    <input type="hidden" name="panel" th:value="'#dropped'" />
+                                                    <button class="btn btn-danger" type="submit">X</button>
+                                                </form>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="recited" role="tabpanel" aria-labelledby="recited-tab">
+                                    <div th:if="${#lists.isEmpty(recitedManga)}">
+                                        <p class="isEmptyMessage">Список 'Прочитав' пустий</p>
+                                    </div>
+                                    <div th:unless="${#lists.isEmpty(recitedManga)}" th:each="manga : ${recitedManga}">
+                                        <a th:href="@{/manga/{id}(id=${manga.id})}">
+                                            <div class="card_manga mb-3">
+                                                <div class="row no-gutters">
+                                                    <div class="col-md-2">
+                                                        <img th:src="${manga.mangaPosterImg}" class="card-img" alt="...">
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <div class="card-body">
+                                                            <div class="top-right">
+                                                                <img class="evoStar" src="/images/icons/star_icon.png" alt="">
+                                                                <span th:text="8"></span>
+                                                            </div>
+                                                            <h5 class="card-title" th:text="${#strings.length(manga.mangaName) > 40 ? #strings.substring(manga.mangaName, 0, 40) + '...' : manga.mangaName}"></h5>
+                                                            <span class="card-text" style="font-size:18px; font-weight: bold; color:#BCA3D3" th:text="${manga.author.name}"></span>
+                                                            <p class="card-text" th:text="${#strings.length(manga.mangaDescription) > 124 ? #strings.substring(manga.mangaDescription, 0, 124) + '...' : manga.mangaDescription}"></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <form th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.principal.username == user.userName})"
+                                                        class="position-absolute top-0 end-0 mt-2 custom-mr"
+                                                        th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
+                                                        method="post">
+                                                    <input type="hidden" name="panel" th:value="'#recited'" />
+                                                    <button class="btn btn-danger" type="submit">X</button>
+                                                </form>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                        <div class="tab-pane tab-friends fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
+                            <p>Friends</p>
+                        </div>
+                        <div class="tab-pane tab-notifications fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
+                            <p>Notification</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:insert="~{/blocks/footer :: footer}"></footer>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/burger-menu.js"></script><script src="/js/loadFirstListUser.js"></script>
+<script src="/js/loader-spinner.js"></script>
+<script src="/js/searchMangaInList.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

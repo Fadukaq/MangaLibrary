@@ -1,102 +1,93 @@
-<div th:fragment="header">
-  <style>
-    body {
-      background-color: #2b2a2a;
-      color: white;
-    }
-
-    .nav-link:hover {
-      color: white !important;
-      border-radius: 8px;
-      background-color: #522878;
-    }
-
-    .form-control-search {
-  border: 1px solid #2f0296;
-  border-radius: 0.25rem;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: white;
-  background-color: #302b3b;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-control-search:hover {
-  border-color: #4e00ff;
-}
-
-.form-control-search:focus {
-  color: white;
-  background-color: #302b3b;
-  border-color: #290085;
-  outline: none;
-    box-shadow: 0 0 0 3px #5000ff;
-}
-
-.form-control-search:valid {
-    color: white; /* Цвет текста */
-    background-color: #302b3b; /* Фоновый цвет */
-}
-
-.form-control-search::placeholder {
-  color: #999;
-}
-    .custom-btn {
-      background-color: #7c1fff;
-      color: #ffffff;
-      border: 1px solid #42009e;
-  }
-.custom-btn:hover {
-      background-color: #5d00de;
-  }
-  </style>
-
-  <nav class="py-2 bg-dark">
-    <div class="container d-flex flex-wrap bg-dark">
-      <ul class="nav me-auto">
-        <li class="nav-item">
-          <a href="/" class="nav-link link-body-emphasis px-2 text-white active" aria-current="page">Home</a>
-        </li>
-        <li class="nav-item">
-          <a href="/manga" class="nav-link link-body-emphasis text-white px-2">Mangas</a>
-        </li>
-        <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
-          <a href="/manga/add" class="nav-link link-body-emphasis text-white px-2">Add Manga</a>
-        </li>
-        <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
-          <a href="/genre/add" class="nav-link link-body-emphasis text-white px-2">Add Genre</a>
-        </li>
-        <li class="nav-item">
-          <a href="/genre-list" class="nav-link link-body-emphasis text-white px-2">Genre List</a>
-        </li>
-        <li class="nav-item">
-          <a href="/random" class="nav-link link-body-emphasis text-white px-2">Random Manga</a>
-        </li>
-        <li class="nav-item">
-          <a href="/about" class="nav-link link-body-emphasis text-white px-2">About</a>
-        </li>
-      </ul>
-      <form th:if="${#authorization.expression('isAuthenticated()')}" class="d-flex" style="margin-top: 5px; margin-right: 20px;" action="/search" method="get">
-        <input class="form-control-search" type="search" placeholder="Поиск манги" aria-label="Search" name="q" autocomplete="off">
-        <button class="btn custom-btn" style="margin-left:10px" type="submit">Поиск</button>
-      </form>
-      <ul class="nav bg-dark mt-1">
-        <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
-          <a th:href="@{/profile/{username}(username=${#authentication.principal.username})}" class="btn btn-primary text-white me-2">Profile</a>
-        </li>
-        <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
-          <form th:action="@{/logout}" method="post">
-            <button type="submit" class="btn btn-danger">Sign Out</button>
-          </form>
-        </li>
-        <li class="nav-item" th:unless="${#authorization.expression('isAuthenticated()')}">
-          <a th:href="@{/login}" class="nav-link link-body-emphasis text-white px-2">Login</a>
-        </li>
-        <li class="nav-item" th:unless="${#authorization.expression('isAuthenticated()')}">
-          <a th:href="@{/registration}" class="nav-link link-body-emphasis text-white px-2">Sign up</a>
-        </li>
-      </ul>
+<div th:fragment="header" class="fixed-header">
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
+  <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/search-form.js"></script>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">
+        <img src="/images/icons/MangaLibraryIcon.png" alt="MangaLibrary Logo" style="height: 40px;">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a href="/" class="nav-link">Головна</a>
+          </li>
+          <li class="nav-item">
+            <a href="/manga" class="nav-link">Манга</a>
+          </li>
+          <li class="nav-item dropdown" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})">
+            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Адмін меню
+            </a>
+            <ul class="dropdown-menu dropdown-menu-start">
+              <li class="nav-item">
+                <a class="dropdown-item" href="/manga/add">Добавити мангу</a>
+              </li>
+              <li class="nav-item">
+                <a class="dropdown-item" href="/author/add">Добавити автора</a>
+              </li>
+              <li class="nav-item">
+                <a class="dropdown-item" href="/genre/add">Добавити жанр</a>
+              </li>
+              <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
+                <a class="dropdown-item" href="/admin-panel">Адмін-Панель</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="/random" class="nav-link" th:if="${#authorization.expression('isAuthenticated()')}">Випадкова манга</a>
+          </li>
+          <li class="nav-item">
+            <a href="/forum" class="nav-link" th:if="${#authorization.expression('isAuthenticated()')}">Форум</a>
+          </li>
+          <li class="nav-item">
+            <a href="/news" class="nav-link" th:if="${#authorization.expression('isAuthenticated()')}">Новини</a>
+          </li>
+        </ul>
+        <div class="search-container">
+          <button class="search-toggle btn btn-outline-light" aria-label="Пошук">
+            <i class="fas fa-search"></i> Пошук
+          </button>
+          <div class="search-form-container">
+            <form th:if="${#authorization.expression('isAuthenticated()')}" class="d-flex search-form" action="/search" method="get">
+              <input class="form-control form-control-search me-2" type="search" placeholder="Пошук манги" aria-label="Search" name="q" autocomplete="off">
+              <input type="hidden" name="type" value="title">
+              <button class="btn btn-outline-light search-submit ml-2" type="submit">Пошук</button>
+            </form>
+          </div>
+        </div>
+        <ul class="navbar-nav ms-auto burger-menu">
+          <li th:if="${#authorization.expression('isAuthenticated()')}" class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img th:src="@{${userImageUrl}}" alt="User Image" class="user-image">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-start">
+              <li class="nav-item">
+                <a th:href="@{/profile/{username}(username=${#authentication.principal.username})}" class="dropdown-item">Профіль</a>
+              </li>
+              <li class="nav-item">
+                <a th:href="@{/profile/settings/{username}(username=${#authentication.principal.username})}" class="dropdown-item">Налаштування</a>
+              </li>
+              <li class="nav-item">
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                  <button type="submit" class="dropdown-item btn btn-danger">Вийти</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item" th:unless="${#authorization.expression('isAuthenticated()')}">
+            <a th:href="@{/login}" class="nav-link mr-5">
+              <i class="fas fa-user mr-5"></i> Увійти
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   </nav>
 </div>

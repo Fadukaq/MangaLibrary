@@ -9,9 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 import javax.sql.DataSource;
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -22,17 +20,25 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/registration","/manga","/activate/*", "/images/**","/css/**").permitAll()
-                        .requestMatchers("/manga/add").hasAuthority("ADMIN")
-                        .requestMatchers("/manga/edit/{id}").hasAuthority("ADMIN")
-                        .requestMatchers("/manga/delete/{id}").hasAuthority("ADMIN")
-                        .requestMatchers("/genre/add").hasAuthority("ADMIN")
-                        .requestMatchers("/genre/edit/{id}").hasAuthority("ADMIN")
-                        .requestMatchers("/genre/delete/{id}").hasAuthority("ADMIN")
+                        .requestMatchers("/", "/registration", "/manga", "/activate/*", "/reset-password", "/about", "/faq", "/contact-us", "/images/**", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/manga/add").hasAnyAuthority("ADMIN", "MangaModerator")
+                        .requestMatchers("/manga/edit/{mangaId}").hasAnyAuthority("ADMIN", "MangaModerator")
+                        .requestMatchers("/manga/delete/{mangaId}").hasAnyAuthority("ADMIN", "MangaModerator")
+                        .requestMatchers("/genre/add").hasAnyAuthority("ADMIN", "MangaModerator")
+                        .requestMatchers("/genre/edit/{genreId}").hasAnyAuthority("ADMIN", "MangaModerator")
+                        .requestMatchers("/genre/delete/{genreId}").hasAnyAuthority("ADMIN", "MangaModerator")
+                        .requestMatchers("/author/add").hasAnyAuthority("ADMIN", "MangaModerator")
+                        .requestMatchers("/author/edit/{authorId}").hasAnyAuthority("ADMIN", "MangaModerator")
+                        .requestMatchers("/author/delete/{authorId}").hasAnyAuthority("ADMIN", "MangaModerator")
+                        .requestMatchers("/manga/{mangaId}/chapter/add").hasAnyAuthority("ADMIN", "MangaModerator")
+                        .requestMatchers("/manga/{mangaId}/chapter/edit/{chapterId}").hasAnyAuthority("ADMIN", "MangaModerator")
+                        .requestMatchers("/manga/{mangaId}/chapter/delete/{chapterId}").hasAnyAuthority("ADMIN", "MangaModerator")
+                        .requestMatchers("/admin-panel").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
+                        .failureUrl("/login?error=true")
                         .defaultSuccessUrl("/manga", true)
                         .permitAll()
                 )

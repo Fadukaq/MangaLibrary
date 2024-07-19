@@ -6,8 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 public class MangaImage {
     private MultipartFile posterImage;
-
-    private List<MultipartFile> pagesImage;
+    private MultipartFile backGroundMangaImg;
     public MultipartFile getPosterImage() {
         return posterImage;
     }
@@ -16,11 +15,11 @@ public class MangaImage {
         this.posterImage = posterImage;
     }
 
-    public List<MultipartFile> getPagesImage() {
-        return pagesImage;
+    public MultipartFile getBackGroundMangaImg() {
+        return backGroundMangaImg;
     }
 
-    public void setPagesImage(List<MultipartFile> pagesImage) {
-        this.pagesImage = pagesImage;
+    public void setBackGroundMangaImg(MultipartFile backGroundMangaImg) {
+        this.backGroundMangaImg = backGroundMangaImg;
     }
 }

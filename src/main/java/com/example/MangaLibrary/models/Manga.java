@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,6 +19,7 @@ public class Manga {
     @NotEmpty(message = "Опис манги не повинно бути порожнім")
     @Size(min=10,max=2048, message = "Опис манги має складатися від 10 до 2048 символів")
     String mangaDescription;
+    String mangaStatus;
 
     @ManyToMany
     @JoinTable(
@@ -27,27 +29,28 @@ public class Manga {
     )
         private List<Genre> genres;
 
-    @NotEmpty(message = "Автор манги не повинно бути порожнім")
-    @Size(min=5,max=256, message = "Автор манги має складатися від 5 до 256 символів")
-    String mangaAuthor;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Author author;
 
     String mangaPosterImg;
 
-    String mangaPages;
+    @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Chapter> chapter = new ArrayList<>();
 
+    String mangaBackGround;
     @NotEmpty(message = "Рік релізу не повинно бути порожнім")
     private String releaseYear;
+
+    private Boolean adultContent;
 
     public Manga() {}
     public Manga(Manga manga) {
         this.mangaName = manga.getMangaName();
         this.mangaDescription = manga.getMangaDescription();
-        this.mangaAuthor = manga.getMangaAuthor();
         this.mangaPosterImg = manga.getMangaPosterImg();
-        this.mangaPages = manga.getMangaPages();
         this.releaseYear = manga.getReleaseYear();
     }
-
 
     public long getId() {
         return id;
@@ -73,14 +76,6 @@ public class Manga {
         this.mangaDescription = mangaDescription;
     }
 
-    public String getMangaAuthor() {
-        return mangaAuthor;
-    }
-
-    public void setMangaAuthor(String mangaAuthor) {
-        this.mangaAuthor = mangaAuthor;
-    }
-
     public String getMangaPosterImg() {
         return mangaPosterImg;
     }
@@ -88,15 +83,6 @@ public class Manga {
     public void setMangaPosterImg(String mangaPosterImg) {
         this.mangaPosterImg = mangaPosterImg;
     }
-
-    public String getMangaPages() {
-        return mangaPages;
-    }
-
-    public void setMangaPages(String mangaPages) {
-        this.mangaPages = mangaPages;
-    }
-
 
     public String getReleaseYear() {
         return releaseYear;
@@ -112,5 +98,45 @@ public class Manga {
 
     public void setGenres(List<Genre> genres) {
         this.genres = genres;
+    }
+
+    public String getMangaBackGround() {
+        return mangaBackGround;
+    }
+
+    public void setMangaBackGround(String mangaBackGround) {
+        this.mangaBackGround = mangaBackGround;
+    }
+
+    public Boolean getAdultContent() {
+        return adultContent;
+    }
+
+    public void setAdultContent(Boolean adultContent) {
+        this.adultContent = adultContent;
+    }
+
+    public String getMangaStatus() {
+        return mangaStatus;
+    }
+
+    public void setMangaStatus(String mangaStatus) {
+        this.mangaStatus = mangaStatus;
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
+    public List<Chapter> getChapter() {
+        return chapter;
+    }
+
+    public void setChapter(List<Chapter> chapter) {
+        this.chapter = chapter;
     }
 }

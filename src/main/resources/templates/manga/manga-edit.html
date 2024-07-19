@@ -4,12 +4,17 @@
     <title>Manga Edit</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/form-styles.css">
+    <link rel="stylesheet" href="/css/loader.css">
+    <link rel="stylesheet" href="/css/transparent-container.css">
 </head>
-<body>
+<body class="loading">
+<div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
-<div class="container mt-5">
-    <form method="POST" th:action="@{/manga/edit/{id}(id=${id})}" th:object="${mangaForm}">
+<input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
+<div class="container transparent-container mt-5 mb-5">
+    <form method="POST" th:action="@{/manga/edit/{id}(id=${id})}" th:object="${mangaForm}" enctype="multipart/form-data">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <textarea name="manga.mangaDescription" placeholder="Введіть опис манги" class="form-control" th:text="*{manga.mangaDescription}" ></textarea>
         <div style="color:red" th:if="${#fields.hasErrors('manga.mangaDescription')}" th:errors="*{manga.mangaDescription}">mangaDescription error</div>
@@ -17,9 +22,20 @@
         <input type="number" name="manga.releaseYear" placeholder="Введіть рік релізу манги(YYYY)" class="form-control" min="1902" th:max="${maxYear}" th:value="*{manga.releaseYear}" >
         <div style="color:red" th:if="${#fields.hasErrors('manga.releaseYear')}" th:errors="*{manga.releaseYear}">releaseYear error</div>
         <br>
-        <input type="text" name="manga.mangaAuthor" placeholder="Введіть автора манги" class="form-control"  th:value="*{manga.mangaAuthor}">
-        <div style="color:red" th:if="${#fields.hasErrors('manga.mangaAuthor')}" th:errors="*{manga.mangaAuthor}">mangaName error</div>
+        <div class="form-group">
+            <label>Виберіть автора манги:</label><br> <br>
+            <div class="row">
+                <div th:each="author, iterStat : ${authors}" class="col-md-4">
+                    <input type="radio" th:id="'author_' + ${author.id}" th:field="*{manga.author}" th:value="${author.id}" class="form-check-input">
+                    <label th:for="'author_' + ${author.id}" th:text="${author.name}" class="form-check-label"></label>
+                    <br th:unless="${iterStat.last}">
+                </div>
+            </div>
+        </div>
+        <div style="color:red" th:if="${#fields.hasErrors('manga.author')}"th:errors="*{manga.author}" ></div>
         <br>
+        <a style="color:white" href="/author/add">Немає нужного автора?</a>
+        <hr>
         <h4>Виберіть жанри:</h4>
         <div class="row">
             <div class="col-md-6" th:each="genre : ${genres}">
@@ -30,16 +46,36 @@
             </div>
         </div>
         <div style="color:red" th:if="${#fields.hasErrors('genres')}" th:errors="*{genres}">genres error</div>
+        <a style="color:white" href="/genre/add">Немає нужного жанру?</a>
         <br>
         <hr>
-        <button type="submit" class="btn btn-success">Редагувати мангу</button>
-        <a href="/manga" class="btn btn-primary">Повернутись</a>
+        <div class="form-check">
+            <input type="checkbox" th:field="*{manga.adultContent}" th:value="${manga.adultContent}" id="adultContent" class="form-check-input">
+            <label for="adultContent" class="form-check-label">18+</label>
+        </div>
+        <hr>
+        <label for="mangaStatus">Статус манги:</label>
+        <select class="custom-select" id="mangaStatus" name="manga.mangaStatus">
+            <option value="release" th:selected="${manga.mangaStatus == 'release'}">Реліз</option>
+            <option value="ongoing" th:selected="${manga.mangaStatus == 'ongoing'}">Онгоїнг</option>
+            <option value="completed" th:selected="${manga.mangaStatus == 'completed'}">Завершено</option>
+        </select>
+        <br>
+        <span th:if="${#fields.hasErrors('manga.mangaStatus')}" th:errors="*{manga.mangaStatus}" class="text-danger"></span>
+        <hr>
+        <p>Задній фон манги, якщо є.</p>
+        <input type="file" th:field="*{mangaImage.backGroundMangaImg}" accept="image/jpeg, image/png," multiple>
+        <br>
+        <hr>
+        <button type="submit" class="btn btn-success mt-3">Редагувати мангу</button>
+        <a th:href="@{/manga/{id}(id=${id})}" class="btn btn-primary mt-3">Повернутись</a>
     </form>
 </div>
-<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-    <div class="col-md-4 mx-5 d-flex align-items-center">
-        <span class="mb-3 mb-md-0 text-white rounded">© 2024 Company, Inc</span>
-    </div>
-</footer>
+<footer th:insert="~{/blocks/footer :: footer}"></footer>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/burger-menu.js"></script>
+<script src="/js/loader-spinner.js"></script>
+
 </body>
 </html>

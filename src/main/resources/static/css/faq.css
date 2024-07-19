@@ -1,0 +1,46 @@
+.custom-accordion .accordion-button {
+    font-size: 1.2rem;
+    font-weight: bold;
+    background-color: #8e5eff;
+    color: #fff;
+    border: none;
+}
+
+.custom-accordion .accordion-button:hover {
+    background-color: #6e3bea;
+}
+
+.custom-accordion .accordion-button.collapsed {
+    background-color: #673fe2;
+}
+
+.custom-accordion .accordion-body {
+    background-color: #342e3d;
+    color: #E91E63;
+}
+.custom-accordion .accordion-button:not(.collapsed) {
+    background-color: #5631ff;
+    color: #ffffff;
+}
+
+.custom-accordion .accordion-body {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+.accordion-body ul {
+    list-style-type: decimal;
+    margin-left:25px;
+    padding-left: 0;
+}
+
+.accordion-body ul li {
+    margin-bottom: 5px;
+}
+
+.accordion-body a {
+    text-decoration: none;
+    color: #bea9ff;
+}
+.accordion-body a:hover {
+    color: #8e5eff;
+}

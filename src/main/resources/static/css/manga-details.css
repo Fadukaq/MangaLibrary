@@ -1,18 +1,103 @@
     body {
+    background-color: #2b2a2a !important;
     overflow-x: hidden;
 }
-        .card-text a {
+    .manga-details-container {
+        background-color: rgba(33, 37, 41, 0.9);
+        color: #ffffff;
+        overflow: hidden;
+    }
+.manga-poster img{
+    border-radius: 8px;
+    border: 2px solid #8e5eff;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+    .manga-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+    }
+
+    .manga-description {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .manga-info {
+        overflow: hidden;
+    }
+
+.genre-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.link {
+    margin-top:8px;
     color: white;
     text-decoration: none;
     background-color: #522878;
     padding: 0.2em 0.4em;
     border-radius: 0.25rem;
     transition: background-color 0.3s ease;
+    display: inline-block;
 }
 
-.card-text a:hover {
-    background-color: #8636cf; /* Цвет фона при наведении */
+.link:hover {
+    background-color: #a445ff;
 }
-    hr{
-    color:#8957ff;
+
+hr {
+    height: 3px;
+    background-color: #ab59ff;
+    border: none;
+    margin: 1rem 0;
+}
+.custom-select {
+    text-align:center;
+    background-color: #343a40;
+    color: white;
+}
+.custom-select option {
+    text-align:start;
+    background-color: #393040;
+}
+.custom-select option:checked {
+    text-align: center;
+}
+.custom-select:focus {
+    border-color: #a26cff;
+    box-shadow: 0 0 0 0.2rem rgba(75, 0, 255, 0.6);
+}
+    .nav-tabs .nav-link {
+        color: #ffffff;
+        background-color: #522878;
+        border: none;
+        margin-right: 5px;
+    }
+
+    .nav-tabs .nav-link:hover {
+        background-color: #a445ff;
+    }
+
+    .nav-tabs .nav-link.active {
+        background-color: #ab59ff;
+        color: #ffffff;
+        border: none;
+    }
+
+    .tab-content {
+        background-color: rgba(35, 0, 73, 0.1);
+        padding: 20px;
+        border-radius: 0 0 8px 8px;
     }

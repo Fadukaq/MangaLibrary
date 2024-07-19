@@ -1,27 +1,104 @@
 a {
-            text-decoration: none;
-            padding: 0.2em 0.4em;
-            border-radius: 0.25rem;
-            transition: background-color 0.3s ease;
-        }
+    text-decoration: none;
+}
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid #7e55a4;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+}
+.profile-picture:hover {
+    transform: scale(1.05);
+}
+.user-card-text{
+    margin-left: 17px;
+}
 
-        a:hover {
-            background-color:#46047d;
-        }
-        .profile-picture {
-            width: 150px;  /* Adjust size as needed */
-            height: 150px; /* Adjust size as needed */
-            border-radius: 50%; /* Make it circular */
-            border: 5px solid #7e55a4; /* Add a border */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow */
-            transition: transform 0.2s; /* Smooth transition for hover effect */
-        }
-
-        /* Optional hover effect */
-        .profile-picture:hover {
-            transform: scale(1.05); /* Slightly enlarge the picture on hover */
-        }
-
-        .ml-3 {
-            margin-left: 1rem; /* Adjust spacing between the image and text */
-        }
+.nav-tabs .nav-link {
+    border: none;
+    color: #fff;
+    background-color: transparent;
+}
+.nav-tabs .nav-link.active {
+    border: none;
+    border-bottom: 3px solid #e91e63;
+    color: #e91e63;
+    background-color: transparent;
+    font-weight: bold;
+}
+.nav-pills .nav-link {
+    border: none;
+    color: #fff;
+    background-color: transparent;
+}
+.nav-pills .nav-link.active {
+    border: none;
+    border-bottom: 3px solid #7534FF;
+    color: #e91e63;
+    background-color: transparent;
+    font-weight: bold;
+}
+.tab-content {
+    background-color: #212529;
+    padding: 20px;
+    border-radius: 8px;
+    }
+.card{
+    background-color: #212529;
+}
+.card_manga {
+    position: relative;
+    width:100%;
+    border-radius: 8px;
+    background-color: #444;
+    color: #fff;
+    overflow: hidden;
+}
+.card-img
+{
+    width:100%;
+    height:100%;
+}
+.card_manga:hover {
+    transform: scale(1.02);
+    border: 2px solid #8e5eff;
+}
+.isEmptyMessage{
+    font-family: sans-serif;
+    font-size:24px;
+    text-align:center;
+    color:white;
+}
+.evoStar{
+    width: 30px;
+}
+.top-right {
+    position: absolute;
+    padding:3px;
+    top: 9px;
+    right: 5px;
+    display: flex;
+    align-items: center;
+    background-color:#6A0572;
+    border-radius: 8px;
+}
+.custom-mr{
+        margin-right: 4rem;
+}
+.top-right span{
+    font-family: sans-serif;
+}
+.tab-lists p{
+    color:white;
+}
+.tab-friends p{
+    color:white;
+}
+.tab-messages p{
+    color:white;
+}
+.tab-notifications p{
+    color:white;
+}
