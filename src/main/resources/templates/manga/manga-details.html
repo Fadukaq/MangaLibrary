@@ -9,6 +9,38 @@
     <link rel="stylesheet" href="/css/manga-details-animation.css">
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/transparent-container.css">
+    <style>
+        .carousel-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            position: static;
+            width: auto;
+            padding: 0;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10%;
+            width: 24px;
+            height: 24px;
+            background-size: 50% 50%;
+        }
+
+        .btn-link {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .btn-link:hover {
+            color: #fff;
+            opacity: 0.8;
+        }
+    </style>
     <meta name="_csrf" th:content="${_csrf.token}" />
 </head>
 <body class="loading">
@@ -149,8 +181,70 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="similar" role="tabpanel" aria-labelledby="similar-tab">
-                        <h5>Схожі манги</h5>
+                    <div class="tab-pane fade" id="similar" role="tabpanel" aria-labelledby="similar-tab"><div class="container">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="m-0">Похожее</h2>
+                            <div class="carousel-controls">
+                                <button class="btn btn-link carousel-control-prev" type="button" data-bs-target="#bookCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Предыдущий</span>
+                                </button>
+                                <button class="btn btn-link carousel-control-next" type="button" data-bs-target="#bookCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Следующий</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="bookCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active">
+                                        <div class="row justify-content-center">
+                                            <div class="col-md-4">
+                                                <div class="card h-100">
+                                                    <img src="book1-cover.jpg" class="card-img-top" alt="Обложка книги 1" style="max-width: 100px; max-height:30px; object-fit: cover;">
+                                                    <div class="card-body">
+                                                        <p class="card-text text-muted">Схож по жанрам</p>
+                                                        <h5 class="card-title">Дети руны: Винтерер</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="card h-100">
+                                                    <img src="book2-cover.jpg" class="card-img-top" alt="Обложка книги 2" style="max-width: 100px; max-height:30px; object-fit: cover;">
+                                                    <div class="card-body">
+                                                        <p class="card-text text-muted">Схож по жанрам</p>
+                                                        <h5 class="card-title">Император Меча Лунной Тени</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="card h-100">
+                                                    <img src="book3-cover.jpg" class="card-img-top" alt="Обложка книги 3" style="max-width: 100px; max-height:30px; object-fit: cover;">
+                                                    <div class="card-body">
+                                                        <p class="card-text text-muted">Схож по жанрам</p>
+                                                        <h5 class="card-title">Чародей</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <div class="row justify-content-center">
+                                            <div class="col-md-4">
+                                                <div class="card h-100">
+                                                    <img src="book4-cover.jpg" class="card-img-top" alt="Обложка книги 4" style="max-width: 100px; min-height:40px; object-fit: cover;">
+                                                    <div class="card-body">
+                                                        <p class="card-text text-muted">Схож по жанрам</p>
+                                                        <h5 class="card-title">йцу</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 </div>
