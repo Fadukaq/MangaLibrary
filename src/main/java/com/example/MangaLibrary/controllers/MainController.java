@@ -55,35 +55,29 @@ public class MainController {
 
         List<Genre> allGenres = genreRepo.findAll();
         Map<String, List<Manga>> mangaByGenre = new LinkedHashMap<>();
-        Set<Long> addedMangaIds = new HashSet<>();
         int maxGenres = 3;
-        int maxResults = 2; //Should 8-9
+        int maxResults = 7;
         for (Genre genre : allGenres) {
             if (mangaByGenre.size() >= maxGenres) {
                 break;
             }
 
             List<Manga> allMangaList = mangaRepo.findMangasByGenreName(genre.getGenreName(), PageRequest.of(0, maxResults * 3).withSort(Sort.by(Sort.Order.desc("id"))));
-            List<Manga> uniqueMangaList = new ArrayList<>();
+            List<Manga> mangaListForGenre = new ArrayList<>();
 
             for (Manga manga : allMangaList) {
-                if (addedMangaIds.add(manga.getId())) {
-                    uniqueMangaList.add(manga);
-                    if (uniqueMangaList.size() >= maxResults) {
-                        break;
-                    }
+                mangaListForGenre.add(manga);
+                if (mangaListForGenre.size() >= maxResults) {
+                    break;
                 }
             }
 
-            if (!uniqueMangaList.isEmpty()) {
-                mangaByGenre.put(genre.getGenreName(), uniqueMangaList);
+            if (!mangaListForGenre.isEmpty()) {
+                mangaByGenre.put(genre.getGenreName(), mangaListForGenre);
             }
         }
         mangaByGenre.entrySet().removeIf(entry -> entry.getValue().size() < maxResults);
 
-        for (Map.Entry<String, List<Manga>> entry : mangaByGenre.entrySet()) {
-            System.out.println("Genre: " + entry.getKey() + ", Count: " + entry.getValue().size());
-        }
         for (List<Manga> mangaList : mangaByGenre.values()) {
             for (Manga manga : mangaList) {
                 manga.setMangaStatus(mangaService.getMangaTranslatedStatus(manga.getMangaStatus()));
@@ -94,6 +88,7 @@ public class MainController {
         model.addAttribute("mangaByGenre", mangaByGenre);
         return "main/home";
     }
+
 
 
     @GetMapping("/about")

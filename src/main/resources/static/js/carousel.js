@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const getItemsPerSlide = () => window.innerWidth < 999 ? 1 : 4;
-
+    const getItemsPerSlide = () => {
+        if (window.innerWidth < 777) return 1;
+        if (window.innerWidth < 1100) return 2;
+        if (window.innerWidth < 1366) return 3;
+        return 4;
+    };
     const updateCarousel = () => {
         const itemsPerSlide = getItemsPerSlide();
         const mangaList = window.mangaList || [];

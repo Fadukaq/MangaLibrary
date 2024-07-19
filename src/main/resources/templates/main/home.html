@@ -30,7 +30,7 @@
         </div>
     </div>
 </div>
-<div class="containerGenre mb-5">
+<div class="containerGenre">
     <div id="genreCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item genre-slide" th:classappend="${iterStat.first ? ' active' : ''}" th:each="entry, iterStat : ${mangaByGenre}">
@@ -42,7 +42,7 @@
                     <div th:class="${mangaStat.first} ? 'manga-card featured first-manga' : 'manga-card'"
                             th:each="manga, mangaStat : ${entry.value}">
                         <a th:href="@{/manga/{id}(id=${manga.id})}">
-                            <img th:src="${manga.mangaPosterImg}" alt="Manga Cover" class="manga-cover">
+                            <img th:src="${manga.mangaPosterImg}" alt="Manga Cover" class="manga-cover manga-cover-small">
                             <div class="manga-info">
                                 <h3 class="manga-title" th:text="${manga.mangaName}"></h3>
                                 <h3 class="manga-author" th:text="${manga.author.name}"></h3>
@@ -53,11 +53,11 @@
                 </div>
             </div>
         </div>
-        <button class="carousel-control-prev genre-control" type="button" data-bs-target="#genreCarousel" data-bs-slide="prev">
+        <button class="carousel-control-prev genre-control-prev" type="button" data-bs-target="#genreCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next genre-control" type="button" data-bs-target="#genreCarousel" data-bs-slide="next">
+        <button class="carousel-control-next genre-control-next" type="button" data-bs-target="#genreCarousel" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
