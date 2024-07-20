@@ -55,28 +55,45 @@ public class MainController {
 
         List<Genre> allGenres = genreRepo.findAll();
         Map<String, List<Manga>> mangaByGenre = new LinkedHashMap<>();
-        int maxGenres = 3;
+        Set<Long> addedMangaIds = new HashSet<>();
+        int maxGenres = 4;
         int maxResults = 7;
+        int minResults = 6;
+
         for (Genre genre : allGenres) {
             if (mangaByGenre.size() >= maxGenres) {
                 break;
             }
-
             List<Manga> allMangaList = mangaRepo.findMangasByGenreName(genre.getGenreName(), PageRequest.of(0, maxResults * 3).withSort(Sort.by(Sort.Order.desc("id"))));
-            List<Manga> mangaListForGenre = new ArrayList<>();
-
+            List<Manga> uniqueMangaList = new ArrayList<>();
             for (Manga manga : allMangaList) {
-                mangaListForGenre.add(manga);
-                if (mangaListForGenre.size() >= maxResults) {
-                    break;
+                if (addedMangaIds.add(manga.getId())) {
+                    uniqueMangaList.add(manga);
+                    if (uniqueMangaList.size() >= maxResults) {
+                        break;
+                    }
                 }
             }
-
-            if (!mangaListForGenre.isEmpty()) {
-                mangaByGenre.put(genre.getGenreName(), mangaListForGenre);
+            if (uniqueMangaList.size() >= minResults) {
+                mangaByGenre.put(genre.getGenreName(), uniqueMangaList);
             }
         }
-        mangaByGenre.entrySet().removeIf(entry -> entry.getValue().size() < maxResults);
+        if (mangaByGenre.size() < maxGenres) {
+            for (Genre genre : allGenres) {
+                if (mangaByGenre.size() >= maxGenres) {
+                    break;
+                }
+                if (!mangaByGenre.containsKey(genre.getGenreName())) {
+                    List<Manga> allMangaList = mangaRepo.findMangasByGenreName(genre.getGenreName(), PageRequest.of(0, maxResults).withSort(Sort.by(Sort.Order.desc("id"))));
+                    List<Manga> uniqueMangaList = allMangaList.stream()
+                            .filter(manga -> addedMangaIds.add(manga.getId()))
+                            .collect(Collectors.toList());
+                    if (!uniqueMangaList.isEmpty()) {
+                        mangaByGenre.put(genre.getGenreName(), uniqueMangaList);
+                    }
+                }
+            }
+        }
 
         for (List<Manga> mangaList : mangaByGenre.values()) {
             for (Manga manga : mangaList) {
@@ -88,7 +105,6 @@ public class MainController {
         model.addAttribute("mangaByGenre", mangaByGenre);
         return "main/home";
     }
-
 
 
     @GetMapping("/about")

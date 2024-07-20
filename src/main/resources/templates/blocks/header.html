@@ -11,7 +11,7 @@
         <img src="/images/icons/MangaLibraryIcon.png" alt="MangaLibrary Logo" style="height: 40px;">
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+        <i class="fas fa-bars"></i>
       </button>
       <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -50,11 +50,11 @@
             <a href="/news" class="nav-link" th:if="${#authorization.expression('isAuthenticated()')}">Новини</a>
           </li>
         </ul>
-        <div class="search-container">
+        <div class="search-container align-center">
           <button class="search-toggle btn btn-outline-light" aria-label="Пошук">
             <i class="fas fa-search"></i> Пошук
           </button>
-          <div class="search-form-container">
+          <div class="search-form-container align-center">
             <form th:if="${#authorization.expression('isAuthenticated()')}" class="d-flex search-form" action="/search" method="get">
               <input class="form-control form-control-search me-2" type="search" placeholder="Пошук манги" aria-label="Search" name="q" autocomplete="off">
               <input type="hidden" name="type" value="title">
