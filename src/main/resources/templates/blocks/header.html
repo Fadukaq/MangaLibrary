@@ -7,6 +7,7 @@
   <link th:if="${#authorization.expression('isAuthenticated()')}" rel="stylesheet" href="/css/form-styles.css">
   <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
   <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/search-form.js"></script>
+  <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/dropdown-animation.js"></script>
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">
@@ -24,10 +25,10 @@
             <a href="/manga" class="nav-link" style="color:white;">Манга</a>
           </li>
           <li class="nav-item dropdown" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})">
-            <a class="nav-link dropdown-toggle" href="#" style="color:white;" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Адмін меню
+            <a class="nav-link" href="#" style="color:white;" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Адмін меню <i class="fas fa-chevron-right dropdown-arrow"></i>
             </a>
-            <ul class="dropdown-menu dropdown-menu-start">
+            <ul class="dropdown-menu dropdown-menu-admin dropdown-menu-start">
               <li class="nav-item">
                 <a class="dropdown-item" href="/manga/add">Добавити мангу</a>
               </li>
@@ -42,14 +43,24 @@
               </li>
             </ul>
           </li>
+          <li class="nav-item dropdown" th:if="${#authorization.expression('isAuthenticated()')}">
+            <a class="nav-link" href="#" style="color:white;" id="siteDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Наш сайт <i class="fas fa-chevron-right dropdown-arrow"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-site dropdown-menu-start">
+              <li class="nav-item">
+                <a class="dropdown-item" href="/forum">Форум</a>
+              </li>
+              <li class="nav-item">
+                <a class="dropdown-item" href="/news">Новини</a>
+              </li>
+              <!--<li class="nav-item">
+                <a class="dropdown-item" href="/shop">Магазин</a>
+              </li>!-->
+            </ul>
+          </li>
           <li class="nav-item">
             <a href="/random" class="nav-link" style="color:white;" th:if="${#authorization.expression('isAuthenticated()')}">Випадкова манга</a>
-          </li>
-          <li class="nav-item">
-            <a href="/forum" class="nav-link" style="color:white;" th:if="${#authorization.expression('isAuthenticated()')}">Форум</a>
-          </li>
-          <li class="nav-item">
-            <a href="/news" class="nav-link" style="color:white;" th:if="${#authorization.expression('isAuthenticated()')}">Новини</a>
           </li>
         </ul>
         <div class="search-container">
