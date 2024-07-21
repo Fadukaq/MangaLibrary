@@ -403,7 +403,8 @@ body {
         right: 5px;
     }
 }
-.manga-card-genres {
+.manga-card-genres,
+.manga-card.featured{
     background-color: #252525;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
