@@ -39,7 +39,7 @@
             </a>
         </h2>
         <div class="manga-grid">
-            <div th:class="${mangaStat.first} ? 'manga-card featured first-manga' : 'manga-card'"
+            <div th:class="${mangaStat.first} ? 'manga-card featured first-manga' : 'manga-card manga-card-genres'"
                  th:each="manga, mangaStat : ${entry.value}">
                 <a th:href="@{/manga/{id}(id=${manga.id})}">
                     <img th:src="${manga.mangaPosterImg}" alt="Manga Cover" class="manga-cover manga-cover-small">
