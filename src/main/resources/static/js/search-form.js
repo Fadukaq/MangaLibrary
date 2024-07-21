@@ -1,39 +1,33 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const searchContainer = document.querySelector('.search-container');
     const searchToggle = document.querySelector('.search-toggle');
     const searchFormContainer = document.querySelector('.search-form-container');
-    const searchForm = document.querySelector('.search-form');
-    const searchInput = searchForm.querySelector('input[type="search"]');
+    const closeBtn = document.querySelector('.close-btn');
+    const searchOverlay = document.querySelector('.search-overlay');
 
-    function toggleSearch() {
-        searchFormContainer.classList.toggle('active');
-        searchForm.classList.toggle('active');
-        searchToggle.classList.toggle('hidden');
-        if (searchFormContainer.classList.contains('active')) {
-            setTimeout(() => {
-                searchInput.focus();
-            }, 300);
-        }
-    }
+    if (searchToggle && searchFormContainer && closeBtn && searchOverlay) {
+        searchToggle.addEventListener('click', function(event) {
+            event.stopPropagation();
+            searchFormContainer.classList.add('active');
+            searchOverlay.classList.add('active');
+            searchFormContainer.querySelector('input[type="search"]').focus();
+        });
 
-    searchToggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        toggleSearch();
-    });
+        closeBtn.addEventListener('click', function() {
+            searchFormContainer.classList.remove('active');
+            searchOverlay.classList.remove('active');
+        });
 
-    document.addEventListener('click', function(event) {
-        if (!searchContainer.contains(event.target)) {
-            if (searchFormContainer.classList.contains('active')) {
-                toggleSearch();
+        document.addEventListener('click', function(event) {
+            if (!searchFormContainer.contains(event.target) && event.target !== searchToggle) {
+                searchFormContainer.classList.remove('active');
+                searchOverlay.classList.remove('active');
             }
-        }
-    });
+        });
 
-    searchFormContainer.addEventListener('click', function(event) {
-        event.stopPropagation();
-    });
-
-    searchForm.addEventListener('submit', function(event) {
-        event.stopPropagation();
-    });
+        searchFormContainer.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    } else {
+        console.error('One or more elements not found');
+    }
 });

@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.innerWidth < 1366) return 3;
         return 4;
     };
+
     const updateCarousel = () => {
         const itemsPerSlide = getItemsPerSlide();
         const mangaList = window.mangaList || [];
@@ -33,14 +34,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             chunk.forEach(manga => {
                 const colDiv = document.createElement('div');
-                colDiv.classList.add('col-12', 'col-sm-6', 'col-md-4', 'col-lg-3', 'manga-card', 'new-manga-card', 'transparent-container');
+                colDiv.classList.add('col-12', 'col-sm-6', 'col-md-4', 'col-lg-3', 'manga-card', 'new-manga-card');
 
                 const mangaLink = document.createElement('a');
                 mangaLink.href = `/manga/${manga.id}`;
                 mangaLink.classList.add('manga-link');
 
                 const mangaImage = document.createElement('div');
-                mangaImage.classList.add('manga-image');
+                mangaImage.classList.add('manga-image', 'manga-image-overlay');
 
                 const mangaCover = document.createElement('img');
                 mangaCover.src = manga.mangaPosterImg;
@@ -54,7 +55,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 mangaTitle.classList.add('manga-title');
                 mangaTitle.textContent = manga.mangaName;
 
+                const mangaGenres = document.createElement('div');
+                mangaGenres.classList.add('manga-genres');
+
+                if (manga.genres && manga.genres.length > 0) {
+                    manga.genres.slice(0, 2).forEach((genre, index) => {
+                        const genreSpan = document.createElement('span');
+                        genreSpan.textContent = genre.name;
+                        mangaGenres.appendChild(genreSpan);
+
+                        if (index === 0 && manga.genres.length > 2) {
+                            const ellipsisSpan = document.createElement('span');
+                            ellipsisSpan.textContent = ' - ';
+                            mangaGenres.appendChild(ellipsisSpan);
+                        }
+                    });
+                }
+
                 mangaInfo.appendChild(mangaTitle);
+                mangaInfo.appendChild(mangaGenres);
                 mangaImage.appendChild(mangaCover);
                 mangaImage.appendChild(mangaInfo);
                 mangaLink.appendChild(mangaImage);
@@ -66,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         new bootstrap.Carousel(document.querySelector('#mangaCarousel'), {
-            interval: 99999999,
+            interval: 15000,
             wrap: true
         });
     };

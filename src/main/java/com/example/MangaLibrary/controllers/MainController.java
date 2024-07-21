@@ -50,14 +50,25 @@ public class MainController {
                     .collect(Collectors.toList());
             mangaMap.put("chapters", chaptersMap);
 
+            // Добавляем жанры
+            List<Map<String, Object>> genresMap = manga.getGenres().stream()
+                    .map(genre -> {
+                        Map<String, Object> genreMap = new HashMap<>();
+                        genreMap.put("id", genre.getId());
+                        genreMap.put("name", genre.getGenreName());
+                        return genreMap;
+                    })
+                    .collect(Collectors.toList());
+            mangaMap.put("genres", genresMap);
+
             newMangaListMap.add(mangaMap);
         }
 
         List<Genre> allGenres = genreRepo.findAll();
         Map<String, List<Manga>> mangaByGenre = new LinkedHashMap<>();
         Set<Long> addedMangaIds = new HashSet<>();
-        int maxGenres = 4;
-        int maxResults = 7;
+        int maxGenres = 3;
+        int maxResults = 11;
         int minResults = 6;
 
         for (Genre genre : allGenres) {
@@ -105,6 +116,7 @@ public class MainController {
         model.addAttribute("mangaByGenre", mangaByGenre);
         return "main/home";
     }
+
 
 
     @GetMapping("/about")

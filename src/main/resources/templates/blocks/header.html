@@ -3,6 +3,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <link th:if="${#authorization.expression('isAuthenticated()')}" rel="stylesheet" href="/css/transparent-container.css">
+  <link th:if="${#authorization.expression('isAuthenticated()')}" rel="stylesheet" href="/css/form-styles.css">
   <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
   <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/search-form.js"></script>
   <nav class="navbar navbar-expand-lg">
@@ -16,13 +18,13 @@
       <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a href="/" class="nav-link">Головна</a>
+            <a href="/" class="nav-link" style="color:white;">Головна</a>
           </li>
           <li class="nav-item">
-            <a href="/manga" class="nav-link">Манга</a>
+            <a href="/manga" class="nav-link" style="color:white;">Манга</a>
           </li>
           <li class="nav-item dropdown" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})">
-            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" style="color:white;" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Адмін меню
             </a>
             <ul class="dropdown-menu dropdown-menu-start">
@@ -41,24 +43,28 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a href="/random" class="nav-link" th:if="${#authorization.expression('isAuthenticated()')}">Випадкова манга</a>
+            <a href="/random" class="nav-link" style="color:white;" th:if="${#authorization.expression('isAuthenticated()')}">Випадкова манга</a>
           </li>
           <li class="nav-item">
-            <a href="/forum" class="nav-link" th:if="${#authorization.expression('isAuthenticated()')}">Форум</a>
+            <a href="/forum" class="nav-link" style="color:white;" th:if="${#authorization.expression('isAuthenticated()')}">Форум</a>
           </li>
           <li class="nav-item">
-            <a href="/news" class="nav-link" th:if="${#authorization.expression('isAuthenticated()')}">Новини</a>
+            <a href="/news" class="nav-link" style="color:white;" th:if="${#authorization.expression('isAuthenticated()')}">Новини</a>
           </li>
         </ul>
-        <div class="search-container align-center">
+        <div class="search-container">
           <button class="search-toggle btn btn-outline-light" aria-label="Пошук">
             <i class="fas fa-search"></i> Пошук
           </button>
-          <div class="search-form-container align-center">
-            <form th:if="${#authorization.expression('isAuthenticated()')}" class="d-flex search-form" action="/search" method="get">
-              <input class="form-control form-control-search me-2" type="search" placeholder="Пошук манги" aria-label="Search" name="q" autocomplete="off">
+          <div class="search-overlay"></div>
+          <div class="search-form-container transparent-container" style="background: rgba(24, 24, 24, 0.9);">
+            <div class="search-header">
+              <h2>Пошук</h2>
+              <button class="close-btn" aria-label="Закрити">&times;</button>
+            </div>
+            <form action="/search" method="get">
+              <input class="form-control " type="search" placeholder="Введіть пошуковий запит..." aria-label="Search" name="q" autocomplete="off">
               <input type="hidden" name="type" value="title">
-              <button class="btn btn-outline-light search-submit ml-2" type="submit">Пошук</button>
             </form>
           </div>
         </div>
