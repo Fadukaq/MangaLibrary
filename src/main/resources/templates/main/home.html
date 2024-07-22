@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/transparent-container.css">
+    <style>
+
+    </style>
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
@@ -29,7 +32,22 @@
             </button>
         </div>
     </div>
+    <div class="latestUpdates-section text-center">
+        <h3>Оновлення</h3>
+        <div id="latestUpdatesCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div id="latestUpdatesCarouselInner" class="carousel-inner"></div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#latestUpdatesCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#latestUpdatesCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
 </div>
+
 <div class="containerGenre mb-5">
     <div th:each="entry, iterStat : ${mangaByGenre}">
         <h2 class="genre-title">
@@ -40,7 +58,7 @@
         </h2>
         <div class="manga-grid">
             <div th:class="${mangaStat.first} ? 'manga-card featured first-manga' : 'manga-card manga-card-genres'"
-                 th:each="manga, mangaStat : ${entry.value}">
+                    th:each="manga, mangaStat : ${entry.value}">
                 <a th:href="@{/manga/{id}(id=${manga.id})}">
                     <img th:src="${manga.mangaPosterImg}" alt="Manga Cover" class="manga-cover manga-cover-small">
                     <div class="manga-info">
@@ -61,6 +79,9 @@
 <script src="/js/carousel.js"></script>
 <script th:inline="javascript">
     var mangaList = /*[[${NewMangaListMap}]]*/ [];
+</script>
+<script th:inline="javascript">
+    window.latestUpdatesList = /*[[${latestUpdatesList}]]*/ [];
 </script>
 </body>
 </html>

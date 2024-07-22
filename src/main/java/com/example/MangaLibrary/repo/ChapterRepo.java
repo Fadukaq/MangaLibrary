@@ -1,8 +1,13 @@
 package com.example.MangaLibrary.repo;
 
 import com.example.MangaLibrary.models.Chapter;
+import com.example.MangaLibrary.models.Manga;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ChapterRepo extends JpaRepository<Chapter, Long> {
@@ -10,5 +15,6 @@ public interface ChapterRepo extends JpaRepository<Chapter, Long> {
     boolean existsByMangaIdAndTitle(Long mangaId, String title);
     boolean existsByMangaIdAndTitleAndIdNot(Long mangaId, String title, Long id);
 
-
+    @Query("SELECT c FROM Chapter c ORDER BY c.creationTime DESC")
+    List<Chapter> findLatestChapters(Pageable pageable);
 }

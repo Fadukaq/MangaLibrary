@@ -1,7 +1,9 @@
 package com.example.MangaLibrary.controllers;
 
+import com.example.MangaLibrary.models.Chapter;
 import com.example.MangaLibrary.models.Genre;
 import com.example.MangaLibrary.models.Manga;
+import com.example.MangaLibrary.repo.ChapterRepo;
 import com.example.MangaLibrary.repo.GenreRepo;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.service.MangaService;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,13 +29,29 @@ public class MainController {
     @Autowired
     private MangaRepo mangaRepo;
     @Autowired
+    private ChapterRepo chapterRepo;
+    @Autowired
     MangaService mangaService;
     @Autowired
     private GenreRepo genreRepo;
     @GetMapping("/")
     public String home(Model model) {
         List<Manga> newMangaList = mangaRepo.findMangasByIdDesc().stream().limit(8).collect(Collectors.toList());
+        List<Chapter> latestChapters = chapterRepo.findLatestChapters(PageRequest.of(0, 16));
+        List<Map<String, Object>> mangaWithNewChapters = new ArrayList<>();
+        for (Chapter chapter : latestChapters) {
+            Manga manga = chapter.getManga();
 
+            Map<String, Object> mangaInfo = new HashMap<>();
+            mangaInfo.put("mangaId", manga.getId());
+            mangaInfo.put("mangaName", manga.getMangaName());
+            mangaInfo.put("mangaPosterImg", manga.getMangaPosterImg());
+            mangaInfo.put("chapterId", chapter.getId());
+            mangaInfo.put("chapterTitle", chapter.getTitle());
+            mangaInfo.put("creationTime", chapter.getCreationTime());
+
+            mangaWithNewChapters.add(mangaInfo);
+        }
         List<Map<String, Object>> newMangaListMap = new ArrayList<>();
         for (Manga manga : newMangaList) {
             Map<String, Object> mangaMap = new HashMap<>();
@@ -50,7 +69,6 @@ public class MainController {
                     .collect(Collectors.toList());
             mangaMap.put("chapters", chaptersMap);
 
-            // Добавляем жанры
             List<Map<String, Object>> genresMap = manga.getGenres().stream()
                     .map(genre -> {
                         Map<String, Object> genreMap = new HashMap<>();
@@ -112,6 +130,7 @@ public class MainController {
             }
         }
 
+        model.addAttribute("latestUpdatesList", mangaWithNewChapters);
         model.addAttribute("NewMangaListMap", newMangaListMap);
         model.addAttribute("mangaByGenre", mangaByGenre);
         return "main/home";

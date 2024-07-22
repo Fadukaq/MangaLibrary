@@ -1,6 +1,7 @@
 package com.example.MangaLibrary.repo;
 
 import com.example.MangaLibrary.models.Author;
+import com.example.MangaLibrary.models.Chapter;
 import com.example.MangaLibrary.models.Manga;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MangaRepo extends CrudRepository<Manga, Long> {
@@ -29,4 +31,5 @@ public interface MangaRepo extends CrudRepository<Manga, Long> {
     Page<Manga> findAll(Pageable pageable);
     @Query("SELECT m FROM Manga m ORDER BY m.id DESC")
     List<Manga> findMangasByIdDesc();
+
 }

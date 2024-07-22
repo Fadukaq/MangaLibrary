@@ -9,29 +9,6 @@
   <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
   <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/search-form.js"></script>
   <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/dropdown-animation.js"></script>
-  <style>
-    body{
-      font-family: 'Raleway', sans-serif;
-    }
-    .navbar-brand {
-      margin-bottom:5px;
-      display: flex;
-      align-items: center;
-    }
-
-    .navbar-brand img {
-      height: 40px;
-      margin-right: 10px;
-    }
-
-    .brand-subtext {
-      font-family: 'Raleway', sans-serif;
-      color: white;
-      font-size: 12px;
-      display: block;
-      margin-top: 2px;
-    }
-  </style>
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">
