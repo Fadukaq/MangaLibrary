@@ -1,49 +1,112 @@
-body{
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-footer{
-    margin-top: auto;
-    border-top: 1px solid #5000ff;
-}
-body {
-    display: flex;
-    flex-direction: column;
+footer {
+    font-family: 'Raleway', sans-serif;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    padding: 20px;
+    border-top: 2px dotted #333;
 }
 
-.wrapper {
-    flex: 1 0 auto;
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: center;
 }
 
-.footer {
-    background-color: #1C1C1E;
-    color: #fff;
-    padding: 20px 0;
-    flex-shrink: 0;
+.logo-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-left:165px;
 }
-.footer h5 {
-    font-weight: bold;
+
+.logo {
+    display: flex;
+    align-items: center;
     margin-bottom: 10px;
 }
+.logo span{
+    font-size:19px;
+}
+.logo img {
+    height: 65px;
+}
 
-.footer ul li {
+.social-icons {
+    margin-left: 19px;
+}
+.social-icons a {
+    margin-right: 10px;
+    color: #ffffff;
+    text-decoration: none;
+}
+.social-icons img {
+    height: 20px;
+}
+.copyright {
+    margin-top: 10px;
+    font-size: 0.8em;
+    color: #888;
+    text-align: center;
+}
+
+.navigation {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.nav-column {
+    margin-right: 40px;
+}
+
+.nav-column h4 {
+    color: #E49805;
+    margin-bottom: 10px;
+}
+.nav-column ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+}
+
+.nav-column ul li {
     margin-bottom: 5px;
 }
 
-.footer ul li a {
-    color: #fff;
+.nav-column ul li a {
+    color: #8F8F8F;
     text-decoration: none;
 }
-
-.footer ul li a:hover {
-    color: #ccc;
+.nav-column ul li a:hover {
+    color: white;
 }
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+    }
 
-.footer p {
-    margin-bottom: 0;
-}
-.nav-item a
-{
-    color:white;
+    .navigation {
+        flex-direction: column;
+    }
+
+    .nav-column {
+        margin-left: 0;
+        margin-bottom: 20px;
+    }
+
+    .social-icons {
+        margin-left: 0;
+    }
+    .logo-section {
+        margin-left:0px;
+        margin-right:35px;
+    }
+    .copyright {
+        margin-bottom: 10px;
+    }
 }

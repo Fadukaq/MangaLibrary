@@ -1,15 +1,44 @@
 <div th:fragment="footer">
     <link rel="stylesheet" href="/css/footer.css">
-    <footer class="footer">
-        <div class="container">
-            <ul class="nav justify-content-center">
-                <li class="nav-item"><a href="/faq" class="nav-link px-2">FAQ</a></li>
-                <li class="nav-item"><a href="/about" class="nav-link px-2">About</a></li>
-                <li class="nav-item"><a href="/contact-us" class="nav-link px-2">Contact</a></li>
-            </ul>
-            <div class="text-center">
-                <p>© 2024 MangaLibrary</p>
+    <div>
+        <div class="footer-content">
+            <div class="logo-section">
+                <div class="logo">
+                    <img src="/images/icons/MangaLibraryIcon.png" alt="MangaLibrary Logo">
+                    <span class="brand-text" style="margin-right:15px;"><span style="color:white;">Manga</span><span style="color:#a9a9a9;">Library</span></span>
+                </div>
+                <div class="social-icons">
+                    <a href="#" class="icon-instagram"><img src="/images/icons/instagram_logo.png" alt="Instagram"></a>
+                    <a href="#" class="icon-discord"><img src="/images/icons/discord_logo.png" alt="Discord"></a>
+                    <a href="#" class="icon-github"><img src="/images/icons/github_logo.png" alt="GitHub"></a>
+                </div>
+                <div class="copyright">©2024 MangaLibrary</div>
+            </div>
+            <div class="navigation">
+                <div class="nav-column">
+                    <h4>Навігація</h4>
+                    <ul>
+                        <li><a href="#">Головна</a></li>
+                        <li><a href="#">Манга</a></li>
+                        <li><a href="#">Випадкова манга</a></li>
+                    </ul>
+                </div>
+                <div class="nav-column">
+                    <h4>Для користувача</h4>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Зв'язок з нами</a></li>
+                        <li><a href="#">Про нас</a></li>
+                    </ul>
+                </div>
+                <div class="nav-column">
+                    <h4>Наш сайт</h4>
+                    <ul>
+                        <li><a href="#">Форум</a></li>
+                        <li><a href="#">Новини</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </footer>
+    </div>
 </div>
