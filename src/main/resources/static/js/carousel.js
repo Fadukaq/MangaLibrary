@@ -95,8 +95,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 document.addEventListener('DOMContentLoaded', function() {
     const getItemsPerSlide = () => {
-        if (window.innerWidth < 777) return 4;
-        if (window.innerWidth < 1100) return 5;
+        if (window.innerWidth < 777) return 2;
+        if (window.innerWidth < 992) return 4;
         if (window.innerWidth < 1366) return 6;
         return 8;
     };

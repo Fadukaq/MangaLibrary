@@ -9,15 +9,13 @@
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/transparent-container.css">
-    <style>
-
-    </style>
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <input type="hidden" id="isMobile" />
 <header th:insert="~{blocks/header :: header}"></header>
+<div class="main-container-wrapper">
 <div class="container mt-5 mb-2">
     <div class="newManga-section text-center">
         <div id="mangaCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -46,8 +44,8 @@
             </button>
         </div>
     </div>
-</div>
 
+</div>
 <div class="containerGenre mb-5">
     <div th:each="entry, iterStat : ${mangaByGenre}">
         <h2 class="genre-title">
@@ -58,7 +56,7 @@
         </h2>
         <div class="manga-grid">
             <div th:class="${mangaStat.first} ? 'manga-card featured first-manga' : 'manga-card manga-card-genres'"
-                    th:each="manga, mangaStat : ${entry.value}">
+                 th:each="manga, mangaStat : ${entry.value}">
                 <a th:href="@{/manga/{id}(id=${manga.id})}">
                     <img th:src="${manga.mangaPosterImg}" alt="Manga Cover" class="manga-cover manga-cover-small">
                     <div class="manga-info">
@@ -71,10 +69,11 @@
         </div>
     </div>
 </div>
+</div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/burger-menu.js"></script>
+<script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
 <script src="/js/carousel.js"></script>
 <script th:inline="javascript">

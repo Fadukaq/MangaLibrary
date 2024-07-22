@@ -413,16 +413,16 @@ body {
     width: 100%;
     max-width: 1280px;
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 21px;
     box-sizing: border-box;
 }
 
 .manga-grid {
     background-color: #1C1C1E;
-    padding: 20px;
+    padding: 25px;
     border-radius: 20px;
     width: 100%;
-    max-height: 705px;
+    max-height: 785px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 20px;
@@ -472,7 +472,11 @@ body {
         font-size: 13px;
     }
 }
-
+@media (max-width: 1272px) {
+    .manga-grid .manga-card:nth-child(n+10) {
+        display: none;
+    }
+}
 @media (max-width: 1250px) {
     .containerGenre {
         min-width: auto;
@@ -508,17 +512,13 @@ body {
     .manga-status {
         font-size: 13px;
     }
-
-    .manga-grid .manga-card:nth-child(n+10) {
-        display: none;
-    }
 }
-@media (max-width: 700px) {
+@media (max-width: 710px) {
     .manga-grid .manga-card:nth-child(n+9) {
         display: none;
     }
 }
-@media (max-width: 570px) {
+@media (max-width: 580px) {
     .manga-grid {
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     }
@@ -529,12 +529,17 @@ body {
         height: 140px;
     }
 }
-
+@media (max-width: 500px) {
+    .manga-grid .manga-card:nth-child(n+7) {
+        display: none;
+    }
+}
 #mangaCarousel .carousel-inner .carousel-item {
     transition: transform 1.8s ease, opacity 2.3s ease;
 }
 .latestUpdates-section {
     margin-bottom: 30px;
+    padding:67px;
 }
 
 #latestUpdatesCarousel .carousel-inner {
@@ -557,7 +562,6 @@ body {
     overflow: hidden;
     border-radius: 15px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    /* Add max-width and height to make it responsive */
     max-width: 100%;
     height: auto;
 }
@@ -567,7 +571,6 @@ body {
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
-    /* Add max-width and height to make it responsive */
     max-width: 100%;
     height: auto;
 }
@@ -611,15 +614,11 @@ body {
     color: #ccc;
 }
 
-@media (min-width: 499px) {
-    #latestUpdatesCarousel .col-md-4 {
-        flex: 0 0 16.666667%;
-            max-width: 16.666667%;
-    }
-    #latestUpdatesCarousel.manga-cover {
-        width:100%;
-        height: 160px;
-    }
+#latestUpdatesCarousel .manga-cover {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    height: 180px;
 }
 
 @media (min-width: 992px) {
@@ -628,8 +627,33 @@ body {
         max-width: 12.5%;
     }
 }
-@media (max-width: 576px) {
-    #latestUpdatesCarousel.manga-image {
-        height: 90px;
+
+@media (min-width: 768px) and (max-width: 991px) {
+    #latestUpdatesCarousel .col-sm-6 {
+        flex: 0 0 19.666667%;
+        max-width: 19.666667%;
+    }
+    #latestUpdatesCarousel .manga-cover {
+        height: 180px;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+    #latestUpdatesCarousel .col-sm-6 {
+        flex: 0 0 22.5%;
+        max-width: 22.5%;
+    }
+    #latestUpdatesCarousel .manga-cover {
+        height: 160px;
+    }
+}
+
+@media (max-width: 575px) {
+    #latestUpdatesCarousel .col-sm-6 {
+        flex: 0 0 28.5%;
+        max-width: 28.5%;
+    }
+    #latestUpdatesCarousel .manga-cover {
+        height: 160px;
     }
 }

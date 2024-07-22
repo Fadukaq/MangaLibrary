@@ -13,7 +13,7 @@
     <div class="container-fluid">
       <a class="navbar-brand" href="/">
         <img src="/images/icons/MangaLibraryIcon.png" alt="MangaLibrary Logo">
-        <span class="brand-text"><span style="color:white;">Manga</span><span style="color:#a9a9a9;">Library</span></span>
+        <span class="brand-text" style="margin-right:15px;"><span style="color:white;">Manga</span><span style="color:#a9a9a9;">Library</span></span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars"></i>
@@ -65,7 +65,7 @@
             <a href="/random" class="nav-link" style="color:white;" th:if="${#authorization.expression('isAuthenticated()')}">Випадкова манга</a>
           </li>
         </ul>
-        <div class="search-container">
+        <div th:if="${#authorization.expression('isAuthenticated()')}" class="search-container">
           <button class="search-toggle btn btn-outline-light" aria-label="Пошук">
             <i class="fas fa-search"></i> Пошук
           </button>
