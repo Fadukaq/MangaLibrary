@@ -1,55 +1,98 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Mangas</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/manga-main.css">
-    <link rel="stylesheet" href="/css/pagination.css">
+    <link rel="stylesheet" href="/css/loader.css">
+    <title>Каталог манги</title>
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
-<div class="container mt-5 mb-5">
+<div class="container-fluid">
     <div class="row">
-        <div th:each="el : ${mangas}" class="col-md-6 col-lg-4 mb-4">
-            <div class="custom-container position-relative">
-                <a th:href="@{'/manga/' + ${el.id}}" class="d-flex justify-content-center align-items-center position-relative">
-                    <img th:src="@{${el.mangaPosterImg}}" class="img-fluid" alt="manga image" loading="lazy">
-                    <div class="custom-title text-center position-absolute w-100" th:text="${el.mangaName}"></div>
-                    <div class="overlay d-flex flex-column justify-content-center align-items-center">
-                        <h5 class="overlay-title text-center mb-2" th:text="${el.mangaName}"></h5>
-                        <p class="overlay-description text-center mb-0">
-                            <span style="color:white;" th:text="${#strings.length(el.mangaDescription) > 125 ? #strings.substring(el.mangaDescription, 0, 125) + '...' : el.mangaDescription}"></span>
-                        </p>
+        <div class="sidebar col-md-3 col-lg-2 ml-5">
+            <h3 class="text-center mb-4">Фільтр <i class="fas fa-bars ml-3 fs-5"></i></h3>
+            <input type="text" class="filter-input" placeholder="За жанром">
+            <input type="text" class="filter-input" placeholder="За автором">
+            <input type="text" class="filter-input" placeholder="Роки виходу">
+            <button class="filter-button text-center">Застосувати</button>
+        </div>
+<div class="container mt-5 mb-3">
+    <div class="main-content col-md-9 col-lg-10">
+        <div class="header-container">
+            <h2 class="catalog-title">
+                Каталог манги
+                <span class="catalog-count" th:text="${page.totalElements}">1000</span>
+            </h2>
+            <div class="view-switcher">
+                <button class="d-md-none btn btn-primary mb-3" id="toggleSidebar">
+                    <i class="fas fa-filter"></i> Фільтри
+                </button>
+                <button class="view-btn" id="grid-view" title="Сетка">
+                    <i class="fa fa-th"></i>
+                </button>
+                <button class="view-btn" id="list-view" title="Список">
+                    <i class="fa fa-th-list"></i>
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-dark dropdown-toggle view-btn" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        Сортирувати:
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="#">За оновленням</a></li>
+                        <li><a class="dropdown-item" href="#">За рейтингом</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="manga-grid">
+            <div th:each="el : ${mangas}" class="custom-container">
+                <a th:href="@{'/manga/' + ${el.id}}">
+                    <img th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy">
+                    <div class="custom-info">
+                        <div class="custom-genres">
+                            <div class="custom-genre" th:if="${el.genres.size() > 0}" th:text="${el.genres[0].genreName}"></div>
+                            <div class="custom-genre" th:if="${el.genres.size() > 1}">
+                                <span> - </span>
+                                <span th:text="${el.genres[1].genreName}"></span>
+                            </div>
+                            <div class="custom-genre" th:if="${el.genres.size() > 2}">
+                                <span> - </span>
+                                <span th:text="${el.genres[2].genreName}"></span>
+                            </div>
+                        </div>
+                        <div class="custom-title" th:text="${el.mangaName}"></div>
+                    </div>
+                    <div class="manga-details">
+                        <h4 th:text="${el.mangaName}"></h4>
+                        <div class="manga-genres">
+                            <span th:each="genre : ${el.genres}" th:text="${genre.genreName}"></span>
+                        </div>
+                        <p th:text="${#strings.abbreviate(el.mangaDescription, 512)}"></p>
                     </div>
                 </a>
             </div>
         </div>
+        <div class="pagination" th:if="${page.totalPages > 1}">
+            <a th:href="@{/manga(page=${page.number})}" th:if="${page.number > 1}">&laquo;</a>
+            <span th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}">
+                    <a th:href="@{/manga(page=${pageNumber})}"
+                       th:text="${pageNumber}"
+                       th:class="${pageNumber==page.number + 1} ? active"></a>
+                </span>
+            <a th:href="@{/manga(page=${page.number + 2})}" th:if="${page.number + 1 < page.totalPages}">&raquo;</a>
+        </div>
     </div>
-
-    <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${page.number == 0 ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/manga(page=${page.number})}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-
-            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}"
-                th:classappend="${pageNumber == page.number + 1 ? 'active' : ''}">
-                <a class="page-link" th:href="@{/manga(page=${pageNumber})}" th:text="${pageNumber}"></a>
-            </li>
-            <li class="page-item" th:classappend="${page.number + 1 == page.totalPages ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/manga(page=${page.number + 2})}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
 </div>
-<footer th:insert="~{/blocks/footer :: footer}"></footer>
+</div>
+</div>
+<footer th:insert="~{blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>

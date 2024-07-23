@@ -101,7 +101,7 @@
             </ul>
           </li>
           <li class="nav-item" th:unless="${#authorization.expression('isAuthenticated()')}">
-            <a th:href="@{/login}" class="nav-link mr-5">
+            <a style="color:white;" th:href="@{/login}" class="nav-link mr-5">
               <i class="fas fa-user mr-5"></i> Увійти
             </a>
           </li>
