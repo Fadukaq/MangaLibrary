@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог манги</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/manga-main.css">
     <link rel="stylesheet" href="/css/loader.css">
-    <title>Каталог манги</title>
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
@@ -16,86 +16,195 @@
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="container-fluid">
     <div class="row">
-        <div class="sidebar col-md-3 col-lg-2 ml-5">
-            <h3 class="text-center mb-4">Фільтр <i class="fas fa-bars ml-3 fs-5"></i></h3>
-            <input type="text" class="filter-input" placeholder="За жанром">
-            <input type="text" class="filter-input" placeholder="За автором">
-            <input type="text" class="filter-input" placeholder="Роки виходу">
-            <button class="filter-button text-center">Застосувати</button>
+        <template id="filter-template">
+            <h3 class="text-center mb-4">Фільтр <i class="fas fa-bars ml-3 fs-5" aria-hidden="true"></i></h3>
+            <form id="filter-form">
+                <fieldset class="filter-group">
+                    <label class="filter-label">Жанри & Категорії</label >
+                    <input type="text" id="genre" class="filter-input" aria-label="Жанри і Категорії">
+                </fieldset>
+
+                <fieldset class="filter-group">
+                    <label class="filter-label">За автором</label >
+                    <input type="text" id="author" class="filter-input" aria-label="За автором">
+                </fieldset>
+
+                <fieldset class="filter-group">
+                    <label  class="filter-label">Роки виходу</label >
+                    <div class="range-input-group">
+                        <input type="number" id="releaseYearFrom" class="filter-input" placeholder="Від" aria-label="Рік випуску від">
+                        <span class="dash mb-3" aria-hidden="true">—</span>
+                        <input type="number" id="releaseYearTo" class="filter-input" placeholder="До" aria-label="Рік випуску до">
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="filter-button text-center mt-5">Застосувати</button>
+            </form>
+        </template>
+
+        <aside class="sidebar col-md-3 col-lg-2 ml-5">
+            <div id="sidebar-content"></div>
+        </aside>
+
+        <div id="filter-modal" class="filter-modal" aria-hidden="true">
+            <div class="filter-modal-content" role="dialog" aria-labelledby="filter-modal-title">
+                <button class="close-btn" id="close-btn" aria-label="Закрити">&times;</button>
+                <h3 id="filter-modal-title">Фільтр</h3>
+                <div id="modal-content"></div>
+            </div>
         </div>
-<div class="container mt-5 mb-3">
-    <div class="main-content col-md-9 col-lg-10">
-        <div class="header-container">
-            <h2 class="catalog-title">
-                Каталог манги
-                <span class="catalog-count" th:text="${page.totalElements}">1000</span>
-            </h2>
-            <div class="view-switcher">
-                <button class="d-md-none btn btn-primary mb-3" id="toggleSidebar">
-                    <i class="fas fa-filter"></i> Фільтри
-                </button>
-                <button class="view-btn" id="grid-view" title="Сетка">
-                    <i class="fa fa-th"></i>
-                </button>
-                <button class="view-btn" id="list-view" title="Список">
-                    <i class="fa fa-th-list"></i>
-                </button>
-                <div class="dropdown">
-                    <button class="btn btn-dark dropdown-toggle view-btn" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        Сортирувати:
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item" href="#">За оновленням</a></li>
-                        <li><a class="dropdown-item" href="#">За рейтингом</a></li>
-                    </ul>
+
+
+        <div class="container mt-5 mb-3">
+            <div class="main-content col-md-9 col-lg-10">
+                <div class="header-container">
+                    <h2 class="catalog-title">
+                        Каталог манги
+                        <span class="catalog-count" th:text="${page.totalElements}">1000</span>
+                    </h2>
+                    <div class="view-switcher">
+                        <button class="view-btn filter-btn" id="filter-btn" title="Фільтр">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                        <button class="view-btn" id="grid-view" title="Сетка">
+                            <i class="fa fa-th"></i>
+                        </button>
+                        <button class="view-btn" id="list-view" title="Список">
+                            <i class="fa fa-th-list"></i>
+                        </button>
+                        <div class="dropdown dropdown-sort ">
+                            <button class="btn btn-dark dropdown-toggle view-btn" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                Сортирувати: <span id="dropdownMenuText">За оновленням</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-sortBy custom-mt" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item active" href="#" data-sort="За оновленням">За оновленням</a></li>
+                                <li><a class="dropdown-item" href="#" data-sort="За рейтингом">За рейтингом</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="manga-grid">
+                    <div th:each="el : ${mangas}" class="custom-container">
+                        <a th:href="@{'/manga/' + ${el.id}}">
+                            <img th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy">
+                        </a>
+                        <div class="custom-info">
+                            <div class="custom-genres">
+                                <div class="custom-genre" th:if="${el.genres.size() > 0}" th:text="${el.genres[0].genreName}"></div>
+                                <div class="custom-genre" th:if="${el.genres.size() > 1}">
+                                    <span> - </span>
+                                    <span th:text="${el.genres[1].genreName}"></span>
+                                </div>
+                                <div class="custom-genre" th:if="${el.genres.size() > 2}">
+                                    <span> - </span>
+                                    <span th:text="${el.genres[2].genreName}"></span>
+                                </div>
+                            </div>
+                            <div class="custom-title"  th:text="${el.mangaName}"></div>
+                            <div class="custom-grade-details">
+                                <span class="star">&#9733;</span>
+                                <span class="star">&#9733;</span>
+                                <span class="star">&#9733;</span>
+                                <span class="star">&#9733;</span>
+                                <span class="star">&#9733;</span>
+                            </div>
+                            <div class="manga-details">
+                                <div class="custom-title-details" style="font-weight:bold;" th:text="${el.mangaName}"></div>
+                                <div class="manga-genres">
+                                    <a th:each="genre : ${el.genres}"
+                                       th:href="@{'/search?q=' + ${genre.genreName} + '&type=genre'}"
+                                       class="link">
+                                        <span th:text="${genre.genreName}"></span>
+                                    </a>
+                                </div>
+                                <p th:text="${#strings.abbreviate(el.mangaDescription, 512)}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pagination" th:if="${page.totalPages > 1}">
+                    <a th:href="@{/manga(page=${page.number})}" th:if="${page.number > 1}">&laquo;</a>
+                    <span th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}">
+                            <a th:href="@{/manga(page=${pageNumber})}"
+                               th:text="${pageNumber}"
+                               th:class="${pageNumber==page.number + 1} ? active"></a>
+                        </span>
+                    <a th:href="@{/manga(page=${page.number + 2})}" th:if="${page.number + 1 < page.totalPages}">&raquo;</a>
                 </div>
             </div>
         </div>
-        <div class="manga-grid">
-            <div th:each="el : ${mangas}" class="custom-container">
-                <a th:href="@{'/manga/' + ${el.id}}">
-                    <img th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy">
-                    <div class="custom-info">
-                        <div class="custom-genres">
-                            <div class="custom-genre" th:if="${el.genres.size() > 0}" th:text="${el.genres[0].genreName}"></div>
-                            <div class="custom-genre" th:if="${el.genres.size() > 1}">
-                                <span> - </span>
-                                <span th:text="${el.genres[1].genreName}"></span>
-                            </div>
-                            <div class="custom-genre" th:if="${el.genres.size() > 2}">
-                                <span> - </span>
-                                <span th:text="${el.genres[2].genreName}"></span>
-                            </div>
-                        </div>
-                        <div class="custom-title" th:text="${el.mangaName}"></div>
-                    </div>
-                    <div class="manga-details">
-                        <h4 th:text="${el.mangaName}"></h4>
-                        <div class="manga-genres">
-                            <span th:each="genre : ${el.genres}" th:text="${genre.genreName}"></span>
-                        </div>
-                        <p th:text="${#strings.abbreviate(el.mangaDescription, 512)}"></p>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="pagination" th:if="${page.totalPages > 1}">
-            <a th:href="@{/manga(page=${page.number})}" th:if="${page.number > 1}">&laquo;</a>
-            <span th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}">
-                    <a th:href="@{/manga(page=${pageNumber})}"
-                       th:text="${pageNumber}"
-                       th:class="${pageNumber==page.number + 1} ? active"></a>
-                </span>
-            <a th:href="@{/manga(page=${page.number + 2})}" th:if="${page.number + 1 < page.totalPages}">&raquo;</a>
-        </div>
     </div>
-</div>
-</div>
 </div>
 <footer th:insert="~{blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.dropdown-menu-sortBy').on('click', 'a', function(event) {
+            event.preventDefault();
+            const selectedText = $(this).text();
+            $('#dropdownMenuText').text(`${selectedText}`);
+            $(this).parent().siblings().find('a').removeClass('active');
+            $(this).addClass('active');
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterBtn = document.getElementById('filter-btn');
+        const filterModal = document.getElementById('filter-modal');
+        const closeBtn = document.getElementById('close-btn');
+
+        filterBtn.addEventListener('click', function() {
+            filterModal.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', function() {
+            filterModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === filterModal) {
+                filterModal.style.display = 'none';
+            }
+        });
+    });
+</script>
+<script>
+    const filterTemplate = document.getElementById('filter-template');
+    const sidebarContent = document.getElementById('sidebar-content');
+    const modalContent = document.getElementById('modal-content');
+
+    sidebarContent.appendChild(filterTemplate.content.cloneNode(true));
+    modalContent.appendChild(filterTemplate.content.cloneNode(true));
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const gridViewBtn = document.getElementById('grid-view');
+        const listViewBtn = document.getElementById('list-view');
+        const mangaContainer = document.querySelector('.manga-grid');
+
+        mangaContainer.classList.add('hide-manga-details');
+
+        gridViewBtn.classList.add('active');
+
+        gridViewBtn.addEventListener('click', function() {
+            mangaContainer.classList.remove('manga-list');
+            mangaContainer.classList.remove('hide-manga-details');
+            gridViewBtn.classList.add('active');
+            listViewBtn.classList.remove('active');
+        });
+
+        listViewBtn.addEventListener('click', function() {
+            mangaContainer.classList.add('manga-list');
+            mangaContainer.classList.add('hide-manga-details');
+            listViewBtn.classList.add('active');
+            gridViewBtn.classList.remove('active');
+        });
+    });
+
+</script>
 </body>
 </html>

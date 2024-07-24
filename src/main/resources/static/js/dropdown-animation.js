@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const dropdowns = document.querySelectorAll('.dropdown');
+    const dropdowns = document.querySelectorAll('.admin-dropdown, .site-dropdown');
 
     dropdowns.forEach(dropdown => {
         dropdown.addEventListener('show.bs.dropdown', function () {

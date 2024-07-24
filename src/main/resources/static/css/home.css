@@ -160,20 +160,7 @@ body {
     border: none;
     z-index: 10;
 }
-::-webkit-scrollbar {
-    width: 11px;
-}
 
-::-webkit-scrollbar-track {
-    background-color: #343a40;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #6f42c1;
-    border-radius: 6px;
-    border: 3px solid #343a40;
-
-}
 @media (max-width: 768px) {
     .genre-control {
         width: 40px;
