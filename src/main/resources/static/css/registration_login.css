@@ -1,15 +1,116 @@
+.form-container {
+    width: 480px;
+    border-left: 2px dotted #333;
+    border-right: 2px dotted #333;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.form-label {
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.input-group-prepend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #222;
+    border: 1px solid #444;
+    color: #fff;
+    border-radius: 5px 0 0 5px;
+    padding: 10px;
+}
+
+.input-group-text {
+    color: #fff;
+    background-color: #222;
+    border: none;
+}
+
 .form-control {
-    color: white;
-    }
-.form-control{
- background-color: #302b3b;
+    height:40px;
+    background-color: #222;
+    border: 1px solid #444;
+    color: #fff;
+    border-radius: 0 5px 5px 0;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    border-left:none;
 }
-.form-control:focus{
-    color:white;
-    background-color: #302b3b;
-    border-color: #5000ff;
-    box-shadow: 0 0 0 2px #5000ff;
-}
+
 .form-control::placeholder {
-    color: #999;
+    color: #777;
+}
+
+.form-control:focus {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #fff;
+}
+
+.btn-primary {
+    background-color: #ff0080;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #ff4fa7;
+}
+.btn-outline-info {
+    border-color: #ff4fa7;
+    color: #ff4fa7;
+}
+.btn-outline-info:hover {
+    background-color: #ff4fa7;
+    color: #ffffff;
+    border-color:#de006f;
+}
+.text-white {
+    color: #fff !important;
+}
+
+.text-center p {
+    margin-bottom: 5px;
+}
+
+.text-center {
+    font-size: 14px;
+}
+
+.brand-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.brand-text {
+    font-size: 28px;
+}
+
+.brand-container img {
+    height: 80px;
+}
+.input-group-prepend{
+    height:40px;
+    border-right:none;
+}
+.form-header {
+    margin-top:25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.text-right {
+    text-align: right;
+}
+.account a{
+    color:#a2a2a2;
+    text-decoration: none;
+}
+.account a:hover{
+    color:#cbcbcb;
+    text-decoration: underline;
 }

@@ -48,7 +48,8 @@ public class UserController {
     private List<Manga> wantToReadManga = new ArrayList<>();
     private List<Manga> stoppedReadingManga = new ArrayList<>();
     @GetMapping("/registration")
-    public String registration(User user) {
+    public String registration(Model model) {
+        model.addAttribute("user", new User());
         return "registration";
     }
 

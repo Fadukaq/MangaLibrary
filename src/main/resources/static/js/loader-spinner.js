@@ -1,7 +1,7 @@
 var loader = document.getElementById('loader');
 
 document.addEventListener('DOMContentLoaded', function() {
-    var backgroundImageUrl = '/images/settingsPicture/backGroundSettings1.jpg'; // Изображение по умолчанию
+    var backgroundImageUrl = '/images/settingsPicture/backGroundSettings1.jpg';
 
     var backGroundImgElement = document.getElementById('backGroundImg');
     if (backGroundImgElement && backGroundImgElement.value.trim() !== '') {
@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var body = document.body;
 
     if (backgroundImageUrl && backgroundImageUrl.trim() !== '') {
-        body.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("' + backgroundImageUrl + '")';
+        body.style.backgroundImage = 'url("' + backgroundImageUrl + '")';
     } else {
-        body.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("' + '/images/settingsPicture/backGroundSettings1.jpg' + '")';
+        body.style.backgroundImage = 'url("' + '/images/settingsPicture/backGroundSettings1.jpg' + '")';
     }
 
     body.style.backgroundSize = 'cover';
