@@ -101,3 +101,33 @@ hr {
         padding: 20px;
         border-radius: 0 0 8px 8px;
     }
+    .carousel-controls {
+        display: flex;
+        gap: 10px;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        position: static;
+        width: auto;
+        padding: 0;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 10%;
+        width: 24px;
+        height: 24px;
+        background-size: 50% 50%;
+    }
+
+    .btn-link {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .btn-link:hover {
+        color: #fff;
+        opacity: 0.8;
+    }
