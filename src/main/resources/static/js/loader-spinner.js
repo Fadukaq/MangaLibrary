@@ -18,7 +18,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     body.style.backgroundSize = 'cover';
     body.style.backgroundRepeat = 'no-repeat';
-    body.style.backgroundPosition = 'center center fixed';
+    body.style.backgroundPosition = 'center center';
+    body.style.position = 'relative';
+
+    var overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    overlay.style.backdropFilter = 'blur(10px)';
+    overlay.style.zIndex = '-1';
+
+    body.appendChild(overlay);
 
     loader.classList.add('hidden');
 });

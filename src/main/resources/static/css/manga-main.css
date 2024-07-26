@@ -168,7 +168,9 @@ body {
 
 .filter-modal-content {
     background-color: #fff;
-    margin: 15% auto;
+    margin-top: 9%;
+    margin-left: auto;
+    margin-right: auto;
     padding: 20px;
     border-radius: 5px;
     width: 80%;
@@ -215,9 +217,8 @@ body {
     color: #e0e0e0;
 }
 
-/* Если вам нужно добавить стрелку вниз для выпадающего списка */
 .filter-select::-ms-expand {
-    display: none; /* Убирает стрелку для IE */
+    display: none;
 }
 
 .filter-select-container {
@@ -225,7 +226,7 @@ body {
 }
 
 .filter-select-container::after {
-    content: '\f078'; /* Используем иконку стрелки вниз (FontAwesome) */
+    content: '\f078';
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
     position: absolute;
@@ -548,6 +549,9 @@ input::placeholder {
     .manga-grid {
         grid-template-columns: repeat(4, 1fr);
     }
+    .filter-modal-content {
+        margin-top: 20%;
+    }
 }
 
 @media (max-width: 992px) {
@@ -707,7 +711,7 @@ input::placeholder {
         -webkit-line-clamp: 4;
     }
 }
-@media (max-width:577px) {
+@media (max-width:954px) {
     .manga-list .custom-grade-details {
         position: absolute;
         top: -28px;
