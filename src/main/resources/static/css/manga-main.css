@@ -96,7 +96,7 @@ body {
 }
 
 .filter-button {
-    width: 95%;
+    width: 93%;
     padding: 15px 20px;
     border: none;
     border-radius: 5px;
@@ -127,7 +127,7 @@ body {
 
 .filter-input {
     border: 1px solid #595959;
-    width: 95%;
+    width: 93%;
     height:40px;
     padding: 0.5rem;
     box-sizing: border-box;
@@ -139,7 +139,7 @@ body {
 }
 
 .range-input-group {
-    width: 95%;
+    width: 93%;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -147,7 +147,7 @@ body {
 
 .range-input-group .dash {
     font-weight: bold;
-    margin: 0 0.5rem;
+    margin: 0 0.3rem;
 }
 
 .range-input-group input {
