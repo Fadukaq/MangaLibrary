@@ -27,6 +27,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -285,12 +286,52 @@ public class MangaController {
 
             String translatedStatus = mangaService.getMangaTranslatedStatus(manga.getMangaStatus());
 
+            Set<Genre> genres = new HashSet<>(manga.getGenres());
+            List<Manga> similarMangas = mangaRepo.findByGenresIn(genres);
+
+            List<Map<String, Object>> similarMangasMap = similarMangas.stream()
+                    .filter(similarManga -> similarManga.getId() != manga.getId())
+                    .limit(8)
+                    .map(similarManga -> {
+                Map<String, Object> mangaMap = new HashMap<>();
+                mangaMap.put("id", similarManga.getId());
+                mangaMap.put("mangaName", similarManga.getMangaName());
+                mangaMap.put("mangaPosterImg", similarManga.getMangaPosterImg());
+
+                List<Map<String, Object>> chaptersMap = similarManga.getChapter().stream()
+                        .map(chapter -> {
+                            Map<String, Object> chapterMap = new HashMap<>();
+                            chapterMap.put("id", chapter.getId());
+                            chapterMap.put("title", chapter.getTitle());
+                            return chapterMap;
+                        })
+                        .collect(Collectors.toList());
+                mangaMap.put("chapters", chaptersMap);
+
+                List<Map<String, Object>> genresMap = similarManga.getGenres().stream()
+                        .map(genre -> {
+                            Map<String, Object> genreMap = new HashMap<>();
+                            genreMap.put("id", genre.getId());
+                            genreMap.put("genreName", genre.getGenreName());
+                            return genreMap;
+                        })
+                        .collect(Collectors.toList());
+                mangaMap.put("genres", genresMap);
+
+                mangaMap.put("mangaStatus", similarManga.getMangaStatus());
+                mangaMap.put("description", similarManga.getMangaDescription());
+
+                return mangaMap;
+            }).collect(Collectors.toList());
+
             MangaService.addMangaStatusAttributes(user, id, model);
 
             model.addAttribute("manga", manga);
             model.addAttribute("translatedMangaStatus", translatedStatus);
             model.addAttribute("userSettings", userSettings);
             model.addAttribute("chapters", chapters);
+            model.addAttribute("chapterCount", chapters.size());
+            model.addAttribute("similarMangas", similarMangasMap);
             return "manga/manga-details";
         } else {
             model.addAttribute("errorMessage", "Такої манги не знайдено!");

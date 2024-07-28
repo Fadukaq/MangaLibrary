@@ -2,6 +2,7 @@ package com.example.MangaLibrary.repo;
 
 import com.example.MangaLibrary.models.Author;
 import com.example.MangaLibrary.models.Chapter;
+import com.example.MangaLibrary.models.Genre;
 import com.example.MangaLibrary.models.Manga;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface MangaRepo extends CrudRepository<Manga, Long> {
     @Query("SELECT m FROM Manga m JOIN m.genres g WHERE g.genreName = :genreName")
@@ -31,5 +33,5 @@ public interface MangaRepo extends CrudRepository<Manga, Long> {
     Page<Manga> findAll(Pageable pageable);
     @Query("SELECT m FROM Manga m ORDER BY m.id DESC")
     List<Manga> findMangasByIdDesc();
-
+    List<Manga> findByGenresIn(Set<Genre> genres);
 }

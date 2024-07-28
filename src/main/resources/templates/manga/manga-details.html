@@ -4,6 +4,7 @@
     <title th:text="${manga.mangaName}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/manga-details.css">
     <link rel="stylesheet" href="/css/manga-details-animation.css">
@@ -36,89 +37,118 @@
         </div>
     </div>
 </div>
-<input type="hidden" id="backGroundImg" name="manga.mangaBackGround" th:value="${manga.mangaBackGround}" />
+
 <div class="container mt-5 mb-5">
-    <div class="row">
-        <div class="col-lg-10 mx-auto">
-            <div class="manga-details-container p-4 rounded shadow-lg">
-                <ul class="nav nav-tabs justify-content-center" id="mangaTabs" role="tablist">
+    <div class="bg-manga">
+        <img th:src="${manga.mangaBackGround}" alt="" class="img-fluid">
+    </div>
+    <div class="main-container">
+        <div class="left-block">
+            <img th:src="${manga.mangaPosterImg}" alt="Main Manga Image">
+            <button class="btn-custom mt-2 btn-view">Почати перегляд</button>
+            <form id="addMangaForm" action="#" th:action="@{/manga/add-to-list}" th:object="${manga}" method="post" onsubmit="return false;">
+                <div class="select-wrapper">
+                    <select name="listType" id="listTypeSelect" class="form-select custom-select-lists">
+                        <option value="" disabled th:selected="${!isInReadingList && !isInWantToReadList && !isInRecitedList && !isInReadStoppedList}">Додати до списку</option>
+                        <option value="reading" th:selected="${isInReadingList}">Читаю</option>
+                        <option value="want-read" th:selected="${isInWantToReadList}">В планах</option>
+                        <option value="recited" th:selected="${isInRecitedList}">Прочитано</option>
+                        <option value="read-stopped" th:selected="${isInReadStoppedList}">Кинуто</option>
+                    </select>
+                    <div id="icon-preview" class="icon-preview"></div>
+                </div>
+                <input type="hidden" name="mangaId" th:value="${manga.id}" />
+            </form>
+            <div class="info-block mt-2">
+                <div class="info-item">
+                    <p class="info-title">Тип: </p>
+                    <span>Манга</span>
+                </div>
+                <div class="info-item">
+                    <p class="info-title">Рік виходу:</p>
+                    <a th:href="@{'/search?q=' + ${manga.releaseYear} + '&type=releaseYear'}" class="link" th:text="${manga.releaseYear}"></a>
+                </div>
+                <div class="info-item">
+                    <p class="info-title">Віковий рейтинг:</p>
+                    <span th:text="${manga.adultContent} ? '18+' : 'Ні'"></span>
+                </div>
+                <div class="info-item">
+                    <p class="info-title">Автор манги:</p>
+                    <span th:if="${manga.author != null}">
+                    <a th:href="@{'/author/' + ${manga.author.id}}" class="link" th:text="${manga.author.name}"></a>
+                </span>
+                    <span th:unless="${manga.author != null}">undefined</span>
+                </div>
+                <div class="info-item">
+                    <p class="info-title">Статус манги:</p>
+                    <a th:href="@{'/search?q=' + ${manga.mangaStatus} + '&type=mangaStatus'}" class="link" th:text="${translatedMangaStatus}"></a>
+                </div>
+                <div class="info-item">
+                    <p class="info-title">Завантажено глав:</p>
+                    <span th:text="${chapterCount}"></span>
+                </div>
+            </div>
+        </div>
+        <div class="right-block">
+            <div class="title-rating">
+                <h2 th:text="${manga.mangaName}"></h2>
+                <div class="stars">
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div class="bg-nav-tabs">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="info-tab" data-bs-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Інфо</a>
+                        <a class="nav-link active" id="info-tab" data-bs-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Інформація</a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="chapters-tab" data-bs-toggle="tab" href="#chapters" role="tab" aria-controls="chapters" aria-selected="false">Глави</a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="similar-tab" data-bs-toggle="tab" href="#similar" role="tab" aria-controls="similar" aria-selected="false">Схожі</a>
+                        <a class="nav-link" id="comments-tab" data-bs-toggle="tab" href="#comments" role="tab" aria-controls="comments" aria-selected="false">Коментарі</a>
+                    </li>
+                    <li class="nav-item ms-3 admin-panel">
+                        <button class="btn btn-custom-admin-panel" type="button" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Адмін-панель
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fa fa-trash" aria-hidden="true"></i> Видалити</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa fa-edit" aria-hidden="true"></i> Редагувати</a></li>
+                        </ul>
                     </li>
                 </ul>
-                <div class="tab-content" id="mangaTabsContent">
+
+                <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="manga-poster mb-3">
-                                    <img th:src="${manga.mangaPosterImg}" class="img-fluid rounded" alt="Manga Poster">
-                                </div>
-                                <div class="manga-actions">
-                                    <form id="addMangaForm" action="#" th:action="@{/manga/add-to-list}" th:object="${manga}" method="post" onsubmit="return false;">
-                                        <select name="listType" id="listTypeSelect" class="form-select mb-3 custom-select">
-                                            <option value="" disabled th:selected="${!isInReadingList && !isInWantToReadList && !isInRecitedList && !isInReadStoppedList}">Виберіть список</option>
-                                            <option value="reading" th:selected="${isInReadingList}">Читаю</option>
-                                            <option value="want-read" th:selected="${isInWantToReadList}">Буду читати</option>
-                                            <option value="recited" th:selected="${isInRecitedList}">Прочитано</option>
-                                            <option value="read-stopped" th:selected="${isInReadStoppedList}">Привинив</option>
-                                        </select>
-                                        <input type="hidden" name="mangaId" th:value="${manga.id}" />
-                                    </form>
-                                    <div th:if="${!#lists.isEmpty(chapters)}">
-                                        <a th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapters[0].id})}" class="btn btn-primary w-100">Почати читати</a>
-                                    </div>
-                                    <div th:unless="${!#lists.isEmpty(chapters)}">
-                                        <a class="btn btn-primary w-100 disabled" title="Поки що немає глав">Почати читати</a>
-                                    </div>
-                                    <div class="admin-actions mt-4" th:if="(${#authentication.authorities[0].authority == 'ADMIN'}) or (${#authentication.authorities[0].authority == 'MangaModerator'})">
-                                        <hr>
-                                        <a th:href="@{/manga/edit/{id}(id=${id})}" class="btn w-100 mt-1 mb-3 btn-warning me-2">Редагувати</a>
-                                        <form th:action="@{/manga/delete/{id}(id=${id})}" method="post" class="d-inline" onsubmit="return confirmDelete()">
-                                            <button class="btn btn-danger w-100" type="submit">Видалити</button>
-                                        </form>
-                                    </div>
-                                    <hr>
+                        <p style="color:gray;">Повний Опис</p>
+                        <p th:text="${manga.mangaDescription}"></p>
+                        <hr>
+                        <p style="color:gray;">Жанри & Категорії</p>
+                        <div class="genres">
+                            <span th:each="genre : ${manga.genres}" th:text="${genre.genreName}"></span>
+                        </div>
+                        <hr>
+                        <div class="similar">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p style="color: gray;">Схожі</p>
+                                <div class="carousel-controls">
+                                    <button class="btn btn-link carousel-control-prev" type="button" data-bs-target="#mangaCarousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Попередній</span>
+                                    </button>
+                                    <button class="btn btn-link carousel-control-next" type="button" data-bs-target="#mangaCarousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Наступний</span>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="col-md-8">
-                                <h2 class="manga-title mb-3" th:text="${manga.mangaName}"></h2>
-                                <div class="manga-info">
-                                    <p class="manga-description" th:text="${manga.mangaDescription}"></p>
-                                    <hr>
-                                    <div class="manga-genres mb-3">
-                                        <h5>Жанри:</h5>
-                                        <div class="genre-list">
-                                    <span th:each="genre : ${manga.genres}" class="genre-item">
-                                        <a th:href="@{'/search?q=' + ${genre.genreName} + '&type=genre'}" class="link">
-                                            <span th:text="${genre.genreName}"></span>
-                                        </a>
-                                    </span>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="manga-author mb-3">
-                                        <h5>Автор манги:</h5>
-                                        <span th:if="${manga.author != null}">
-                                    <a th:href="@{'/author/' + ${manga.author.id}}" class="link" th:text="${manga.author.name}"></a>
-                                </span>
-                                        <span th:unless="${manga.author != null}">undefined</span>
-                                    </div>
-                                    <hr>
-                                    <div class="manga-year mb-3">
-                                        <h5>Рік виходу:</h5>
-                                        <a th:href="@{'/search?q=' + ${manga.releaseYear} + '&type=releaseYear'}" class="link" th:text="${manga.releaseYear}"></a>
-                                    </div>
-                                    <hr>
-                                    <div class="manga-status mb-3">
-                                        <h5>Статус манги:</h5>
-                                        <a th:href="@{'/search?q=' + ${manga.mangaStatus} + '&type=mangaStatus'}" class="link" th:text="${translatedMangaStatus}"></a>
-                                    </div>
+                            <div id="mangaCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div id="carouselInner" class="carousel-inner">
+
                                 </div>
                             </div>
                         </div>
@@ -135,93 +165,34 @@
                                     <a th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="d-flex justify-content-between align-items-center text-decoration-none">
                                         <span th:text="${chapter.title}" style="color:#ce86ff;"></span>
                                         <span class="fw-bold" style="color:#ce86ff;">Додано на сайт: <span th:text="${#temporals.format(chapter.creationTime, 'dd-MM-yyyy HH:mm')}" style="color:white;"></span></span>
-                                    <div th:if="(${#authentication.authorities[0].authority == 'ADMIN'}) or (${#authentication.authorities[0].authority == 'MangaModerator'})"
-                                            class="d-flex justify-content-end mt-2">
-                                        <a th:href="@{/manga/{mangaId}/chapter/edit/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="btn btn-warning btn-sm me-2">Редагувати</a>
-                                        <form th:action="@{/manga/{mangaId}/chapter/delete/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" method="post" class="d-inline">
-                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Ви впевнені, що хочете видалити цю главу?')">Видалити</button>
-                                        </form>
-                                    </div>
+                                        <div th:if="(${#authentication.authorities[0].authority == 'ADMIN'}) or (${#authentication.authorities[0].authority == 'MangaModerator'})"
+                                             class="d-flex justify-content-end mt-2">
+                                            <a th:href="@{/manga/{mangaId}/chapter/edit/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="btn btn-warning btn-sm me-2">Редагувати</a>
+                                            <form th:action="@{/manga/{mangaId}/chapter/delete/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" method="post" class="d-inline">
+                                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Ви впевнені, що хочете видалити цю главу?')">Видалити</button>
+                                            </form>
+                                        </div>
                                     </a>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="similar" role="tabpanel" aria-labelledby="similar-tab"><div class="container">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="m-0">Схожі</h2>
-                            <div class="carousel-controls">
-                                <button class="btn btn-link carousel-control-prev" type="button" data-bs-target="#bookCarousel" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Попередній</span>
-                                </button>
-                                <button class="btn btn-link carousel-control-next" type="button" data-bs-target="#bookCarousel" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Наступний</span>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
 
-                        <div id="bookCarousel" class="carousel slide" data-bs-ride="carousel">
-                                <div class="carousel-inner">
-                                    <div class="carousel-item active">
-                                        <div class="row justify-content-center">
-                                            <div class="col-md-4">
-                                                <div class="card h-100">
-                                                    <img src="book1-cover.jpg" class="card-img-top" alt="IMG" style="max-width: 100px; max-height:30px; object-fit: cover;">
-                                                    <div class="card-body">
-                                                        <p class="card-text text-muted">Схож по жанрам</p>
-                                                        <h5 class="card-title">Дети руны: Винтерер</h5>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="card h-100">
-                                                    <img src="book2-cover.jpg" class="card-img-top" alt="IMG" style="max-width: 100px; max-height:30px; object-fit: cover;">
-                                                    <div class="card-body">
-                                                        <p class="card-text text-muted">Схож по жанрам</p>
-                                                        <h5 class="card-title">Император Меча Лунной</h5>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="card h-100">
-                                                    <img src="book3-cover.jpg" class="card-img-top" alt="IMG" style="max-width: 100px; max-height:30px; object-fit: cover;">
-                                                    <div class="card-body">
-                                                        <p class="card-text text-muted">Схож по жанрам</p>
-                                                        <h5 class="card-title">Чародей</h5>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="carousel-item">
-                                        <div class="row justify-content-center">
-                                            <div class="col-md-4">
-                                                <div class="card h-100">
-                                                    <img src="book4-cover.jpg" class="card-img-top" alt="IMG" style="max-width: 100px; max-height:30px; object-fit: cover;">
-                                                    <div class="card-body">
-                                                        <p class="card-text text-muted">Схож по жанрам</p>
-                                                        <h5 class="card-title">йцу</h5>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
+
                 </div>
-                </div>
+            </div>
         </div>
     </div>
 </div>
+
+
+
 <div th:if="${notificationMessage}" class="alert alert-success alert-dismissible fade show hide-delay fixed-right" role="alert">
     <span th:text="${notificationMessage}"></span>
 </div>
-
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -230,6 +201,47 @@
 <script src="/js/burger-menu.js"></script>
 <script src="/js/confirmDelete.js"></script>
 <script src="/js/manga-details.js"></script>
+<script src="/js/carousel-details.js"></script>
+<script th:inline="javascript">
+    window.mangaList = /*[[${similarMangas}]]*/ [];
+</script>
 <script th:if="${manga.adultContent and not userSettings.adultContentAgreement}" src="/js/adultContentAlert.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const select = document.getElementById('listTypeSelect');
+        const iconPreview = document.getElementById('icon-preview');
+
+        const icons = {
+                '': 'fa-folder',
+            'reading': 'fa-book',
+            'want-read': 'fa-calendar',
+            'recited': 'fa-check',
+            'read-stopped': 'fa-times'
+        };
+
+        function updateIcon() {
+            const selectedValue = select.value;
+            const iconClass = icons[selectedValue] || '';
+            iconPreview.innerHTML = iconClass ? `<i class="fa-solid ${iconClass}"></i>` : '';
+        }
+
+        updateIcon();
+
+        select.addEventListener('change', updateIcon);
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hash = window.location.hash;
+        if (hash) {
+            document.querySelector(`.nav-link[href="${hash}"]`).click();
+        }
+        document.querySelectorAll('#myTab .nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                history.replaceState(null, null, this.getAttribute('href'));
+            });
+        });
+    });
+</script>
 </body>
 </html>

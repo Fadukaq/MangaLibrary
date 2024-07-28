@@ -1,5 +1,7 @@
 package com.example.MangaLibrary.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -16,6 +18,7 @@ public class Chapter {
     private String title;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manga_id", nullable = false)
+    @JsonManagedReference
     private Manga manga;
     private LocalDateTime creationTime;
     String chapterPages;
