@@ -193,7 +193,6 @@ public class UserService {
                 break;
         }
     }
-
     public void createFolderForProfile(User thisUser, String rootPath) {
         String mangaFolderName = thisUser.getUserName().replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
         File userFolder = new File(rootPath + File.separator + mangaFolderName);

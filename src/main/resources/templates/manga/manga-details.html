@@ -44,7 +44,15 @@
     </div>
     <div class="main-container">
         <div class="left-block">
-            <img th:src="${manga.mangaPosterImg}" alt="Main Manga Image">
+            <div class="manga-image-container">
+                <img th:src="${manga.mangaPosterImg}" alt="Main Manga Image">
+                <form id="addMangaFavoritesForm" action="#" th:action="@{/manga/add-to-favorites}" method="post" onsubmit="return false;">
+                    <input type="hidden" name="mangaId" th:value="${manga.id}" />
+                    <button type="submit" id="addToFavorites" class="btn btn-link" th:classappend="${isFavorited ? 'favorited' : ''}">
+                        <i class="fa fa-heart" aria-hidden="true"></i>
+                    </button>
+                </form>
+            </div>
             <button class="btn-custom mt-2 btn-view">Почати перегляд</button>
             <form id="addMangaForm" action="#" th:action="@{/manga/add-to-list}" th:object="${manga}" method="post" onsubmit="return false;">
                 <div class="select-wrapper">
@@ -60,10 +68,12 @@
                 <input type="hidden" name="mangaId" th:value="${manga.id}" />
             </form>
             <div class="info-block mt-2">
-                <div class="info-item">
-                    <p class="info-title">Тип: </p>
-                    <span>Манга</span>
-                </div>
+                <a href="/manga" class="link full-link">
+                    <div class="info-item">
+                        <p class="info-title">Тип:</p>
+                        <span>Манга</span>
+                    </div>
+                </a>
                 <div class="info-item">
                     <p class="info-title">Рік виходу:</p>
                     <a th:href="@{'/search?q=' + ${manga.releaseYear} + '&type=releaseYear'}" class="link" th:text="${manga.releaseYear}"></a>
@@ -73,11 +83,11 @@
                     <span th:text="${manga.adultContent} ? '18+' : 'Ні'"></span>
                 </div>
                 <div class="info-item">
-                    <p class="info-title">Автор манги:</p>
-                    <span th:if="${manga.author != null}">
-                    <a th:href="@{'/author/' + ${manga.author.id}}" class="link" th:text="${manga.author.name}"></a>
-                </span>
-                    <span th:unless="${manga.author != null}">undefined</span>
+                    <a th:href="@{'/author/' + ${manga.author.id}}" class="link full-link">
+                        <p class="info-title">Автор манги:</p>
+                        <span th:if="${manga.author != null}" th:text="${manga.author.name}"></span>
+                        <span th:unless="${manga.author != null}">undefined</span>
+                    </a>
                 </div>
                 <div class="info-item">
                     <p class="info-title">Статус манги:</p>
@@ -111,13 +121,21 @@
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="comments-tab" data-bs-toggle="tab" href="#comments" role="tab" aria-controls="comments" aria-selected="false">Коментарі</a>
                     </li>
-                    <li class="nav-item ms-3 admin-panel">
+                    <li th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})" class="nav-item ms-3 admin-panel">
                         <button class="btn btn-custom-admin-panel" type="button" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             Адмін-панель
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                            <li><a class="dropdown-item" href="#"><i class="fa fa-trash" aria-hidden="true"></i> Видалити</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fa fa-edit" aria-hidden="true"></i> Редагувати</a></li>
+                            <li>
+                                <a class="dropdown-item" href="#" th:onclick="'confirmDelete(event, ' + ${manga.id} + ')'">
+                                    <i class="fa fa-trash" aria-hidden="true"></i> Видалити
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/manga/edit/{id}(id=${id})}">
+                                    <i class="fa fa-edit" aria-hidden="true"></i> Редагувати
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
@@ -204,43 +222,9 @@
 <script th:inline="javascript">
     window.mangaList = /*[[${similarMangas}]]*/ [];
 </script>
+<script>
+
+</script>
 <script th:if="${manga.adultContent and not userSettings.adultContentAgreement}" src="/js/adultContentAlert.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const select = document.getElementById('listTypeSelect');
-        const iconPreview = document.getElementById('icon-preview');
-
-        const icons = {
-                '': 'fa-folder',
-            'reading': 'fa-book',
-            'want-read': 'fa-calendar',
-            'recited': 'fa-check',
-            'read-stopped': 'fa-times'
-        };
-
-        function updateIcon() {
-            const selectedValue = select.value;
-            const iconClass = icons[selectedValue] || '';
-            iconPreview.innerHTML = iconClass ? `<i class="fa-solid ${iconClass}"></i>` : '';
-        }
-
-        updateIcon();
-
-        select.addEventListener('change', updateIcon);
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const hash = window.location.hash;
-        if (hash) {
-            document.querySelector(`.nav-link[href="${hash}"]`).click();
-        }
-        document.querySelectorAll('#myTab .nav-link').forEach(link => {
-            link.addEventListener('click', function() {
-                history.replaceState(null, null, this.getAttribute('href'));
-            });
-        });
-    });
-</script>
 </body>
 </html>

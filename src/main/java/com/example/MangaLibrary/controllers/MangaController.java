@@ -7,6 +7,8 @@ import com.example.MangaLibrary.repo.*;
 import com.example.MangaLibrary.service.ChapterService;
 import com.example.MangaLibrary.service.MangaService;
 import com.example.MangaLibrary.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -293,36 +295,38 @@ public class MangaController {
                     .filter(similarManga -> similarManga.getId() != manga.getId())
                     .limit(8)
                     .map(similarManga -> {
-                Map<String, Object> mangaMap = new HashMap<>();
-                mangaMap.put("id", similarManga.getId());
-                mangaMap.put("mangaName", similarManga.getMangaName());
-                mangaMap.put("mangaPosterImg", similarManga.getMangaPosterImg());
+                        Map<String, Object> mangaMap = new HashMap<>();
+                        mangaMap.put("id", similarManga.getId());
+                        mangaMap.put("mangaName", similarManga.getMangaName());
+                        mangaMap.put("mangaPosterImg", similarManga.getMangaPosterImg());
 
-                List<Map<String, Object>> chaptersMap = similarManga.getChapter().stream()
-                        .map(chapter -> {
-                            Map<String, Object> chapterMap = new HashMap<>();
-                            chapterMap.put("id", chapter.getId());
-                            chapterMap.put("title", chapter.getTitle());
-                            return chapterMap;
-                        })
-                        .collect(Collectors.toList());
-                mangaMap.put("chapters", chaptersMap);
+                        List<Map<String, Object>> chaptersMap = similarManga.getChapter().stream()
+                                .map(chapter -> {
+                                    Map<String, Object> chapterMap = new HashMap<>();
+                                    chapterMap.put("id", chapter.getId());
+                                    chapterMap.put("title", chapter.getTitle());
+                                    return chapterMap;
+                                })
+                                .collect(Collectors.toList());
+                        mangaMap.put("chapters", chaptersMap);
 
-                List<Map<String, Object>> genresMap = similarManga.getGenres().stream()
-                        .map(genre -> {
-                            Map<String, Object> genreMap = new HashMap<>();
-                            genreMap.put("id", genre.getId());
-                            genreMap.put("genreName", genre.getGenreName());
-                            return genreMap;
-                        })
-                        .collect(Collectors.toList());
-                mangaMap.put("genres", genresMap);
+                        List<Map<String, Object>> genresMap = similarManga.getGenres().stream()
+                                .map(genre -> {
+                                    Map<String, Object> genreMap = new HashMap<>();
+                                    genreMap.put("id", genre.getId());
+                                    genreMap.put("genreName", genre.getGenreName());
+                                    return genreMap;
+                                })
+                                .collect(Collectors.toList());
+                        mangaMap.put("genres", genresMap);
 
-                mangaMap.put("mangaStatus", similarManga.getMangaStatus());
-                mangaMap.put("description", similarManga.getMangaDescription());
+                        mangaMap.put("mangaStatus", similarManga.getMangaStatus());
+                        mangaMap.put("description", similarManga.getMangaDescription());
 
-                return mangaMap;
-            }).collect(Collectors.toList());
+                        return mangaMap;
+                    }).collect(Collectors.toList());
+
+            boolean isFavorited = user != null && user.getMangaFavorites().contains(String.valueOf(id));
 
             MangaService.addMangaStatusAttributes(user, id, model);
 
@@ -332,6 +336,7 @@ public class MangaController {
             model.addAttribute("chapters", chapters);
             model.addAttribute("chapterCount", chapters.size());
             model.addAttribute("similarMangas", similarMangasMap);
+            model.addAttribute("isFavorited", isFavorited);
             return "manga/manga-details";
         } else {
             model.addAttribute("errorMessage", "Такої манги не знайдено!");
@@ -346,7 +351,6 @@ public class MangaController {
         String username = authentication.getName();
         User user = userRepo.findByUserName(username);
         Map<String, Object> response = new HashMap<>();
-
         if(user != null) {
             userService.deleteMangaFromUserList(user, mangaId);
             userService.addMangaToList(user, listType, mangaId);
@@ -360,8 +364,37 @@ public class MangaController {
 
         return ResponseEntity.ok(response);
     }
-    @PostMapping("/manga/delete/{id}")
-    public String MangaPostDelete(@PathVariable(value ="id") long id,Model model) {
+
+    @PostMapping("/manga/add-to-favorites")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> toggleFavorite(@RequestParam("mangaId") Long mangaId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepo.findByUserName(username);
+        Map<String, Object> response = new HashMap<>();
+
+        if (user != null) {
+            List<String> favorites = user.getMangaFavorites();
+
+            if (favorites.contains(String.valueOf(mangaId))) {
+                favorites.remove(String.valueOf(mangaId));
+                response.put("message", "Манга успішно видалена з обраного");
+            } else {
+                favorites.add(String.valueOf(mangaId));
+                response.put("message", "Манга успішно додана в обране");
+            }
+
+            userRepo.save(user);
+            response.put("success", true);
+        } else {
+            response.put("success", false);
+            response.put("message", "Користувач не знайдений");
+        }
+
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/manga/delete/{id}")
+    public String MangaDelete(@PathVariable(value ="id") long id,Model model) {
         Manga mangaToDelete = mangaRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Id:" + id));
         mangaRepo.delete(mangaToDelete);
 
@@ -427,48 +460,11 @@ public class MangaController {
         mangaService.updateManga(id,mangaForm);
         return "redirect:/manga/"+id;
     }
-        @GetMapping("/search")
-    public String search(@RequestParam("q") String searchQuery,
-                            @RequestParam("type") String searchType,
-                            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-                            Model model) {
-        if (!searchQuery.isEmpty()) {
-            Page<Manga> foundMangas;
-            switch (searchType) {
-                case "title":
-                    foundMangas = mangaRepo.findByMangaNameContainingIgnoreCase(searchQuery, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending()));
-                    break;
-                case "genre":
-                    Genre genre = genreRepo.findByGenreName(searchQuery);
-                    foundMangas = mangaRepo.findByGenresGenreNameContainingIgnoreCase(searchQuery, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending()));
-                    model.addAttribute("genreId", genre.getId());
-                    break;
-                case "releaseYear":
-                    foundMangas = mangaRepo.findByReleaseYear(searchQuery, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending()));
-                    break;
-                case "mangaStatus":
-                    foundMangas = mangaRepo.findByMangaStatusContainingIgnoreCase(searchQuery, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending()));
-                    break;
-                default:
-                    model.addAttribute("errorMessage", "Немає такого типу пошуку!");
-                    return "main/error";
-            }
-            List<Manga> mangaList = foundMangas.getContent();
-            if (mangaList.isEmpty()) {
-                model.addAttribute("noResults", true);
-                model.addAttribute("searchQuery", searchQuery);
-
-            } else {
-                model.addAttribute("noResults", false);
-                model.addAttribute("mangas", mangaList);
-                model.addAttribute("currentPage", foundMangas.getNumber());
-                model.addAttribute("totalPages", foundMangas.getTotalPages());
-                model.addAttribute("searchQuery", searchQuery);
-            }
-            model.addAttribute("searchType", searchType);
-            return "manga/manga-search-result";
-        }
-        return "redirect:/manga";
+    @GetMapping("/search")
+    @ResponseBody
+    public List<Manga> searchManga(@RequestParam("q") String query) {
+        List<Manga> results = mangaRepo.findByMangaNameContainingIgnoreCase(query);
+        return results;
     }
 
     @GetMapping("/random")

@@ -1,7 +1,9 @@
 package com.example.MangaLibrary.controllers;
 
+import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.models.UserSettings;
+import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
 import com.example.MangaLibrary.repo.UserSettingsRepo;
 import com.example.MangaLibrary.service.UserService;
@@ -9,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -21,6 +23,8 @@ public class GlobalControllerAdvice {
     private UserService userService;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private MangaRepo mangaRepo;
     @Autowired
     private UserSettingsRepo userSettingsRepo;
     @ModelAttribute
@@ -34,4 +38,5 @@ public class GlobalControllerAdvice {
             }
         }
     }
+
 }

@@ -40,6 +40,8 @@ public class User {
 
     @ElementCollection
     private List<String> mangaRecited = new ArrayList<>();
+    @ElementCollection
+    private List<String> mangaFavorites = new ArrayList<>();
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserSettings userSettings;
     private String resetCode;
@@ -110,6 +112,14 @@ public class User {
 
     public void setMangaRecited(List<String> mangaRecited) {
         this.mangaRecited = mangaRecited;
+    }
+
+    public List<String> getMangaFavorites() {
+        return mangaFavorites;
+    }
+
+    public void setMangaFavorites(List<String> mangaFavorites) {
+        this.mangaFavorites = mangaFavorites;
     }
 
     public String getEmail() {

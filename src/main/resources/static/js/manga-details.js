@@ -43,3 +43,47 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const select = document.getElementById('listTypeSelect');
+    const iconPreview = document.getElementById('icon-preview');
+
+    const icons = {
+        '': 'fa-folder',
+        'reading': 'fa-book',
+        'want-read': 'fa-calendar',
+        'recited': 'fa-check',
+        'read-stopped': 'fa-times'
+    };
+
+    function updateIcon() {
+        const selectedValue = select.value;
+        const iconClass = icons[selectedValue] || '';
+        iconPreview.innerHTML = iconClass ? `<i class="fa-solid ${iconClass}"></i>` : '';
+    }
+
+    updateIcon();
+
+    select.addEventListener('change', updateIcon);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const hash = window.location.hash;
+    if (hash) {
+        document.querySelector(`.nav-link[href="${hash}"]`).click();
+    }
+    document.querySelectorAll('#myTab .nav-link').forEach(link => {
+        link.addEventListener('click', function() {
+            history.replaceState(null, null, this.getAttribute('href'));
+        });
+    });
+});
+
+function confirmDelete(event, id) {
+    event.preventDefault();
+
+    if (confirm("Ви впевнені, що хочете видалити цей об'єкт?")) {
+        const url = `/manga/delete/${id}`;
+
+        window.location.href = url;
+    }
+}

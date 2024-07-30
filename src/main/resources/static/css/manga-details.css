@@ -42,7 +42,7 @@
     justify-content: flex-start;
     align-items: flex-start;
     margin-top: 20px;
-    width: 100%; /* Обеспечиваем, что main-container занимает всю ширину контейнера */
+    width: 100%;
 }
 
 .left-block {
@@ -181,7 +181,7 @@
     margin-left: 40px;
     flex: 1;
     align-self: flex-start;
-    position: relative; /* Для позиционирования звезд */
+    position: relative;
 }
 
 .title-rating {
@@ -234,7 +234,6 @@
     cursor:pointer;
 }
 
-/* Carousel controls */
 .carousel-controls {
     display: flex;
     gap: 10px;
@@ -434,9 +433,12 @@
 }
 
 .btn-custom-admin-panel {
+    color: #cccccc;
+    font-weight: bold;
+}
+.btn-custom-admin-panel:hover {
     color: white;
 }
-
 
 .btn-custom-admin-panel + .dropdown-menu {
     background-color: #000000;
@@ -463,7 +465,6 @@
     background-color: #495057;
     color: #ffffff;
 }
-/* Для экранов шириной 1400px и меньше */
 @media (max-width: 1399px) {
     .genre-tag {
         font-size: 10px;
@@ -552,4 +553,63 @@
     .manga-card{
         background-color:#252527;
     }
+}
+.full-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.info-item {
+    cursor: pointer;
+}
+.manga-image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.manga-image-container img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+#addMangaFavoritesForm {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    margin: 0;
+}
+
+#addToFavorites {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+#addToFavorites.btn-link {
+    color: #6c6c6c;
+    transition: color 0.3s;
+}
+
+#addToFavorites.btn-link:hover {
+    color: #8100ff;
+}
+
+#addToFavorites.btn-link.favorited {
+    color: #FF0080;
+}
+
+#addToFavorites.btn-link.favorited:hover {
+    color: #ff6cb2;
+}
+
+#addToFavorites .fa-heart {
+    font-size: 24px;
+    transition: color 0.3s, transform 0.3s;
+}
+
+#addToFavorites.btn-link.favorited .fa-heart {
+    transform: scale(1.2);
 }
