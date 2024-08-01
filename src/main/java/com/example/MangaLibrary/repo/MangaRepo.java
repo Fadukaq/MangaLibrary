@@ -34,5 +34,6 @@ public interface MangaRepo extends CrudRepository<Manga, Long> {
     @Query("SELECT m FROM Manga m ORDER BY m.id DESC")
     List<Manga> findMangasByIdDesc();
     List<Manga> findByGenresIn(Set<Genre> genres);
-    List<Manga> findByMangaNameContainingIgnoreCase(String query);
+    List<Manga> findByMangaNameStartingWith(String query);
+
 }

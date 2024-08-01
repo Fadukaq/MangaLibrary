@@ -276,6 +276,7 @@ input::placeholder {
 .pagination .active {
     background-color: #ff369a;
 }
+
 .header-container {
     display: flex;
     justify-content: space-between;
@@ -705,11 +706,6 @@ input::placeholder {
     display: flex;
     gap: 2px;
 }
-
-.star {
-    color: gold;
-    font-size: 1.5em;
-}
 @media (max-width: 768px) {
     .manga-list .manga-details p {
         -webkit-line-clamp: 5;
@@ -745,4 +741,14 @@ input::placeholder {
 .filter-modal-content .filter-select
 {
     width: 93%;
+}
+.fa-star {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: gold;
+}
+.fa-star-half-alt{
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: gold;
 }

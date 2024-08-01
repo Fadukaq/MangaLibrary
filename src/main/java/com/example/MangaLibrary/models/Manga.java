@@ -1,6 +1,7 @@
 package com.example.MangaLibrary.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -39,6 +40,7 @@ public class Manga {
 
     @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @JsonIgnore
     private List<Chapter> chapter = new ArrayList<>();
 
     String mangaBackGround;
@@ -46,6 +48,9 @@ public class Manga {
     private String releaseYear;
 
     private Boolean adultContent;
+
+    private double averageRating;
+    private int totalRatings;
 
     public Manga() {}
     public Manga(Manga manga) {
@@ -141,5 +146,21 @@ public class Manga {
 
     public void setChapter(List<Chapter> chapter) {
         this.chapter = chapter;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public int getTotalRatings() {
+        return totalRatings;
+    }
+
+    public void setTotalRatings(int totalRatings) {
+        this.totalRatings = totalRatings;
     }
 }

@@ -26,6 +26,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const gradeDetails = document.querySelectorAll('.custom-grade-details');
+
+    gradeDetails.forEach(function(detail) {
+        const rating = parseFloat(detail.dataset.rating);
+        const starsContainer = detail.querySelector('.stars');
+        const ratingNumber = detail.querySelector('.rating-number');
+
+        starsContainer.innerHTML = '';
+
+        for (let i = 1; i <= 5; i++) {
+            const star = document.createElement('i');
+
+            if (i <= Math.floor(rating)) {
+                star.className = 'fas fa-star';
+            } else if (i - 0.8 < rating) {
+                star.className = 'fas fa-star-half-alt';
+            } else {
+                star.className = 'far fa-star';
+            }
+
+            starsContainer.appendChild(star);
+        }
+
+        ratingNumber.textContent = rating.toFixed(1);
+    });
+});
 const filterTemplate = document.getElementById('filter-template');
 const sidebarContent = document.getElementById('sidebar-content');
 const modalContent = document.getElementById('modal-content');

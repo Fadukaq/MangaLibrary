@@ -7,12 +7,10 @@ import com.example.MangaLibrary.repo.*;
 import com.example.MangaLibrary.service.ChapterService;
 import com.example.MangaLibrary.service.MangaService;
 import com.example.MangaLibrary.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,10 +21,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,6 +43,8 @@ public class MangaController {
     private UserRepo userRepo;
     @Autowired
     private AuthorRepo authorRepo;
+    @Autowired
+    private RatingRepo ratingRepo;
     @Autowired
     private MangaLibraryManager mangaLibraryManager;
     private static final int PAGE_SIZE = 15;
@@ -300,6 +298,8 @@ public class MangaController {
                         mangaMap.put("mangaName", similarManga.getMangaName());
                         mangaMap.put("mangaPosterImg", similarManga.getMangaPosterImg());
 
+                        mangaMap.put("averageRating", similarManga.getAverageRating());
+
                         List<Map<String, Object>> chaptersMap = similarManga.getChapter().stream()
                                 .map(chapter -> {
                                     Map<String, Object> chapterMap = new HashMap<>();
@@ -325,12 +325,17 @@ public class MangaController {
 
                         return mangaMap;
                     }).collect(Collectors.toList());
-
             boolean isFavorited = user != null && user.getMangaFavorites().contains(String.valueOf(id));
-
             MangaService.addMangaStatusAttributes(user, id, model);
 
+
+            Optional<Rating> ratingOptional = ratingRepo.findByMangaAndUser(manga,user);
+            if(ratingOptional.isPresent()){
+                Rating ratingValue = ratingOptional.get();
+                model.addAttribute("ratingValue", ratingValue.getRating());
+            }
             model.addAttribute("manga", manga);
+            model.addAttribute("user", user);
             model.addAttribute("translatedMangaStatus", translatedStatus);
             model.addAttribute("userSettings", userSettings);
             model.addAttribute("chapters", chapters);
@@ -462,9 +467,49 @@ public class MangaController {
     }
     @GetMapping("/search")
     @ResponseBody
-    public List<Manga> searchManga(@RequestParam("q") String query) {
-        List<Manga> results = mangaRepo.findByMangaNameContainingIgnoreCase(query);
-        return results;
+    public ResponseEntity<List<Manga>> searchManga(@RequestParam(value = "q", defaultValue = "") String query) {
+        try {
+            if (query.isEmpty()) {
+                return ResponseEntity.ok(Collections.emptyList());
+            }
+            List<Manga> results = mangaRepo.findByMangaNameStartingWith(query);
+            return ResponseEntity.ok(results);
+        } catch (Exception e) {
+            // Логирование и обработка ошибок
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/rate-manga")
+    @ResponseBody
+    ResponseEntity<Map<String, Object>> rateManga(@RequestParam("mangaId") Long mangaId,
+                                                  @RequestParam("userId") Long userId,
+                                                  @RequestParam("rating") int rating) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            mangaService.saveRating(mangaId, userId, rating);
+            response.put("success", true);
+            response.put("message", "Ви успішно додали оцінку!");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Виникла помилка при збереженні оцінки.");
+        }
+        return ResponseEntity.ok(response);
+    }
+    @PostMapping("/remove-rating")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> removeRating(@RequestParam("mangaId") Long mangaId,
+                                                            @RequestParam("userId") Long userId) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            mangaService.removeRating(mangaId, userId);
+            response.put("success", true);
+            response.put("message", "Оценка успешно удалена!");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Ошибка при удалении оценки: " + e.getMessage());
+        }
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/random")

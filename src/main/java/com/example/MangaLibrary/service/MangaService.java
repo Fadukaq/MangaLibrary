@@ -5,9 +5,13 @@ import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.helper.manga.MangaForm;
 import com.example.MangaLibrary.models.Genre;
 import com.example.MangaLibrary.models.Manga;
+import com.example.MangaLibrary.models.Rating;
 import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.GenreRepo;
 import com.example.MangaLibrary.repo.MangaRepo;
+import com.example.MangaLibrary.repo.RatingRepo;
+import com.example.MangaLibrary.repo.UserRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -28,9 +32,14 @@ public class MangaService {
     @Autowired
     private MangaLibraryManager mangaLibraryManager;
     @Autowired
-    private GenreRepo genreRepo;
-    @Autowired
     private MangaRepo mangaRepo;
+    @Autowired
+    private UserRepo userRepo;
+    @Autowired
+    private GenreRepo genreRepo;
+
+    @Autowired
+    private RatingRepo ratingRepo;
     private static final Map<String, String> statusTranslation = new HashMap<>();
 
     public boolean isValidAddMangaForm(MangaForm mangaForm, BindingResult bindingResult) {
@@ -296,6 +305,51 @@ public class MangaService {
         for (int i = 0; i < userLists.size(); i++) {
             boolean isInList = userLists.get(i).contains(mangaIdStr);
             model.addAttribute(attributeNames[i], isInList);
+        }
+    }
+
+
+    @Transactional
+    public void saveRating(Long mangaId, Long userId, int ratingValue) {
+        Manga manga = mangaRepo.findById(mangaId)
+                .orElseThrow(() -> new RuntimeException("Manga not found"));
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Rating rating = ratingRepo.findByMangaAndUser(manga, user)
+                .orElse(new Rating());
+        rating.setManga(manga);
+        rating.setUser(user);
+        rating.setRating(ratingValue);
+
+        ratingRepo.save(rating);
+
+        updateAverageRating(manga);
+    }
+
+    private void updateAverageRating(Manga manga) {
+        double averageRating = ratingRepo.findAverageRatingByManga(manga);
+        int totalRatings = ratingRepo.countByManga(manga);
+
+        manga.setAverageRating(averageRating);
+        manga.setTotalRatings(totalRatings);
+        mangaRepo.save(manga);
+    }
+    @Transactional
+    public void removeRating(Long mangaId, Long userId) {
+        Optional<Manga> mangaOptional= mangaRepo.findById(mangaId);
+        if(mangaOptional.isPresent())
+        {
+            Manga manga = mangaOptional.get();
+            ratingRepo.deleteByMangaIdAndUserId(mangaId, userId);
+            int newTotalRatings = ratingRepo.countByMangaId(mangaId);
+            manga.setTotalRatings(newTotalRatings);
+
+            double newAverageRating = (newTotalRatings > 0)
+                    ? ratingRepo.findAverageByMangaId(mangaId)
+                    : 0.0;
+            manga.setAverageRating(newAverageRating);
+            mangaRepo.save(manga);
         }
     }
 }

@@ -43,12 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const button = document.getElementById('addToFavorites');
 
     if (form && button) {
-        // При загрузке страницы проверяем состояние кнопки
         const mangaId = form.querySelector('input[name="mangaId"]').value;
 
-        // Обработчик нажатия на кнопку
         form.addEventListener('submit', function(event) {
-            event.preventDefault(); // Предотвратить стандартное поведение формы
+            event.preventDefault();
 
             const formData = new FormData(form);
 
@@ -76,6 +74,175 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const stars = document.querySelectorAll('.rating-stars .fa-star');
+    const ratingPanel = document.getElementById('ratingPanel');
+    const overlay = document.getElementById('overlay');
+    const openRatingBtn = document.querySelector('.open-rating-btn');
+    const closePanelBtn = document.querySelector('.close-panel');
+    const ratingForm = document.getElementById('ratingForm');
+    const ratingInput = document.getElementById('ratingInput');
+    const ratingValue = document.getElementById('ratingValue');
+    const userRatingDiv = document.getElementById('userRating');
+    const removeRatingButton = document.getElementById('removeRatingButton');
+    const removeRatingForm = document.getElementById('removeRatingForm');
+    const removeRatingDiv = document.getElementById('removeRatingContainer');
+    let selectedRating = 0;
+
+    function updateStars(rating) {
+        stars.forEach(star => {
+            const value = parseFloat(star.getAttribute('data-value'));
+            if (value <= rating) {
+                star.classList.add('checked');
+            } else {
+                star.classList.remove('checked');
+            }
+        });
+    }
+
+    function updateRatingValue() {
+        ratingValue.textContent = "Ваша оцінка: "+ selectedRating;
+    }
+
+    function saveRating() {
+        const formData = new FormData(ratingForm);
+
+        fetch(ratingForm.getAttribute('action'), {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+            .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+            } else {
+                showNotification(data.message, 'danger');
+            }
+        })
+            .catch(error => {
+            console.error('Ошибка:', error);
+            showNotification('Произошла ошибка при сохранении оценки', 'danger');
+        });
+    }
+
+    function removeRating() {
+        const formData = new FormData(removeRatingForm);
+
+        fetch(removeRatingForm.getAttribute('action'), {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+            .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                ratingValue.textContent = '';
+                const removeRatingContainer = document.getElementById('removeRatingContainer');
+                if (removeRatingContainer) {
+                    removeRatingContainer.style.display = 'none';
+                }
+                resetStars();
+
+                ratingPanel.classList.remove('active');
+                overlay.classList.remove('active');
+            } else {
+                showNotification(data.message, 'danger');
+            }
+        })
+            .catch(error => {
+            console.error('Ошибка:', error);
+            showNotification('Произошла ошибка при удалении оценки', 'danger');
+        });
+    }
+
+    if (document.getElementById('removeRatingButton')) {
+        document.getElementById('removeRatingButton').addEventListener('click', (e) => {
+            e.preventDefault();
+            removeRating();
+        });
+    }
+
+    if (ratingValue != null) {
+        selectedRating = parseFloat(ratingValue.textContent) || 0;
+        updateStars(selectedRating);
+        if(selectedRating!=0){
+            updateRatingValue();
+        }
+    }
+
+    stars.forEach(star => {
+        star.addEventListener('mouseover', () => {
+            const rating = parseFloat(star.getAttribute('data-value'));
+            updateStars(rating);
+        });
+
+        star.addEventListener('mouseout', () => {
+            updateStars(selectedRating);
+        });
+
+        star.addEventListener('click', () => {
+            selectedRating = parseFloat(star.getAttribute('data-value'));
+            updateStars(selectedRating);
+            ratingInput.value = selectedRating;
+            updateRatingValue();
+            saveRating();
+
+            const removeRatingContainer = document.getElementById('removeRatingContainer');
+            if (removeRatingContainer) {
+                removeRatingContainer.style.display = 'block';
+            } else {
+                const container = document.createElement('div');
+                container.id = 'removeRatingContainer';
+
+                const button = document.createElement('button');
+                button.type = 'submit';
+                button.id = 'removeRatingButton';
+                button.className = 'remove-rating-button';
+                button.textContent = 'Видалити оцінку';
+
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    removeRating();
+                });
+
+                container.appendChild(button);
+                document.getElementById('ratingPanel').appendChild(container);
+            }
+
+        });
+    });
+    function resetStars() {
+        stars.forEach(star => {
+            star.classList.remove('checked');
+        });
+    }
+    openRatingBtn.addEventListener('click', () => {
+        ratingPanel.classList.add('active');
+        overlay.classList.add('active');
+    });
+
+    closePanelBtn.addEventListener('click', () => {
+        ratingPanel.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+
+    overlay.addEventListener('click', () => {
+        ratingPanel.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+});
+
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `alert alert-${type} alert-dismissible fade show hide-delay fixed-right`;

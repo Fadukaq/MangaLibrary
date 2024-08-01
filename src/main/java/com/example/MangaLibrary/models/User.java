@@ -45,6 +45,10 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserSettings userSettings;
     private String resetCode;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Rating> ratings = new ArrayList<>();
+
     public User() {}
     public User(User user) {
         this.userName = user.getUserName();
@@ -176,5 +180,13 @@ public class User {
 
     public void setResetCode(String resetCode) {
         this.resetCode = resetCode;
+    }
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
     }
 }

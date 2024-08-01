@@ -102,13 +102,42 @@
         <div class="right-block">
             <div class="title-rating">
                 <h2 th:text="${manga.mangaName}"></h2>
-                <div class="stars">
-                    <i class="fa fa-star" aria-hidden="true"></i>
-                    <i class="fa fa-star" aria-hidden="true"></i>
-                    <i class="fa fa-star" aria-hidden="true"></i>
-                    <i class="fa fa-star" aria-hidden="true"></i>
-                    <i class="fa fa-star" aria-hidden="true"></i>
+                <div class="rating-container mb-2 open-rating-btn">
+                    <div class="stars">
+                        <i class="fa fa-star" aria-hidden="true"></i>
+                        <span th:text="${#numbers.formatDecimal(manga.averageRating, 1, 'POINT', 2, 'COMMA')}" style="font-size: 18px;">0.00</span>
+                        <span style="color: gray;">/ <span th:text="${manga.totalRatings}">0</span></span>
+                    </div>
+                    <button id="rateButton" class="rate-button">✭ Оцінити</button>
                 </div>
+                <div id="ratingPanel" class="rating-panel">
+                    <button class="close-panel" aria-label="Закрыть">&times;</button>
+                    <h3>Оцінити мангу</h3>
+                    <form id="ratingForm" method="post" th:action="@{/rate-manga}" onsubmit="return false;">
+                        <div class="rating-stars">
+                            <i class="fa fa-star" data-value="1" aria-hidden="true"></i>
+                            <i class="fa fa-star" data-value="2" aria-hidden="true"></i>
+                            <i class="fa fa-star" data-value="3" aria-hidden="true"></i>
+                            <i class="fa fa-star" data-value="4" aria-hidden="true"></i>
+                            <i class="fa fa-star" data-value="5" aria-hidden="true"></i>
+                        </div>
+                        <input type="hidden" id="ratingInput" name="rating">
+                        <input type="hidden" id="mangaIdInput" name="mangaId" th:value="${manga.id}">
+                        <input type="hidden" id="userIdInput" name="userId" th:value="${user.id}">
+                    </form>
+                    <div id="userRating" class="user-rating mb-2">
+                        <span th:if="${ratingValue != null}"></span>
+                        <span id="ratingValue" th:text="${ratingValue != null ? ratingValue : ''}"></span>
+                    </div>
+                    <form id="removeRatingForm" method="post" th:action="@{/remove-rating}">
+                        <input type="hidden" id="removeMangaIdInput" name="mangaId" th:value="${manga.id}">
+                        <input type="hidden" id="removeUserIdInput" name="userId" th:value="${user.id}">
+                        <div id="removeRatingContainer" th:if="${ratingValue != null}">
+                            <button type="submit" id="removeRatingButton" class="remove-rating-button">Видалити оцінку</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="overlay" class="overlay"></div>
             </div>
             <div class="bg-nav-tabs">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -139,7 +168,6 @@
                         </ul>
                     </li>
                 </ul>
-
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
                         <p style="color:gray;">Повний Опис</p>
@@ -205,8 +233,6 @@
     </div>
 </div>
 
-
-
 <div th:if="${notificationMessage}" class="alert alert-success alert-dismissible fade show hide-delay fixed-right" role="alert">
     <span th:text="${notificationMessage}"></span>
 </div>
@@ -221,9 +247,6 @@
 <script src="/js/carousel-details.js"></script>
 <script th:inline="javascript">
     window.mangaList = /*[[${similarMangas}]]*/ [];
-</script>
-<script>
-
 </script>
 <script th:if="${manga.adultContent and not userSettings.adultContentAgreement}" src="/js/adultContentAlert.js"></script>
 </body>

@@ -441,7 +441,7 @@
 }
 
 .btn-custom-admin-panel + .dropdown-menu {
-    background-color: #000000;
+    background-color: #202020;
     border: 1px solid #495057;
     margin-top: 0;
     padding: 0;
@@ -462,7 +462,7 @@
 }
 
 .btn-custom-admin-panel + .dropdown-menu .dropdown-item:hover {
-    background-color: #495057;
+    background-color: #522878;
     color: #ffffff;
 }
 @media (max-width: 1399px) {
@@ -612,4 +612,151 @@
 
 #addToFavorites.btn-link.favorited .fa-heart {
     transform: scale(1.2);
+}
+.rating-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stars {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.rating-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    padding: 20px;
+    background-color: rgba(38, 38, 38, 1);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    text-align: center;
+}
+
+.rating-stars {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.rating-stars .fa-star {
+    font-size: 24px;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.rating-stars .fa-star.checked {
+    color: #ffcc00;
+}
+
+.open-rating-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #fff;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.rating-panel.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.close-panel {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.rate-button {
+    background-color: #232323;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.rate-button:hover {
+    background-color: #333;
+}
+
+.rate-button:focus {
+    outline: none;
+}
+
+.rate-button:active {
+    background-color: #222;
+}
+.remove-rating-button {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 2px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.remove-rating-button:hover {
+    background-color: #c0392b;
+}
+
+.remove-rating-button:active {
+    transform: scale(0.98);
+}
+
+.remove-rating-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5);
+}
+.close-panel:hover {
+    background-color:gray;
+    border-radius:5px;
+}
+.fa-star {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: gold;
+}
+.fa-star-half-alt{
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: gold;
 }

@@ -62,14 +62,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
 
-                const ratingDiv = document.createElement('div');
-                ratingDiv.classList.add('manga-rating');
-                for (let i = 0; i < 5; i++) {
-                    const star = document.createElement('span');
-                    star.classList.add('star');
-                    star.textContent = '★';
-                    ratingDiv.appendChild(star);
-                }
+                const ratingDiv = createRatingStars(manga.averageRating);
+
+                cardDiv.appendChild(ratingDiv);
 
                 textDiv.appendChild(cardTitle);
                 textDiv.appendChild(genresDiv);
@@ -94,3 +89,25 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCarousel();
     window.addEventListener('resize', updateCarousel);
 });
+function createRatingStars(rating) {
+    const maxRating = 5; // Максимальный рейтинг
+    const ratingDiv = document.createElement('div');
+    ratingDiv.classList.add('manga-rating');
+
+    for (let i = 1; i <= maxRating; i++) {
+        const star = document.createElement('span');
+        star.classList.add('star');
+
+        if (i <= Math.floor(rating)) {
+            star.className = 'fas fa-star'; // Полная звезда
+        } else if (i - 0.8 < rating) {
+            star.className = 'fas fa-star-half-alt'; // Половинная звезда
+        } else {
+            star.className = 'far fa-star'; // Пустая звезда
+        }
+
+        ratingDiv.appendChild(star);
+    }
+
+    return ratingDiv;
+}

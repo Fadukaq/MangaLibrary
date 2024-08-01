@@ -118,12 +118,9 @@
                                 </div>
                             </div>
                             <div class="custom-title"  th:text="${el.mangaName}"></div>
-                            <div class="custom-grade-details">
-                                <span class="star">&#9733;</span>
-                                <span class="star">&#9733;</span>
-                                <span class="star">&#9733;</span>
-                                <span class="star">&#9733;</span>
-                                <span class="star">&#9733;</span>
+                            <div class="custom-grade-details" th:data-rating="${el.averageRating}">
+                                <span class="stars"></span>
+                                <span class="rating-number"></span>
                             </div>
                             <div class="manga-details">
                                 <div class="custom-title-details" style="font-weight:bold;" th:text="${el.mangaName}"></div>
