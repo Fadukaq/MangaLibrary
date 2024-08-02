@@ -5,12 +5,14 @@ import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.models.*;
 import com.example.MangaLibrary.repo.*;
 import com.example.MangaLibrary.service.ChapterService;
+import com.example.MangaLibrary.service.CommentService;
 import com.example.MangaLibrary.service.MangaService;
 import com.example.MangaLibrary.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,7 +58,11 @@ public class MangaController {
     @Autowired
     ChapterService chapterService;
     @Autowired
+    CommentService commentService;
+    @Autowired
     ChapterRepo chapterRepo;
+    @Autowired
+    CommentRepo commentRepo;
     @GetMapping("/manga")
     public String mangas(
             @RequestParam(name = "page", defaultValue = "1", required = false) int page,
@@ -512,6 +519,33 @@ public class MangaController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/manga/{mangaId}/add-comment")
+    @ResponseBody
+    public ResponseEntity<Comment> addComment(@PathVariable Long mangaId, @RequestParam String text, Principal principal) {
+        Optional<Manga> mangaOptional = mangaRepo.findById(mangaId);
+        if (!mangaOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Manga manga = mangaOptional.get();
+
+        User user = userRepo.findByUserName(principal.getName());
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        if (text == null || text.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Comment comment = new Comment(text, manga, user, LocalDateTime.now());
+        commentRepo.save(comment);
+        return new ResponseEntity<>(comment, HttpStatus.CREATED);
+    }
+    @GetMapping("/manga/{mangaId}/comments")
+    public @ResponseBody List<Comment> getComments(@PathVariable Long mangaId) {
+        List<Comment> comments = commentRepo.findByMangaId(mangaId);
+        return comments;
+    }
     @GetMapping("/random")
     public String getRandomMangaId(Model model) {
 

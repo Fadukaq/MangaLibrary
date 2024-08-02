@@ -51,7 +51,9 @@ public class Manga {
 
     private double averageRating;
     private int totalRatings;
-
+    @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Comment> comments = new ArrayList<>();
     public Manga() {}
     public Manga(Manga manga) {
         this.mangaName = manga.getMangaName();
