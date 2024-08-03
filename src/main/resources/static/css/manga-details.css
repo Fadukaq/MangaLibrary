@@ -728,7 +728,7 @@
     color: #fff;
     border: none;
     border-radius: 5px;
-    padding: 2px;
+    padding: 5px 8px;
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
@@ -913,6 +913,7 @@
 
 .comment-options .dropdown-item {
     color: #fff;
+    text-align: left;
     padding: 10px 15px;
     font-size: 14px;
     min-width: 146px;
