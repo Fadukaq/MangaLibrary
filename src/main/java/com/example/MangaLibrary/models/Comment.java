@@ -32,6 +32,14 @@ public class Comment {
     public String getUserName() {
         return user != null ? user.getUserName() : "Unknown User";
     }
+    @JsonProperty("ProfilePicture")
+    public String getUserProfilePicture() {
+        return user != null ? user.getProfilePicture() : "<i class='fa-solid fa-user-circle'></i>";
+    }
+    @JsonProperty("userId")
+    public Long getUserId() {
+        return user != null ? user.getId() : null;
+    }
     public long getId() {
         return id;
     }

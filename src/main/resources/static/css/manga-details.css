@@ -706,7 +706,7 @@
     border: none;
     border-radius: 5px;
     padding: 5px 10px;
-    font-size: 16px;
+    font-size: 16   px;
     font-family: Arial, sans-serif;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
@@ -759,4 +759,182 @@
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
     color: gold;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.comment-header img {
+    height:28px;
+    border-radius:2px;
+    margin-right: 10px;
+}
+
+.user-name {
+    font-weight: bold;
+}
+.user-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+.user-name:hover {
+    color:#ff0080;
+}
+.comment-text {
+    margin-bottom: 5px;
+}
+
+.comment-time {
+    color: #888;
+    font-size: 0.9em;
+}
+
+#add-comment-form {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    padding: 10px;
+}
+
+.form-group {
+    grid-row: 1;
+}
+
+#submit-comment {
+    grid-row: 2;
+    justify-self: end;
+}
+#comment-text {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #626262;
+    height: 47px;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.btn-primary {
+    background-color: #282828 !important;
+    border: none !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover {
+    background-color: #2f2f2f !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:focus, .btn-primary:active {
+    background-color: #282828 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+.reply-button{
+    font-size:12px;
+    color: #ff0080;
+    text-decoration:none;
+}
+.reply-button:hover{
+    color: #c20060;
+}
+.reply-button:focus, .reply-button:active {
+    color: #ff0080 !important;
+    box-shadow: none !important;
+}
+#comments-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#comments-list li .user-name {
+    font-weight: bold;
+    color: #333;
+}
+
+#comments-list li .comment-text {
+    color: #555;
+}
+
+#comments-list li .comment-time {
+    font-size: 0.9em;
+    color: #999;
+}
+.fa-paper-plane{
+    margin-right:10px;
+}
+.fa-circle{
+    margin-left:9px;
+}
+#comments-list .comment .user-comment-text {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    max-width: 950px;
+    overflow: hidden;
+}
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.comment-options .dropdown-toggle::after {
+    display: none;
+}
+
+.comment-options .btn-link {
+    color: #888;
+    padding: 0;
+}
+.comment-options .dropdown-toggle {
+    background: none;
+    border: none;
+    color: #888;
+    padding: 0;
+    font-size: 16px;
+}
+
+.comment-options .dropdown-toggle:hover,
+.comment-options .dropdown-toggle:focus {
+    color: #ff0080;
+}
+
+.comment-options .dropdown-menu {
+    background-color: #282828;
+    border: 1px solid #3a3a3a;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    border-radius: 4px;
+    padding: 0;
+}
+
+.comment-options .dropdown-item {
+    color: #fff;
+    padding: 10px 15px;
+    font-size: 14px;
+    min-width: 146px;
+    transition: background-color 0.2s ease;
+}
+
+.comment-options .dropdown-item:hover {
+    background-color: #3a3a3a;
+    color: #ff0080;
+}
+
+.comment-options .dropdown-item i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+.comment-options .dropdown-divider {
+    border-top-color: #3a3a3a;
+    margin: 0;
+}
+.comment-footer {
+    display: flex;
+    align-items: center;
 }
