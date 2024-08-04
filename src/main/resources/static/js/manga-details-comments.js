@@ -61,7 +61,7 @@ $(document).ready(function() {
                     if (comment.userId === currentUserId) {
                         optionsMenu += `
         <form action="/manga/comment/${comment.id}/edit" method="post">
-            <input type="hidden" name="comment-id" th:value="${comment.id}">
+            <input type="hidden" name="comment-id" value="${comment.id}">
             <button class="dropdown-item edit-comment" type="submit"><i class="fas fa-edit"></i>Редагувати</button>
         </form>
         <form action="/manga/comment/${comment.id}/delete" method="post">
@@ -92,7 +92,7 @@ $(document).ready(function() {
     </div>
     <hr>
 `);
-                    $('#comments-list').append(commentElement);
+                    commentElement.hide().appendTo('#comments-list').fadeIn('slow');
                 });
 
                 $('.report-comment').click(function(e) {
@@ -104,7 +104,7 @@ $(document).ready(function() {
                 $('#comments-list').on('click', '.edit-comment', function(e) {
                     e.preventDefault();
                     const commentElement = $(this).closest('.comment');
-                    const commentId = commentElement.data('comment-id');
+                    const commentId = commentElement.attr('id').split('-')[1];
                     const commentText = commentElement.find('.user-comment-text').text().trim();
 
                     commentElement.find('.user-comment-text').hide();
@@ -142,26 +142,32 @@ $(document).ready(function() {
                     commentElement.find('.edit-comment-cancel').hide();
                 });
 
+                $(document).ready(function() {
+                    $('#comments-list').off('click', '.delete-comment').on('click', '.delete-comment', function(e) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        const form = $(this).closest('form');
+                        const commentId = form.find('input[name="comment-id"]').val();
 
-                $('#comments-list').on('click', '.delete-comment', function(e) {
-                    e.preventDefault();
-                    const form = $(this).closest('form');
-                    const commentId = form.find('input[name="comment-id"]').val();
+                        console.log("Delete button clicked for comment ID:", commentId);
 
-                    if (confirm('Ви впевнені, що хочете видалити цей коментар?')) {
-                        $.ajax({
-                            url: form.attr('action'),
-                            method: 'GET',
-                            data: form.serialize(),
-                            success: function(response) {
-                                form.closest('.comment').remove();
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('Помилка видалення коментаря:', error);
-                                alert('Помилка видалення коментаря. Спробуйте пізніше.');
-                            }
-                        });
-                    }
+                        if (confirm('Ви впевнені, що хочете видалити цей коментар?')) {
+                            console.log("Confirming deletion");
+                            $.ajax({
+                                url: form.attr('action'),
+                                method: 'GET',
+                                data: form.serialize(),
+                                success: function(response) {
+                                    console.log("Comment deleted successfully");
+                                    form.closest('.comment').remove();
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Помилка видалення коментаря:', error);
+                                    alert('Помилка видалення коментаря. Спробуйте пізніше.');
+                                }
+                            });
+                        }
+                    });
                 });
             },
             error: function(jqXHR, textStatus, errorThrown) {
