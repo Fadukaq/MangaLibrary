@@ -7,6 +7,10 @@ import com.example.MangaLibrary.repo.*;
 import com.example.MangaLibrary.service.ChapterService;
 import com.example.MangaLibrary.service.CommentService;
 import com.example.MangaLibrary.service.MangaService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import com.example.MangaLibrary.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -68,7 +73,8 @@ public class MangaController {
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "sort", defaultValue = "byNew") String sortOrder,
             @RequestParam(name = "direction", defaultValue = "desc") String direction,
-            Model model
+            Model model,
+            HttpServletRequest request
     ) {
         Sort.Direction sortDirection = "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable;
@@ -89,6 +95,10 @@ public class MangaController {
 
         model.addAttribute("mangas", mangaList);
         model.addAttribute("page", mangaPage);
+
+        if (request.getHeader("X-Requested-With") != null && request.getHeader("X-Requested-With").equals("XMLHttpRequest")) {
+            return "manga/manga-partial :: manga-content";
+        }
         return "manga/manga-main";
     }
 

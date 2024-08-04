@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', updateStarRatings);
+function updateStarRatings() {
     const gradeDetails = document.querySelectorAll('.custom-grade-details');
 
     gradeDetails.forEach(function(detail) {
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         ratingNumber.textContent = rating.toFixed(1);
     });
-});
+}
 const filterTemplate = document.getElementById('filter-template');
 const sidebarContent = document.getElementById('sidebar-content');
 const modalContent = document.getElementById('modal-content');
@@ -66,14 +67,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const mangaContainer = document.querySelector('.manga-grid');
 
     mangaContainer.classList.add('hide-manga-details');
-
     gridViewBtn.classList.add('active');
+
+    function applyViewSwitchAnimation() {
+        mangaContainer.classList.add('switching');
+
+        setTimeout(() => {
+            mangaContainer.classList.remove('switching');
+        }, 300);
+    }
 
     gridViewBtn.addEventListener('click', function() {
         mangaContainer.classList.remove('manga-list');
         mangaContainer.classList.remove('hide-manga-details');
         gridViewBtn.classList.add('active');
         listViewBtn.classList.remove('active');
+
+        applyViewSwitchAnimation();
     });
 
     listViewBtn.addEventListener('click', function() {
@@ -81,26 +91,50 @@ document.addEventListener('DOMContentLoaded', function() {
         mangaContainer.classList.add('hide-manga-details');
         listViewBtn.classList.add('active');
         gridViewBtn.classList.remove('active');
+
+        applyViewSwitchAnimation();
     });
 });
 $(document).ready(function() {
     let sortDirection = new URLSearchParams(window.location.search).get('direction') || 'desc';
-    const currentSort = new URLSearchParams(window.location.search).get('sort') || 'byNew';
+    let currentSort = new URLSearchParams(window.location.search).get('sort') || 'byNew';
 
     function updateSortButton(direction) {
         const sortButton = $('#sort-up');
         if (direction === 'asc') {
             sortButton.removeClass('sort-desc').addClass('sort-asc');
+            sortButton.find('i').removeClass('fa-arrow-up-wide-short').addClass('fa-arrow-down-wide-short');
         } else {
             sortButton.removeClass('sort-asc').addClass('sort-desc');
+            sortButton.find('i').removeClass('fa-arrow-down-wide-short').addClass('fa-arrow-up-wide-short');
         }
     }
 
-    // Функция для обновления типа сортировки
     function updateSortType(sortType) {
         $('#dropdownMenuText').text(sortType === 'byNew' ? 'За новинкою' : 'За рейтингом');
         $('.dropdown-menu-sortBy a').removeClass('active');
         $(`.dropdown-menu-sortBy a[data-sort="${sortType}"]`).addClass('active');
+    }
+
+    function loadManga(sort, direction, page = 1) {
+        $.ajax({
+            url: '/manga',
+            data: { sort: sort, direction: direction, page: page },
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(data) {
+                const mangaContainer = document.querySelector('.manga-grid');
+                $('.manga-grid').html($(data).find('.manga-grid').html());
+                $('.pagination').html($(data).find('.pagination').html());
+                history.pushState(null, '', `/manga?sort=${sort}&direction=${direction}&page=${page}`);
+                updateStarRatings();
+                mangaContainer.classList.add('switching');
+                setTimeout(() => {
+                    mangaContainer.classList.remove('switching');
+                }, 300);
+            }
+        });
     }
 
     updateSortButton(sortDirection);
@@ -109,14 +143,19 @@ $(document).ready(function() {
     $('#sort-up').on('click', function() {
         sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
         updateSortButton(sortDirection);
-
-        window.location.href = `/manga?sort=${encodeURIComponent(currentSort)}&direction=${sortDirection}`;
+        loadManga(currentSort, sortDirection);
     });
 
     $('.dropdown-menu-sortBy a').on('click', function(event) {
         event.preventDefault();
-        const sortType = $(this).data('sort');
-        updateSortType(sortType);
-        window.location.href = `/manga?sort=${encodeURIComponent(sortType)}&direction=${sortDirection}`;
+        currentSort = $(this).data('sort');
+        updateSortType(currentSort);
+        loadManga(currentSort, sortDirection);
+    });
+
+    $(document).on('click', '.pagination a', function(event) {
+        event.preventDefault();
+        const page = $(this).text();
+        loadManga(currentSort, sortDirection, page);
     });
 });

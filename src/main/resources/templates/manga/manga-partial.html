@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<script src="/js/manga-main.js"></script>
+<body>
+<div th:fragment="manga-content">
+    <div class="manga-grid">
+        <div th:each="el : ${mangas}" class="custom-container">
+            <a th:href="@{'/manga/' + ${el.id}}">
+                <img th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy">
+            </a>
+            <div class="custom-info">
+                <div class="custom-genres">
+                    <div class="custom-genre" th:if="${el.genres.size() > 0}" th:text="${el.genres[0].genreName}"></div>
+                    <div class="custom-genre" th:if="${el.genres.size() > 1}">
+                        <span> - </span>
+                        <span th:text="${el.genres[1].genreName}"></span>
+                    </div>
+                    <div class="custom-genre" th:if="${el.genres.size() > 2}">
+                        <span> - </span>
+                        <span th:text="${el.genres[2].genreName}"></span>
+                    </div>
+                </div>
+                <div class="custom-title"  th:text="${el.mangaName}"></div>
+                <div class="custom-grade-details" th:data-rating="${el.averageRating}">
+                    <span class="stars"></span>
+                    <span class="rating-number"></span>
+                </div>
+                <div class="manga-details">
+                    <div class="custom-title-details" style="font-weight:bold;" th:text="${el.mangaName}"></div>
+                    <div class="manga-genres">
+                        <a th:each="genre : ${el.genres}"
+                           th:href="@{'/search?q=' + ${genre.genreName} + '&type=genre'}"
+                           class="link">
+                            <span th:text="${genre.genreName}"></span>
+                        </a>
+                    </div>
+                    <p th:text="${#strings.abbreviate(el.mangaDescription, 512)}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="pagination" th:if="${page.totalPages > 1}">
+        <a th:href="@{/manga(page=${page.number})}" th:if="${page.number > 1}">&laquo;</a>
+        <span th:each="pageNumber : ${#numbers.sequence(1, page.totalPages)}">
+                <a th:href="@{/manga(page=${pageNumber})}"
+                   th:text="${pageNumber}"
+                   th:class="${pageNumber==page.number + 1} ? active"></a>
+            </span>
+        <a th:href="@{/manga(page=${page.number + 2})}" th:if="${page.number + 1 < page.totalPages}">&raquo;</a>
+    </div>
+</div>
+</body>
+</html>
