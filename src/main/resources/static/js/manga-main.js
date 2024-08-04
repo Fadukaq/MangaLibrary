@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         setTimeout(() => {
             mangaContainer.classList.remove('switching');
-        }, 300);
+        }, 500);
     }
 
     gridViewBtn.addEventListener('click', function() {
@@ -132,7 +132,7 @@ $(document).ready(function() {
                 mangaContainer.classList.add('switching');
                 setTimeout(() => {
                     mangaContainer.classList.remove('switching');
-                }, 300);
+                }, 500);
             }
         });
     }
