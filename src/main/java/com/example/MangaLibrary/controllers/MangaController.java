@@ -12,10 +12,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -65,17 +65,28 @@ public class MangaController {
     CommentRepo commentRepo;
     @GetMapping("/manga")
     public String mangas(
-            @RequestParam(name = "page", defaultValue = "1", required = false) int page,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "sort", defaultValue = "byNew") String sortOrder,
+            @RequestParam(name = "direction", defaultValue = "desc") String direction,
             Model model
     ) {
+        Sort.Direction sortDirection = "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable;
 
-        Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending());
+        if ("byRating".equals(sortOrder)) {
+            pageable = PageRequest.of(page - 1, PAGE_SIZE, Sort.by(sortDirection, "averageRating"));
+        } else {
+            pageable = PageRequest.of(page - 1, PAGE_SIZE, Sort.by(sortDirection, "id"));
+        }
+
         Page<Manga> mangaPage = mangaRepo.findAll(pageable);
         List<Manga> mangaList = mangaPage.getContent();
         int totalPages = mangaPage.getTotalPages();
+
         if (page > totalPages) {
             return "redirect:/manga?page=" + totalPages;
         }
+
         model.addAttribute("mangas", mangaList);
         model.addAttribute("page", mangaPage);
         return "manga/manga-main";
@@ -546,6 +557,42 @@ public class MangaController {
         List<Comment> comments = commentRepo.findByMangaId(mangaId);
         return comments;
     }
+    @GetMapping("/manga/comment/{commentId}/edit")
+    public @ResponseBody ResponseEntity<?> editComment(@PathVariable Long commentId, @RequestParam String commentText, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User currentUser = userRepo.findByUserName(userDetails.getUsername());
+
+        return commentRepo.findById(commentId)
+                .map(comment -> {
+                    if (comment.getUser().getId() != currentUser.getId()) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                    }
+                    if (commentText.isEmpty() || commentText.length() > 1000) {
+                        return ResponseEntity.badRequest().body("Коментар повинен містити від 1 до 1000 символів");
+                    }
+                    comment.setText(commentText);
+                    commentRepo.save(comment);
+                    return ResponseEntity.ok().build();
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/manga/comment/{commentId}/delete")
+    public @ResponseBody ResponseEntity<?> deleteComment(@PathVariable Long commentId, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User currentUser = userRepo.findByUserName(userDetails.getUsername());
+
+        return commentRepo.findById(commentId)
+                .map(comment -> {
+                    if (comment.getUser().getId() != currentUser.getId()) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                    }
+                    commentRepo.delete(comment);
+                    return ResponseEntity.ok().build();
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/random")
     public String getRandomMangaId(Model model) {
 

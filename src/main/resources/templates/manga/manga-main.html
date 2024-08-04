@@ -83,19 +83,22 @@
                         <button class="view-btn filter-btn" id="filter-btn" title="Фільтр">
                             <i class="fas fa-filter"></i>
                         </button>
-                        <button class="view-btn" id="grid-view" title="Сетка">
+                        <button class="view-btn" id="grid-view" title="Сітка">
                             <i class="fa fa-th"></i>
                         </button>
                         <button class="view-btn" id="list-view" title="Список">
                             <i class="fa fa-th-list"></i>
                         </button>
-                        <div class="dropdown dropdown-sort ">
+                        <button class="view-btn" id="sort-up" title="Сортувати за">
+                            <i class="fa-solid fa-arrow-up-wide-short"></i>
+                        </button>
+                        <div class="dropdown dropdown-sort">
                             <button class="btn btn-dark dropdown-toggle view-btn" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                Сортирувати: <span id="dropdownMenuText">За оновленням</span>
+                                Сортувати: <span id="dropdownMenuText">За оновленням</span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-sortBy custom-mt" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item active" href="#" data-sort="За оновленням">За оновленням</a></li>
-                                <li><a class="dropdown-item" href="#" data-sort="За рейтингом">За рейтингом</a></li>
+                                <li><a class="dropdown-item active" href="#" data-sort="byNew">За оновленням</a></li>
+                                <li><a class="dropdown-item" href="#" data-sort="byRating">За рейтингом</a></li>
                             </ul>
                         </div>
                     </div>

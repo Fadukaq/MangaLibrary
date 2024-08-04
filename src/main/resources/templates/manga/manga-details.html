@@ -37,7 +37,6 @@
         </div>
     </div>
 </div>
-
 <div class="container mt-5 mb-5">
     <div class="bg-manga">
         <img th:src="${manga.mangaBackGround}" alt="" class="img-fluid">
@@ -253,122 +252,9 @@
 <script src="/js/confirmDelete.js"></script>
 <script src="/js/manga-details.js"></script>
 <script src="/js/carousel-details.js"></script>
+<script src="/js/manga-details-comments.js"></script>
 <script th:inline="javascript">
     window.mangaList = /*[[${similarMangas}]]*/ [];
-</script>
-<script>
-    loadComments();
-
-    function formatDate(dateString) {
-        const options = { day: 'numeric', month: 'short', year: 'numeric' };
-        const date = new Date(dateString);
-        return date.toLocaleDateString('uk-UA', options);
-    }
-
-    $('#submit-comment').click(function(event) {
-        event.preventDefault();
-
-        var $button = $(this);
-        var formData = $('#add-comment-form').serialize();
-        var mangaId = $('#comments').data('manga-id');
-
-        $button.prop('disabled', true);
-
-        $.ajax({
-            type: 'POST',
-            url: '/manga/' + mangaId + '/add-comment',
-            data: formData,
-            success: function(data) {
-                loadComments();
-                $('#comment-text').val('');
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Error adding comment:', textStatus, errorThrown);
-            },
-            complete: function() {
-                setTimeout(function() {
-                    $button.prop('disabled', false);
-                }, 3000);
-            }
-        });
-    });
-
-    function loadComments() {
-        var mangaId = $('#comments').data('manga-id');
-        var currentUserId = $('#comments').data('current-user-id');
-        console.log(currentUserId);
-        $.ajax({
-            url: `/manga/${mangaId}/comments`,
-            method: 'GET',
-            success: function(comments) {
-                console.log(comments);
-                $('#comments-list').empty();
-                comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                comments.forEach(comment => {
-                    const userName = comment.userName || 'Unknown User';
-                    const userIcon = comment.ProfilePicture || '<i class="fa-solid fa-user-circle"></i>';
-                    const formattedDate = formatDate(comment.createdAt);
-                    const commentElement = $('<div>').addClass('comment');
-
-                    let optionsMenu = `
-                        <div class="dropdown comment-options">
-                            <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton-${comment.id}" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-${comment.id}">
-                            <li><a class="dropdown-item report-comment" href="#" data-comment-id="${comment.id}"><i class="fas fa-flag"></i>Поскаржитися</a></li>
-                        `;
-
-                    if (comment.userId === currentUserId) {
-                        optionsMenu += `
-                            <li><a class="dropdown-item edit-comment" href="#" data-comment-id="${comment.id}"><i class="fas fa-edit"></i>Редагувати</a></li>
-                            <li><a class="dropdown-item delete-comment" href="#" data-comment-id="${comment.id}"><i class="fas fa-trash-alt"></i>Видалити</a></li>
-                            `;
-                    }
-                    optionsMenu += `</ul></div>`;
-
-                    commentElement.html(`
-                    <div class="comment-header">
-                        <a href="/user/${comment.userId}" class="user-link">
-                            <img src="${userIcon}" class="user-icon" alt="${userName}'s icon">
-                            <span class="user-name">${userName}</span>
-                        </a>
-                        ${optionsMenu}
-                    </div>
-                    <p class="user-comment-text">${comment.text}</p>
-                    <div class="comment-footer">
-                        <small class="comment-time">${formattedDate}</small>
-                        <i style="font-size:8px; color:gray;" class="fa-solid fa-circle"></i>
-                        <button class="btn btn-link reply-button" data-comment-id="${comment.id}">Відповісти</button>
-                    </div>
-                    <hr>
-                `);
-                    $('#comments-list').append(commentElement);
-                });
-
-                $('.report-comment').click(function(e) {
-                    e.preventDefault();
-                    const commentId = $(this).data('comment-id');
-                    console.log('Надіслано скаргу на коментар:', commentId);
-                });
-
-                $('.edit-comment').click(function(e) {
-                    e.preventDefault();
-                    const commentId = $(this).data('comment-id');
-                    console.log('Редагування коментаря:', commentId);
-                });
-
-                $('.delete-comment').click(function(e) {
-                    e.preventDefault();
-                    const commentId = $(this).data('comment-id');
-                    console.log('Видалення коментаря:', commentId);
-                });
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Error:', textStatus, errorThrown);
-            }
-        });
-    }
 </script>
 <script th:if="${manga.adultContent and not userSettings.adultContentAgreement}" src="/js/adultContentAlert.js"></script>
 </body>

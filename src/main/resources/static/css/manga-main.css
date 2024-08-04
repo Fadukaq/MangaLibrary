@@ -752,3 +752,14 @@ input::placeholder {
     font-weight: 900;
     color: gold;
 }
+.sort-asc .fa-arrow-up-wide-short {
+    transform: rotate(0deg);
+}
+
+.sort-desc .fa-arrow-up-wide-short {
+    transform: rotate(180deg);
+}
+
+.view-btn {
+    transition: transform 0.3s;
+}

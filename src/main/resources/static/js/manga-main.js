@@ -83,3 +83,40 @@ document.addEventListener('DOMContentLoaded', function() {
         gridViewBtn.classList.remove('active');
     });
 });
+$(document).ready(function() {
+    let sortDirection = new URLSearchParams(window.location.search).get('direction') || 'desc';
+    const currentSort = new URLSearchParams(window.location.search).get('sort') || 'byNew';
+
+    function updateSortButton(direction) {
+        const sortButton = $('#sort-up');
+        if (direction === 'asc') {
+            sortButton.removeClass('sort-desc').addClass('sort-asc');
+        } else {
+            sortButton.removeClass('sort-asc').addClass('sort-desc');
+        }
+    }
+
+    // Функция для обновления типа сортировки
+    function updateSortType(sortType) {
+        $('#dropdownMenuText').text(sortType === 'byNew' ? 'За новинкою' : 'За рейтингом');
+        $('.dropdown-menu-sortBy a').removeClass('active');
+        $(`.dropdown-menu-sortBy a[data-sort="${sortType}"]`).addClass('active');
+    }
+
+    updateSortButton(sortDirection);
+    updateSortType(currentSort);
+
+    $('#sort-up').on('click', function() {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        updateSortButton(sortDirection);
+
+        window.location.href = `/manga?sort=${encodeURIComponent(currentSort)}&direction=${sortDirection}`;
+    });
+
+    $('.dropdown-menu-sortBy a').on('click', function(event) {
+        event.preventDefault();
+        const sortType = $(this).data('sort');
+        updateSortType(sortType);
+        window.location.href = `/manga?sort=${encodeURIComponent(sortType)}&direction=${sortDirection}`;
+    });
+});
