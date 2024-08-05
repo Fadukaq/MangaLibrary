@@ -940,25 +940,25 @@
     align-items: center;
 }
 .upvote-button {
-    color: #ccc; /* серый цвет по умолчанию */
+    color: #ccc;
 }
 
 .upvote-button.selected {
-    color: #0f0; /* зеленый цвет при выборе */
+    color: #0f0;
 }
 
 .upvote-button.cancelled {
-    color: #ccc; /* серый цвет при отмене */
+    color: #ccc;
 }
 
 .downvote-button {
-    color: #ccc; /* серый цвет по умолчанию */
+    color: #ccc;
 }
 
 .downvote-button.selected {
-    color: #f00; /* красный цвет при выборе */
+    color: #f00;
 }
 
 .downvote-button.cancelled {
-    color: #ccc; /* серый цвет при отмене */
+    color: #ccc;
 }

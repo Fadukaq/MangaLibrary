@@ -506,7 +506,6 @@ public class MangaController {
             List<Manga> results = mangaRepo.findByMangaNameStartingWith(query);
             return ResponseEntity.ok(results);
         } catch (Exception e) {
-            // Логирование и обработка ошибок
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
