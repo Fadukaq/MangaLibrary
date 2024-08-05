@@ -23,6 +23,6 @@ public interface CommentRatingRepo extends JpaRepository<CommentRating, Long> {
 
     @Query("SELECT COUNT(cr) FROM CommentRating cr WHERE cr.comment.id = :commentId AND cr.delta = :delta")
     int getCountByCommentIdAndDelta(@Param("commentId") Long commentId, @Param("delta") int delta);
-
+    long countByCommentIdAndDelta(Long commentId, int delta);
     List<CommentRating> findByUserIdAndCommentIdIn(Long userId, List<Long> commentIds);
 }

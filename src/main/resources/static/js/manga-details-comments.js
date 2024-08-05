@@ -36,20 +36,20 @@ $(document).ready(function() {
                                 <i class="fas fa-ellipsis-v"></i>
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-${comment.id}">
-                ${comment.userId!== currentUserId? `
-                    <li><a class="dropdown-item report-comment" href="#" data-comment-id="${comment.id}"><i class="fas fa-flag"></i>Поскаржитися</a></li>
-                ` : ''}
-                ${comment.userId === currentUserId? `
-                    <form action="/manga/comment/${comment.id}/edit" method="post">
-                        <input type="hidden" name="comment-id" value="${comment.id}">
-                        <button class="dropdown-item edit-comment" type="submit"><i class="fas fa-edit"></i>Редагувати</button>
-                    </form>
-                    <form action="/manga/comment/${comment.id}/delete" method="post">
-                        <input type="hidden" name="comment-id" value="${comment.id}">
-                        <button class="dropdown-item delete-comment" type="submit"><i class="fas fa-trash-alt"></i>Видалити</button>
-                    </form>
-                ` : ''}
-            </ul>
+                                ${comment.userId !== currentUserId ? `
+                                    <li><a class="dropdown-item report-comment" href="#" data-comment-id="${comment.id}"><i class="fas fa-flag"></i>Поскаржитися</a></li>
+                                ` : ''}
+                                ${comment.userId === currentUserId ? `
+                                    <form action="/manga/comment/${comment.id}/edit" method="post">
+                                        <input type="hidden" name="comment-id" value="${comment.id}">
+                                        <button class="dropdown-item edit-comment" type="submit"><i class="fas fa-edit"></i>Редагувати</button>
+                                    </form>
+                                    <form action="/manga/comment/${comment.id}/delete" method="post">
+                                        <input type="hidden" name="comment-id" value="${comment.id}">
+                                        <button class="dropdown-item delete-comment" type="submit"><i class="fas fa-trash-alt"></i>Видалити</button>
+                                    </form>
+                                ` : ''}
+                            </ul>
                         </div>
                     </div>
                     <p class="user-comment-text">${comment.text}</p>
@@ -74,14 +74,16 @@ $(document).ready(function() {
                 `);
 
                 $('#comments-list').prepend(commentElement);
-
-                $button.prop('disabled', false);
+                $('#comment-text').val('');
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('Error adding comment:', textStatus, errorThrown);
+                alert('Произошла ошибка. Попробуйте снова.');
             },
             complete: function() {
-                setTimeout(() => $button.prop('disabled', false), 3000);
+                setTimeout(() => {
+                    $button.prop('disabled', false);
+                }, 3000);
             }
         });
     });
@@ -96,6 +98,8 @@ $(document).ready(function() {
             success: function(response) {
                 const comments = response.comments;
                 const userRatings = response.userRatings;
+                const commentRatings = response.commentRatings;
+
                 $('#comments-list').empty();
                 comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 comments.forEach(comment => {
@@ -106,6 +110,10 @@ $(document).ready(function() {
                     const userRating = userRatings[comment.id] || 0;
                     const upvoteSelected = userRating === 1 ? 'selected' : '';
                     const downvoteSelected = userRating === -1 ? 'selected' : '';
+
+                    const ratingInfo = commentRatings[comment.id] || { upvotes: 0, downvotes: 0 };
+                    const ratingTitle = `Плюсів: ${ratingInfo.upvotes} | Мінусів: ${ratingInfo.downvotes}`;
+
 
                     const commentElement = $('<div>').addClass('comment').attr('id', `comment-${comment.id}`);
 
@@ -155,7 +163,7 @@ $(document).ready(function() {
                         <button class="btn btn-link upvote-button ${upvoteSelected}" data-comment-id="${comment.id}">
                             <i class="fa-solid fa-arrow-up"></i>
                         </button>
-                        <span class="rating-score" id="rating-score-${comment.id}">${comment.rating || 0}</span>
+                            <span class="rating-score" id="rating-score-${comment.id}" title="${ratingTitle}">${comment.rating || 0}</span>
                         <button class="btn btn-link downvote-button ${downvoteSelected}" data-comment-id="${comment.id}">
                             <i class="fa-solid fa-arrow-down"></i>
                         </button>
@@ -258,34 +266,36 @@ $(document).ready(function() {
         });
     }
 
-    function updateRating(commentId, userId, delta) {
-        $.ajax({
-            url: `/manga/comment/${commentId}/rate`,
-            method: 'GET',
-            data: { userId: userId, delta: delta },
-            success: function(newRating) {
-                $(`#rating-score-${commentId}`).text(newRating);
-            },
-            error: function(xhr, status, error) {
-                console.error('Ошибка обновления оценки:', error);
-                alert('Ошибка обновления оценки. Попробуйте позже.');
-            }
-        });
-    }
-
     $('#comments-list').on('click', '.upvote-button, .downvote-button', function() {
         const commentId = $(this).data('comment-id');
         const userId = $('#comments').data('current-user-id');
         const delta = $(this).hasClass('upvote-button') ? 1 : -1;
+        const currentButton = $(this);
 
-        if ($(this).hasClass('selected')) {
-            updateRating(commentId, userId, 0);
-            $(this).removeClass('selected');
-        } else {
-            updateRating(commentId, userId, delta);
-            $(this).addClass('selected');
-            $(this).siblings('.upvote-button, .downvote-button').removeClass('selected');
-        }
+        $.ajax({
+            url: `/manga/comment/${commentId}/rate`,
+            method: 'GET',
+            data: {
+                userId: userId,
+                delta: delta
+            },
+            success: function(response) {
+                updateRatingDisplay(commentId, response.newRatingScore, response.ratingTitle);
+
+                if (currentButton.hasClass('selected')) {
+                    currentButton.removeClass('selected');
+                } else {
+                    currentButton.addClass('selected');
+                    currentButton.siblings('.upvote-button, .downvote-button').removeClass('selected');
+                }
+            },
+            error: function() {
+            }
+        });
     });
-
+    function updateRatingDisplay(commentId, newRating, ratingTitle) {
+        const ratingElement = $(`#rating-score-${commentId}`);
+        ratingElement.text(newRating);
+        ratingElement.attr('title', ratingTitle);
+    }
 });

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -100,6 +101,18 @@ public class CommentService {
                         rating -> rating.getComment().getId(),
                         CommentRating::getDelta
                 ));
+    }
+    public Map<String, Object> getCommentRatingInfo(Long commentId) {
+        long upvotes = commentRatingRepo.countByCommentIdAndDelta(commentId, 1);
+        long downvotes = commentRatingRepo.countByCommentIdAndDelta(commentId, -1);
+        int totalRating = (int) (upvotes - downvotes);
+
+        Map<String, Object> ratingInfo = new HashMap<>();
+        ratingInfo.put("upvotes", upvotes);
+        ratingInfo.put("downvotes", downvotes);
+        ratingInfo.put("totalRating", totalRating);
+
+        return ratingInfo;
     }
     public List<Comment> getCommentsByMangaId(Long mangaId) {
         return commentRepo.findByMangaId(mangaId);

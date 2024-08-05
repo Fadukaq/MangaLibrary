@@ -565,18 +565,34 @@ public class MangaController {
         commentRepo.save(comment);
         return new ResponseEntity<>(comment, HttpStatus.CREATED);
     }
+
     @GetMapping("/manga/{mangaId}/comments")
-    public @ResponseBody Map<String, Object> getComments(@PathVariable Long mangaId) {
+    public @ResponseBody Map<String, Object> getComments(@PathVariable Long mangaId, @AuthenticationPrincipal UserDetails userDetails) {
         List<Comment> comments = commentRepo.findByMangaId(mangaId);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userRepo.findByUserName(username);
-        List<Long> commentIds = comments.stream().map(Comment::getId).collect(Collectors.toList());
-        Map<Long, Integer> userRatings = commentService.getUserRatingsForComments(user.getId(), commentIds);
+
+        Map<Long, Integer> userRatings = new HashMap<>();
+        Map<Long, Map<String, Integer>> commentRatings = new HashMap<>();
+
+        for (Comment comment : comments) {
+            CommentRating userRating = commentRatingRepo.findByCommentIdAndUserId(comment.getId(), user.getId());
+            userRatings.put(comment.getId(), userRating != null ? userRating.getDelta() : 0);
+
+            long upvotes = commentRatingRepo.countByCommentIdAndDelta(comment.getId(), 1);
+            long downvotes = commentRatingRepo.countByCommentIdAndDelta(comment.getId(), -1);
+
+            Map<String, Integer> ratingInfo = new HashMap<>();
+            ratingInfo.put("upvotes", (int) upvotes);
+            ratingInfo.put("downvotes", (int) downvotes);
+            commentRatings.put(comment.getId(), ratingInfo);
+        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("comments", comments);
         response.put("userRatings", userRatings);
+        response.put("commentRatings", commentRatings);
 
         return response;
     }
@@ -616,22 +632,23 @@ public class MangaController {
                 .orElse(ResponseEntity.notFound().build());
     }
     @GetMapping("/manga/comment/{commentId}/rate")
-    public ResponseEntity<Integer> updateRatingGET(@PathVariable Long commentId,
-                                                @RequestParam Long userId,
-                                                @RequestParam int delta) {
+    public ResponseEntity<Map<String, Object>> updateRatingGET(@PathVariable Long commentId,
+                                                               @RequestParam Long userId,
+                                                               @RequestParam int delta) {
         commentService.updateRating(commentId, userId, delta);
 
-        Map<String, Integer> ratingInfo = new HashMap<>();
+        Map<String, Object> ratingInfo = new HashMap<>();
         int upvotes = commentRatingRepo.getCountByCommentIdAndDelta(commentId, 1);
         int downvotes = commentRatingRepo.getCountByCommentIdAndDelta(commentId, -1);
         int newRatingScore = commentRepo.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"))
                 .getRating();
-        ratingInfo.put("upvotes", upvotes);
-        ratingInfo.put("downvotes", downvotes);
-        ratingInfo.put("newRatingScore", newRatingScore);
 
-        return ResponseEntity.ok(newRatingScore);
+        String ratingTitle = "Плюсів: " + upvotes + " | Мінусів: " + downvotes;
+
+        ratingInfo.put("newRatingScore", newRatingScore);
+        ratingInfo.put("ratingTitle", ratingTitle);
+        return ResponseEntity.ok(ratingInfo);
     }
     @GetMapping("/manga/comment/{commentId}/report")
     public ResponseEntity<String> reportComment(
