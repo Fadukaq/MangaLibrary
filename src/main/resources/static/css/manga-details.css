@@ -939,3 +939,26 @@
     display: flex;
     align-items: center;
 }
+.upvote-button {
+    color: #ccc; /* серый цвет по умолчанию */
+}
+
+.upvote-button.selected {
+    color: #0f0; /* зеленый цвет при выборе */
+}
+
+.upvote-button.cancelled {
+    color: #ccc; /* серый цвет при отмене */
+}
+
+.downvote-button {
+    color: #ccc; /* серый цвет по умолчанию */
+}
+
+.downvote-button.selected {
+    color: #f00; /* красный цвет при выборе */
+}
+
+.downvote-button.cancelled {
+    color: #ccc; /* серый цвет при отмене */
+}

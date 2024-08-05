@@ -28,6 +28,7 @@ public class Comment {
     @JsonIdentityReference(alwaysAsId = true)
     private User user;
     private LocalDateTime createdAt;
+    private int rating;
     @JsonProperty("userName")
     public String getUserName() {
         return user != null ? user.getUserName() : "Unknown User";
@@ -86,5 +87,13 @@ public class Comment {
         this.manga = manga;
         this.user = user;
         this.createdAt = createdAt;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }

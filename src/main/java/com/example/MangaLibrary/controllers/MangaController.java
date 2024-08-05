@@ -9,6 +9,7 @@ import com.example.MangaLibrary.service.CommentService;
 import com.example.MangaLibrary.service.MangaService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.example.MangaLibrary.service.UserService;
@@ -47,6 +48,8 @@ public class MangaController {
     private GenreRepo genreRepo;
     @Autowired
     private UserSettingsRepo userSettingsRepo;
+    @Autowired
+    private CommentRatingRepo commentRatingRepo;
     @Autowired
     private UserRepo userRepo;
     @Autowired
@@ -563,9 +566,19 @@ public class MangaController {
         return new ResponseEntity<>(comment, HttpStatus.CREATED);
     }
     @GetMapping("/manga/{mangaId}/comments")
-    public @ResponseBody List<Comment> getComments(@PathVariable Long mangaId) {
+    public @ResponseBody Map<String, Object> getComments(@PathVariable Long mangaId) {
         List<Comment> comments = commentRepo.findByMangaId(mangaId);
-        return comments;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepo.findByUserName(username);
+        List<Long> commentIds = comments.stream().map(Comment::getId).collect(Collectors.toList());
+        Map<Long, Integer> userRatings = commentService.getUserRatingsForComments(user.getId(), commentIds);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("comments", comments);
+        response.put("userRatings", userRatings);
+
+        return response;
     }
     @GetMapping("/manga/comment/{commentId}/edit")
     public @ResponseBody ResponseEntity<?> editComment(@PathVariable Long commentId, @RequestParam String commentText, Authentication authentication) {
@@ -602,7 +615,37 @@ public class MangaController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+    @GetMapping("/manga/comment/{commentId}/rate")
+    public ResponseEntity<Integer> updateRatingGET(@PathVariable Long commentId,
+                                                @RequestParam Long userId,
+                                                @RequestParam int delta) {
+        commentService.updateRating(commentId, userId, delta);
 
+        Map<String, Integer> ratingInfo = new HashMap<>();
+        int upvotes = commentRatingRepo.getCountByCommentIdAndDelta(commentId, 1);
+        int downvotes = commentRatingRepo.getCountByCommentIdAndDelta(commentId, -1);
+        int newRatingScore = commentRepo.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"))
+                .getRating();
+        ratingInfo.put("upvotes", upvotes);
+        ratingInfo.put("downvotes", downvotes);
+        ratingInfo.put("newRatingScore", newRatingScore);
+
+        return ResponseEntity.ok(newRatingScore);
+    }
+    @GetMapping("/manga/comment/{commentId}/report")
+    public ResponseEntity<String> reportComment(
+            @PathVariable Long commentId,
+            @RequestParam Long userId,
+            @RequestParam String reason) {
+
+        boolean success = commentService.reportComment(commentId, userId, reason);
+        if (success) {
+            return ResponseEntity.ok("Comment reported successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You have already reported this comment");
+        }
+    }
     @GetMapping("/random")
     public String getRandomMangaId(Model model) {
 
