@@ -57,6 +57,8 @@ public class MangaController {
     @Autowired
     private RatingRepo ratingRepo;
     @Autowired
+    private RepliesRepo repliesRepo;
+    @Autowired
     private MangaLibraryManager mangaLibraryManager;
     private static final int PAGE_SIZE = 15;
     @Autowired
@@ -574,6 +576,7 @@ public class MangaController {
 
         Map<Long, Integer> userRatings = new HashMap<>();
         Map<Long, Map<String, Integer>> commentRatings = new HashMap<>();
+        Map<Long, List<Replies>> commentReplies = new HashMap<>();
 
         for (Comment comment : comments) {
             CommentRating userRating = commentRatingRepo.findByCommentIdAndUserId(comment.getId(), user.getId());
@@ -586,12 +589,15 @@ public class MangaController {
             ratingInfo.put("upvotes", (int) upvotes);
             ratingInfo.put("downvotes", (int) downvotes);
             commentRatings.put(comment.getId(), ratingInfo);
-        }
 
+            List<Replies> replies = repliesRepo.findByParentCommentId(comment.getId());
+            commentReplies.put(comment.getId(), replies);
+        }
         Map<String, Object> response = new HashMap<>();
         response.put("comments", comments);
         response.put("userRatings", userRatings);
         response.put("commentRatings", commentRatings);
+        response.put("commentReplies", commentReplies);
 
         return response;
     }
@@ -661,6 +667,39 @@ public class MangaController {
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You have already reported this comment");
         }
+    }
+    @GetMapping("/manga/comment/reply")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> addReply(
+            @RequestParam("text") String text,
+            @RequestParam("parentCommentId") Long parentCommentId,
+            @RequestParam("mangaId") Long mangaId,
+            Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Comment parentComment = commentRepo.findById(parentCommentId)
+                    .orElseThrow(() -> new RuntimeException("Parent comment not found"));
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            User currentUser = userRepo.findByUserName(userDetails.getUsername());
+
+            Replies reply = new Replies();
+            reply.setText(text);
+            reply.setParentComment(parentComment);
+            reply.setUser(userRepo.findById(currentUser.getId())
+                    .orElseThrow(() -> new RuntimeException("User not found")));
+            reply.setCreatedAt(LocalDateTime.now());
+            reply.setManga(mangaRepo.findById(mangaId)
+                    .orElseThrow(() -> new RuntimeException("Manga not found")));
+
+            repliesRepo.save(reply);
+
+            response.put("success", true);
+            response.put("reply", reply);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Ошибка при добавлении ответа.");
+        }
+        return ResponseEntity.ok(response);
     }
     @GetMapping("/random")
     public String getRandomMangaId(Model model) {

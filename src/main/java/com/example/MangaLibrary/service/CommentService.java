@@ -25,6 +25,8 @@ public class CommentService {
     @Autowired
     private UserRepo userRepo;
     @Autowired
+    private RepliesRepo repliesRepo;
+    @Autowired
     private MangaRepo mangaRepo;
     public void addComment(Long mangaId, String text, Long userId) {
         Manga manga = mangaRepo.findById(mangaId)
@@ -113,6 +115,23 @@ public class CommentService {
         ratingInfo.put("totalRating", totalRating);
 
         return ratingInfo;
+    }
+    public Replies addReply(Long parentCommentId, String text, Long userId, Long mangaId) {
+        Comment parentComment = commentRepo.findById(parentCommentId)
+                .orElseThrow(() -> new RuntimeException("Parent comment not found"));
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Manga manga = mangaRepo.findById(mangaId)
+                .orElseThrow(() -> new RuntimeException("Manga not found"));
+
+        Replies reply = new Replies();
+        reply.setText(text);
+        reply.setParentComment(parentComment);
+        reply.setUser(user);
+        reply.setCreatedAt(LocalDateTime.now());
+        reply.setManga(manga);
+
+        return repliesRepo.save(reply);
     }
     public List<Comment> getCommentsByMangaId(Long mangaId) {
         return commentRepo.findByMangaId(mangaId);

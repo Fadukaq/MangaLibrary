@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Comment {
@@ -29,13 +31,14 @@ public class Comment {
     private User user;
     private LocalDateTime createdAt;
     private int rating;
+
     @JsonProperty("userName")
     public String getUserName() {
         return user != null ? user.getUserName() : "Unknown User";
     }
     @JsonProperty("ProfilePicture")
     public String getUserProfilePicture() {
-        return user != null ? user.getProfilePicture() : "<i class='fa-solid fa-user-circle'></i>";
+        return user != null ? user.getProfilePicture() : "https://www.riseandfall.xyz/unrevealed.png";
     }
     @JsonProperty("userId")
     public Long getUserId() {
