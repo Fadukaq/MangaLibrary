@@ -162,29 +162,31 @@ $(document).ready(function() {
                         });
                     });
                 });
-            }
-        });
-    }
-    $('.report-comment').click(function(e) {
-        e.preventDefault();
-        const commentId = $(this).data('comment-id');
-        const userId = $('#comments').data('current-user-id');
+                $('.report-comment').click(function(e) {
+                    e.preventDefault();
+                    const commentId = $(this).data('comment-id');
+                    const userId = $('#comments').data('current-user-id');
 
-        const reason = prompt('Введіть причину скарги:');
-        if (reason) {
-            $.ajax({
-                url: `/manga/comment/${commentId}/report`,
-                method: 'GET',
-                data: { userId: userId, reason: reason },
-                success: function(response) {
-                    alert('Ваше повідомлення про порушення надіслано.');
-                },
-                error: function(xhr, status, error) {
-                    alert('Ви вже надіслали повідомлення про цей коментар.');
-                }
-            });
-        }
-    });
+                    const reason = prompt('Введіть причину скарги:');
+                    if (reason) {
+                        $.ajax({
+                            url: `/manga/comment/${commentId}/report`,
+                            method: 'GET',
+                            data: { userId: userId, reason: reason },
+                            success: function(response) {
+                                alert('Ваше повідомлення про порушення надіслано.');
+                            },
+                            error: function(xhr, status, error) {
+                                alert('Ви вже надіслали повідомлення про цей коментар.');
+                            }
+                        });
+                    }
+                });
+            }
+
+        });
+
+    }
 
     $('#comments-list').on('click', '.edit-comment', function(e) {
         e.preventDefault();
