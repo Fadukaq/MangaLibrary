@@ -6,9 +6,19 @@ $(document).ready(function() {
         const date = new Date(dateString);
         return date.toLocaleDateString('uk-UA', options);
     }
-    $('#comments-list').on('click', '.reply-button', function() {
-        const commentId = $(this).data('comment-id');
-        $(this).closest('.comment').find('.reply-form-container').toggle();
+
+    $(document).on('click', '.reply-button', function() {
+        const parentId = $(this).data('comment-id');
+        const parentUserName = $(this).closest('.comment').find('.user-name-comment').text();
+        const $formContainer = $(`#comment-${parentId}`).find('.reply-form-container');
+        const $form = $formContainer.find('form');
+        const $textarea = $form.find('textarea');
+
+        const replyText = `@${parentUserName}, `;
+        $textarea.val(replyText);
+        $formContainer.show();
+
+        $form.find('.username-block').show();
     });
 
     $('#comments-list').on('click', '.cancel-reply', function() {
@@ -87,14 +97,19 @@ $(document).ready(function() {
                     }
                     if (comment.userId === currentUserId) {
                         optionsMenu += `
-                    <form action="/manga/comment/${comment.id}/edit" method="post">
-                        <input type="hidden" name="comment-id" value="${comment.id}">
-                        <button class="dropdown-item edit-comment" type="submit"><i class="fas fa-edit"></i>Редагувати</button>
-                    </form>
-                    <form action="/manga/comment/${comment.id}/delete" method="post">
-                        <input type="hidden" name="comment-id" value="${comment.id}">
-                        <button class="dropdown-item delete-comment" type="submit"><i class="fas fa-trash-alt"></i>Видалити</button>
-                    </form>
+                        <form action="/manga/comment/${comment.id}/edit" method="post">
+                            <input type="hidden" name="comment-id" value="${comment.id}">
+                            <button class="dropdown-item edit-comment" type="submit"><i class="fas fa-edit"></i>Редагувати</button>
+                        </form>
+                    `;
+                    }
+
+                    if ( comment.userId === currentUserId) {
+                        optionsMenu += `
+                        <form action="/manga/comment/${comment.id}/delete" method="post">
+                            <input type="hidden" name="comment-id" value="${comment.id}">
+                            <button class="dropdown-item delete-comment" type="submit"><i class="fas fa-trash-alt"></i>Видалити</button>
+                        </form>
                     `;
                     }
                     optionsMenu += `</ul></div>`;
@@ -103,7 +118,7 @@ $(document).ready(function() {
                 <div class="comment-header">
                     <a href="/profile/${comment.userName}" class="user-link">
                         <img src="${userIcon}" class="user-icon" alt="${userName}'s icon">
-                        <span class="user-name">${userName}</span>
+                        <span class="user-name-comment">${userName}</span>
                     </a>
                     ${optionsMenu}
                 </div>
@@ -126,12 +141,15 @@ $(document).ready(function() {
                 </div>
                 </div>
                 <div class="reply-form-container" style="display: none;">
-                    <form class="reply-form" data-parent-id="${comment.id}">
-                        <textarea name="text" class="form-control" rows="2" placeholder="Напишіть відповідь..." required></textarea>
-                        <button type="submit" class="btn btn-primary mt-2">Відповісти</button>
-                        <button type="button" class="btn btn-primary mt-2 cancel-reply">Скасувати</button>
-                    </form>
-                </div>
+    <form class="reply-form" data-username="${comment.userName}" data-parent-id="${comment.id}">
+        <div class="textarea-container">
+            <span class="username-block">@${comment.userName}</span>
+            <textarea name="text" class="form-control" rows="2" placeholder="Напишіть відповідь..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Відповісти</button>
+        <button type="button" class="btn btn-primary mt-2 cancel-reply">Скасувати</button>
+    </form>
+</div>
                 <button class="btn btn-link show-replies-button" data-comment-id="${comment.id}" style="display: none;">Показати відповіді (<span class="replies-count">0</span>)</button>
                 <div class="replies-container" style="display: none;"></div>
                 <hr>
@@ -148,19 +166,26 @@ $(document).ready(function() {
                         const commentId = $(this).data('comment-id');
                         const repliesContainer = $(this).siblings('.replies-container');
 
+                        repliesContainer.toggle();
+
+                        const repliesCount = repliesContainer.find('.reply').length;
+
+                        $(this).text(function(i, text) {
+                            const newCount = repliesContainer.find('.reply').length;
+                            return repliesContainer.is(':visible')
+                            ? `Приховати відповіді`
+                            : `Показати відповіді (${newCount})`;
+                        });
+
                         if (repliesContainer.is(':empty')) {
                             const replies = commentReplies[commentId] || [];
                             replies.forEach(reply => {
-                                const replyElement = createReplyElement(reply);
+                                const replyElement = createReplyElement(reply, comment.id);
                                 repliesContainer.append(replyElement);
                             });
                         }
-
-                        repliesContainer.toggle();
-                        $(this).text(function(i, text) {
-                            return text.includes("Показати відповіді") ? "Приховати відповіді" : `Показати відповіді (${replies.length})`;
-                        });
                     });
+
                 });
                 $('.report-comment').click(function(e) {
                     e.preventDefault();
@@ -183,11 +208,17 @@ $(document).ready(function() {
                     }
                 });
             }
-
         });
 
     }
 
+    function updateRatingDisplay(commentId, newRating, ratingTitle) {
+        const ratingElement = $(`#rating-score-${commentId}`);
+        ratingElement.text(newRating);
+        ratingElement.attr('title', ratingTitle);
+    }
+
+    //Comment
     $('#comments-list').on('click', '.edit-comment', function(e) {
         e.preventDefault();
         const commentElement = $(this).closest('.comment');
@@ -251,59 +282,6 @@ $(document).ready(function() {
         }
     });
 
-    $('#comments-list').on('submit', '.reply-form', function(event) {
-        event.preventDefault();
-
-        const $form = $(this);
-        const formData = $form.serializeArray();
-        const parentId = $form.data('parent-id');
-        const mangaId = $('#comments').data('manga-id');
-
-        const formDataObject = {};
-        formData.forEach(item => {
-            formDataObject[item.name] = item.value;
-        });
-
-        formDataObject.parentCommentId = parentId;
-        formDataObject.mangaId = mangaId;
-
-        const queryString = $.param(formDataObject);
-
-        $.ajax({
-            type: 'GET',
-            url: '/manga/comment/reply?' + queryString,
-            success: function(response) {
-                if (response.success) {
-                    const newReply = response.reply;
-                    const formattedDate = formatDate(newReply.createdAt);
-                    const newReplyHtml = `
-                                    <div class="comment reply" id="comment-${newReply.id}">
-                                        <div class="reply-header">
-                                            <a href="/profile/${newReply.userName}" class="user-link">
-                                                <img src="${newReply.ProfilePicture}" class="user-icon" alt="${newReply.userName}'s icon">
-                                                <span class="user-name">${newReply.userName}</span>
-                                            </a>
-                                        </div>
-                                            <p class="user-reply-text">${newReply.text}</p>
-                                            <div class="reply-footer">
-                                                <small class="comment-time">${formattedDate}</small>
-                                            </div>
-                                    </div>
-                                    <hr>
-                                `;
-                    $(`#comment-${parentId}`).append(newReplyHtml);
-
-                    $form.closest('.reply-form-container').hide();
-                } else {
-                    alert('Помилка під час додавання відповіді');
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Помилка під час додавання відповіді:', textStatus, errorThrown);
-            }
-        });
-    });
-
     $('#comments-list').on('click', '.upvote-button, .downvote-button', function() {
         const commentId = $(this).data('comment-id');
         const userId = $('#comments').data('current-user-id');
@@ -332,38 +310,95 @@ $(document).ready(function() {
         });
     });
 
-    $(document).on('click', '.report-reply', function(e) {
-        e.preventDefault();
-        const replyId = $(this).data('reply-id');
+    //Reply
+    $('#comments-list').on('submit', '.reply-form', function(event) {
+        event.preventDefault();
+
+        const $form = $(this);
+        const formData = $form.serializeArray();
+        const parentId = $form.data('parent-id');
+        const mangaId = $('#comments').data('manga-id');
+
+        const formDataObject = {};
+        formData.forEach(item => {
+            formDataObject[item.name] = item.value;
+        });
+
+        formDataObject.parentCommentId = parentId;
+        formDataObject.mangaId = mangaId;
+
+        const queryString = $.param(formDataObject);
+
         $.ajax({
-            url: `/manga/reply/${replyId}/report`,
-            method: 'POST',
+            type: 'GET',
+            url: '/manga/comment/reply?' + queryString,
             success: function(response) {
-                alert('Ваше повідомлення про порушення надіслано.');
+                if (response.success) {
+                    const newReply = response.reply;
+                    const formattedDate = formatDate(newReply.createdAt);
+                    const replyText = linkifyUsernames(newReply.text);
+
+                    const newReplyHtml = `
+                                    <div class="comment reply" id="comment-${newReply.id}">
+                                        <div class="reply-header">
+                                            <a href="/profile/${newReply.userName}" class="user-link">
+                                                <img src="${newReply.ProfilePicture}" class="user-icon" alt="${newReply.userName}'s icon">
+                                                <span class="user-name">${newReply.userName}</span>
+                                            </a>
+                                        </div>
+                                            <p class="user-reply-text">${replyText}</p>
+                                            <div class="reply-footer">
+                                                <small class="comment-time">${formattedDate}</small>
+                                            </div>
+                                    </div>
+                                    <hr>
+                                `;
+                    $(`#comment-${parentId}`).append(newReplyHtml);
+
+                    $form.closest('.reply-form-container').hide();
+                    $form.closest('.reply-on-reply-form-container').hide();
+                    $form.find('textarea').val("");
+                } else {
+                    alert('Помилка під час додавання відповіді');
+                }
             },
-            error: function(xhr, status, error) {
-                console.error('Помилка при надсиланні скарги:', error);
-                alert('Помилка при надсиланні скарги. Спробуйте пізніше.');
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Помилка під час додавання відповіді:', textStatus, errorThrown);
             }
         });
     });
 
-    $(document).on('click', '.edit-reply', function(e) {
-        e.preventDefault();
-        const replyId = $(this).closest('form').find('input[name="reply-id"]').val();
-        // Открытие формы редактирования или модального окна
-        console.log(`Open edit form for reply with ID: ${replyId}`);
-    });
-
     $(document).on('click', '.delete-reply', function(e) {
         e.preventDefault();
+        const commentElement = $(this).closest('.comment');
         const replyId = $(this).closest('form').find('input[name="reply-id"]').val();
+        const commentId = commentElement.attr('id').split('-')[1];
+
         if (confirm('Ви впевнені, що хочете видалити цей коментар?')) {
             $.ajax({
                 url: `/manga/reply/${replyId}/delete`,
-                method: 'POST',
+                method: 'GET',
                 success: function(response) {
-                    $(`.reply[data-reply-id="${replyId}"]`).remove();
+                    const $reply = $(`.reply[data-reply-id="${replyId}"]`);
+                    if ($reply.length) {
+                        $reply.remove();
+                    } else {
+                        console.warn('Reply not found for ID:', replyId);
+                    }
+
+                    const $comment = $(`.comment[id="comment-${commentId}"]`);
+                    if ($comment.length) {
+                        const replies = $comment.find('.reply');
+                        const repliesCount = replies.length;
+
+                        if (repliesCount > 0) {
+                            commentElement.find('.show-replies-button').find('.replies-count').text(repliesCount);
+                        } else {
+                            $showRepliesButton.hide();
+                        }
+                    } else {
+                        console.warn('Comment not found for ID:', commentId);
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.error('Помилка видалення коментаря:', error);
@@ -373,18 +408,115 @@ $(document).ready(function() {
         }
     });
 
-    function updateRatingDisplay(commentId, newRating, ratingTitle) {
-        const ratingElement = $(`#rating-score-${commentId}`);
-        ratingElement.text(newRating);
-        ratingElement.attr('title', ratingTitle);
-    }
+    $(document).on('click', '.report-reply', function(e) {
+        e.preventDefault();
+        const replyId = $(this).closest('.reply').data('reply-id');
+        const userId = $('#comments').data('current-user-id');
+        const reason = prompt('Будь ласка, вкажіть причину скарги:');
 
-    function createReplyElement(reply) {
+        if (reason) {
+            $.ajax({
+                url: `/manga/reply/${replyId}/report`,
+                method: 'GET',
+                data: { userId: userId, reason: reason },
+                success: function(response) {
+                    alert('Ваше повідомлення про порушення надіслано.');
+                },
+                error: function(xhr, status, error) {
+                    alert('Ви вже надіслали повідомлення про порушення цієї відповіді.');
+                }
+            });
+        }
+    });
+
+    $(document).on('click', '.edit-reply', function(event) {
+        event.preventDefault();
+        const replyId = $(this).closest('.reply').data('reply-id');
+        const replyElement = $(`.reply[data-reply-id="${replyId}"]`);
+        replyElement.find('.user-reply-text').hide();
+        replyElement.find('.edit-reply-text').show();
+        replyElement.find('.edit-reply-save').show();
+        replyElement.find('.edit-reply-cancel').show();
+    });
+
+    $(document).on('click', '.edit-reply-cancel', function() {
+        const replyElement = $(this).closest('.reply');
+        replyElement.find('.user-reply-text').show();
+        replyElement.find('.edit-reply-text').hide();
+        replyElement.find('.edit-reply-save').hide();
+        replyElement.find('.edit-reply-cancel').hide();
+    });
+
+    $(document).on('click', '.edit-reply-save', function() {
+        const replyElement = $(this).closest('.reply');
+        const replyId = replyElement.data('reply-id');
+        const newText = replyElement.find('.edit-reply-text').val();
+        const formattedText = linkifyUsernames(newText);
+
+        $.ajax({
+            type: 'GET',
+            url: `/manga/reply/${replyId}/edit`,
+            data: { text: newText },
+            success: function() {
+                replyElement.find('.user-reply-text').html(formattedText).show();
+                replyElement.find('.edit-reply-text').hide();
+                replyElement.find('.edit-reply-save').hide();
+                replyElement.find('.edit-reply-cancel').hide();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error editing reply:', textStatus, errorThrown);
+                alert('Відповідь повинна містити від 1 до 1000 символів.');
+            }
+        });
+    });
+
+    //Reply on Reply
+    $(document).on('click', '.reply-on-reply-button', function() {
+    const commentElement = $(this).closest('.comment');
+    const commentId = commentElement.attr('id').split('-')[1];
+    const parentId = commentId;
+
+    const $reply = $(this).closest('.reply');
+    const $formContainer = $reply.find('.reply-on-reply-form-container');
+    const $form = $formContainer.find('form');
+
+    const replyId = $(this).data('reply-id');
+    const userName = $form.data('username');
+
+    const $textarea = $form.find('textarea');
+        $textarea.val(`@${userName}, `);
+
+    $formContainer.toggle();
+    });
+
+    $(document).on('input', '.reply-form textarea', function() {
+        const $textarea = $(this);
+        const $form = $textarea.closest('form');
+        const userName = $form.data('username');
+        const textValue = $textarea.val();
+        const prefix = `@${userName}`;
+
+        if (textValue.startsWith(prefix)) {
+            $form.find('.username-block').show();
+        } else {
+            $form.find('.username-block').hide();
+        }
+    });
+
+    $(document).on('click', '.cancel-reply-on-reply', function() {
+        const $formContainer = $(this).closest('.reply-on-reply-form-container');
+        $formContainer.find('textarea').val("");
+        $(this).closest('.reply-on-reply-form-container').hide();
+    });
+
+    function createReplyElement(reply,commentId) {
         const currentUserId = $('#comments').data('current-user-id');
         const userName = reply.userName || 'Unknown User';
         const userIcon = reply.ProfilePicture || 'https://www.riseandfall.xyz/unrevealed.png';
         const formattedDate = formatDate(reply.createdAt);
+        const replyText = linkifyUsernames(reply.text);
 
+        console.log(commentId);
         let optionsMenu = `
         <div class="dropdown reply-options">
             <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton-${reply.id}" data-bs-toggle="dropdown" aria-expanded="false">
@@ -422,11 +554,25 @@ $(document).ready(function() {
                     <span class="user-name">${userName}</span>
                 </a>
             </div>
-            <p class="user-reply-text">${reply.text}</p>
+            <p class="user-reply-text">${replyText}</p>
             <div class="reply-footer">
                 <small class="comment-time">${formattedDate}</small>
+                <button class="btn btn-link reply-on-reply-button" data-reply-id="${reply.id}">Відповісти</button>
                 ${optionsMenu}
             </div>
+            <div class="reply-on-reply-form-container" style="display: none;">
+    <form class="reply-form" data-parent-id="${commentId}" data-username="${reply.userName}">
+        <div class="textarea-container">
+            <span class="username-block">@${reply.userName}</span>
+            <textarea name="text" class="form-control" rows="2" placeholder="Напишіть відповідь..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Відповісти</button>
+        <button type="button" class="btn btn-primary mt-2 cancel-reply-on-reply">Скасувати</button>
+    </form>
+</div>
+            <textarea class="edit-reply-text form-control mb-3" style="display:none; width:100%;">${reply.text}</textarea>
+            <button class="btn btn-primary edit-reply-save" style="display:none;">Зберегти</button>
+            <button class="btn btn-primary edit-reply-cancel" style="display:none;">Скасувати</button>
         </div>
     `);
     }
@@ -439,6 +585,12 @@ $(document).ready(function() {
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
+        });
+    }
+
+    function linkifyUsernames(text) {
+        return text.replace(/@(\w+)/g, function(match, username) {
+            return `<a href="/profile/${username}" class="user-mention">@${username}</a>`;
         });
     }
 });
