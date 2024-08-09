@@ -773,8 +773,20 @@
     margin-right: 10px;
 }
 
-.user-name {
+.user-name ,
+.user-name-comment{
     font-weight: bold;
+}
+.user-name:hover ,
+.user-name-comment:hover {
+    color:#ff0080;
+}
+.user-mention{
+    color:gray;
+    text-decoration:none;
+}
+.user-mention:hover{
+    color:#ff0080;
 }
 .user-link {
     display: flex;
@@ -782,9 +794,7 @@
     text-decoration: none;
     color: inherit;
 }
-.user-name:hover {
-    color:#ff0080;
-}
+
 .show-replies-button{
     font-size:14px;
     color: #ff0080;
@@ -849,15 +859,18 @@
     color: #ffffff !important;
     box-shadow: none !important;
 }
-.reply-button{
+.reply-button,
+.reply-on-reply-button{
     font-size:12px;
     color: #ff0080;
     text-decoration:none;
 }
-.reply-button:hover{
+.reply-button:hover,
+.reply-on-reply-button:hover{
     color: #c20060;
 }
-.reply-button:focus, .reply-button:active {
+.reply-button:focus, .reply-button:active,
+.reply-on-reply-button:focus, .reply-on-reply-button:active{
     color: #ff0080 !important;
     box-shadow: none !important;
 }
@@ -975,33 +988,46 @@
     display: flex;
     align-items: center;
 }
+
+.replies-container {
+    border-left: 2px solid #ff0080;
+    margin-left: 15px;
+    padding-left: 10px;
+}
+
 .reply {
     position: relative;
     padding-left: 10px;
-    border-left: 3px solid #ccc;
     margin-bottom: 10px;
-    margin-left:15px;
 }
 .upvote-button {
     color: #ccc;
 }
 
-.upvote-button.selected {
-    color: #0f0;
+.upvote-button {
+    color: #ccc;
+    --bs-btn-active-color: #00c200;
 }
-
+.upvote-button.selected {
+    color: #00f100;
+}
+.upvote-button:hover {
+    color: #00c200;
+}
 .upvote-button.cancelled {
     color: #ccc;
 }
 
 .downvote-button {
     color: #ccc;
+    --bs-btn-active-color: #c70000;
 }
-
 .downvote-button.selected {
     color: #f00;
 }
-
+.downvote-button:hover {
+    color: #c70000;
+}
 .downvote-button.cancelled {
     color: #ccc;
 }
@@ -1010,4 +1036,23 @@
     align-items: center;
     text-decoration: none;
     color: inherit;
+}
+.textarea-container {
+    position: relative;
+}
+
+.username-block {
+    position: absolute;
+    top: 4px;
+    left: 8px;
+    background-color: #302B3B;
+    padding: 2px;
+    border-radius: 4px;
+    pointer-events: none;
+    font-weight: bold;
+    color: #ff0080;
+}
+
+textarea {
+    padding-left: 80px;
 }

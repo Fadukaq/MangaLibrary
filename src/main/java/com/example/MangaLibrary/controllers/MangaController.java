@@ -668,6 +668,7 @@ public class MangaController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You have already reported this comment");
         }
     }
+
     @GetMapping("/manga/comment/reply")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> addReply(
@@ -701,6 +702,48 @@ public class MangaController {
         }
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/manga/reply/{replyId}/edit")
+    @ResponseBody
+    public ResponseEntity<?> editReply(
+            @PathVariable Long replyId,
+            @RequestParam String text,
+            Principal principal) {
+
+        try {
+            String currentUsername = principal.getName();
+            commentService.updateReply(replyId, text, currentUsername);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating reply");
+        }
+    }
+    @GetMapping("/manga/reply/{replyId}/delete")
+    @ResponseBody
+    public ResponseEntity<?> deleteReply(
+            @PathVariable Long replyId,
+            Principal principal) {
+        try {
+            String currentUsername = principal.getName();
+            commentService.deleteReply(replyId, currentUsername);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting reply");
+        }
+    }
+    @GetMapping("/manga/reply/{replyId}/report")
+    public ResponseEntity<String> reportReply(
+            @PathVariable Long replyId,
+            @RequestParam Long userId,
+            @RequestParam String reason) {
+        boolean success = commentService.reportReply(replyId, userId, reason);
+        if (success) {
+            return ResponseEntity.ok("Reply reported successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You have already reported this reply");
+        }
+    }
+
     @GetMapping("/random")
     public String getRandomMangaId(Model model) {
 

@@ -27,6 +27,8 @@ public class CommentService {
     @Autowired
     private RepliesRepo repliesRepo;
     @Autowired
+    private ReplyReportRepo replyReportRepo;
+    @Autowired
     private MangaRepo mangaRepo;
     public void addComment(Long mangaId, String text, Long userId) {
         Manga manga = mangaRepo.findById(mangaId)
@@ -135,5 +137,57 @@ public class CommentService {
     }
     public List<Comment> getCommentsByMangaId(Long mangaId) {
         return commentRepo.findByMangaId(mangaId);
+    }
+
+    public void updateReply(Long replyId, String newText, String currentUsername) {
+        Replies reply = repliesRepo.findById(replyId)
+                .orElseThrow(() -> new EntityNotFoundException("Reply not found"));
+
+        User replyAuthor = userRepo.findById(reply.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        if (!replyAuthor.getUserName().equals(currentUsername)) {
+            return;
+        }
+
+        reply.setText(newText);
+        repliesRepo.save(reply);
+    }
+
+    public void deleteReply(Long replyId, String currentUsername) {
+        Replies reply = repliesRepo.findById(replyId)
+                .orElseThrow(() -> new EntityNotFoundException("Reply not found"));
+
+        User replyAuthor = userRepo.findById(reply.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        if (!replyAuthor.getUserName().equals(currentUsername)) {
+        return;
+        }
+
+        repliesRepo.delete(reply);
+    }
+
+    public boolean reportReply(Long replyId, Long userId, String reason) {
+        Replies reply = repliesRepo.findById(replyId)
+                .orElseThrow(() -> new IllegalArgumentException("Reply not found"));
+
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        boolean alreadyReported = replyReportRepo.existsByReplyAndUser(reply, user);
+
+        if (alreadyReported) {
+            return false;
+        }
+
+        ReplyReport replyReport = new ReplyReport();
+        replyReport.setReply(reply);
+        replyReport.setUser(user);
+        replyReport.setReportedAt(LocalDateTime.now());
+        replyReport.setReason(reason);
+
+        replyReportRepo.save(replyReport);
+        return true;
     }
 }

@@ -43,6 +43,10 @@ public class Replies {
     public String getUserProfilePicture() {
         return user != null ? user.getProfilePicture() : "https://www.riseandfall.xyz/unrevealed.png";
     }
+    @JsonProperty("userId")
+    public Long getUserId() {
+        return user != null ? user.getId() : null;
+    }
     public Long getId() {
         return id;
     }

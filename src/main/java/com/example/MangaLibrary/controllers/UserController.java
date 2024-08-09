@@ -52,7 +52,16 @@ public class UserController {
         model.addAttribute("user", new User());
         return "registration";
     }
-
+    @GetMapping("/manga/user/{userId}/role")
+    public ResponseEntity<User> getUserRole(@PathVariable Long userId) {
+        Optional<User> userOptional = userRepo.findById(userId);
+        if(userOptional.isPresent())
+        {
+            User user = userOptional.get();
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.ok(null);
+    }
     @PostMapping("/registration")
     public String addUser(@ModelAttribute("user") @Valid User user, BindingResult result, Map<String, Object> model, Model _model) {
         if (result.hasErrors()) {
