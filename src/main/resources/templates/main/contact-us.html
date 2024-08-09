@@ -8,26 +8,45 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/transparent-container.css">
-    </head>
+</head>
 <body class="loading">
-<div th:insert="~{blocks/loader :: loader}"></div>
-<header th:insert="~{blocks/header :: header}"></header>
-<input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
-<div class="container mt-5 mb-5 updateText ">
-    <div class="containerInfo transparent-container">
-        <h4 class="text-center">Ви можете з нами зв'язатися якщо:
-            <br>1. Ви хочете оскаржити своє блокування.
-            <br>2. Ви хочете повідомити про помилку на сайті.
-            <br>3. Ви хочете отримати роль MangaUploader.
-        </h4>
-    </div>
-    <div class="master-card mt-3">
-        <div class="author-section">
-            <h2 class="text-center highlight showEmail" id="emailToggle" onclick="toggleEmail()">Натисніть тут, щоб побачити електронну пошту</h2>
-            <h2 class="text-center highlight email-hidden" id="emailShown">mangalibrary2024@gmail.com</h2>
+    <div th:insert="~{blocks/loader :: loader}"></div>
+    <header th:insert="~{blocks/header :: header}"></header>
+    <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 text-center">
+                <h1 class="header">Зворотній зв’язок</h1>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-4">
+            <div class="col-12 col-md-10">
+                <div class="content">
+                    <p class="first-paragraph">
+                        Шановний користувач, ваша думка є важливою для нас, і ми прагнемо зробити ваш досвід перебування на нашому сайті максимально комфортним і цікавим.
+                        Якщо у вас є питання, пропозиції або ви натрапили на проблему, не соромтеся звернутися до нас через наступні канали зв’язку:
+                    </p>
+                    <p class="first-paragraph">
+                        <span class="highlight-white">Telegram</span> – найзручніший спосіб зв’язатися з нами, надішліть нам повідомлення через наш офіційний канал <span class="highlight-pink">mangalibrary2024</span>, і ми оперативно відповімо на ваші питання та своєчасно вирішимо виявлені проблеми.
+                    </p>
+                    <p class="first-paragraph">
+                        <span class="highlight-white">Instagram</span> – слідкуйте за нашими оновленнями і пишіть нам в прямі повідомлення <span class="highlight-pink">mangalibrary2024</span>. Ми завжди готові вислухати ваші відгуки та пропозиції щодо покращення функціоналу нашого сайту!
+                    </p>
+                    <p class="first-paragraph">
+                        <span class="highlight-white">Google Mail</span> – для детальних запитів або якщо ви вважаєте, що ваше питання потребує особливої уваги, напишіть нам на електронну пошту <span class="highlight-pink">mangalibrary2024@gmail.com</span>. Ми гарантуємо, що ваша проблема буде розглянута з усією серйозністю та негайно перейде в фазу виправлення.
+                    </p>
+                    <p class="first-paragraph">
+                        Ваші ідеї та зауваження допомагають нам покращувати весь сайт в цілому і робити його ще цікавішим і зручнішим для вас. Не пропустіть можливість стати частиною розвитку нашого сайту та команди!
+                    </p>
+                    <p class="first-paragraph">
+                        З найкращими побажаннями, команда <span class="highlight-pink">Manga</span> <span class="highlight-white">Library</span>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
