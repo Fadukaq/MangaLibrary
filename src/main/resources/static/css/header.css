@@ -165,7 +165,6 @@ body {
   padding: 3px;
   color: #ffffff;
   max-width: 100vw;
-  overflow-x: auto;
 }
 
 .dropdown-menu.show {
@@ -235,14 +234,17 @@ body {
 
 .dropdown-item {
   display: block;
-  text-align:center;
+  text-align:left;
   width: 100%;
   padding: 8px;
   white-space: nowrap;
   box-sizing: border-box;
   cursor: pointer;
 }
-
+.navbar-nav .dropdown-menu-site,
+.dropdown-menu-admin{
+  text-indent: 10px;
+}
 .dropdown-item:hover,
 .dropdown-item:focus {
   background-color: #522878;
@@ -395,7 +397,6 @@ body {
   padding: 0;
   max-height: 400px;
   overflow-y: auto;
-
 }
 
 .search-result-item {

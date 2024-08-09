@@ -408,7 +408,7 @@ input::placeholder {
 
 .manga-details {
     position: absolute;
-    top: -380px;
+    top: -310px;
     left: 100%;
     margin-left: 10px;
     width: 300px;
@@ -462,27 +462,40 @@ input::placeholder {
 @media (max-width: 1680px) {
     .manga-details {
         height: 380px;
-        width: auto;
+        width: 100%;
         left: auto;
         right: 0;
         margin-left: 0;
         max-width: 90%;
+    }
+    .custom-title-details{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        word-wrap: break-word;
+        white-space: normal;
+        font-size: 1em;
     }
     .manga-details p {
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 10;
+        -webkit-line-clamp: 12;
         word-wrap: break-word;
         white-space: normal;
-        font-size: 0.9em;
+        font-size: 0.8em;
     }
     .manga-details h4{
         font-size: 1.1em;
     }
-    .manga-genres span {
+    .manga-genres a {
         font-size: 0.9em;
+    }
+    .manga-genres a:nth-of-type(n+6) {
+        display: none;
     }
 }
 
