@@ -216,8 +216,6 @@ body {
   margin-right: 10px;
 }
 
-
-
 .dropdown-menu-admin {
   padding: 0;
   min-width: 160px;
@@ -356,7 +354,7 @@ body {
   visibility: hidden;
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
   box-sizing: border-box;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: #212121e8;
 }
 
 .search-form-container.active {
@@ -422,3 +420,23 @@ body {
 .search-result-title {
   font-size: 16px;
 }
+
+.btn-custom-confirm {
+  background-color: #ff0080 !important;
+  color: white;
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+.btn-custom-confirm:hover {
+  background-color: #ea0078 !important;
+}
+.btn-custom-confirm:focus {
+  background-color: #c20065 !important;
+}
+

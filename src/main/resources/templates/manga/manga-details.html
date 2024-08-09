@@ -14,29 +14,15 @@
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
-<div th:if="${manga.adultContent}" class="modal fade" id="adultContentModal" tabindex="-1" aria-labelledby="adultContentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background-color: #4b0082; color: #ffffff;">
-            <div class="modal-header">
-                <h5 class="modal-title" id="adultContentModalLabel">Попередження про контент 18+</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Ця манга містить контент, призначений для дорослої аудиторії <br>Продовжуючи, ви підтверджуєте, що вам виповнилося 18 років.</p>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="rememberChoice">
-                    <label class="form-check-label" for="rememberChoice">
-                        Запам'ятати мій вибір
-                    </label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="agreeButton" type="button" class="btn btn-secondary">Продовжити</button>
-                <a href="/manga" class="btn btn-primary">Повернутись</a>
-            </div>
-        </div>
-    </div>
-</div>
+
+<div th:insert="~{blocks/modals/adultContentModal :: adultContentModal}"></div>
+<div th:insert="~{blocks/modals/deleteConfirmationModal :: deleteConfirmationModal}"></div>
+<div th:insert="~{blocks/modals/deleteReplyModal :: deleteReplyModal}"></div>
+<div th:insert="~{blocks/modals/errorModal :: errorModal}"></div>
+<div th:insert="~{blocks/modals/reportCommentModal :: reportCommentModal}"></div>
+<div th:insert="~{blocks/modals/reportReplyModal :: reportReplyModal}"></div>
+<div th:insert="~{blocks/modals/successModal :: successModal}"></div>
+
 <div class="container mt-5 mb-5">
     <div class="bg-manga">
         <img th:src="${manga.mangaBackGround}" alt="" class="img-fluid">
@@ -58,7 +44,7 @@
                     <select name="listType" id="listTypeSelect" class="form-select custom-select-lists">
                         <option value="" disabled th:selected="${!isInReadingList && !isInWantToReadList && !isInRecitedList && !isInReadStoppedList}">Додати до списку</option>
                         <option value="reading" th:selected="${isInReadingList}">Читаю</option>
-                        <option value="want-read" th:selected="${isInWantToReadList}">В планах</option>
+                        <option value="want-read" th:selected="${isInWantToReadList}">У планах</option>
                         <option value="recited" th:selected="${isInRecitedList}">Прочитано</option>
                         <option value="read-stopped" th:selected="${isInReadStoppedList}">Кинуто</option>
                     </select>
@@ -82,11 +68,12 @@
                     <span th:text="${manga.adultContent} ? '18+' : 'Ні'"></span>
                 </div>
                 <div class="info-item">
-                    <a th:href="@{'/author/' + ${manga.author.id}}" class="link full-link">
+                    <a th:if="${manga.author != null}" th:href="@{'/author/' + ${manga.author.id}}" class="link full-link">
                         <p class="info-title">Автор манги:</p>
-                        <span th:if="${manga.author != null}" th:text="${manga.author.name}"></span>
-                        <span th:unless="${manga.author != null}">undefined</span>
+                        <span th:text="${manga.author.name}"></span>
                     </a>
+                    <p th:unless="${manga.author != null}" class="info-title">Автор манги:</p>
+                    <span th:unless="${manga.author != null}">Невизначено</span>
                 </div>
                 <div class="info-item">
                     <p class="info-title">Статус манги:</p>
@@ -155,7 +142,7 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                             <li>
-                                <a class="dropdown-item" href="#" th:onclick="'confirmDelete(event, ' + ${manga.id} + ')'">
+                                <a class="dropdown-item" href="#" th:onclick="'confirmDeleteManga(event, ' + ${manga.id} + ')'">
                                     <i class="fa fa-trash" aria-hidden="true"></i> Видалити
                                 </a>
                             </li>

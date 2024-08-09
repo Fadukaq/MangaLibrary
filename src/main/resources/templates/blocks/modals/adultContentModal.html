@@ -1,0 +1,25 @@
+<div th:fragment="adultContentModal">
+<div th:if="${manga.adultContent}" class="modal fade" id="adultContentModal" tabindex="-1" aria-labelledby="adultContentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #212121; color: #ffffff;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adultContentModalLabel">Попередження про контент 18+</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+            </div>
+            <div class="modal-body">
+                <p>Ця манга містить контент, призначений для дорослої аудиторії <br>Продовжуючи, ви підтверджуєте, що вам виповнилося 18 років.</p>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rememberChoice">
+                    <label class="form-check-label" for="rememberChoice">
+                        Запам'ятати мій вибір
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="agreeButton" type="button" class="btn btn-custom-confirm">Продовжити</button>
+                <a href="/manga" class="btn btn-primary">Повернутись</a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

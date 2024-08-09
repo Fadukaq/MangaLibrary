@@ -1,0 +1,26 @@
+<div th:fragment="reportCommentModal">
+<div class="modal fade" id="reportCommentModal" tabindex="-1" aria-labelledby="reportCommentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #212121; color: #ffffff;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportCommentModalLabel">Поскаржитися на коментар</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reportCommentForm">
+                    <div class="mb-3">
+                        <label for="reportReason" class="form-label">Введіть причину скарги:</label>
+                        <textarea id="reportReason" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <input type="hidden" id="reportCommentId" value="">
+                    <input type="hidden" id="reportUserId" value="">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="submitReport" type="button" class="btn btn-custom-confirm">Відправити скаргу</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрити</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

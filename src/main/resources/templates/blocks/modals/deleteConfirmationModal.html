@@ -1,0 +1,19 @@
+<div th:fragment="deleteConfirmationModal">
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #212121; color: #ffffff;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Підтвердження видалення</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Ви впевнені, що хочете видалити?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-custom-confirm" id="confirmDeleteButton">Так, видалити</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Скасувати</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

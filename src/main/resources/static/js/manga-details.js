@@ -78,12 +78,29 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function confirmDelete(event, id) {
+let deleteUrl = '';
+
+function confirmDeleteManga(event, id) {
     event.preventDefault();
-
-    if (confirm("Ви впевнені, що хочете видалити цей об'єкт?")) {
-        const url = `/manga/delete/${id}`;
-
-        window.location.href = url;
-    }
+    deleteUrl = `/manga/delete/${id}`;
+    $('#deleteConfirmationModal').modal('show');
 }
+
+function confirmDeleteComment(event, id) {
+    event.preventDefault();
+    deleteUrl = `/comment/delete/${id}`;
+    $('#deleteConfirmationModal').modal('show');
+}
+
+$('#confirmDeleteButton').click(function() {
+    if (deleteUrl) {
+        window.location.href = deleteUrl;
+        $('#deleteConfirmationModal').modal('hide');
+        deleteUrl = '';
+    }
+});
+
+$('#cancelDeleteButton').click(function() {
+    deleteUrl = '';
+    $('#deleteConfirmationModal').modal('hide');
+});

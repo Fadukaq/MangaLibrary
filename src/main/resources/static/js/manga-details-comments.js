@@ -187,24 +187,45 @@ $(document).ready(function() {
                     });
 
                 });
-                $('.report-comment').click(function(e) {
+                $(document).on('click', '.report-comment', function(e) {
                     e.preventDefault();
                     const commentId = $(this).data('comment-id');
                     const userId = $('#comments').data('current-user-id');
+                    $('#reportCommentId').val(commentId);
+                    $('#reportUserId').val(userId);
+                    $('#reportCommentModal').modal('show');
+                });
 
-                    const reason = prompt('Введіть причину скарги:');
+                $('#submitReport').click(function() {
+                    const commentId = $('#reportCommentId').val();
+                    const userId = $('#reportUserId').val();
+                    const reason = $('#reportReason').val();
+
                     if (reason) {
                         $.ajax({
                             url: `/manga/comment/${commentId}/report`,
                             method: 'GET',
-                            data: { userId: userId, reason: reason },
+                            data: {
+                                userId: userId,
+                                reason: reason
+                            },
                             success: function(response) {
-                                alert('Ваше повідомлення про порушення надіслано.');
+                                $('#reportCommentModal').modal('hide');
+                                $('#successMessage').text('Ваша скарга надіслана.');
+                                $('#successModal').modal('show');
+                                $('#reportReason').val('');
                             },
                             error: function(xhr, status, error) {
-                                alert('Ви вже надіслали повідомлення про цей коментар.');
+                                $('#reportCommentModal').modal('hide');
+                                $('#errorMessage').text('Ви вже надіслали повідомлення про цей коментар.');
+                                $('#errorModal').modal('show');
+                                $('#reportReason').val('');
                             }
                         });
+                    } else {
+                        $('#reportCommentModal').modal('hide');
+                        $('#errorMessage').text('Будь ласка, введіть причину скарги.');
+                        $('#errorModal').modal('show');
                     }
                 });
             }
@@ -260,23 +281,31 @@ $(document).ready(function() {
         commentElement.find('.edit-comment-cancel').hide();
     });
 
-    $('#comments-list').off('click', '.delete-comment').on('click', '.delete-comment', function(e) {
+    $(document).on('click', '.delete-comment', function(e) {
         e.preventDefault();
         e.stopImmediatePropagation();
-        const form = $(this).closest('form');
-        const commentId = form.find('input[name="comment-id"]').val();
 
-        if (confirm('Ви впевнені, що хочете видалити цей коментар?')) {
+        const form = $(this).closest('form');
+        commentToDelete = form.closest('.comment');
+        $('#deleteConfirmationModal').modal('show');
+    });
+
+    $('#confirmDeleteButton').click(function() {
+        if (commentToDelete) {
+            const commentId = $(commentToDelete).find('input[name="comment-id"]').val();
+
             $.ajax({
-                url: form.attr('action'),
+                url: `/manga/comment/${commentId}/delete`,
                 method: 'GET',
-                data: form.serialize(),
+                data: { commentId: commentId },
                 success: function(response) {
-                    form.closest('.comment').remove();
+                    commentToDelete.remove();
+                    $('#deleteConfirmationModal').modal('hide');
                 },
                 error: function(xhr, status, error) {
-                    console.error('Помилка видалення коментаря:', error);
-                    alert('Помилка видалення коментаря. Спробуйте пізніше.');
+                    $('#deleteConfirmationModal').modal('hide');
+                    $('#errorMessage').text('Помилка видалення коментаря. Спробуйте пізніше.');
+                    $('#errorModal').modal('show');
                 }
             });
         }
@@ -370,39 +399,50 @@ $(document).ready(function() {
 
     $(document).on('click', '.delete-reply', function(e) {
         e.preventDefault();
-        const commentElement = $(this).closest('.comment');
-        const replyId = $(this).closest('form').find('input[name="reply-id"]').val();
-        const commentId = commentElement.attr('id').split('-')[1];
+        const form = $(this).closest('form');
+        const replyId = form.find('input[name="reply-id"]').val();
+        const commentId = $(this).closest('.comment').attr('id').split('-')[1];
 
-        if (confirm('Ви впевнені, що хочете видалити цей коментар?')) {
+        replyToDelete = { replyId: replyId, commentId: commentId };
+        $('#deleteReplyModal').modal('show');
+    });
+
+    $('#confirmDeleteReplyButton').click(function() {
+        if (replyToDelete) {
             $.ajax({
-                url: `/manga/reply/${replyId}/delete`,
+                url: `/manga/reply/${replyToDelete.replyId}/delete`,
                 method: 'GET',
                 success: function(response) {
-                    const $reply = $(`.reply[data-reply-id="${replyId}"]`);
+                    // Удаляем ответ из DOM
+                    const $reply = $(`.reply[data-reply-id="${replyToDelete.replyId}"]`);
                     if ($reply.length) {
                         $reply.remove();
                     } else {
-                        console.warn('Reply not found for ID:', replyId);
+                        console.warn('Reply not found for ID:', replyToDelete.replyId);
                     }
 
-                    const $comment = $(`.comment[id="comment-${commentId}"]`);
+                    // Обновляем количество ответов в комментарии
+                    const $comment = $(`.comment[id="comment-${replyToDelete.commentId}"]`);
                     if ($comment.length) {
                         const replies = $comment.find('.reply');
                         const repliesCount = replies.length;
 
+                        const $showRepliesButton = $comment.find('.show-replies-button');
                         if (repliesCount > 0) {
-                            commentElement.find('.show-replies-button').find('.replies-count').text(repliesCount);
+                            $showRepliesButton.find('.replies-count').text(repliesCount);
                         } else {
                             $showRepliesButton.hide();
                         }
                     } else {
-                        console.warn('Comment not found for ID:', commentId);
+                        console.warn('Comment not found for ID:', replyToDelete.commentId);
                     }
+
+                    $('#deleteReplyModal').modal('hide');
                 },
                 error: function(xhr, status, error) {
-                    console.error('Помилка видалення коментаря:', error);
-                    alert('Помилка видалення коментаря. Спробуйте пізніше.');
+                    $('#deleteReplyModal').modal('hide');
+                    $('#errorMessage').text('Помилка видалення відповіді. Спробуйте пізніше.');
+                    $('#errorModal').modal('show');
                 }
             });
         }
@@ -411,21 +451,36 @@ $(document).ready(function() {
     $(document).on('click', '.report-reply', function(e) {
         e.preventDefault();
         const replyId = $(this).closest('.reply').data('reply-id');
-        const userId = $('#comments').data('current-user-id');
-        const reason = prompt('Будь ласка, вкажіть причину скарги:');
+        replyToReport = replyId;
+        $('#reportReplyModal').modal('show');
+    });
 
-        if (reason) {
-            $.ajax({
-                url: `/manga/reply/${replyId}/report`,
-                method: 'GET',
-                data: { userId: userId, reason: reason },
-                success: function(response) {
-                    alert('Ваше повідомлення про порушення надіслано.');
-                },
-                error: function(xhr, status, error) {
-                    alert('Ви вже надіслали повідомлення про порушення цієї відповіді.');
-                }
-            });
+    $('#confirmReportReplyButton').click(function() {
+        if (replyToReport) {
+            const reason = $('#reportReplyReason').val();
+            if (reason) {
+                const userId = $('#comments').data('current-user-id');
+                $.ajax({
+                    url: `/manga/reply/${replyToReport}/report`,
+                    method: 'GET',
+                    data: { userId: userId, reason: reason },
+                    success: function(response) {
+                        $('#reportReplyModal').modal('hide');
+                        $('#successMessage').text('Ваше повідомлення про порушення надіслано.');
+                        $('#successModal').modal('show');
+                        $('#reportReplyReason').val('');
+
+                    },
+                    error: function(xhr, status, error) {
+                        $('#reportReplyModal').modal('hide');
+                        $('#errorMessage').text('Ви вже надіслали повідомлення про порушення цієї відповіді.');
+                        $('#errorModal').modal('show');
+                        $('#reportReplyReason').val('');
+                    }
+                });
+            } else {
+                $('#errorMessage').text('Будь ласка, введіть причину скарги.');
+                $('#errorModal').modal('show');            }
         }
     });
 
@@ -516,7 +571,6 @@ $(document).ready(function() {
         const formattedDate = formatDate(reply.createdAt);
         const replyText = linkifyUsernames(reply.text);
 
-        console.log(commentId);
         let optionsMenu = `
         <div class="dropdown reply-options">
             <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton-${reply.id}" data-bs-toggle="dropdown" aria-expanded="false">

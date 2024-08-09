@@ -1,3 +1,17 @@
-function confirmDelete() {
-    return confirm('Ви впевнені, що хочете видалити? Дані в базі даних буде видалено.');
+let formToSubmit;
+
+function openDeleteConfirmationModal(form) {
+    formToSubmit = form;
+    $('#deleteConfirmationModal').modal('show');
 }
+
+$('#confirmDeleteButton').click(function() {
+    if (formToSubmit) {
+        formToSubmit.submit();
+    }
+});
+
+$('#deleteAuthorForm').on('submit', function(event) {
+    event.preventDefault();
+    openDeleteConfirmationModal(this);
+});

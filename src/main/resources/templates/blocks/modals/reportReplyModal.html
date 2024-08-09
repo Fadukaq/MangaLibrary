@@ -1,0 +1,20 @@
+<div th:fragment="reportReplyModal">
+<div class="modal fade" id="reportReplyModal" tabindex="-1" aria-labelledby="reportReplyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background-color: #212121; color: #ffffff;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reportReplyModalLabel">Поскаржитися на відповідь</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Будь ласка, вкажіть причину скарги:</p>
+        <textarea id="reportReplyReason" class="form-control" rows="3" placeholder="Введіть причину скарги..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button id="confirmReportReplyButton" type="button" class="btn btn-custom-confirm">Надіслати скаргу</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Скасувати</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
