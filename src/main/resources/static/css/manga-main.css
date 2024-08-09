@@ -512,7 +512,7 @@ input::placeholder {
     .manga-details {
         width: auto;
         left: auto;
-        top:
+        top: auto;
         right: 0;
         margin-left: 0;
         max-width: 90%;
@@ -726,7 +726,7 @@ input::placeholder {
     }
 }
 .filter-modal-content .filter-group,
-.filter-modal-content .filter-button,
+.filter-modal-content .filter-button
 {
     width: 95%;
     padding: 10px;

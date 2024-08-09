@@ -9,32 +9,59 @@
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/transparent-container.css">
     <link rel="stylesheet" href="/css/token-alerts.css">
+    <link rel="stylesheet" href="/css/about.css">
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
-<div class="container mt-5 mb-5 updateText transparent-container">
-        <h1>Manga<span style="color:#a9a9a9;">Library</span></h1>
-        <p><span class="highlight">Manga<span style="color:#a9a9a9;">Library</span></span> - це унікальний онлайн-ресурс для всіх, хто цінує і захоплюється японською культурою,
-            особливо мангою. На нашому сайті ви знайдете велику колекцію манги найрізноманітніших жанрів і напрямків.
-            Ми прагнемо надати нашим користувачам доступ до якомога більшої кількості творів, щоб кожен міг знайти щось на свій смак.</p>
-        <p>Однією з головних особливостей <span class="highlight">Manga<span style="color:#a9a9a9;">Library</span></span> є зручний та інтуїтивно зрозумілий інтерфейс,
-            який дає змогу легко знаходити та читати улюблені манги. Ви можете додавати будь-яку мангу в свої списки щоб вам було зручно знаходити ту мангу,
-            яку ви читаєте, прочитали, будете читати.</p>
+
+<div class="container text-center mt-5">
+    <h1 class="about-title">Про нас</h1>
 </div>
-<div class="container updateText">
-    <div class="master-card">
-        <div class="author-section">
-            <h2 class="highlight">Дизайнери:</h2>
-            <p>Любенко Владислав <br> Кощавка Максим Олексійович</p>
-        </div>
-        <div class="author-section">
-            <h2 class="highlight">Программісти:</h2>
-            <p>Сайдакар Іван Іванович<br>Бондарєв Артем Дмитрович</p>
+
+<!-- Основной текст -->
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <p class="about-text">
+                Ласкаво просимо до <span class="manga">Manga</span><span class="library">Library</span> – унікального онлайн-простору, створеного для справжніх поціновувачів аніме та манги. Тут ви знайдете все, що може зацікавити фанатів японської культури, від найсвіжіших релізів до класичних творів, які сформували жанр. Наша бібліотека постійно оновлюється, щоб забезпечити вам доступ до найновіших глав манги та епізодів улюблених аніме.
+            </p>
+            <p class="about-text">
+                <span class="manga">Manga</span><span class="library">Library</span> пропонує користувачам зручну навігацію, дозволяючи легко знаходити та зберігати улюблені серії у вашій особистій колекції. Наші детальні рецензії та рейтинги допоможуть вам вибрати найцікавіші новинки, а інтерактивні форуми та чати – обговорити їх з іншими фанатами з усього світу.
+            </p>
+            <p class="about-text">
+                Ми пишаємося своєю спільнотою, де панує атмосфера дружби та взаємодопомоги. Приєднуйтесь до нас, щоб ділитися своїми враженнями, відкривати нові горизонти та занурюватися в захопливий світ аніме та манги разом з однодумцями. <span class="manga">Manga</span><span class="library">Library</span> – це не просто сайт, це ваш вірний друг у пригодах по безмежному всесвіту японської творчості.
+            </p>
         </div>
     </div>
 </div>
+
+<!-- Заголовок "Команда що займалась створенням сайту" -->
+<div class="container text-center mt-5">
+    <h2 class="team-title">Команда що займалась створенням сайту</h2>
+</div>
+
+<!-- Информация о дизайнерах и программистах -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-5 text-center">
+            <h3 class="role-title">Дизайнери:</h3>
+            <div class="role-names">
+                <p>Любенко Владислав</p>
+                <p>Кощавка Максим Олексійович</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-5 text-center">
+            <h3 class="role-title">Программісти:</h3>
+            <div class="role-names">
+                <p>Сайдакар Іван Іванович</p>
+                <p>Бондарєв Артем Дмитрович</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div th:if="${message}" class="message-container fixed-right">
     <div th:classappend="${isActivated} ? 'alert alert-success' : 'alert alert-error'" th:text="${message}"></div>
 </div>

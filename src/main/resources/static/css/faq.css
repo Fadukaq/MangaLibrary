@@ -44,3 +44,108 @@
 .accordion-body a:hover {
     color: #8e5eff;
 }
+
+.faq-header {
+    position: relative;
+    margin-top: 100px; /* Отступ сверху */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    z-index: 10;
+}
+
+.faq-image {
+    width: 50px;
+    height: 28px;
+}
+
+.faq-text {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.faq-divider {
+    margin: 20px auto;
+    width: 80%;
+    border-top: 2px dotted #333;
+}
+
+/* Общий контейнер для секции FAQ */
+.faq-container {
+    position: relative;
+    padding-bottom: 200px;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+}
+
+/* Контейнер для квадратов */
+.container {
+    position: relative;
+    width: 750px; /* Устанавливаем ширину для центрирования */
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(3, 230px); /* 3 колонки */
+    grid-template-rows: repeat(3, 90px); /* 3 строки */
+    gap: 20px;
+    justify-content: center;
+}
+
+/* Стили для квадратов */
+.square {
+    background-color: #202020;
+    border: 2px solid #808080;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    transition: background-color 0.3s ease; /* Плавный переход для затемнения */
+}
+
+/* Эффект затемнения при наведении */
+.square:hover {
+    background-color: #696969; /* Немного затемненный цвет при наведении */
+}
+
+.square-text {
+    width: 212px;
+    height: 20px;
+    top: 10px;
+    left: 10px;
+    opacity: 1;
+    font-family: Raleway, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.78px;
+    text-align: left;
+}
+
+.square-subtext {
+    width: 150.88px;
+    height: 16px;
+    top: 34px;
+    left: 27.68px;
+    opacity: 1;
+    font-family: Roboto, sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14.06px;
+    text-align: left;
+    color: #625E5E;
+    margin-left: 10px;
+}
+
+/* Позиционирование квадратов */
+#square1 { grid-row: 1; grid-column: 1; }
+#square2 { grid-row: 1; grid-column: 2; }
+#square3 { grid-row: 1; grid-column: 3; }
+#square4 { grid-row: 2; grid-column: 1; }
+#square5 { grid-row: 2; grid-column: 2; }
+#square6 { grid-row: 2; grid-column: 3; }
+#square7 { grid-row: 3; grid-column: 1; }
+#square8 { grid-row: 3; grid-column: 2; }
