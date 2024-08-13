@@ -413,7 +413,6 @@ $(document).ready(function() {
                 url: `/manga/reply/${replyToDelete.replyId}/delete`,
                 method: 'GET',
                 success: function(response) {
-                    // Удаляем ответ из DOM
                     const $reply = $(`.reply[data-reply-id="${replyToDelete.replyId}"]`);
                     if ($reply.length) {
                         $reply.remove();
@@ -421,7 +420,6 @@ $(document).ready(function() {
                         console.warn('Reply not found for ID:', replyToDelete.replyId);
                     }
 
-                    // Обновляем количество ответов в комментарии
                     const $comment = $(`.comment[id="comment-${replyToDelete.commentId}"]`);
                     if ($comment.length) {
                         const replies = $comment.find('.reply');
@@ -479,8 +477,10 @@ $(document).ready(function() {
                     }
                 });
             } else {
+                $('#reportReplyModal').modal('hide');
                 $('#errorMessage').text('Будь ласка, введіть причину скарги.');
-                $('#errorModal').modal('show');            }
+                $('#errorModal').modal('show');
+            }
         }
     });
 

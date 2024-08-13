@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/transparent-container.css">
 </head>
 <body class="loading">
+<div class="content">
 <div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
@@ -70,6 +71,7 @@
         <button type="submit" class="btn btn-success mt-3">Редагувати мангу</button>
         <a th:href="@{/manga/{id}(id=${id})}" class="btn btn-primary mt-3">Повернутись</a>
     </form>
+</div>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -11,20 +11,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterBtn = document.getElementById('filter-btn');
     const filterModal = document.getElementById('filter-modal');
     const closeBtn = document.getElementById('close-btn');
+    const body = document.body;
 
-    filterBtn.addEventListener('click', function() {
-        filterModal.style.display = 'block';
-    });
+    function openModal() {
+        filterModal.style.right = '0';
+        createOverlay();
+        body.style.overflow = 'hidden';
+        filterModal.setAttribute('aria-hidden', 'false');
+    }
 
-    closeBtn.addEventListener('click', function() {
-        filterModal.style.display = 'none';
-    });
+    function closeModal() {
+        filterModal.style.right = '-100%';
+        removeOverlay();
+        body.style.overflow = '';
+        filterModal.setAttribute('aria-hidden', 'true');
+    }
 
-    window.addEventListener('click', function(event) {
-        if (event.target === filterModal) {
-            filterModal.style.display = 'none';
+    function createOverlay() {
+        const overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        document.body.appendChild(overlay);
+        overlay.style.display = 'block';
+        overlay.addEventListener('click', closeModal);
+    }
+
+    function removeOverlay() {
+        const overlay = document.querySelector('.overlay');
+        if (overlay) {
+            overlay.remove();
         }
-    });
+    }
+
+    filterBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
 });
 document.addEventListener('DOMContentLoaded', updateStarRatings);
 function updateStarRatings() {
@@ -158,4 +177,31 @@ $(document).ready(function() {
         const page = $(this).text();
         loadManga(currentSort, sortDirection, page);
     });
+});
+//For Sidebar fixed scrolling down.
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.querySelector('.sidebar');
+    const footer = document.querySelector('footer');
+    const initialTopOffset = 100;
+
+    function updateSidebarPosition() {
+        const scrollPosition = window.pageYOffset;
+        const footerTop = footer.offsetTop;
+        const sidebarHeight = sidebar.offsetHeight;
+        const maxTop = footerTop - sidebarHeight - 20;
+
+        if (scrollPosition + initialTopOffset > maxTop) {
+            sidebar.style.position = 'absolute';
+            sidebar.style.top = maxTop + 'px';
+        } else {
+            sidebar.style.position = 'fixed';
+            sidebar.style.top = initialTopOffset + 'px';
+        }
+    }
+
+    window.addEventListener('scroll', updateSidebarPosition);
+
+    window.addEventListener('resize', updateSidebarPosition);
+
+    updateSidebarPosition();
 });

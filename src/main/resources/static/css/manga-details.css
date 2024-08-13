@@ -457,7 +457,7 @@
 .btn-custom-admin-panel + .dropdown-menu .dropdown-item {
     color: #ffffff;
     width: 100%;
-    min-width:134px;
+    min-width: 146px;
     box-sizing: border-box;
     padding: 10px 15px;
 }

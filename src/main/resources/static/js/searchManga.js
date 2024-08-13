@@ -41,17 +41,20 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayResults(results) {
         searchResults.innerHTML = '';
         if (results.length === 0) {
-            searchResults.innerHTML = '<li>Нічого не знайдено</li>';
+            searchResults.innerHTML = '<li class="nothing-found">Нічого не знайдено</li>';
             return;
         }
         results.forEach(manga => {
             const li = document.createElement('li');
             li.innerHTML = `
         <a href="/manga/${manga.id}" class="search-result-item">
-          <img src="${manga.mangaPosterImg}" alt="${manga.mangaName}" class="search-result-image">
-          <span class="search-result-title">${manga.mangaName}</span>
+            <img src="${manga.mangaPosterImg}" alt="${manga.mangaName}" class="search-result-image">
+            <span class="search-result-title">${manga.mangaName}</span>
+            <span class="rating">
+                <i class="fas fa-star"></i> ${manga.averageRating}
+            </span>
         </a>
-      `;
+        `;
             searchResults.appendChild(li);
         });
     }

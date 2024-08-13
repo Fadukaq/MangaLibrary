@@ -12,13 +12,6 @@ body {
   flex: 1;
 }
 
-footer {
-  background-color: #2c2c2c;
-  color: #e0e0e0;
-  padding: 20px;
-  text-align: center;
-  margin-top: 85px;
-}
 body {
   font-family: "Gill Sans", sans-serif;
   background-color: #1C1C1E;
@@ -242,7 +235,9 @@ body {
   cursor: pointer;
 }
 .navbar-nav .dropdown-menu-site,
-.dropdown-menu-admin{
+.dropdown-menu-admin,
+.dropdown-menu-start,
+.btn-exit{
   text-indent: 10px;
 }
 .dropdown-item:hover,
@@ -407,9 +402,27 @@ body {
   backdrop-filter: blur(5px);
   color: inherit;
   text-decoration: none;
+  border: 1px solid #2f0296;
+  border-radius: 5px;
 }
 .search-result-item:hover {
   background-color: rgba(31, 31, 31, 0.6);
+}
+.rating {
+  position: absolute;
+  top: 25px;
+  right: 10px;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+.rating .fa-star {
+  margin-right: 5px;
+  font-size: 15px;
 }
 .search-result-image {
   width: 50px;
@@ -417,27 +430,17 @@ body {
   object-fit: cover;
   margin-right: 10px;
 }
-
 .search-result-title {
   font-size: 16px;
 }
 
-.btn-custom-confirm {
-  background-color: #ff0080 !important;
-  color: white;
-  border: none;
+.nothing-found {
   text-align: center;
-  text-decoration: none;
-  display: inline-block;
+  padding: 20px;
   font-size: 16px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+  color: #ffffff;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  border: 1px solid #2f0296;
+  border-radius: 5px;
 }
-.btn-custom-confirm:hover {
-  background-color: #ea0078 !important;
-}
-.btn-custom-confirm:focus {
-  background-color: #c20065 !important;
-}
-

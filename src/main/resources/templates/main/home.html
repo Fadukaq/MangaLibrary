@@ -14,6 +14,7 @@
 <div th:insert="~{blocks/loader :: loader}"></div>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <input type="hidden" id="isMobile" />
+<div class="content">
 <header th:insert="~{blocks/header :: header}"></header>
 <div class="main-container-wrapper">
 <div class="container mt-5 mb-2">
@@ -73,6 +74,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>

@@ -14,11 +14,13 @@
 <div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
+<div class="content mb-5">
 <div class="container-fluid">
     <div class="row">
         <template id="filter-template">
             <h3 class="text-center mb-4">Фільтр <i class="fas fa-bars ml-3 fs-5" aria-hidden="true"></i></h3>
             <form id="filter-form">
+                <div class="filter-container">
                 <fieldset class="filter-group">
                     <label class="filter-label">Жанри & Категорії</label >
                     <input type="text" id="genre" class="filter-input" aria-label="Жанри і Категорії">
@@ -56,7 +58,8 @@
                         <option value="18plus">18+</option>
                     </select>
                 </fieldset>
-                <button type="submit" class="filter-button text-center mt-2">Застосувати</button>
+                <button type="submit" class="filter-button mt-2">Застосувати</button>
+                </div>
             </form>
         </template>
 
@@ -110,6 +113,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 <footer th:insert="~{blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

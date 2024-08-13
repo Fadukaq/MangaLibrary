@@ -8,18 +8,17 @@
 }
 
 .content p {
-    margin-bottom: 16px;
     line-height: 1.6;
 }
 
 .first-paragraph {
-    color: #625E5E; /* Цвет текста для всех абзацев */
+    color: #625E5E;
 }
 
 .highlight-white {
-    color: #FFFFFF99; /* Полупрозрачный белый для слов Telegram, Instagram, Google Mail, Library */
+    color: #FFFFFF99;
 }
 
 .highlight-pink {
-    color: #FF0080; /* Ярко-розовый для слов mangalibrary2024, mangalibrary2024@gmail.com, Manga */
+    color: #FF0080;
 }

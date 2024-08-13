@@ -12,6 +12,7 @@
     <meta name="_csrf" th:content="${_csrf.token}" />
 </head>
 <body class="loading">
+<div class="content">
 <div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
 
@@ -138,17 +139,22 @@
                     </li>
                     <li th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})" class="nav-item ms-3 admin-panel">
                         <button class="btn btn-custom-admin-panel" type="button" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            Адмін-панель
+                            Меню Автора
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                             <li>
-                                <a class="dropdown-item" href="#" th:onclick="'confirmDeleteManga(event, ' + ${manga.id} + ')'">
-                                    <i class="fa fa-trash" aria-hidden="true"></i> Видалити
+                                <a class="dropdown-item" th:href="@{/manga/{mangaId}/chapter/add(mangaId=${manga.id})}">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Додати главу
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" th:href="@{/manga/edit/{id}(id=${id})}">
                                     <i class="fa fa-edit" aria-hidden="true"></i> Редагувати
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" th:onclick="'confirmDeleteManga(event, ' + ${manga.id} + ')'">
+                                    <i class="fa fa-trash" aria-hidden="true"></i> Видалити
                                 </a>
                             </li>
                         </ul>
@@ -186,10 +192,6 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="chapters" role="tabpanel" aria-labelledby="chapters-tab">
-                        <div class="admin-actions mt-4" th:if="(${#authentication.authorities[0].authority == 'ADMIN'}) or (${#authentication.authorities[0].authority == 'MangaModerator'})">
-                            <hr>
-                            <a th:href="@{/manga/{mangaId}/chapter/add(mangaId=${manga.id})}" class="btn w-100 mt-1 mb-3 btn-success me-2">Додати главу</a>
-                        </div>
                         <div class="chapter-list">
                             <h5 class="text-center">Список глав</h5>
                             <ul class="list-group">
@@ -202,7 +204,7 @@
                                             <a th:href="@{/manga/{mangaId}/chapter/edit/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="btn btn-warning btn-sm me-2">Редагувати</a>
                                             <form th:action="@{/manga/{mangaId}/chapter/delete/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" method="post" class="d-inline">
                                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Ви впевнені, що хочете видалити цю главу?')">Видалити</button>
+                                                <button type="button" class="btn btn-danger btn-sm btn-delete">Видалити</button>
                                             </form>
                                         </div>
                                     </a>
@@ -226,9 +228,9 @@
         </div>
     </div>
 </div>
-
 <div th:if="${notificationMessage}" class="alert alert-success alert-dismissible fade show hide-delay fixed-right" role="alert">
     <span th:text="${notificationMessage}"></span>
+</div>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

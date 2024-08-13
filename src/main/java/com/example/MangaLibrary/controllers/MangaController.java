@@ -296,9 +296,9 @@ public class MangaController {
     public String deleteChapter(@PathVariable Long mangaId, @PathVariable Long chapterId, RedirectAttributes redirectAttributes) {
         try {
             chapterService.deleteChapter(mangaId, chapterId);
-            redirectAttributes.addFlashAttribute("message", "Глава успешно удалена");
+            redirectAttributes.addFlashAttribute("message", "Главу успішно видалено");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Ошибка удаления главы: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Помилка видалення глави: " + e.getMessage());
         }
         return "redirect:/manga/" + mangaId + "#chapters";
     }
