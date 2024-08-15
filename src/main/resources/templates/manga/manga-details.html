@@ -213,15 +213,28 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab" th:data-manga-id="${manga.id}" th:data-current-user-id="${user.id}">
-                        <form id="add-comment-form" th:action="@{/manga/{mangaId}/add-comment(mangaId=${manga.id})}" method="post">
-                            <div class="form-group">
-                                <textarea id="comment-text" name="text" class="form-control" rows="4" placeholder="Залишити коментар..." required></textarea>
+                        <div class="comment-controls">
+                            <form id="add-comment-form" th:action="@{/manga/{mangaId}/add-comment(mangaId=${manga.id})}" method="post">
+                                <div class="form-group">
+                                    <textarea id="comment-text" name="text" class="form-control" rows="4" placeholder="Залишити коментар..." required></textarea>
+                                </div>
+                            </form>
+                            <div class="controls-container">
+                                <div class="dropdown dropdown-sort">
+                                    <button class="btn dropdown-toggle view-btn"  style="background-color:#282828; color:#fff;" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Сортувати: <span id="dropdownMenuText">За оновленням</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-sortBy custom-mt" aria-labelledby="dropdownMenuButton">
+                                        <li><a class="dropdown-item active" href="#" data-sort="byNew">За оновленням</a></li>
+                                        <li><a class="dropdown-item" href="#" data-sort="byRating">За рейтингом</a></li>
+                                    </ul>
+                                </div>
+                                <button id="submit-comment" form="add-comment-form" type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-paper-plane"></i> Надіслати
+                                </button>
                             </div>
-                            <button id="submit-comment" type="submit" class="btn btn-primary mt-2">
-                                <i class="fa-solid fa-paper-plane"></i> Надіслати
-                            </button>
-                        </form>
-                        <ul id="comments-list" class="list-group"></ul>
+                        </div>
+                        <ul id="comments-list" class="list-group mt-3"></ul>
                     </div>
                 </div>
             </div>

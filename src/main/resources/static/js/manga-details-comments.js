@@ -1,6 +1,18 @@
 $(document).ready(function() {
-    loadComments();
+    let sortOption = 'byNew';
 
+    $('.dropdown-menu .dropdown-item').on('click', function(event) {
+        event.preventDefault();
+        sortOption = $(this).data('sort');
+        $('#dropdownMenuText').text($(this).text());
+        loadComments(sortOption);
+
+        $('.dropdown-menu .dropdown-item').removeClass('active');
+        $(this).addClass('active');
+    });
+
+    loadComments(sortOption);
+    console.log(sortOption);
     function formatDate(dateString) {
         const options = { day: 'numeric', month: 'short', year: 'numeric' };
         const date = new Date(dateString);
@@ -39,7 +51,7 @@ $(document).ready(function() {
             url: `/manga/${mangaId}/add-comment`,
             data: formData,
             success: function(comment) {
-                loadComments();
+                loadComments(sortOption);
 
                 $('#comment-text').val('');
             },
@@ -55,7 +67,7 @@ $(document).ready(function() {
         });
     });
 
-    function loadComments() {
+    function loadComments(sortBy) {
         const mangaId = $('#comments').data('manga-id');
         const currentUserId = $('#comments').data('current-user-id');
         $.ajax({
@@ -68,7 +80,19 @@ $(document).ready(function() {
                 const commentReplies = response.commentReplies;
 
                 $('#comments-list').empty();
-                comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                if (sortBy === 'byNew') {
+                    comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                } else if (sortBy === 'byRating') {
+                    comments.sort((a, b) => {
+                        const ratingInfoA = commentRatings[a.id] || { upvotes: 0, downvotes: 0 };
+                        const ratingInfoB = commentRatings[b.id] || { upvotes: 0, downvotes: 0 };
+
+                        const scoreA = ratingInfoA.upvotes - ratingInfoA.downvotes;
+                        const scoreB = ratingInfoB.upvotes - ratingInfoB.downvotes;
+
+                        return scoreB - scoreA;
+                    });
+                }
                 comments.forEach(comment => {
                     const userName = comment.userName || 'Unknown User';
                     const userIcon = comment.ProfilePicture || 'https://www.riseandfall.xyz/unrevealed.png';
@@ -333,6 +357,8 @@ $(document).ready(function() {
                     currentButton.addClass('selected');
                     currentButton.siblings('.upvote-button, .downvote-button').removeClass('selected');
                 }
+                loadComments(sortOption);
+
             },
             error: function() {
             }
