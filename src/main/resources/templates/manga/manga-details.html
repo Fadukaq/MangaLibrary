@@ -9,26 +9,6 @@
     <link rel="stylesheet" href="/css/manga-details.css">
     <link rel="stylesheet" href="/css/manga-details-animation.css">
     <link rel="stylesheet" href="/css/loader.css">
-    <style>
-        #chartsContainer {
-            display: flex; /* Используем flexbox для горизонтального выравнивания */
-            justify-content: space-between; /* Распределяет пространство между графиками */
-            align-items: flex-start; /* Выравнивает графики по верхнему краю */
-            max-width: 1000px; /* Устанавливаем максимальную ширину контейнера */
-            margin: auto; /* Центрируем контейнер по горизонтали */
-            padding: 20px; /* Добавляем отступы вокруг контейнера */
-        }
-
-        #container, #containerGrade {
-            flex: 1; /* Позволяет контейнерам занимать равное пространство */
-            padding: 10px; /* Добавляем отступы вокруг каждого графика */
-        }
-
-        .chart-container {
-            width: 100%; /* Ширина контейнера с графиками */
-            height: 300px; /* Высота графиков, можно изменить по необходимости */
-        }
-    </style>
     <meta name="_csrf" th:content="${_csrf.token}" />
 </head>
 <body class="loading">

@@ -1108,3 +1108,21 @@ textarea {
     margin-right:10px;
     order: 2;
 }
+#chartsContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+}
+
+#container, #containerGrade {
+    flex: 1;
+    padding: 10px;
+}
+
+.chart-container {
+    width: 100%;
+    height: 200px;
+}
