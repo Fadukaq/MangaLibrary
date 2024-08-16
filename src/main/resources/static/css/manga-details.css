@@ -191,6 +191,10 @@
     align-items: center;
 }
 
+.title-rating h2{
+    max-width:90%;
+}
+
 .stars {
     display: flex;
     gap: 5px;

@@ -35,5 +35,5 @@ public interface MangaRepo extends CrudRepository<Manga, Long> {
     List<Manga> findMangasByIdDesc();
     List<Manga> findByGenresIn(Set<Genre> genres);
     List<Manga> findByMangaNameStartingWith(String query);
-
+    List<Manga> findByRelatedMangasId(Long mangaId);
 }

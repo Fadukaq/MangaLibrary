@@ -78,6 +78,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+
+
 let deleteUrl = '';
 
 function confirmDeleteManga(event, id) {

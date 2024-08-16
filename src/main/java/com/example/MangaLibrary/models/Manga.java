@@ -8,7 +8,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Manga {
@@ -23,7 +25,6 @@ public class Manga {
     @Size(min=10,max=2048, message = "Опис манги має складатися від 10 до 2048 символів")
     String mangaDescription;
     String mangaStatus;
-
     @ManyToMany
     @JoinTable(
             name = "manga_genre",
@@ -51,6 +52,13 @@ public class Manga {
 
     private double averageRating;
     private int totalRatings;
+    @ManyToMany
+    @JoinTable(
+            name = "manga_related",
+            joinColumns = @JoinColumn(name = "manga_id"),
+            inverseJoinColumns = @JoinColumn(name = "related_manga_id")
+    )
+    private Set<Manga> relatedMangas = new HashSet<>();
     @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
@@ -164,5 +172,21 @@ public class Manga {
 
     public void setTotalRatings(int totalRatings) {
         this.totalRatings = totalRatings;
+    }
+
+    public Set<Manga> getRelatedMangas() {
+        return relatedMangas;
+    }
+
+    public void setRelatedMangas(Set<Manga> relatedMangas) {
+        this.relatedMangas = relatedMangas;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

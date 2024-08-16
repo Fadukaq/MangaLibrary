@@ -6,21 +6,20 @@ document.addEventListener('DOMContentLoaded', function() {
         return 4;
     };
 
-    const updateCarousel = () => {
+    const updateCarousel = (carouselId, mangaList) => {
         const itemsPerSlide = getItemsPerSlide();
-        const mangaList = window.mangaList || [];
-
         if (!mangaList || mangaList.length === 0) {
-            console.error('No manga data found.');
             return;
         }
+
+        mangaList.sort((a, b) => b.averageRating - a.averageRating);
 
         const chunkedMangaList = [];
         for (let i = 0; i < mangaList.length; i += itemsPerSlide) {
             chunkedMangaList.push(mangaList.slice(i, i + itemsPerSlide));
         }
 
-        const carouselInner = document.getElementById('carouselInner');
+        const carouselInner = document.getElementById(`${carouselId}Inner`);
         carouselInner.innerHTML = '';
 
         chunkedMangaList.forEach((chunk, index) => {
@@ -29,15 +28,19 @@ document.addEventListener('DOMContentLoaded', function() {
             if (index === 0) carouselItem.classList.add('active');
 
             const rowDiv = document.createElement('div');
-            rowDiv.classList.add('row', 'justify-content-center');
+            rowDiv.classList.add('row', 'justify-content-start');
             carouselItem.appendChild(rowDiv);
 
             chunk.forEach(manga => {
                 const colDiv = document.createElement('div');
                 colDiv.classList.add('col-12', 'col-sm-6', 'col-md-4', 'col-lg-3');
 
+                const link = document.createElement('a');
+                link.href = `/manga/${manga.id}`;
+                link.classList.add('d-block', 'text-decoration-none');
+                link.style.color = 'inherit';
                 const cardDiv = document.createElement('div');
-                cardDiv.classList.add('manga-card');
+                cardDiv.classList.add('manga-card', 'mb-3');
 
                 const img = document.createElement('img');
                 img.src = manga.mangaPosterImg;
@@ -64,46 +67,51 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const ratingDiv = createRatingStars(manga.averageRating);
 
-                cardDiv.appendChild(ratingDiv);
-
+                cardDiv.appendChild(img);
                 textDiv.appendChild(cardTitle);
                 textDiv.appendChild(genresDiv);
                 textDiv.appendChild(ratingDiv);
-
-                cardDiv.appendChild(img);
                 cardDiv.appendChild(textDiv);
 
-                colDiv.appendChild(cardDiv);
+                link.appendChild(cardDiv);
+
+                colDiv.appendChild(link);
                 rowDiv.appendChild(colDiv);
             });
 
             carouselInner.appendChild(carouselItem);
         });
 
-        new bootstrap.Carousel(document.querySelector('#mangaCarousel'), {
+        new bootstrap.Carousel(document.querySelector(`#${carouselId}`), {
             interval: 25000,
             wrap: true
         });
     };
 
-    updateCarousel();
-    window.addEventListener('resize', updateCarousel);
+    updateCarousel('mangaCarouselRelated', window.relatedMangas || []);
+    updateCarousel('mangaCarouselSimilar', window.similarMangas || []);
+
+    window.addEventListener('resize', () => {
+        updateCarousel('mangaCarouselRelated', window.relatedMangas || []);
+        updateCarousel('mangaCarouselSimilar', window.similarMangas || []);
+    });
 });
+
 function createRatingStars(rating) {
-    const maxRating = 5; // Максимальный рейтинг
+    const maxRating = 5;
     const ratingDiv = document.createElement('div');
-    ratingDiv.classList.add('manga-rating');
+    ratingDiv.classList.add('manga-rating', 'mb-2');
 
     for (let i = 1; i <= maxRating; i++) {
         const star = document.createElement('span');
         star.classList.add('star');
 
         if (i <= Math.floor(rating)) {
-            star.className = 'fas fa-star'; // Полная звезда
+            star.className = 'fas fa-star';
         } else if (i - 0.8 < rating) {
-            star.className = 'fas fa-star-half-alt'; // Половинная звезда
+            star.className = 'fas fa-star-half-alt';
         } else {
-            star.className = 'far fa-star'; // Пустая звезда
+            star.className = 'far fa-star';
         }
 
         ratingDiv.appendChild(star);

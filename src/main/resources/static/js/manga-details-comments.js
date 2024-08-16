@@ -1,18 +1,16 @@
 $(document).ready(function() {
     let sortOption = 'byNew';
 
-    $('.dropdown-menu .dropdown-item').on('click', function(event) {
+    $('.dropdown-sort .dropdown-menu .dropdown-item').on('click', function(event) {
         event.preventDefault();
         sortOption = $(this).data('sort');
         $('#dropdownMenuText').text($(this).text());
         loadComments(sortOption);
-
-        $('.dropdown-menu .dropdown-item').removeClass('active');
+        $('.dropdown-sort .dropdown-menu .dropdown-item').removeClass('active');
         $(this).addClass('active');
     });
-
     loadComments(sortOption);
-    console.log(sortOption);
+
     function formatDate(dateString) {
         const options = { day: 'numeric', month: 'short', year: 'numeric' };
         const date = new Date(dateString);

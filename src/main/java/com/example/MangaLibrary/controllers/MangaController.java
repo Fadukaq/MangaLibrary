@@ -319,11 +319,44 @@ public class MangaController {
 
             String translatedStatus = mangaService.getMangaTranslatedStatus(manga.getMangaStatus());
 
+            Set<Manga> relatedMangasSet = mangaService.getRelatedMangas(id);
+            Set<Long> relatedMangaIds = relatedMangasSet.stream()
+                    .map(Manga::getId)
+                    .collect(Collectors.toSet());
+
+            List<Map<String, Object>> relatedMangasMap = relatedMangasSet.stream()
+                    .map(relatedManga -> {
+                        Map<String, Object> mangaMap = new HashMap<>();
+                        mangaMap.put("id", relatedManga.getId());
+                        mangaMap.put("mangaName", relatedManga.getMangaName());
+                        mangaMap.put("mangaPosterImg", relatedManga.getMangaPosterImg());
+                        mangaMap.put("averageRating", relatedManga.getAverageRating());
+
+                        List<Map<String, Object>> genresMap = relatedManga.getGenres().stream()
+                                .map(genre -> {
+                                    Map<String, Object> genreMap = new HashMap<>();
+                                    genreMap.put("id", genre.getId());
+                                    genreMap.put("genreName", genre.getGenreName());
+                                    return genreMap;
+                                })
+                                .collect(Collectors.toList());
+                        mangaMap.put("genres", genresMap);
+
+                        return mangaMap;
+                    })
+                    .collect(Collectors.toList());
+
             Set<Genre> genres = new HashSet<>(manga.getGenres());
             List<Manga> similarMangas = mangaRepo.findByGenresIn(genres);
 
             List<Map<String, Object>> similarMangasMap = similarMangas.stream()
                     .filter(similarManga -> similarManga.getId() != manga.getId())
+                    .filter(similarManga -> !relatedMangaIds.contains(similarManga.getId()))
+                    .filter(similarManga -> {
+                        Set<Genre> commonGenres = new HashSet<>(similarManga.getGenres());
+                        commonGenres.retainAll(genres);
+                        return commonGenres.size() >= 4;
+                    })
                     .limit(8)
                     .map(similarManga -> {
                         Map<String, Object> mangaMap = new HashMap<>();
@@ -358,9 +391,9 @@ public class MangaController {
 
                         return mangaMap;
                     }).collect(Collectors.toList());
+
             boolean isFavorited = user != null && user.getMangaFavorites().contains(String.valueOf(id));
             MangaService.addMangaStatusAttributes(user, id, model);
-
 
             Optional<Rating> ratingOptional = ratingRepo.findByMangaAndUser(manga,user);
             if(ratingOptional.isPresent()){
@@ -374,6 +407,20 @@ public class MangaController {
             model.addAttribute("chapters", chapters);
             model.addAttribute("chapterCount", chapters.size());
             model.addAttribute("similarMangas", similarMangasMap);
+            model.addAttribute("relatedMangas", relatedMangasMap);
+
+            model.addAttribute("countReading", mangaService.getCountByReading(String.valueOf(id)));
+            model.addAttribute("countWantToRead", mangaService.getCountByWantToRead(String.valueOf(id)));
+            model.addAttribute("countStoppedReading", mangaService.getCountByStoppedReading(String.valueOf(id)));
+            model.addAttribute("countRecited", mangaService.getCountByRecited(String.valueOf(id)));
+            model.addAttribute("countFavorites", mangaService.getCountByFavorites(String.valueOf(id)));
+
+            model.addAttribute("countOneStar", mangaService.getCountByOneStar(String.valueOf(id)));
+            model.addAttribute("countTwoStar", mangaService.getCountByTwoStar(String.valueOf(id)));
+            model.addAttribute("countThreeStar", mangaService.getCountByThreeStar(String.valueOf(id)));
+            model.addAttribute("countFourStar", mangaService.getCountByFourStar(String.valueOf(id)));
+            model.addAttribute("countFiveStar", mangaService.getCountByFiveStar(String.valueOf(id)));
+
             model.addAttribute("isFavorited", isFavorited);
             return "manga/manga-details";
         } else {
@@ -381,6 +428,7 @@ public class MangaController {
             return "main/error";
         }
     }
+
     @PostMapping("/manga/add-to-list")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> addMangaToList(@RequestParam("listType") String listType,

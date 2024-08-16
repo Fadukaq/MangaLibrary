@@ -352,5 +352,62 @@ public class MangaService {
             mangaRepo.save(manga);
         }
     }
+    public void addRelatedManga(Long mangaId, Long relatedMangaId) {
+        Manga manga = mangaRepo.findById(mangaId).orElseThrow();
+        Manga relatedManga = mangaRepo.findById(relatedMangaId).orElseThrow();
+
+        manga.getRelatedMangas().add(relatedManga);
+        mangaRepo.save(manga);
+    }
+
+    public Set<Manga> getRelatedMangas(Long mangaId) {
+        Manga manga = mangaRepo.findById(mangaId).orElseThrow();
+        Set<Manga> relatedMangas = manga.getRelatedMangas();
+
+        List<Manga> reverseRelatedMangas = mangaRepo.findByRelatedMangasId(mangaId);
+        relatedMangas.addAll(reverseRelatedMangas);
+
+        return relatedMangas;
+    }
+    public long getCountByReading(String mangaId) {
+        return userRepo.countByMangaReading(mangaId);
+    }
+
+    public long getCountByWantToRead(String mangaId) {
+        return userRepo.countByMangaWantToRead(mangaId);
+    }
+
+    public long getCountByStoppedReading(String mangaId) {
+        return userRepo.countByMangaStoppedReading(mangaId);
+    }
+
+    public long getCountByRecited(String mangaId) {
+        return userRepo.countByMangaRecited(mangaId);
+    }
+
+    public long getCountByFavorites(String mangaId) {
+        return userRepo.countByMangaFavorites(mangaId);
+    }
+
+
+    public long getCountByOneStar(String mangaId) {
+        return userRepo.countByMangaOneStar(Long.parseLong(mangaId));
+    }
+
+    public long getCountByTwoStar(String mangaId) {
+        return userRepo.countByMangaTwoStar(Long.parseLong(mangaId));
+    }
+
+    public long getCountByThreeStar(String mangaId) {
+        return userRepo.countByMangaThreeStar(Long.parseLong(mangaId));
+    }
+
+    public long getCountByFourStar(String mangaId) {
+        return userRepo.countByMangaFourStar(Long.parseLong(mangaId));
+    }
+
+    public long getCountByFiveStar(String mangaId) {
+        return userRepo.countByMangaFiveStar(Long.parseLong(mangaId));
+    }
 }
 

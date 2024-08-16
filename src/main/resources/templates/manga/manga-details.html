@@ -9,13 +9,32 @@
     <link rel="stylesheet" href="/css/manga-details.css">
     <link rel="stylesheet" href="/css/manga-details-animation.css">
     <link rel="stylesheet" href="/css/loader.css">
+    <style>
+        #chartsContainer {
+            display: flex; /* Используем flexbox для горизонтального выравнивания */
+            justify-content: space-between; /* Распределяет пространство между графиками */
+            align-items: flex-start; /* Выравнивает графики по верхнему краю */
+            max-width: 1000px; /* Устанавливаем максимальную ширину контейнера */
+            margin: auto; /* Центрируем контейнер по горизонтали */
+            padding: 20px; /* Добавляем отступы вокруг контейнера */
+        }
+
+        #container, #containerGrade {
+            flex: 1; /* Позволяет контейнерам занимать равное пространство */
+            padding: 10px; /* Добавляем отступы вокруг каждого графика */
+        }
+
+        .chart-container {
+            width: 100%; /* Ширина контейнера с графиками */
+            height: 300px; /* Высота графиков, можно изменить по необходимости */
+        }
+    </style>
     <meta name="_csrf" th:content="${_csrf.token}" />
 </head>
 <body class="loading">
 <div class="content">
 <div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
-
 <div th:insert="~{blocks/modals/adultContentModal :: adultContentModal}"></div>
 <div th:insert="~{blocks/modals/deleteConfirmationModal :: deleteConfirmationModal}"></div>
 <div th:insert="~{blocks/modals/deleteReplyModal :: deleteReplyModal}"></div>
@@ -170,23 +189,58 @@
                             <span th:each="genre : ${manga.genres}" th:text="${genre.genreName}"></span>
                         </div>
                         <hr>
-                        <div class="similar">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <p style="color: gray;">Схожі</p>
-                                <div class="carousel-controls">
-                                    <button class="btn btn-link carousel-control-prev" type="button" data-bs-target="#mangaCarousel" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Попередній</span>
-                                    </button>
-                                    <button class="btn btn-link carousel-control-next" type="button" data-bs-target="#mangaCarousel" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Наступний</span>
-                                    </button>
+                        <div th:if="${not #lists.isEmpty(relatedMangas)}">
+                            <div class="related">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <p style="color: gray;">Пов'язані</p>
+                                    <div class="carousel-controls">
+                                        <button class="btn btn-link carousel-control-prev" type="button" data-bs-target="#mangaCarouselRelated" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="btn btn-link carousel-control-next" type="button" data-bs-target="#mangaCarouselRelated" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="mangaCarouselRelated" class="carousel slide">
+                                    <div id="mangaCarouselRelatedInner" class="carousel-inner">
+                                    </div>
                                 </div>
                             </div>
-                            <div id="mangaCarousel" class="carousel slide" data-bs-ride="carousel">
-                                <div id="carouselInner" class="carousel-inner">
+                        </div>
 
+                        <div th:if="${not #lists.isEmpty(similarMangas)}">
+                            <div class="related">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <p style="color: gray;">Схожі</p>
+                                    <div class="carousel-controls">
+                                        <button class="btn btn-link carousel-control-prev" type="button" data-bs-target="#mangaCarouselSimilar" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="btn btn-link carousel-control-next" type="button" data-bs-target="#mangaCarouselSimilar" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="mangaCarouselSimilar" class="carousel slide">
+                                    <div id="mangaCarouselSimilarInner" class="carousel-inner">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="chartsContainer">
+                            <div id="container">
+                                <div class="chart-container">
+                                    <canvas id="mangaStatsChart"></canvas>
+                                </div>
+                            </div>
+                            <div id="containerGrade">
+                                <div class="chart-container">
+                                    <canvas id="mangaStatsGrade"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -248,6 +302,8 @@
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script src="/js/loader-spinner.js"></script>
 <script src="/js/listTypeSelect.js"></script>
 <script src="/js/burger-menu.js"></script>
@@ -256,8 +312,23 @@
 <script src="/js/carousel-details.js"></script>
 <script src="/js/manga-details-comments.js"></script>
 <script th:inline="javascript">
-    window.mangaList = /*[[${similarMangas}]]*/ [];
+    window.relatedMangas = /*[[${relatedMangas}]]*/ [];
+    window.similarMangas = /*[[${similarMangas}]]*/ [];
 </script>
+<script th:inline="javascript">
+    window.countReading = /*[[${countReading}]]*/ 0;
+    window.countWantToRead = /*[[${countWantToRead}]]*/ 0;
+    window.countStoppedReading = /*[[${countStoppedReading}]]*/ 0;
+    window.countRecited = /*[[${countRecited}]]*/ 0;
+    window.countFavorites = /*[[${countFavorites}]]*/ 0;
+
+    window.countOneStar = /*[[${countOneStar}]]*/ 0;
+    window.countTwoStar = /*[[${countTwoStar}]]*/ 0;
+    window.countThreeStar = /*[[${countThreeStar}]]*/ 0;
+    window.countFourStar = /*[[${countFourStar}]]*/ 0;
+    window.countFiveStar = /*[[${countFiveStar}]]*/ 0;
+</script>
+<script src="/js/manga-details-statistics.js"></script>
 <script th:if="${manga.adultContent and not userSettings.adultContentAgreement}" src="/js/adultContentAlert.js"></script>
 </body>
 </html>
