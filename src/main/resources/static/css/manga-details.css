@@ -609,7 +609,7 @@
 
 #addMangaFavoritesForm {
     position: absolute;
-    top: 10px;
+    top: 6px;
     right: 10px;
     margin: 0;
 }
@@ -1137,14 +1137,14 @@ textarea {
 
 .charts-wrapper {
     display: flex;
-    justify-content: space-between; /* Распределяет пространство между блоками */
-    gap: 20px; /* Отступ между блоками */
+    justify-content: space-between;
+    gap: 20px;
 }
 
 .chart-container {
     display: flex;
     flex-direction: column;
-    width: 45%; /* Можно настроить ширину контейнеров */
+    width: 85%;
 }
 
 .bar-wrapper {
@@ -1154,7 +1154,7 @@ textarea {
     height: 25px;
     background-color: #252528;
     border-radius: 10px;
-    position: relative; /* Для позиционирования текста внутри бара */
+    position: relative;
 }
 
 .bar {
@@ -1163,7 +1163,7 @@ textarea {
     background-color: #252528;
     border-radius: 10px;
     position: relative;
-    overflow: hidden; /* Чтобы текст не выходил за пределы бара */
+    overflow: hidden;
 }
 
 .bar-fill {
@@ -1190,4 +1190,16 @@ textarea {
 
 .bar-value {
     right: 10px;
+}
+.chart-section {
+    margin-bottom: 20px;
+    width: 100%;
+    padding-left: 50px;
+}
+
+.chart-section h2 {
+    color: gray;
+    margin-bottom: 10px;
+    font-size: 24px;
+    margin-left: 5px;
 }
