@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
             scales: {
                 x: {
                     beginAtZero: true,
-                    max: totalCount,
+                    max: totalCount === 0 ? 1 : totalCount,
                     grid: {
                         display: false
                     },
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
             scales: {
                 x: {
                     beginAtZero: true,
-                    max: totalCountGrade,
+                    max: totalCountGrade === 0 ? 1 : totalCountGrade,
                     grid: {
                         display: false
                     },
