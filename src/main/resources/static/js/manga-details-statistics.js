@@ -1,181 +1,52 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const mangaStatsChartCtx = document.getElementById('mangaStatsChart').getContext('2d');
-    const mangaStatsGradeCtx = document.getElementById('mangaStatsGrade').getContext('2d');
+    const listsData = [
+        { label: 'Читають', value: window.countReading },
+        { label: 'У планах', value: window.countWantToRead },
+        { label: 'У кинутих', value: window.countStoppedReading },
+        { label: 'Прочитано', value: window.countRecited },
+        { label: 'Улюблені', value: window.countFavorites }
+    ];
 
-    const countReading = window.countReading || 0;
-    const countWantToRead = window.countWantToRead || 0;
-    const countStoppedReading = window.countStoppedReading || 0;
-    const countRecited = window.countRecited || 0;
-    const countFavorites = window.countFavorites || 0;
+    const gradesData = [
+        { label: '1 зірка', value: window.countOneStar },
+        { label: '2 зірки', value: window.countTwoStar },
+        { label: '3 зірки', value: window.countThreeStar },
+        { label: '4 зірки', value: window.countFourStar },
+        { label: '5 зірок', value: window.countFiveStar }
+    ];
 
-    const totalCount = countReading + countWantToRead + countStoppedReading + countRecited + countFavorites;
+    function createChart(containerId, data) {
+        const container = document.getElementById(containerId);
+        const totalValue = data.reduce((acc, item) => acc + item.value, 0);
 
-    const mangaStatsChartData = {
-        labels: [
-            'Читають',
-            'Хочуть прочитати',
-            'Припинили читати',
-            'Прочитали',
-            'Улюблені'
-        ],
-        datasets: [{
-            label: 'Списки',
-            data: [countReading, countWantToRead, countStoppedReading, countRecited, countFavorites],
-            backgroundColor: '#FF0080',
-            borderColor: '#E80074',
-            borderWidth: 1,
-            barThickness: 20,
-            borderRadius: 10,
-            borderSkipped: false
-        }]
-    };
+        data.forEach(item => {
+            const barWrapper = document.createElement('div');
+            barWrapper.className = 'bar-wrapper';
 
-    const mangaStatsChartConfig = {
-        type: 'bar',
-        data: mangaStatsChartData,
-        options: {
-            responsive: true,
-            indexAxis: 'y',
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                },
-                datalabels: {
-                    display: true,
-                    anchor: 'end',
-                    align: 'right',
-                    offset: 4,
-                    formatter: (value) => {
-                        const percentage = totalCount === 0 ? '0%' : ((value / totalCount) * 100).toFixed(1) + '%';
-                        return `${value} (${percentage})`;
-                    },
-                    color: '#fff',
-                    font: {
-                        weight: 'bold',
-                        size: 11
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    max: totalCount === 0 ? 1 : totalCount,
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        display: false,
-                    },
-                    border: {
-                        display: false
-                    }
-                },
-                y: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        display: true
-                    },
-                    border: {
-                        display: false
-                    }
-                }
-            },
-            layout: {
-                padding: {
-                    right: 50
-                }
-            }
-        },
-        plugins: [ChartDataLabels]
-    };
+            const bar = document.createElement('div');
+            bar.className = 'bar';
 
-    const countOneStar = window.countOneStar || 0;
-    const countTwoStar = window.countTwoStar || 0;
-    const countThreeStar = window.countThreeStar || 0;
-    const countFourStar = window.countFourStar || 0;
-    const countFiveStar = window.countFiveStar || 0;
+            const barFill = document.createElement('div');
+            barFill.className = 'bar-fill';
+            const percentage = totalValue > 0 ? (item.value / totalValue) * 100 : 0;
+            barFill.style.width = `${percentage}%`;
 
-    const totalCountGrade = countOneStar + countTwoStar + countThreeStar + countFourStar + countFiveStar;
+            const barLabel = document.createElement('div');
+            barLabel.className = 'bar-label';
+            barLabel.textContent = item.label;
 
-    const mangaStatsGradeData = {
-        labels: ['1 зірка', '2 зірки', '3 зірки', '4 зірки', '5 зірок'],
-        datasets: [{
-            label: 'Оцінки',
-            data: [countOneStar, countTwoStar, countThreeStar, countFourStar, countFiveStar],
-            backgroundColor: '#FF0080',
-            borderColor: '#E80074',
-            borderWidth: 1,
-            barThickness: 20,
-            borderRadius: 10,
-            borderSkipped: false
-        }]
-    };
+            const barValue = document.createElement('div');
+            barValue.className = 'bar-value';
+            barValue.textContent = `${item.value} (${percentage.toFixed(1)}%)`;
 
-    const mangaStatsGradeConfig = {
-        type: 'bar',
-        data: mangaStatsGradeData,
-        options: {
-            responsive: true,
-            indexAxis: 'y',
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                },
-                datalabels: {
-                    display: true,
-                    anchor: 'end',
-                    align: 'right',
-                    offset: 4,
-                    formatter: (value) => {
-                        const percentage = totalCountGrade === 0 ? '0%' : ((value / totalCountGrade) * 100).toFixed(1) + '%';
-                        return `${value} (${percentage})`;
-                    },
-                    color: '#fff',
-                    font: {
-                        weight: 'bold',
-                        size: 11
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    max: totalCountGrade === 0 ? 1 : totalCountGrade,
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        display: false,
-                    },
-                    border: {
-                        display: false
-                    }
-                },
-                y: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        display: true
-                    },
-                    border: {
-                        display: false
-                    }
-                }
-            },
-            layout: {
-                padding: {
-                    right: 80
-                }
-            }
-        },
-        plugins: [ChartDataLabels]
-    };
+            bar.appendChild(barFill);
+            barWrapper.appendChild(bar);
+            barWrapper.appendChild(barLabel);
+            barWrapper.appendChild(barValue);
+            container.appendChild(barWrapper);
+        });
+    }
 
-    new Chart(mangaStatsChartCtx, mangaStatsChartConfig);
-    new Chart(mangaStatsGradeCtx, mangaStatsGradeConfig);
+    createChart('chart-containerLists', listsData);
+    createChart('chart-containerGrades', gradesData);
 });
