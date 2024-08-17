@@ -1182,6 +1182,7 @@ textarea {
     top: 50%;
     transform: translateY(-50%);
     white-space: nowrap;
+    font-size: 14px;
 }
 
 .bar-label {
