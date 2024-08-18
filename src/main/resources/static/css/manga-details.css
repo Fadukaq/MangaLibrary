@@ -437,6 +437,50 @@
     position: relative;
 }
 
+.alert-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 15px;
+    background-color: #2e2e2e;
+    color: #d9d9d9;
+    border: 1px solid #4a4a4a;
+    border-radius: 8px;
+}
+
+.alert-info i {
+    margin-right: 10px;
+    color: #b0b0b0;
+}
+
+.chapter-title span{
+    color:#dcdcdc;
+}
+.chapter-title:hover span{
+    color:#ff0080;
+    text-decoration:underline
+}
+.fas-admin{
+    color:gray;
+    font-size:19px;
+}
+.fas-admin:hover{
+    color:#ff0080;
+}
+
+.list-group-item {
+    background-color: #1D1D1D;
+    border: none;
+    border-radius: 0px !important;
+    border-bottom: 2px dotted #3d3d3d;
+    transition: background-color 0.2s ease, border-radius 0.2s ease;
+}
+
+.list-group-item:hover {
+    border-radius: 10px !important;
+    background-color: #262626;
+}
 .btn-custom-admin-panel {
     color: #cccccc;
     font-weight: bold;
@@ -498,6 +542,7 @@
     background-color: #522878;
     color: #ffffff;
 }
+
 @media (max-width: 1399px) {
     .genre-tag {
         font-size: 10px;
@@ -726,13 +771,17 @@
 .close-panel {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 22px;
     color: white;
-    cursor: pointer;
     position: absolute;
     top: 10px;
     right: 10px;
 }
+.close-panel:hover {
+    background-color:#333333;
+    border-radius:5px;
+}
+
 .rate-button {
     background-color: #232323;
     color: #fff;
@@ -779,10 +828,7 @@
     outline: none;
     box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.5);
 }
-.close-panel:hover {
-    background-color:gray;
-    border-radius:5px;
-}
+
 .fa-star {
     font-family: "Font Awesome 6 Free";
     font-weight: 900;

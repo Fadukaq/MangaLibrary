@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayResults(results) {
         searchResults.innerHTML = '';
         if (results.length === 0) {
-            searchResults.innerHTML = '<li class="nothing-found">Нічого не знайдено</li>';
+            searchResults.innerHTML = '<li class="nothing-found">Ми нічого не знайшли <i style="font-size:20px;" class="fa-regular fa-face-frown"></i></li>';
             return;
         }
         results.forEach(manga => {
