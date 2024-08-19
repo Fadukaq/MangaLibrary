@@ -172,8 +172,11 @@ public class MangaController {
                 model.addAttribute("mangaId", mangaId);
                 return "manga/manga-add-chapter";
             }
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            User user = userRepo.findByUserName(username);
 
-            chapterService.addChapter(chapterForm, manga);
+            chapterService.addChapter(chapterForm, manga, user);
             redirectAttributes.addFlashAttribute("message", "Chapter added successfully");
         }
         return "redirect:/manga/"+mangaId+"#chapters";

@@ -453,7 +453,14 @@
     margin-right: 10px;
     color: #b0b0b0;
 }
-
+.user-added-chapter{
+    color: gray;
+    text-decoration:none;
+}
+.user-added-chapter:hover{
+    color:#656565;
+    text-decoration:underline;
+}
 .chapter-title span{
     color:#dcdcdc;
 }

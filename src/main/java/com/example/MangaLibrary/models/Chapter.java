@@ -23,6 +23,9 @@ public class Chapter {
     private LocalDateTime creationTime;
     String chapterPages;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
     public long getId() {
         return id;
     }
@@ -61,5 +64,13 @@ public class Chapter {
 
     public void setChapterPages(String chapterPages) {
         this.chapterPages = chapterPages;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

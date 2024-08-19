@@ -242,8 +242,13 @@
                                         <span style="font-size:14px; color:gray;">
                                             <span th:text="${#temporals.format(chapter.creationTime, 'dd MMM yyyy р.', new java.util.Locale('uk', 'UA'))}"></span>
                                             <span style="margin: 0 5px;">|</span>
-                                            <i class="fas fa-user" style="margin-right: 5px;"></i>
-                                            <span>Mistermaks</span>
+                                            <!--<i class="fas fa-user" style="margin-right: 5px;"></i>!-->
+                                            <span>
+                                                <a class="user-added-chapter" th:href="@{/profile/{userName}(userName=${chapter.user.userName})}">
+                                                    <img th:src="${chapter.user.profilePicture}" alt="Profile Picture" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 5px;">
+                                                    <span th:text="${chapter.user.userName}"></span>
+                                                </a>
+                                            </span>
                                         </span>
                                             <div class="ms-auto d-flex align-items-center">
                                                 <a th:href="@{/manga/{mangaId}/chapter/edit/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="ms-3">

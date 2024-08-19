@@ -4,6 +4,7 @@ import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.helper.manga.ChapterForm;
 import com.example.MangaLibrary.models.Chapter;
 import com.example.MangaLibrary.models.Manga;
+import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.ChapterRepo;
 import com.example.MangaLibrary.repo.MangaRepo;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
@@ -58,10 +59,11 @@ public class ChapterService {
         return isValid;
     }
 
-    public void addChapter(ChapterForm chapterForm, Manga manga) throws IOException {
+    public void addChapter(ChapterForm chapterForm, Manga manga, User user) throws IOException {
         Chapter chapter = new Chapter();
         chapter.setTitle(chapterForm.getChapter().getTitle());
         chapter.setManga(manga);
+        chapter.setUser(user);
         chapter.setCreationTime(LocalDateTime.now());
 
         List<String> imageUrls = createPagesManga(chapterForm.getChapterImage().getPagesImage(), manga, chapter);
