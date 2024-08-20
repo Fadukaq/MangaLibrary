@@ -62,7 +62,7 @@ public class MangaController {
     private RepliesRepo repliesRepo;
     @Autowired
     private MangaLibraryManager mangaLibraryManager;
-    private static final int PAGE_SIZE = 15;
+    private static final int PAGE_SIZE = 10;
     @Autowired
     UserService userService;
     @Autowired
@@ -610,8 +610,19 @@ public class MangaController {
     }
 
     @GetMapping("/manga/{mangaId}/comments")
-    public @ResponseBody Map<String, Object> getComments(@PathVariable Long mangaId, @AuthenticationPrincipal UserDetails userDetails) {
-        List<Comment> comments = commentRepo.findByMangaId(mangaId);
+    public @ResponseBody Map<String, Object> getComments(
+            @PathVariable Long mangaId,
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "4") int size,
+            @RequestParam(required = false, defaultValue = "byNew") String sortBy,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        if ("byRating".equals(sortBy)) {
+            pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "rating"));
+        }
+        Page<Comment> commentPage = commentRepo.findByMangaId(mangaId, pageable);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userRepo.findByUserName(username);
@@ -620,7 +631,7 @@ public class MangaController {
         Map<Long, Map<String, Integer>> commentRatings = new HashMap<>();
         Map<Long, List<Replies>> commentReplies = new HashMap<>();
 
-        for (Comment comment : comments) {
+        for (Comment comment : commentPage.getContent()) {
             CommentRating userRating = commentRatingRepo.findByCommentIdAndUserId(comment.getId(), user.getId());
             userRatings.put(comment.getId(), userRating != null ? userRating.getDelta() : 0);
 
@@ -635,11 +646,13 @@ public class MangaController {
             List<Replies> replies = repliesRepo.findByParentCommentId(comment.getId());
             commentReplies.put(comment.getId(), replies);
         }
+
         Map<String, Object> response = new HashMap<>();
-        response.put("comments", comments);
+        response.put("comments", commentPage.getContent());
         response.put("userRatings", userRatings);
         response.put("commentRatings", commentRatings);
         response.put("commentReplies", commentReplies);
+        response.put("hasMore", commentPage.hasNext());
 
         return response;
     }

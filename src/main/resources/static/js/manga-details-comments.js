@@ -1,15 +1,24 @@
 $(document).ready(function() {
+    let currentPage = 1;
+    const pageSize = 4;
+    let isLoading = false;
+    let hasMoreComments = true;
     let sortOption = 'byNew';
 
     $('.dropdown-sort .dropdown-menu .dropdown-item').on('click', function(event) {
         event.preventDefault();
         sortOption = $(this).data('sort');
         $('#dropdownMenuText').text($(this).text());
-        loadComments(sortOption);
+        $('#comments-list').empty();
+        currentPage = 1;
+        hasMoreComments = true;
+        loadComments(sortOption, currentPage, pageSize);
         $('.dropdown-sort .dropdown-menu .dropdown-item').removeClass('active');
         $(this).addClass('active');
     });
-    loadComments(sortOption);
+    $('#comments-list').on('click', '.cancel-reply', function() {
+        $(this).closest('.reply-form-container').hide();
+    });
 
     function formatDate(dateString) {
         const options = { day: 'numeric', month: 'short', year: 'numeric' };
@@ -31,10 +40,6 @@ $(document).ready(function() {
         $form.find('.username-block').show();
     });
 
-    $('#comments-list').on('click', '.cancel-reply', function() {
-        $(this).closest('.reply-form-container').hide();
-    });
-
     $('#submit-comment').click(function(event) {
         event.preventDefault();
         const $button = $(this);
@@ -49,9 +54,11 @@ $(document).ready(function() {
             url: `/manga/${mangaId}/add-comment`,
             data: formData,
             success: function(comment) {
-                loadComments(sortOption);
-
                 $('#comment-text').val('');
+                $('#comments-list').empty();
+                currentPage = 1;
+                hasMoreComments = true;
+                loadComments(sortOption, currentPage, pageSize);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('Error adding comment:', textStatus, errorThrown);
@@ -65,210 +72,246 @@ $(document).ready(function() {
         });
     });
 
-    function loadComments(sortBy) {
+    function loadComments(sortBy, page, size) {
         const mangaId = $('#comments').data('manga-id');
         const currentUserId = $('#comments').data('current-user-id');
-        $.ajax({
-            url: `/manga/${mangaId}/comments`,
-            method: 'GET',
-            success: function(response) {
-                const comments = response.comments;
-                const userRatings = response.userRatings;
-                const commentRatings = response.commentRatings;
-                const commentReplies = response.commentReplies;
+        if (isLoading || !hasMoreComments) return;
+        isLoading = true;
+        $('#loading-comments-for-manga').show();
 
-                const $commentsList = $('#comments-list');
-                $('#comments-list').empty();
-                console.log("length: "+comments.length)
+        //setTimeout(function() {
+            $.ajax({
+                url: `/manga/${mangaId}/comments`,
+                method: 'GET',
+                data: {
+                    page: page,
+                    size: size,
+                    sortBy: sortBy
+                },
+                success: function(response) {
+                    const comments = response.comments;
+                    const userRatings = response.userRatings;
+                    const commentRatings = response.commentRatings;
+                    const commentReplies = response.commentReplies;
+                    hasMoreComments = response.hasMore;
 
-                if (comments.length === 0) {
-                    $commentsList.append(`
+                    isLoading = false;
+                    $('#loading-comments-for-manga').hide();
+
+                    const $commentsList = $('#comments-list');
+                    if (page === 1) {
+                        $commentsList.empty();
+                    }
+
+                    if (comments.length === 0 && page === 1) {
+                        $commentsList.append(`
                     <li class="list-group-nocomments-item">
                         <i class="fa-regular fa-face-smile-wink"></i>
                         Будьте першим хто залишить коментар для цієї манги.
                     </li>
                 `);
-                    $('.dropdown-sort').addClass('disabled');
-                } else {
-                    $('.dropdown-sort').removeClass('disabled');
-                }
-
-                if (sortBy === 'byNew') {
-                    comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                } else if (sortBy === 'byRating') {
-                    comments.sort((a, b) => {
-                        const ratingInfoA = commentRatings[a.id] || { upvotes: 0, downvotes: 0 };
-                        const ratingInfoB = commentRatings[b.id] || { upvotes: 0, downvotes: 0 };
-
-                        const scoreA = ratingInfoA.upvotes - ratingInfoA.downvotes;
-                        const scoreB = ratingInfoB.upvotes - ratingInfoB.downvotes;
-
-                        return scoreB - scoreA;
-                    });
-                }
-                comments.forEach(comment => {
-                    const userName = comment.userName || 'Unknown User';
-                    const userIcon = comment.ProfilePicture || 'https://www.riseandfall.xyz/unrevealed.png';
-                    const formattedDate = formatDate(comment.createdAt);
-
-                    const userRating = userRatings[comment.id] || 0;
-                    const upvoteSelected = userRating === 1 ? 'selected' : '';
-                    const downvoteSelected = userRating === -1 ? 'selected' : '';
-
-                    const ratingInfo = commentRatings[comment.id] || { upvotes: 0, downvotes: 0 };
-                    const ratingTitle = `Плюсів: ${ratingInfo.upvotes} | Мінусів: ${ratingInfo.downvotes}`;
-
-                    const commentElement = $('<div>').addClass('comment').attr('id', `comment-${comment.id}`);
-
-                    let optionsMenu = `
-                <div class="dropdown comment-options">
-                    <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton-${comment.id}" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-${comment.id}">
-                `;
-                    if (comment.userId !== currentUserId) {
-                        optionsMenu += `
-                        <li><a class="dropdown-item report-comment" href="#" data-comment-id="${comment.id}"><i class="fas fa-flag"></i>Поскаржитися</a></li>
-                    `;
-                    }
-                    if (comment.userId === currentUserId) {
-                        optionsMenu += `
-                        <form action="/manga/comment/${comment.id}/edit" method="post">
-                            <input type="hidden" name="comment-id" value="${comment.id}">
-                            <button class="dropdown-item edit-comment" type="submit"><i class="fas fa-edit"></i>Редагувати</button>
-                        </form>
-                    `;
+                        $('.dropdown-sort').addClass('disabled');
+                    } else {
+                        $('.dropdown-sort').removeClass('disabled');
                     }
 
-                    if ( comment.userId === currentUserId) {
-                        optionsMenu += `
-                        <form action="/manga/comment/${comment.id}/delete" method="post">
-                            <input type="hidden" name="comment-id" value="${comment.id}">
-                            <button class="dropdown-item delete-comment" type="submit"><i class="fas fa-trash-alt"></i>Видалити</button>
-                        </form>
-                    `;
-                    }
-                    optionsMenu += `</ul></div>`;
+                    if (sortBy === 'byNew') {
+                        comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    } else if (sortBy === 'byRating') {
+                        comments.sort((a, b) => {
+                            const ratingInfoA = commentRatings[a.id] || { upvotes: 0, downvotes: 0 };
+                            const ratingInfoB = commentRatings[b.id] || { upvotes: 0, downvotes: 0 };
 
-                    commentElement.html(`
-                <div class="comment-header">
-                    <a href="/profile/${comment.userId}" class="user-link">
-                        <img src="${userIcon}" class="user-icon" alt="${userName}'s icon">
-                        <span class="user-name-comment">${userName}</span>
-                    </a>
-                    ${optionsMenu}
-                </div>
-                <p class="user-comment-text">${comment.text}</p>
-                <textarea class="edit-comment-text form-control mb-3" style="display:none; width:100%;">${comment.text}</textarea>
-                <button class="btn btn-primary edit-comment-save" style="display:none;">Зберегти</button>
-                <button class="btn btn-primary edit-comment-cancel" style="display:none;">Скасувати</button>
-                <div class="comment-footer">
-                    <small class="comment-time">${formattedDate}</small>
-                    <i style="font-size:8px; color:gray;" class="fa-solid fa-circle"></i>
-                    <button class="btn btn-link reply-button" data-comment-id="${comment.id}">Відповісти</button>
-                    <div class="rating-controls" data-user-rating="${userRating}">
-                    <button class="btn btn-link upvote-button ${upvoteSelected}" data-comment-id="${comment.id}">
-                        <i class="fa-solid fa-arrow-up"></i>
-                    </button>
-                        <span class="rating-score" id="rating-score-${comment.id}" title="${ratingTitle}">${comment.rating || 0}</span>
-                    <button class="btn btn-link downvote-button ${downvoteSelected}" data-comment-id="${comment.id}">
-                        <i class="fa-solid fa-arrow-down"></i>
-                    </button>
-                </div>
-                </div>
-                <div class="reply-form-container" style="display: none;">
-    <form class="reply-form" data-username="${comment.userName}" data-parent-id="${comment.id}">
-        <div class="textarea-container">
-            <span class="username-block">@${comment.userName}</span>
-            <textarea name="text" class="form-control" rows="2" placeholder="Напишіть відповідь..." required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary mt-2">Відповісти</button>
-        <button type="button" class="btn btn-primary mt-2 cancel-reply">Скасувати</button>
-    </form>
-</div>
-                <button class="btn btn-link show-replies-button" data-comment-id="${comment.id}" style="display: none;">Показати відповіді (<span class="replies-count">0</span>)</button>
-                <div class="replies-container" style="display: none;"></div>
-                <hr>
-                `);
+                            const scoreA = ratingInfoA.upvotes - ratingInfoA.downvotes;
+                            const scoreB = ratingInfoB.upvotes - ratingInfoB.downvotes;
 
-                    commentElement.hide().appendTo('#comments-list').fadeIn('slow');
-
-                    const replies = commentReplies[comment.id] || [];
-                    if (replies.length > 0) {
-                        commentElement.find('.show-replies-button').show().find('.replies-count').text(replies.length);
-                    }
-
-                    commentElement.find('.show-replies-button').on('click', function() {
-                        const commentId = $(this).data('comment-id');
-                        const repliesContainer = $(this).siblings('.replies-container');
-
-                        repliesContainer.toggle();
-
-                        const repliesCount = repliesContainer.find('.reply').length;
-
-                        $(this).text(function(i, text) {
-                            const newCount = repliesContainer.find('.reply').length;
-                            return repliesContainer.is(':visible')
-                            ? `Приховати відповіді`
-                            : `Показати відповіді (${newCount})`;
+                            return scoreB - scoreA;
                         });
+                    }
+                    comments.forEach(comment => {
+                        const userName = comment.userName || 'Unknown User';
+                        const userIcon = comment.ProfilePicture || 'https://www.riseandfall.xyz/unrevealed.png';
+                        const formattedDate = formatDate(comment.createdAt);
 
-                        if (repliesContainer.is(':empty')) {
-                            const replies = commentReplies[commentId] || [];
-                            replies.forEach(reply => {
-                                const replyElement = createReplyElement(reply, comment.id);
-                                repliesContainer.append(replyElement);
-                            });
+                        const userRating = userRatings[comment.id] || 0;
+                        const upvoteSelected = userRating === 1 ? 'selected' : '';
+                        const downvoteSelected = userRating === -1 ? 'selected' : '';
+
+                        const ratingInfo = commentRatings[comment.id] || { upvotes: 0, downvotes: 0 };
+                        const ratingTitle = `Плюсів: ${ratingInfo.upvotes} | Мінусів: ${ratingInfo.downvotes}`;
+
+                        const commentElement = $('<div>').addClass('comment').attr('id', `comment-${comment.id}`);
+
+                        let optionsMenu = `
+                    <div class="dropdown comment-options">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton-${comment.id}" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-${comment.id}">
+                    `;
+                        if (comment.userId !== currentUserId) {
+                            optionsMenu += `
+                            <li><a class="dropdown-item report-comment" href="#" data-comment-id="${comment.id}"><i class="fas fa-flag"></i>Поскаржитися</a></li>
+                        `;
                         }
-                    });
+                        if (comment.userId === currentUserId) {
+                            optionsMenu += `
+                            <form action="/manga/comment/${comment.id}/edit" method="post">
+                                <input type="hidden" name="comment-id" value="${comment.id}">
+                                <button class="dropdown-item edit-comment" type="submit"><i class="fas fa-edit"></i>Редагувати</button>
+                            </form>
+                        `;
+                        }
 
-                });
-                $(document).on('click', '.report-comment', function(e) {
-                    e.preventDefault();
-                    const commentId = $(this).data('comment-id');
-                    const userId = $('#comments').data('current-user-id');
-                    $('#reportCommentId').val(commentId);
-                    $('#reportUserId').val(userId);
-                    $('#reportCommentModal').modal('show');
-                });
+                        if ( comment.userId === currentUserId) {
+                            optionsMenu += `
+                            <form action="/manga/comment/${comment.id}/delete" method="post">
+                                <input type="hidden" name="comment-id" value="${comment.id}">
+                                <button class="dropdown-item delete-comment" type="submit"><i class="fas fa-trash-alt"></i>Видалити</button>
+                            </form>
+                        `;
+                        }
+                        optionsMenu += `</ul></div>`;
 
-                $('#submitReport').click(function() {
-                    const commentId = $('#reportCommentId').val();
-                    const userId = $('#reportUserId').val();
-                    const reason = $('#reportReason').val();
+                        commentElement.html(`
+                    <div class="comment-header">
+                        <a href="/profile/${comment.userId}" class="user-link">
+                            <img src="${userIcon}" class="user-icon" alt="${userName}'s icon">
+                            <span class="user-name-comment">${userName}</span>
+                        </a>
+                        ${optionsMenu}
+                    </div>
+                    <p class="user-comment-text">${comment.text}</p>
+                    <textarea class="edit-comment-text form-control mb-3" style="display:none; width:100%;">${comment.text}</textarea>
+                    <button class="btn btn-primary edit-comment-save" style="display:none;">Зберегти</button>
+                    <button class="btn btn-primary edit-comment-cancel" style="display:none;">Скасувати</button>
+                    <div class="comment-footer">
+                        <small class="comment-time">${formattedDate}</small>
+                        <i style="font-size:8px; color:gray;" class="fa-solid fa-circle"></i>
+                        <button class="btn btn-link reply-button" data-comment-id="${comment.id}">Відповісти</button>
+                        <div class="rating-controls" data-user-rating="${userRating}">
+                        <button class="btn btn-link upvote-button ${upvoteSelected}" data-comment-id="${comment.id}">
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </button>
+                            <span class="rating-score" id="rating-score-${comment.id}" title="${ratingTitle}">${comment.rating || 0}</span>
+                        <button class="btn btn-link downvote-button ${downvoteSelected}" data-comment-id="${comment.id}">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </button>
+                    </div>
+                    </div>
+                    <div class="reply-form-container" style="display: none;">
+                        <form class="reply-form" data-username="${comment.userName}" data-parent-id="${comment.id}">
+                            <div class="textarea-container">
+                                <span class="username-block">@${comment.userName}</span>
+                                <textarea name="text" class="form-control" rows="2" placeholder="Напишіть відповідь..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-2">Відповісти</button>
+                            <button type="button" class="btn btn-primary mt-2 cancel-reply">Скасувати</button>
+                        </form>
+                    </div>
+                    <button class="btn btn-link show-replies-button" data-comment-id="${comment.id}" style="display: none;">Показати відповіді (<span class="replies-count">0</span>)</button>
+                    <div class="replies-container" style="display: none;"></div>
+                    <hr>
+                    `);
 
-                    if (reason) {
-                        $.ajax({
-                            url: `/manga/comment/${commentId}/report`,
-                            method: 'GET',
-                            data: {
-                                userId: userId,
-                                reason: reason
-                            },
-                            success: function(response) {
-                                $('#reportCommentModal').modal('hide');
-                                $('#successMessage').text('Ваша скарга надіслана.');
-                                $('#successModal').modal('show');
-                                $('#reportReason').val('');
-                            },
-                            error: function(xhr, status, error) {
-                                $('#reportCommentModal').modal('hide');
-                                $('#errorMessage').text('Ви вже надіслали повідомлення про цей коментар.');
-                                $('#errorModal').modal('show');
-                                $('#reportReason').val('');
+                        commentElement.hide().appendTo('#comments-list').fadeIn('slow');
+
+                        const replies = commentReplies[comment.id] || [];
+                        if (replies.length > 0) {
+                            commentElement.find('.show-replies-button').show().find('.replies-count').text(replies.length);
+                        }
+
+                        commentElement.find('.show-replies-button').on('click', function() {
+                            const commentId = $(this).data('comment-id');
+                            const repliesContainer = $(this).siblings('.replies-container');
+
+                            repliesContainer.toggle();
+
+                            const repliesCount = repliesContainer.find('.reply').length;
+
+                            $(this).text(function(i, text) {
+                                const newCount = repliesContainer.find('.reply').length;
+                                return repliesContainer.is(':visible')
+                                ? `Приховати відповіді`
+                                : `Показати відповіді (${newCount})`;
+                            });
+
+                            if (repliesContainer.is(':empty')) {
+                                const replies = commentReplies[commentId] || [];
+                                replies.forEach(reply => {
+                                    const replyElement = createReplyElement(reply, comment.id);
+                                    repliesContainer.append(replyElement);
+                                });
                             }
                         });
-                    } else {
-                        $('#reportCommentModal').modal('hide');
-                        $('#errorMessage').text('Будь ласка, введіть причину скарги.');
-                        $('#errorModal').modal('show');
-                    }
-                });
-            }
-        });
 
+                    });
+
+                    $(document).on('click', '.report-comment', function(e) {
+                        e.preventDefault();
+                        const commentId = $(this).data('comment-id');
+                        const userId = $('#comments').data('current-user-id');
+                        $('#reportCommentId').val(commentId);
+                        $('#reportUserId').val(userId);
+                        $('#reportCommentModal').modal('show');
+                    });
+
+                    $('#submitReport').click(function() {
+                        const commentId = $('#reportCommentId').val();
+                        const userId = $('#reportUserId').val();
+                        const reason = $('#reportReason').val();
+
+                        if (reason) {
+                            $.ajax({
+                                url: `/manga/comment/${commentId}/report`,
+                                method: 'GET',
+                                data: {
+                                    userId: userId,
+                                    reason: reason
+                                },
+                                success: function(response) {
+                                    $('#reportCommentModal').modal('hide');
+                                    $('#successMessage').text('Ваша скарга надіслана.');
+                                    $('#successModal').modal('show');
+                                    $('#reportReason').val('');
+                                },
+                                error: function(xhr, status, error) {
+                                    $('#reportCommentModal').modal('hide');
+                                    $('#errorMessage').text('Ви вже надіслали повідомлення про цей коментар.');
+                                    $('#errorModal').modal('show');
+                                    $('#reportReason').val('');
+                                }
+                            });
+                        } else {
+                            $('#reportCommentModal').modal('hide');
+                            $('#errorMessage').text('Будь ласка, введіть причину скарги.');
+                            $('#errorModal').modal('show');
+                        }
+                    });
+                    if (hasMoreComments) {
+                        $('#load-more-comments').show();
+                    } else {
+                        $('#load-more-comments').hide();
+                    }
+                },
+                error: function() {
+                    $('#loading-comments-for-manga').hide();
+                    isLoading = false;
+                    alert('Ошибка загрузки комментариев');
+                }
+            });
+        //}, 500);
     }
+
+    $(window).on('scroll', function() {
+        const scrollPosition = $(window).scrollTop() + $(window).height();
+        const documentHeight = $(document).height();
+        if (scrollPosition >= documentHeight - 100 && !isLoading && hasMoreComments) {
+            currentPage++;
+            loadComments(sortOption, currentPage, pageSize);
+        }
+    });
+    loadComments(sortOption, currentPage, pageSize);
 
     function updateRatingDisplay(commentId, newRating, ratingTitle) {
         const ratingElement = $(`#rating-score-${commentId}`);
@@ -338,7 +381,8 @@ $(document).ready(function() {
                 success: function(response) {
                     commentToDelete.remove();
                     $('#deleteConfirmationModal').modal('hide');
-                    loadComments(sortOption);
+                    currentPage = 1;
+                    loadComments(sortOption, currentPage, pageSize);
                 },
                 error: function(xhr, status, error) {
                     $('#deleteConfirmationModal').modal('hide');
@@ -364,15 +408,12 @@ $(document).ready(function() {
             },
             success: function(response) {
                 updateRatingDisplay(commentId, response.newRatingScore, response.ratingTitle);
-
                 if (currentButton.hasClass('selected')) {
                     currentButton.removeClass('selected');
                 } else {
                     currentButton.addClass('selected');
                     currentButton.siblings('.upvote-button, .downvote-button').removeClass('selected');
                 }
-                loadComments(sortOption);
-
             },
             error: function() {
             }
@@ -708,3 +749,4 @@ $(document).ready(function() {
     }
 
 });
+

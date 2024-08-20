@@ -282,7 +282,6 @@
                                             <span style="margin: 0 5px;">|</span>
                                             <span th:text="${#temporals.format(chapter.creationTime, 'dd MMM yyyy р.', new java.util.Locale('uk', 'UA'))}"></span>
                                         </span>
-
                                     </div>
                                 </li>
                             </ul>
@@ -311,6 +310,11 @@
                             </div>
                         </div>
                         <ul id="comments-list" class="list-group mt-3" style="padding:15px;"></ul>
+                        <div id="loading-comments-for-manga" class="loading-comments-for-manga" style="display: none;">
+                            <div class="loading">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Завантаження...
+                            </div>
+                        </div>
                     </div>
                 </div>
                 </div>
@@ -350,41 +354,7 @@
     window.countFourStar = /*[[${countFourStar}]]*/ 0;
     window.countFiveStar = /*[[${countFiveStar}]]*/ 0;
 </script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const sortButton = document.getElementById('sortChapters');
-        const sortIcon = document.getElementById('sortIcon');
-        const chaptersList = document.getElementById('chaptersList');
-        let isAscending = false;
-
-        function sortChapters() {
-            const chapters = Array.from(chaptersList.children);
-            chapters.sort((a, b) => {
-                const dateA = new Date(a.getAttribute('data-date'));
-                const dateB = new Date(b.getAttribute('data-date'));
-
-                return isAscending ? dateA - dateB : dateB - dateA;
-            });
-
-            chapters.forEach(chapter => chaptersList.appendChild(chapter));
-        }
-        sortChapters();
-
-        sortButton.addEventListener('click', function() {
-            isAscending = !isAscending;
-
-            sortChapters();
-
-            if (isAscending) {
-                sortIcon.classList.remove('fa-sort-amount-down');
-                sortIcon.classList.add('fa-sort-amount-up');
-            } else {
-                sortIcon.classList.remove('fa-sort-amount-up');
-                sortIcon.classList.add('fa-sort-amount-down');
-            }
-        });
-    });
-</script>
+<script th:unless="${#lists.isEmpty(chapters)}" src="/js/manga-details-chapter-sort.js"></script>
 <script src="/js/manga-details-statistics.js"></script>
 <script th:if="${manga.adultContent and not userSettings.adultContentAgreement}" src="/js/adultContentAlert.js"></script>
 </body>

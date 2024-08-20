@@ -46,7 +46,6 @@
                    th:text="${pageNumber}"
                    th:class="${pageNumber==page.number + 1} ? active"></a>
             </span>
-        <a th:href="@{/manga(page=${page.number + 2})}" th:if="${page.number + 1 < page.totalPages}">&raquo;</a>
     </div>
 </div>
 </body>

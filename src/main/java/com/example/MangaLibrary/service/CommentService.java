@@ -135,9 +135,6 @@ public class CommentService {
 
         return repliesRepo.save(reply);
     }
-    public List<Comment> getCommentsByMangaId(Long mangaId) {
-        return commentRepo.findByMangaId(mangaId);
-    }
 
     public void updateReply(Long replyId, String newText, String currentUsername) {
         Replies reply = repliesRepo.findById(replyId)

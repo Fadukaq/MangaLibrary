@@ -461,6 +461,15 @@
     color:#656565;
     text-decoration:underline;
 }
+
+.chapter-list {
+    max-height: 670px;
+    overflow-y: auto;
+}
+
+#sortChapters {
+    margin-bottom: 10px;
+}
 .list-group-nocomments-item {
     text-align: center;
     font-size: 20px;
@@ -580,6 +589,29 @@
     opacity: 0.5;
     background-color: #6c757d;
     color: #fff;
+}
+#loading-comments-for-manga {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+#loading-comments-for-manga .loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff0080;
+    padding: 10px;
+}
+#loading-comments-for-manga .fa-spinner{
+    margin-right: 8px;
 }
 @media (max-width: 1399px) {
     .genre-tag {
