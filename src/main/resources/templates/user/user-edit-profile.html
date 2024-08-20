@@ -23,6 +23,11 @@
         <span style="background-color: #ff9100; color: white; padding: 5px; border: 2px solid black; border-radius: 5px;">Max size picture 5MB</span><br><br>
         <input type="file" name="profilePicture.profileImage" accept="image/jpeg, image/png">
         <hr>
+        <label class="form-label" title="Змініть свій нікнейм">Нік: <span style="color:red">*</span></label>
+        <input type="text" name="user.userName" th:value="*{user.userName}" class="form-control" autocomplete="off">
+        <div style="color:red" th:if="${#fields.hasErrors('user.userName')}" th:errors="*{user.userName}">userName error</div>
+        <hr>
+
         <label class="form-label" title="Розкажіть щось про себе!">Про себе: <span style="color:red">*</span></label>
         <textarea name="user.about" placeholder="Введіть щось про себе" class="form-control" th:text="*{user.about}" autocomplete="off"></textarea>
         <div style="color:red" th:if="${#fields.hasErrors('user.about')}" th:errors="*{user.about}">user about error</div>

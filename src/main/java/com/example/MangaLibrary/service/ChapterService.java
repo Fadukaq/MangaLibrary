@@ -10,6 +10,7 @@ import com.example.MangaLibrary.repo.MangaRepo;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,34 +66,21 @@ public class ChapterService {
         chapter.setManga(manga);
         chapter.setUser(user);
         chapter.setCreationTime(LocalDateTime.now());
+        chapterRepo.save(chapter);
 
         List<String> imageUrls = createPagesManga(chapterForm.getChapterImage().getPagesImage(), manga, chapter);
 
         chapter.setChapterPages(String.join(",", imageUrls));
-
         chapterRepo.save(chapter);
     }
 
     public void editChapter(ChapterForm chapterForm, Manga manga, Chapter chapter) throws IOException {
-        String oldTitle = chapter.getTitle();
-        String newTitle = chapterForm.getChapter().getTitle();
-
-        if (!oldTitle.equals(newTitle)) {
-            String cleanMangaName = cleanStringForUrl(manga.getMangaName());
-            String oldFolderPath = getChapterFolderPath(cleanMangaName, oldTitle);
-            String newFolderPath = getChapterFolderPath(cleanMangaName, newTitle);
-            renameChapterFolder(oldFolderPath, newFolderPath);
-
-            String oldResourceFolderPath = getResourceChapterFolderPath(cleanMangaName, oldTitle);
-            String newResourceFolderPath = getResourceChapterFolderPath(cleanMangaName, newTitle);
-            renameChapterFolder(oldResourceFolderPath, newResourceFolderPath);
-        }
-
         chapter.setTitle(chapterForm.getChapter().getTitle());
         chapter.setCreationTime(LocalDateTime.now());
 
         List<String> imageUrls = new ArrayList<>();
         if (chapterForm.getChapterImage().getPagesImage() != null && chapterForm.getChapterImage().getPagesImage().stream().anyMatch(file -> file.getSize() > 0)) {
+            clearChapterFolder(manga,chapter);
             imageUrls = createPagesManga(chapterForm.getChapterImage().getPagesImage(), manga, chapter);
         } else {
             imageUrls = Arrays.asList(chapter.getChapterPages().split(","));
@@ -101,23 +89,7 @@ public class ChapterService {
         chapter.setChapterPages(String.join(",", imageUrls));
         chapterRepo.save(chapter);
     }
-    private String getChapterFolderPath(String cleanMangaName, String chapterTitle) {
-        return mangaLibraryManager.getTargetPathManga() + File.separator +
-                cleanMangaName + File.separator + "chapters" + File.separator + chapterTitle;
-    }
-    private String getResourceChapterFolderPath(String cleanMangaName, String chapterTitle) {
-        return "src/main/resources/static/images/mangas/" + cleanMangaName + "/chapters/" + chapterTitle;
-    }
 
-    private void renameChapterFolder(String oldPath, String newPath) throws IOException {
-        Path source = Paths.get(oldPath);
-        Path target = Paths.get(newPath);
-        if (Files.exists(source) && !Files.exists(target)) {
-            Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
-        } else if (!Files.exists(source)) {
-            Files.createDirectories(target);
-        }
-    }
     public void deleteChapter(Long mangaId, Long chapterId) throws IOException {
         Optional<Manga> mangaOptional = mangaRepo.findById(mangaId);
         Optional<Chapter> chapterOptional = chapterRepo.findById(chapterId);
@@ -130,11 +102,11 @@ public class ChapterService {
                     .replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
 
             String targetRootPath = mangaLibraryManager.getTargetPathManga();
-            String chapterFolderPath = targetRootPath + File.separator + cleanMangaName + File.separator + "chapters" + File.separator + chapter.getTitle();
+            String chapterFolderPath = targetRootPath + File.separator + manga.getId() + File.separator + "chapters" + File.separator + chapter.getId();
             File chapterFolder = new File(chapterFolderPath);
 
             String resourceRootPath = "src/main/resources/static/images/mangas";
-            String resourceChapterFolderPath = resourceRootPath + File.separator + cleanMangaName + File.separator + "chapters" + File.separator + chapter.getTitle();
+            String resourceChapterFolderPath = resourceRootPath + File.separator + manga.getId() + File.separator + "chapters" + File.separator + chapter.getId();
             File resourceChapterFolder = new File(resourceChapterFolderPath);
 
             if (chapterFolder.exists()) {
@@ -153,18 +125,17 @@ public class ChapterService {
 
     public List<String> createPagesManga(List<MultipartFile> files, Manga manga, Chapter chapter) throws IOException {
         List<String> pagePaths = new ArrayList<>();
-        String cleanMangaName = manga.getMangaName()
-                .replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
+        Long mangaId  = manga.getId();
 
         String targetRootPath = mangaLibraryManager.getTargetPathManga();
-        String chapterFolderPath = targetRootPath + File.separator + cleanMangaName + File.separator + "chapters" + File.separator + chapter.getTitle();
+        String chapterFolderPath = targetRootPath + File.separator + mangaId + File.separator + "chapters" + File.separator + chapter.getId();
 
         File chapterFolder = new File(chapterFolderPath);
         if (!chapterFolder.exists()) {
             chapterFolder.mkdirs();
         }
 
-        String resourcesPath = "src/main/resources/static/images/mangas/" + cleanMangaName + "/chapters/" + chapter.getTitle();
+        String resourcesPath = "src/main/resources/static/images/mangas/" + mangaId + "/chapters/" + chapter.getId();
         Path resourcesFolderPath = Paths.get(resourcesPath);
         if (!Files.exists(resourcesFolderPath)) {
             Files.createDirectories(resourcesFolderPath);
@@ -172,9 +143,7 @@ public class ChapterService {
 
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
-            String originalFilename = file.getOriginalFilename();
-            String cleanFilename = originalFilename.replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
-            String fileName = cleanMangaName + "_Page" + (i + 1) + "_" + System.currentTimeMillis() + ".png";
+            String fileName = mangaId + "_Page" + (i + 1) + "_" + System.currentTimeMillis() + ".png";
 
             File targetFile = new File(chapterFolder, fileName);
             if (targetFile.exists()) {
@@ -191,7 +160,31 @@ public class ChapterService {
         return pagePaths;
     }
 
-    public String cleanStringForUrl(String input) {
-        return input.replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
+    public void addChapterDataToModel(Model model, Manga manga, Chapter chapter, ChapterForm chapterForm) {
+        String[] chapterImageFileNames = chapter.getChapterPages().split(",");
+        String[] chapterImageUrls = new String[chapterImageFileNames.length];
+        for (int i = 0; i < chapterImageFileNames.length; i++) {
+            chapterImageUrls[i] = String.format("/images/mangas/%s/chapters/%s/%s", manga.getId(), chapter.getId(), chapterImageFileNames[i]);
+        }
+
+        model.addAttribute("manga", manga);
+        model.addAttribute("chapter", chapter);
+        model.addAttribute("chapterImageUrls", chapterImageUrls);
+        model.addAttribute("chapterForm", chapterForm);
+    }
+    private void clearChapterFolder(Manga manga, Chapter chapter) {
+        String chapterFolderPath = getChapterFolderPath(manga.getId(), chapter.getId());
+        File chapterFolder = new File(chapterFolderPath);
+
+        if (chapterFolder.exists() && chapterFolder.isDirectory()) {
+            for (File file : chapterFolder.listFiles()) {
+                if (file.isFile()) {
+                    file.delete();
+                }
+            }
+        }
+    }
+    private String getChapterFolderPath(Long mangaId, Long chapterId) {
+        return mangaLibraryManager.getTargetPathManga() + File.separator + mangaId + File.separator + "chapters" + File.separator + chapterId;
     }
 }

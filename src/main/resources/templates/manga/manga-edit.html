@@ -16,6 +16,10 @@
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="container transparent-container mt-5 mb-5">
     <form method="POST" th:action="@{/manga/edit/{id}(id=${id})}" th:object="${mangaForm}" enctype="multipart/form-data">
+        <input type="text" name="manga.mangaName" placeholder="Введіть назву манги" class="form-control" th:value="*{manga.mangaName}" />
+        <div style="color:red" th:if="${#fields.hasErrors('manga.mangaName')}" th:errors="*{manga.mangaName}">mangaName error</div>
+        <br>
+
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <textarea name="manga.mangaDescription" placeholder="Введіть опис манги" class="form-control" th:text="*{manga.mangaDescription}" ></textarea>
         <div style="color:red" th:if="${#fields.hasErrors('manga.mangaDescription')}" th:errors="*{manga.mangaDescription}">mangaDescription error</div>
@@ -63,6 +67,10 @@
         </select>
         <br>
         <span th:if="${#fields.hasErrors('manga.mangaStatus')}" th:errors="*{manga.mangaStatus}" class="text-danger"></span>
+        <hr>
+        <p>Постер манги, якщо є.</p>
+        <input type="file" th:field="*{mangaImage.posterImage}" accept="image/jpeg, image/png" multiple />
+        <br>
         <hr>
         <p>Задній фон манги, якщо є.</p>
         <input type="file" th:field="*{mangaImage.backGroundMangaImg}" accept="image/jpeg, image/png," multiple>

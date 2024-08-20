@@ -197,4 +197,12 @@ public class User {
     public void setRatings(List<Rating> ratings) {
         this.ratings = ratings;
     }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
 }

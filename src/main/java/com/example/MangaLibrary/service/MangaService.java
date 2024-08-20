@@ -130,23 +130,29 @@ public class MangaService {
                 .collect(Collectors.toList());
         mangaForm.getManga().setGenres(selectedGenres);
 
+        Manga manga = mangaForm.getManga();
+        mangaRepo.save(manga);
+
         String rootPath = mangaLibraryManager.getResourcePathManga();
-        String mangaFolderPath = createFolderForManga(mangaForm.getManga(), rootPath);
-        String posterPath = createPosterManga(mangaForm.getMangaImage().getPosterImage(), mangaForm.getManga(), mangaFolderPath);
-        mangaForm.getManga().setMangaPosterImg(posterPath);
-        if(!mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()){
-            String backGroundPath = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), mangaForm.getManga(), mangaFolderPath);
-            mangaForm.getManga().setMangaBackGround(backGroundPath);
+        String mangaFolderPath = createFolderForManga(manga.getId(), rootPath);
+
+        String posterPath = createPosterManga(mangaForm.getMangaImage().getPosterImage(), manga, mangaFolderPath);
+        manga.setMangaPosterImg(posterPath);
+
+        if (!mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()) {
+            String backGroundPath = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), manga, mangaFolderPath);
+            manga.setMangaBackGround(backGroundPath);
+        } else {
+            manga.setMangaBackGround("/images/mangas/defaultBackGroundManga.jpg");
         }
-        else{
-            mangaForm.getManga().setMangaBackGround("/images/mangas/defaultBackGroundManga.jpg");
-        }
-        mangaRepo.save(mangaForm.getManga());
+
+        mangaRepo.save(manga);
     }
     public void updateManga(long id, MangaForm mangaForm) {
 
         Manga mangaToUpdate = mangaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid manga Id:" + id));
+        mangaToUpdate.setMangaName(mangaForm.getManga().getMangaName());
         mangaToUpdate.setMangaDescription(mangaForm.getManga().getMangaDescription());
         mangaToUpdate.setReleaseYear(mangaForm.getManga().getReleaseYear());
         mangaToUpdate.setGenres(mangaForm.getManga().getGenres());
@@ -154,30 +160,34 @@ public class MangaService {
         mangaToUpdate.setAdultContent(mangaForm.getManga().getAdultContent());
         mangaToUpdate.setMangaStatus(mangaForm.getManga().getMangaStatus());
         if (mangaForm.getMangaImage().getBackGroundMangaImg() != null && !mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()) {
-            String mangaFolderPath = mangaLibraryManager.getResourcePathOfThisManga(mangaToUpdate.getMangaName());
-            String StringBackGroundImg = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), mangaToUpdate,mangaFolderPath);
-            mangaToUpdate.setMangaBackGround(StringBackGroundImg);
+            String mangaFolderPath = mangaLibraryManager.getResourcePathManga() + File.separator + id;
+            String backgroundImgPath = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), mangaToUpdate, mangaFolderPath);
+            mangaToUpdate.setMangaBackGround(backgroundImgPath);
+        }
+        if (mangaForm.getMangaImage().getPosterImage() != null && !mangaForm.getMangaImage().getPosterImage().isEmpty()) {
+            String mangaFolderPath = mangaLibraryManager.getResourcePathManga() + File.separator + id;
+            String posterImgPath = createPosterManga(mangaForm.getMangaImage().getPosterImage(), mangaToUpdate, mangaFolderPath);
+            mangaToUpdate.setMangaPosterImg(posterImgPath);
         }
         mangaRepo.save(mangaToUpdate);
     }
-    public void deleteFolder(String mangaName)
+    public void deleteFolder(long mangaId)
     {
         String rootPath = mangaLibraryManager.getResourcePathManga();
-        File sourceFolder = new File(rootPath + File.separator + mangaName);
+        File sourceFolder = new File(rootPath + File.separator + mangaId);
         if (sourceFolder.exists()) {
             deleteThisFolder(sourceFolder);
         }
 
         String targetRootPath = mangaLibraryManager.getTargetPathManga();
-        File targetFolder = new File(targetRootPath + File.separator + mangaName);
+        File targetFolder = new File(targetRootPath + File.separator + mangaId);
         if (targetFolder.exists()) {
             deleteThisFolder(targetFolder);
         }
     }
 
-    public String createFolderForManga(Manga thisManga, String rootPath) {
-        String mangaFolderName = thisManga.getMangaName().replaceAll("\\s", "_")
-                .replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
+    public String createFolderForManga(Long mangaFolderName, String rootPath) {
+
         File mangaFolder = new File(rootPath + File.separator + mangaFolderName);
 
         String targetRootPath = mangaLibraryManager.getTargetPathManga();
@@ -191,13 +201,12 @@ public class MangaService {
         return mangaFolder.getAbsolutePath();
     }
 
-    public String createPosterManga(MultipartFile posterImg,Manga thisManga,String mangaFolderPath) {
+    public String createPosterManga(MultipartFile posterImg, Manga thisManga, String mangaFolderPath) {
         try {
             byte[] bytes = posterImg.getBytes();
-            String cleanMangaName = thisManga.getMangaName()
-                    .replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
+            String mangaId = String.valueOf(thisManga.getId());
 
-            String fileName = cleanMangaName + "_Poster.png";
+            String fileName = mangaId + "_Poster.png";
 
             File targetFile = new File(mangaFolderPath + "/" + fileName);
             FileOutputStream outputStream = new FileOutputStream(targetFile);
@@ -205,29 +214,27 @@ public class MangaService {
             outputStream.close();
 
             String targetRootPath = mangaLibraryManager.getTargetPathManga();
-            File targetFolder = new File(targetRootPath + File.separator + cleanMangaName);
+            File targetFolder = new File(targetRootPath + File.separator + mangaId);
             if (!targetFolder.exists()) {
                 targetFolder.mkdirs();
             }
-            File sourseFile = new File(targetFolder + File.separator + fileName);
-            FileOutputStream targetOutputStream = new FileOutputStream(sourseFile);
+            File sourceFile = new File(targetFolder + File.separator + fileName);
+            FileOutputStream targetOutputStream = new FileOutputStream(sourceFile);
             targetOutputStream.write(bytes);
             targetOutputStream.close();
 
-            return "/images/mangas/" + cleanMangaName + File.separator + fileName;
-        }
-        catch (IOException e) {
+            return "/images/mangas/" + mangaId + "/" + fileName;
+        } catch (IOException e) {
             e.printStackTrace();
             return "redirect:/manga/add";
         }
     }
-    public String createBackGroundManga(MultipartFile backgroundImg, Manga thisManga,String mangaFolderPath) {
+    public String createBackGroundManga(MultipartFile backgroundImg, Manga thisManga, String mangaFolderPath) {
         try {
             byte[] bytes = backgroundImg.getBytes();
-            String cleanMangaName = thisManga.getMangaName()
-                    .replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
+            String mangaId = String.valueOf(thisManga.getId());
 
-            String fileName = cleanMangaName + "_BackGround.png";
+            String fileName = mangaId + "_BackGround.png";
 
             File targetFile = new File(mangaFolderPath + "/" + fileName);
             FileOutputStream outputStream = new FileOutputStream(targetFile);
@@ -235,20 +242,19 @@ public class MangaService {
             outputStream.close();
 
             String targetRootPath = mangaLibraryManager.getTargetPathManga();
-            File targetFolder = new File(targetRootPath + File.separator + cleanMangaName);
+            File targetFolder = new File(targetRootPath + File.separator + mangaId);
             if (!targetFolder.exists()) {
                 targetFolder.mkdirs();
             }
-            File sourseFile = new File(targetFolder + File.separator + fileName);
-            FileOutputStream targetOutputStream = new FileOutputStream(sourseFile);
+            File sourceFile = new File(targetFolder + File.separator + fileName);
+            FileOutputStream targetOutputStream = new FileOutputStream(sourceFile);
             targetOutputStream.write(bytes);
             targetOutputStream.close();
 
-            return "/images/mangas/" + cleanMangaName + "/" + fileName;
-        }
-        catch (IOException e) {
-        e.printStackTrace();
-        return "redirect:/manga/add";
+            return "/images/mangas/" + mangaId + "/" + fileName;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "redirect:/manga/add";
         }
     }
 
@@ -286,6 +292,7 @@ public class MangaService {
         statusTranslation.put("completed", "Завершено");
         return statusTranslation.getOrDefault(status, status);
     }
+
     public static void addMangaStatusAttributes(User user, Long mangaId, ModelMap model) {
         List<List<String>> userLists = List.of(
                 user.getMangaReading(),
@@ -351,13 +358,6 @@ public class MangaService {
             manga.setAverageRating(newAverageRating);
             mangaRepo.save(manga);
         }
-    }
-    public void addRelatedManga(Long mangaId, Long relatedMangaId) {
-        Manga manga = mangaRepo.findById(mangaId).orElseThrow();
-        Manga relatedManga = mangaRepo.findById(relatedMangaId).orElseThrow();
-
-        manga.getRelatedMangas().add(relatedManga);
-        mangaRepo.save(manga);
     }
 
     public Set<Manga> getRelatedMangas(Long mangaId) {

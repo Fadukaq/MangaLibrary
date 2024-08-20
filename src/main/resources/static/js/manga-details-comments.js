@@ -77,7 +77,20 @@ $(document).ready(function() {
                 const commentRatings = response.commentRatings;
                 const commentReplies = response.commentReplies;
 
+                const $commentsList = $('#comments-list');
                 $('#comments-list').empty();
+                console.log("length: "+comments.length)
+
+                if (comments.length === 0) {
+                    $commentsList.append(`
+                    <li class="list-group-nocomments-item">
+                        <i class="fa-regular fa-face-smile-wink"></i>
+                        Будьте першим хто залишить коментар для цієї манги.
+                    </li>
+                    `);
+                    return;
+                }
+
                 if (sortBy === 'byNew') {
                     comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 } else if (sortBy === 'byRating') {
@@ -138,7 +151,7 @@ $(document).ready(function() {
 
                     commentElement.html(`
                 <div class="comment-header">
-                    <a href="/profile/${comment.userName}" class="user-link">
+                    <a href="/profile/${comment.userId}" class="user-link">
                         <img src="${userIcon}" class="user-icon" alt="${userName}'s icon">
                         <span class="user-name-comment">${userName}</span>
                     </a>
@@ -323,6 +336,7 @@ $(document).ready(function() {
                 success: function(response) {
                     commentToDelete.remove();
                     $('#deleteConfirmationModal').modal('hide');
+                    loadComments(sortOption);
                 },
                 error: function(xhr, status, error) {
                     $('#deleteConfirmationModal').modal('hide');
@@ -389,7 +403,7 @@ $(document).ready(function() {
                 if (response.success) {
                     const newReply = response.reply;
                     const formattedDate = formatDate(newReply.createdAt);
-                    const replyText = linkifyUsernames(newReply.text);
+                    const replyText = linkifyUsernamesAndReplaceIds(newReply.text);
 
                     const newReplyHtml = `
                                     <div class="comment reply" id="comment-${newReply.id}">
@@ -593,7 +607,7 @@ $(document).ready(function() {
         const userName = reply.userName || 'Unknown User';
         const userIcon = reply.ProfilePicture || 'https://www.riseandfall.xyz/unrevealed.png';
         const formattedDate = formatDate(reply.createdAt);
-        const replyText = linkifyUsernames(reply.text);
+        const replyText = linkifyUsernamesAndReplaceIds(reply.text);
 
         let optionsMenu = `
         <div class="dropdown reply-options">
@@ -627,7 +641,7 @@ $(document).ready(function() {
         return $(`
         <div class="reply" data-reply-id="${reply.id}">
             <div class="reply-header">
-                <a href="/profile/${reply.userName}" class="user-link">
+                <a href="/profile/${reply.userId}" class="user-link">
                     <img src="${userIcon}" class="user-icon" alt="${userName}'s icon">
                     <span class="user-name">${userName}</span>
                 </a>
@@ -666,9 +680,29 @@ $(document).ready(function() {
         });
     }
 
-    function linkifyUsernames(text) {
-        return text.replace(/@(\w+)/g, function(match, username) {
-            return `<a href="/profile/${username}" class="user-mention">@${username}</a>`;
-        });
+    function linkifyUsernamesAndReplaceIds(text) {
+        const userIdPattern = /@(\d+)/g;
+        let match;
+
+        while ((match = userIdPattern.exec(text)) !== null) {
+            const userId = match[1];
+
+            $.ajax({
+                url: `/manga/getUsernameById`,
+                type: 'GET',
+                data: { userId: userId },
+                async: false,
+                success: function(response) {
+                    const username = response.username;
+                    text = text.replace(`@${userId}`, `<a href="/profile/${userId}" class="user-mention">@${username}</a>`);
+                },
+                error: function() {
+                    console.error(`Не удалось получить никнейм для ID ${userId}`);
+                }
+            });
+        }
+
+        return text;
     }
+
 });

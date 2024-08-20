@@ -5,9 +5,7 @@ import com.example.MangaLibrary.helper.user.UserForm;
 import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.models.UserSettings;
-import com.example.MangaLibrary.repo.MangaRepo;
-import com.example.MangaLibrary.repo.UserRepo;
-import com.example.MangaLibrary.repo.UserSettingsRepo;
+import com.example.MangaLibrary.repo.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -34,6 +32,10 @@ public class UserService {
     @Autowired UserRepo userRepo;
     @Autowired MangaRepo mangaRepo;
     @Autowired
+    CommentRepo commentRepo;
+    @Autowired
+    RepliesRepo replyRepo;
+    @Autowired
     private UserSettingsRepo userSettingsRepo;
     @Autowired
     private MangaRepo mangaRepository;
@@ -50,7 +52,7 @@ public class UserService {
 
         String plainPassword = user.getUserPassword();
         String hashedPassword = passwordEncoder.encode(plainPassword);
-
+        userRepo.save(user);
         String rootPath = directoryLocator.getResourcePathProfilePicture();
         createFolderForProfile(user, rootPath) ;
         String profilePicturePath = loadProfilePicture(null,user, rootPath);
@@ -77,8 +79,6 @@ public class UserService {
             mailSender.send(user.getEmail(), "Активація облікового запису", message);
         }
     }
-
-
     public boolean activateUser(String code) {
         User user = userRepo.findByVerificationToken(code);
         if(user == null){
@@ -136,7 +136,7 @@ public class UserService {
                 String hashedPassword = hashPassword(userPasswordNew);
                 userToUpdate.setUserPassword(hashedPassword);
             }
-
+            userToUpdate.setUserName(userForm.getUser().getUserName());
             userToUpdate.setAbout(userForm.getUser().getAbout());
             userRepo.save(userToUpdate);
         }
@@ -194,35 +194,34 @@ public class UserService {
         }
     }
     public void createFolderForProfile(User thisUser, String rootPath) {
-        String mangaFolderName = thisUser.getUserName().replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
-        File userFolder = new File(rootPath + File.separator + mangaFolderName);
+        File userFolder = new File(rootPath + File.separator + thisUser.getId());
 
         String targetRootPath = directoryLocator.getTargetPathProfilePicture();
-        File profileFolderTarget = new File(targetRootPath + File.separator + mangaFolderName);
+        File profileFolderTarget = new File(targetRootPath + File.separator + thisUser.getId());
 
         if (!userFolder.exists() || !profileFolderTarget.exists()) {
             userFolder.mkdirs();
             profileFolderTarget.mkdirs();
         }
     }
+
     public String loadProfilePicture(MultipartFile profilePicture, User thisUser, String userFolderPath) {
         try {
-            String cleanUserName = thisUser.getUserName().replaceAll("\\s", "_").replaceAll("[^\\p{L}\\p{N}.\\-_]", "");
-            String fileName = cleanUserName + "_Profile.png";
-            File targetFile = new File(userFolderPath + "/" + cleanUserName + "/" + fileName);
+            String fileName = thisUser.getId() + "_Profile.png";
+            File targetFile = new File(userFolderPath + "/" + thisUser.getId() + "/" + fileName);
 
             if (profilePicture == null || profilePicture.isEmpty() && thisUser.getProfilePicture() == null) {
                 ClassPathResource defaultImageResource = new ClassPathResource("static/images/defaultProfilePicture/defaultAvatar.png");
                 File defaultImageFile = defaultImageResource.getFile();
 
-                File userDirectory = new File(userFolderPath + "/" + cleanUserName);
+                File userDirectory = new File(userFolderPath + "/" + thisUser.getId());
                 if (!userDirectory.exists()) {
                     userDirectory.mkdirs();
                 }
 
                 Files.copy(defaultImageFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                File targetClassesDirectory = new File("target/classes/static/images/profilePicture/" + cleanUserName);
+                File targetClassesDirectory = new File("target/classes/static/images/profilePicture/" + thisUser.getId());
                 if (!targetClassesDirectory.exists()) {
                     targetClassesDirectory.mkdirs();
                 }
@@ -230,7 +229,7 @@ public class UserService {
                 File targetClassesFile = new File(targetClassesDirectory + "/" + fileName);
                 Files.copy(defaultImageFile.toPath(), targetClassesFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                return "/images/profilePicture/" + cleanUserName + "/" + fileName;
+                return "/images/profilePicture/" + thisUser.getId() + "/" + fileName;
             } else{
                 byte[] bytes = profilePicture.getBytes();
                 try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
@@ -238,7 +237,7 @@ public class UserService {
                 }
 
                 String targetRootPath =  directoryLocator.getTargetPathProfilePicture();
-                File targetFolder = new File(targetRootPath + File.separator + cleanUserName);
+                File targetFolder = new File(targetRootPath + File.separator + thisUser.getId());
                 if (!targetFolder.exists()) {
                     targetFolder.mkdirs();
                 }
@@ -248,7 +247,7 @@ public class UserService {
                     targetOutputStream.write(bytes);
                 }
 
-                File targetClassesDirectory = new File("target/classes/static/images/profilePicture/" + cleanUserName);
+                File targetClassesDirectory = new File("target/classes/static/images/profilePicture/" + thisUser.getId());
                 if (!targetClassesDirectory.exists()) {
                     targetClassesDirectory.mkdirs();
                 }
@@ -256,13 +255,14 @@ public class UserService {
                 File targetClassesFile = new File(targetClassesDirectory + "/" + fileName);
                 Files.copy(targetFile.toPath(), targetClassesFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                return "/images/profilePicture/" + cleanUserName + "/" + fileName;
+                return "/images/profilePicture/" + thisUser.getId() + "/" + fileName;
             }
         } catch (IOException e) {
             e.printStackTrace();
             return "redirect:/manga";
         }
     }
+
     public void setAdultContentAgreement(String username, boolean agreement) {
         User user = userRepo.findByUserName(username);
         UserSettings userSettings = userSettingsRepo.findByUser(user);

@@ -92,10 +92,10 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-start">
               <li class="nav-item">
-                <a th:href="@{/profile/{username}(username=${#authentication.principal.username})}" class="dropdown-item">Профіль</a>
+                <a th:href="@{/profile/{userId}(userId=${userId})}" class="dropdown-item">Профіль</a>
               </li>
               <li class="nav-item">
-                <a th:href="@{/profile/settings/{username}(username=${#authentication.principal.username})}" class="dropdown-item">Налаштування</a>
+                <a th:href="@{/profile/settings/{userId}(userId=${userId})}" class="dropdown-item">Налаштування</a>
               </li>
               <li class="nav-item">
                 <form th:action="@{/logout}" method="post" class="d-inline">

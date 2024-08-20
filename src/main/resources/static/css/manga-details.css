@@ -461,6 +461,18 @@
     color:#656565;
     text-decoration:underline;
 }
+.list-group-nocomments-item {
+    text-align: center;
+    font-size: 20px;
+    padding: 20px;
+}
+
+.fa-face-smile-wink {
+    display: block;
+    margin: 0 auto;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
 .chapter-title span{
     color:#dcdcdc;
 }
@@ -1131,10 +1143,9 @@
     top: 4px;
     left: 8px;
     background-color: #302B3B;
-    padding: 2px;
+    padding: 3px;
     border-radius: 4px;
     pointer-events: none;
-    font-weight: bold;
     color: #ff0080;
 }
 

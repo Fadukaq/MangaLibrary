@@ -111,11 +111,14 @@ public class UserController {
         return "main/about";
     }
 
-    @GetMapping("/profile/{userName}")
-    public String userProfile(@PathVariable String userName, Model model) {
-        User user = userRepo.findByUserName(userName);
-        if (user != null) {
+    @GetMapping("/profile/{id}")
+    public String userProfileOId(@PathVariable Long id, Model model) {
+        Optional<User> userOptional = userRepo.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
             model.addAttribute("user", user);
+            model.addAttribute("username", user.getUserName());
             userService.getUserMangaLists(user, readingManga, recitedManga, wantToReadManga, stoppedReadingManga);
 
             model.addAttribute("readingManga", readingManga);
@@ -125,7 +128,7 @@ public class UserController {
 
             return "user/user-profile";
         } else {
-            model.addAttribute("errorMessage", "Користувач: " + userName + " не знайдений");
+            model.addAttribute("errorMessage", "Користувач: " + id + " не знайдений");
             return "main/error";
         }
     }
@@ -145,8 +148,9 @@ public class UserController {
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
-            if(!Objects.equals(user.getUserName(), username)){
-                model.addAttribute("errorMessage", "У вас немає доступу змінювати цей профіль!");
+            User currentUser = userRepo.findByUserName(username);
+            if(!Objects.equals(user.getId(), currentUser.getId())){
+                model.addAttribute("errorMessage", "У вас немає доступу до налаштувань цього профілю!");
                 return "main/error";
             }
 
@@ -157,12 +161,13 @@ public class UserController {
 
     @PostMapping("/profile/edit/{id}")
     public String userEditProfilePost(@PathVariable("id") long id, @Valid @ModelAttribute("userForm") UserForm userForm,
-                                        BindingResult bindingResult,
-                                        @RequestParam String currentPassword,
-                                        @RequestParam(name = "userPasswordNew", required = false) String userPasswordNew,
-                                        @RequestParam(name = "changePasswordCheckbox", required = false) boolean changePasswordCheckbox,
-                                        RedirectAttributes redirectAttributes,
-                                        Model model){
+                                      BindingResult bindingResult,
+                                      @RequestParam String currentPassword,
+                                      @RequestParam(name = "userPasswordNew", required = false) String userPasswordNew,
+                                      @RequestParam(name = "changePasswordCheckbox", required = false) boolean changePasswordCheckbox,
+                                      RedirectAttributes redirectAttributes,
+                                      HttpSession session,
+                                      Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("user", userForm.getUser());
             model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
@@ -181,7 +186,7 @@ public class UserController {
             return "user/user-edit-profile";
         }
 
-        if (changePasswordCheckbox &&(!userService.isValidResetPass(userPasswordNew))) {
+        if (changePasswordCheckbox && !userService.isValidResetPass(userPasswordNew)) {
             model.addAttribute("changePasswordCheckbox", "on");
             model.addAttribute("errorPassword", "Поле Новий пароль повинно бути від 10 символів до 255!");
             model.addAttribute("user", userForm.getUser());
@@ -189,26 +194,30 @@ public class UserController {
             model.addAttribute("userForm", userForm);
             return "user/user-edit-profile";
         }
-
-        model.addAttribute("user", updatedUser);
-        redirectAttributes.addAttribute("userName", updatedUser.getUserName());
-        return "redirect:/profile/{userName}";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        if(!Objects.equals(updatedUser.getUserName(), username)){
+            session.invalidate();
+            return "redirect:/login";
+        }
+        return "redirect:/profile/"+updatedUser.getId();
     }
 
-    @GetMapping("/profile/settings/{userName}")
-    public String userSettings(@PathVariable("userName") String userName ,
-                                    Model model){
-        User user = userRepo.findByUserName(userName);
-        if(user != null){
+    @GetMapping("/profile/settings/{id}")
+    public String userSettings(@PathVariable("id") Long id, Model model) {
+        Optional<User> userOptional = userRepo.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
             UserSettings userSettings = userSettingsRepo.findByUser(user);
-            model.addAttribute("user",user);
+            model.addAttribute("user", user);
             model.addAttribute("userSettings", userSettings);
             if (userSettings != null && userSettings.getBackgroundImage() != null) {
                 model.addAttribute("GetBackGroundImgUser", userSettings.getBackgroundImage());
             }
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
-            if(!Objects.equals(user.getUserName(), username)){
+            User currentUser = userRepo.findByUserName(username);
+            if (!Objects.equals(user.getId(), currentUser.getId())) {
                 model.addAttribute("errorMessage", "У вас немає доступу до налаштувань цього профілю!");
                 return "main/error";
             }
@@ -216,27 +225,28 @@ public class UserController {
         }
         return "user/user-profile";
     }
-    @PostMapping("/profile/settings/{userName}")
-    public String userSettingsPost(@PathVariable("userName") String userName,
-                                    @RequestParam("selectedImage") String selectedImage,
-                                    @RequestParam(value = "adultContentAgreement", required = false) Boolean adultContentAgreement,
-                                    @ModelAttribute("userSettings") UserSettings userSettings,
-                                    BindingResult bindingResult,
-                                    Model model) {
 
-        User user = userRepo.findByUserName(userName);
-        if (user == null) {
+    @PostMapping("/profile/settings/{id}")
+    public String userSettingsPost(@PathVariable("id") Long id,
+                                   @RequestParam("selectedImage") String selectedImage,
+                                   @RequestParam(value = "adultContentAgreement", required = false) Boolean adultContentAgreement,
+                                   @ModelAttribute("userSettings") UserSettings userSettings,
+                                   BindingResult bindingResult,
+                                   Model model) {
+
+        Optional<User> userOptional = userRepo.findById(id);
+        if (userOptional.isEmpty()) {
             return "redirect:/manga";
         }
-
+        User user = userOptional.get();
         UserSettings existingSettings = user.getUserSettings();
 
         String relativeImagePath = selectedImage.substring(selectedImage.indexOf("/images"));
         if (!userService.validateUserSettings(userSettings, relativeImagePath, bindingResult)) {
             model.addAttribute("user", user);
             model.addAttribute("userSettings", userSettings);
-            model.addAttribute("GetBackGroundImgUser", existingSettings.getBackgroundImage());
-            model.addAttribute("selectedImage", existingSettings.getBackgroundImage());
+            model.addAttribute("GetBackGroundImgUser", existingSettings != null ? existingSettings.getBackgroundImage() : null);
+            model.addAttribute("selectedImage", existingSettings != null ? existingSettings.getBackgroundImage() : null);
             return "user/user-settings";
         }
 
@@ -254,7 +264,7 @@ public class UserController {
 
         userRepo.save(user);
 
-        return "redirect:/profile/settings/" + userName;
+        return "redirect:/profile/settings/" + id;
     }
     @PostMapping("/profile/delete-from-list/{mangaId}")
     public String deleteFromListPost(@PathVariable("mangaId") long mangaId,
@@ -266,7 +276,7 @@ public class UserController {
             userService.deleteMangaFromUserList(user, mangaId);
             userRepo.save(user);
 
-            return "redirect:/profile/" + username + panel;
+            return "redirect:/profile/" + user.getId() + panel;
         }
         return "redirect:/error";
     }
