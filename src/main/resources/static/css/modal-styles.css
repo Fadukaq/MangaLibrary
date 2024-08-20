@@ -21,7 +21,7 @@
     font-size: 16px;
     cursor: pointer;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.6s ease;
 }
 .btn-custom-confirm:hover {
     background-color: #ea0078 !important;

@@ -3,18 +3,26 @@ body {
     background-color: #181822;
     color: white;
     text-align: center;
-    padding: 50px;
     }
-h1 {
-    margin-bottom: 20px;
-}
 p {
     font-size: 25px;
     margin-top: 20px;
 }
-.custom-border {
-    background-color:#3300ff;
-    border-color: blue;
+.btn-custom-back {
+    background-color: #282828 !important;
+    border-color: #ff0080;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.6s ease;
 }
-
-
+.btn-custom-back:hover {
+    background-color: #ea0078 !important;
+}
+.btn-custom-back:focus {
+    background-color: #c20065 !important;
+}

@@ -500,6 +500,19 @@
     border-radius: 10px !important;
     background-color: #262626;
 }
+#sortChapters {
+    font-size: 13px;
+    color: #e1e1e1;
+    border-color: #ff0080;
+}
+#sortChapters:hover {
+    background-color:#3b3b3bbe !important;
+}
+#sortChapters .fas {
+    color: #e1e1e1;
+    font-size: 12px;
+}
+
 .btn-custom-admin-panel {
     color: #cccccc;
     font-weight: bold;
@@ -561,7 +574,13 @@
     background-color: #522878;
     color: #ffffff;
 }
-
+.dropdown-sort.disabled .btn,
+.dropdown-sort.disabled .dropdown-menu {
+    pointer-events: none;
+    opacity: 0.5;
+    background-color: #6c757d;
+    color: #fff;
+}
 @media (max-width: 1399px) {
     .genre-tag {
         font-size: 10px;

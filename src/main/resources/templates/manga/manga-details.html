@@ -230,8 +230,13 @@
                                 <i class="fa-regular fa-face-sad-tear" style="font-size: 1.5rem;"></i>
                                 <span>Поки що не було додано глав для цієї манги.</span>
                             </div>
-                            <ul class="list-group">
-                                <li th:each="chapter : ${chapters}" class="list-group-item mb-1">
+                            <div th:unless="${#lists.isEmpty(chapters)}" class="d-flex justify-content-between align-items-center mb-3" style="padding-left: 14px;">
+                                <button id="sortChapters" class="btn btn-outline-primary">
+                                    <i id="sortIcon" class="fas fa-sort-amount-down"></i> Сортувати
+                                </button>
+                            </div>
+                            <ul id="chaptersList" class="list-group">
+                                <li th:each="chapter : ${chapters}" class="list-group-item mb-1" th:data-date="${chapter.creationTime}">
                                     <div th:if="${#authentication.authorities[0].authority == 'ADMIN' or #authentication.authorities[0].authority == 'MangaModerator'}" class="d-flex flex-column">
                                         <span>
                                             <a th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="chapter-title text-decoration-none" style="color:#ce86ff;">
@@ -268,7 +273,7 @@
                                             <span th:text="${chapter.title}"></span>
                                         </a>
                                         <span style="font-size:14px; color:gray;">
-                                           <span>
+                                            <span>
                                                 <a class="user-added-chapter" th:href="@{/profile/{userId}(userId=${chapter.user.id})}">
                                                     <img th:src="${chapter.user.profilePicture}" alt="Profile Picture" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 5px;">
                                                     <span th:text="${chapter.user.userName}"></span>
@@ -281,8 +286,8 @@
                                     </div>
                                 </li>
                             </ul>
-                        </div>
                     </div>
+                </div>
                 <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab" th:data-manga-id="${manga.id}" th:data-current-user-id="${user.id}">
                         <div class="comment-controls">
                             <form id="add-comment-form" th:action="@{/manga/{mangaId}/add-comment(mangaId=${manga.id})}" method="post">
@@ -344,6 +349,41 @@
     window.countThreeStar = /*[[${countThreeStar}]]*/ 0;
     window.countFourStar = /*[[${countFourStar}]]*/ 0;
     window.countFiveStar = /*[[${countFiveStar}]]*/ 0;
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortButton = document.getElementById('sortChapters');
+        const sortIcon = document.getElementById('sortIcon');
+        const chaptersList = document.getElementById('chaptersList');
+        let isAscending = false;
+
+        function sortChapters() {
+            const chapters = Array.from(chaptersList.children);
+            chapters.sort((a, b) => {
+                const dateA = new Date(a.getAttribute('data-date'));
+                const dateB = new Date(b.getAttribute('data-date'));
+
+                return isAscending ? dateA - dateB : dateB - dateA;
+            });
+
+            chapters.forEach(chapter => chaptersList.appendChild(chapter));
+        }
+        sortChapters();
+
+        sortButton.addEventListener('click', function() {
+            isAscending = !isAscending;
+
+            sortChapters();
+
+            if (isAscending) {
+                sortIcon.classList.remove('fa-sort-amount-down');
+                sortIcon.classList.add('fa-sort-amount-up');
+            } else {
+                sortIcon.classList.remove('fa-sort-amount-up');
+                sortIcon.classList.add('fa-sort-amount-down');
+            }
+        });
+    });
 </script>
 <script src="/js/manga-details-statistics.js"></script>
 <script th:if="${manga.adultContent and not userSettings.adultContentAgreement}" src="/js/adultContentAlert.js"></script>

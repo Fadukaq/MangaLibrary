@@ -87,8 +87,10 @@ $(document).ready(function() {
                         <i class="fa-regular fa-face-smile-wink"></i>
                         Будьте першим хто залишить коментар для цієї манги.
                     </li>
-                    `);
-                    return;
+                `);
+                    $('.dropdown-sort').addClass('disabled');
+                } else {
+                    $('.dropdown-sort').removeClass('disabled');
                 }
 
                 if (sortBy === 'byNew') {
