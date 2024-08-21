@@ -20,6 +20,8 @@ public class MainService {
     private final GenreRepo genreRepo;
 
     @Autowired
+    MangaService mangaService;
+    @Autowired
     public MainService(MangaRepo mangaRepo, ChapterRepo chapterRepo, GenreRepo genreRepo) {
         this.mangaRepo = mangaRepo;
         this.chapterRepo = chapterRepo;
@@ -111,6 +113,12 @@ public class MainService {
                 if (!uniqueMangaList.isEmpty()) {
                     mangaByGenre.put(genre.getGenreName(), uniqueMangaList);
                 }
+            }
+        }
+
+        for (Map.Entry<String, List<Manga>> entry : mangaByGenre.entrySet()) {
+            for (Manga manga : entry.getValue()) {
+                manga.setMangaStatus(mangaService.getMangaTranslatedStatus(manga.getMangaStatus()));
             }
         }
 

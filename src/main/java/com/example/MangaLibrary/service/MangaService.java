@@ -42,6 +42,12 @@ public class MangaService {
     private RatingRepo ratingRepo;
     private static final Map<String, String> statusTranslation = new HashMap<>();
 
+    static {
+        statusTranslation.put("release", "Реліз");
+        statusTranslation.put("ongoing", "Онгоїнг");
+        statusTranslation.put("completed", "Завершено");
+    }
+
     public boolean isValidAddMangaForm(MangaForm mangaForm, BindingResult bindingResult) {
         List<Long> genreIds = mangaForm.getGenres().stream()
                 .map(Genre::getId)
@@ -285,13 +291,7 @@ public class MangaService {
         folder.delete();
     }
 
-    public String getMangaTranslatedStatus(String status)
-    {
-        statusTranslation.put("release", "Реліз");
-        statusTranslation.put("ongoing", "Онгоїнг");
-        statusTranslation.put("completed", "Завершено");
-        return statusTranslation.getOrDefault(status, status);
-    }
+
 
     public static void addMangaStatusAttributes(User user, Long mangaId, ModelMap model) {
         List<List<String>> userLists = List.of(
@@ -358,6 +358,9 @@ public class MangaService {
             manga.setAverageRating(newAverageRating);
             mangaRepo.save(manga);
         }
+    }
+    public String getMangaTranslatedStatus(String status) {
+        return statusTranslation.getOrDefault(status, status);
     }
 
     public Set<Manga> getRelatedMangas(Long mangaId) {
