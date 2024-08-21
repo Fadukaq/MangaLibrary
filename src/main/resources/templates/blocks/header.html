@@ -85,7 +85,14 @@
             </div>
           </div>
         </div>
-        <ul class="navbar-nav ms-auto burger-menu">
+
+        <div th:if="${#authorization.expression('isAuthenticated()')}" class="user-info-container">
+          <a href="#">
+            <i class="fa-regular fa-bell"></i>
+          </a>
+        </div>
+
+        <ul class="navbar-nav burger-menu">
           <li th:if="${#authorization.expression('isAuthenticated()')}" class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <img th:src="@{${userImageUrl}}" alt="User Image" class="user-image">

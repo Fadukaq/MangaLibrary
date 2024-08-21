@@ -4,15 +4,10 @@ import com.example.MangaLibrary.helper.manga.MangaForm;
 import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.models.*;
 import com.example.MangaLibrary.repo.*;
-import com.example.MangaLibrary.service.ChapterService;
-import com.example.MangaLibrary.service.CommentService;
-import com.example.MangaLibrary.service.MangaService;
+import com.example.MangaLibrary.service.*;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import com.example.MangaLibrary.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -27,7 +22,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -437,13 +431,13 @@ public class MangaController {
 
     @PostMapping("/manga/{mangaId}/chapter/edit/{chapterId}")
     public String chapterEditPost(@PathVariable Long mangaId, @PathVariable Long chapterId,
-                                  @Valid @ModelAttribute("chapterForm") ChapterForm chapterForm,
-                                  BindingResult result, RedirectAttributes redirectAttributes,
-                                  Model model) throws IOException {
+                                    @Valid @ModelAttribute("chapterForm") ChapterForm chapterForm,
+                                    BindingResult result, RedirectAttributes redirectAttributes,
+                                    Model model) throws IOException {
         Optional<Manga> mangaOptional = mangaRepo.findById(mangaId);
         Optional<Chapter> chapterOptional = chapterRepo.findById(chapterId);
 
-        if (!mangaOptional.isPresent() || !chapterOptional.isPresent()) {
+        if (mangaOptional.isEmpty() || chapterOptional.isEmpty()) {
             model.addAttribute("errorMessage", "Такой манги или главы не найдено!");
             return "main/error";
         }
@@ -557,8 +551,8 @@ public class MangaController {
     @PostMapping("/rate-manga")
     @ResponseBody
     ResponseEntity<Map<String, Object>> rateManga(@RequestParam("mangaId") Long mangaId,
-                                                  @RequestParam("userId") Long userId,
-                                                  @RequestParam("rating") int rating) {
+                                                    @RequestParam("userId") Long userId,
+                                                    @RequestParam("rating") int rating) {
         Map<String, Object> response = new HashMap<>();
         try {
             mangaService.saveRating(mangaId, userId, rating);
@@ -570,6 +564,7 @@ public class MangaController {
         }
         return ResponseEntity.ok(response);
     }
+
     @PostMapping("/remove-rating")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> removeRating(@RequestParam("mangaId") Long mangaId,

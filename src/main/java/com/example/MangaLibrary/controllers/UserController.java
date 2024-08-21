@@ -117,6 +117,18 @@ public class UserController {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
+            UserSettings userSettings = userSettingsRepo.findByUser(user);
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            User currentUser = userRepo.findByUserName(username);
+
+            if(userSettings.getProfilePrivacy().equals("private") && userSettings.getUser().getId() != currentUser.getId()) {
+                model.addAttribute("user", user);
+                model.addAttribute("profilePrivacy", "private");
+                return "user/user-profile";
+            }
+
             model.addAttribute("user", user);
             model.addAttribute("username", user.getUserName());
             userService.getUserMangaLists(user, readingManga, recitedManga, wantToReadManga, stoppedReadingManga);

@@ -23,6 +23,25 @@ body {
   padding-top: 36px;
 }
 
+.fixed-header .user-info-container {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 25px;
+}
+
+
+.fixed-header .user-info-container i {
+  color: white;
+  font-size: 20px;
+  margin-top: 5px;
+  transition: color 0.3s ease;
+}
+
+.fixed-header .user-info-container i:hover {
+  color: #ff0080;
+}
+
 ::-webkit-scrollbar {
   width: 11px;
 }
@@ -442,4 +461,9 @@ body {
   backdrop-filter: blur(5px);
   border: 1px solid #2f0296;
   border-radius: 5px;
+}
+@media (max-width: 991px) {
+  .fixed-header .user-info-container {
+    display:none;
+  }
 }
