@@ -1,0 +1,122 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container h2 {
+    display: flex;
+    align-items: center;
+    font-size: 2em;
+}
+
+.container h2 i {
+    margin-right: 10px;
+}
+
+.news-container {
+    width: 100%;
+    max-width: 600px;
+}
+
+.border-bottom-dotted {
+    width: 100%;
+    border-bottom: 2px dotted #868686;
+}
+
+.main-news {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.news-item {
+    background-color: #1B1B1B;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 600px;
+    border: 1px solid #444;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+.news-item a{
+    text-decoration:none;
+}
+.news-meta {
+    display: flex;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #FFFFFF99;
+}
+
+.news-date {
+    margin-right: 10px;
+}
+.news-title {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.news-title span {
+    margin: 0;
+    font-size: 1.2em;
+    color: #fff;
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.news-title span:hover {
+    color:#ff0080;
+}
+.news-icons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 10px;
+}
+.news-icons .edit-icon, .news-icons .delete-icon {
+    color: #888;
+    font-size: 18px;
+    padding:0px;
+}
+
+.news-icons i{
+    transition: color 0.3s ease;
+}
+.news-icons i:hover {
+    color:#ff0080;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination .page-link {
+    margin: 0 10px;
+    background-color: #1B1B1B;
+    color:white;
+    border: 1px solid #767676;
+    border-radius:5px;
+    text-decoration: none;
+}
+.pagination .page-link:focus {
+    outline: none;
+    box-shadow: none;
+}
+.pagination .page-link:hover {
+    background-color: #282828;
+}
+.pagination .page-item.active .page-link {
+    border: 1px solid #ff0080;
+}

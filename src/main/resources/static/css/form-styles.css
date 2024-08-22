@@ -1,22 +1,21 @@
 .form-control {
-  border: 1px solid #2f0296;
+    border: 1px solid #910048;
     color: white;
-    background-color: #302b3b;
+    background-color: #2f2f2f;
 }
 .form-control:hover {
-    border-color: #4e00ff;
+    border-color: #d9006a;
 }
-
-
 .form-control:focus{
     color:white;
-    background-color: #302b3b;
-    border-color: #5000ff;
-    box-shadow: 0 0 0 2px #5000ff;
+    background-color: #2f2f2f;
+    border-color: #ff0080;
+    box-shadow: 0 0 0 2px #ff0080;
 }
         .form-control::placeholder {
     color: #999;
 }
+
 .custom-select-settings {
     background-color: #f3e5f5;
     border: 2px solid #9c27b0;

@@ -568,21 +568,21 @@
     min-width: 185px;
     box-sizing: border-box;
     border-radius:5px;
-}
-
-.dropdown-menu .dropdown-item:hover {
-    background-color: #1a1a1a;
-    color: #ffffff;
-}
-.dropdown-menu .dropdown-item.active {
-    background-color: #494949;
-    color: #ffffff;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .btn-custom-admin-panel + .dropdown-menu .dropdown-item:hover {
-    background-color: #522878;
-    color: #ffffff;
+    background-color: #383838;
+    color: #ff0080;
 }
+
+.dropdown-menu-sortBy .dropdown-item.active {
+    background-color: #ff0080;
+    color: #ffffff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
 .dropdown-sort.disabled .btn,
 .dropdown-sort.disabled .dropdown-menu {
     pointer-events: none;
@@ -1154,7 +1154,7 @@
 
 .upvote-button {
     color: #ccc;
-    --bs-btn-active-color: #00c200;
+    --bs-btn-active-color: #008300;
 }
 .upvote-button.selected {
     color: #00f100;
@@ -1168,7 +1168,7 @@
 
 .downvote-button {
     color: #ccc;
-    --bs-btn-active-color: #c70000;
+    --bs-btn-active-color: #7c0000;
 }
 .downvote-button.selected {
     color: #f00;

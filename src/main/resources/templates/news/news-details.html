@@ -7,18 +7,125 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/loader.css">
+    <link rel="stylesheet" href="/css/news/news-details.css">
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <header th:insert="~{blocks/header :: header}"></header>
+<div th:insert="~{blocks/modals/deleteConfirmationModal :: deleteConfirmationModal}"></div>
 <div class="content">
-
+    <div class="container mt-5 mb-5">
+        <div class="news-container mt-3">
+            <div class="header-news mt-2 mb-4">
+                <div class="header-title">
+                    <h2 th:text="${news.title}"></h2>
+                </div>
+                <div th:if="${#authentication.authorities[0].authority == 'ADMIN'}" class="news-icons">
+                    <a th:href="@{/news/edit/{newsId}(newsId=${news.id})}" class="edit-icon">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <form th:action="@{/news/delete/{id}(id=${news.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-link btn-delete delete-icon">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-bottom-dotted mb-4"></div>
+            <div class="main-news mb-5">
+                <div class="news-header">
+                    <a class="profile-link" th:href="@{/profile/{userId}(userId=${news.user.id})}">
+                        <img th:src="${news.user.ProfilePicture}" alt="ProfilePicture" class="profile-picture">
+                        <span th:text="${news.user.userName}"></span>
+                    </a>
+                    <span class="news-date" th:text="${#temporals.format(news.createdAt, 'dd MMM yyyy р.', new java.util.Locale('uk', 'UA'))}"></span>
+                </div>
+                <div class="news-text" th:utext="${news.text}"></div>
+            </div>
+            <div class="bottom-news mt-4">
+                <div class="feedback-container" th:data-news-id="${news.id}">
+                    <span class="feedback-span">Чи була ця новина корисна для вас?</span>
+                    <div class="vote-buttons">
+                        <a class="btn btn-link upvote-button" th:data-news-id="${news.id}" data-delta="1" th:classappend="${userRating == 1 ? 'active' : ''}">
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </a>
+                        <span class="rating-score" th:text="${news.rating}" th:title="${positiveAndNegative}">
+                        </span>
+                        <a class="btn btn-link downvote-button" th:data-news-id="${news.id}" data-delta="-1" th:classappend="${userRating == -1 ? 'active' : ''}">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
+<script src="/js/confirmDelete.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const feedbackContainer = document.querySelector('.feedback-container');
+        const voteButtons = document.querySelectorAll('.upvote-button, .downvote-button');
+        const ratingScore = document.querySelector('.rating-score');
+        const newsId = feedbackContainer.getAttribute('data-news-id');
+
+        function setActiveButton(userRating) {
+            voteButtons.forEach(btn => btn.classList.remove('active'));
+            if (userRating === 1) {
+                document.querySelector('.upvote-button').classList.add('active');
+            } else if (userRating === -1) {
+                document.querySelector('.downvote-button').classList.add('active');
+            }
+        }
+
+        function updateRatingInfo() {
+            fetch(`/news/rating-info/${newsId}`)
+                .then(response => response.json())
+                .then(data => {
+                ratingScore.textContent = data.total;
+                ratingScore.title = `Плюсів: ${data.positive} | Мінусів: ${data.negative}`;
+            })
+                .catch(error => console.error('Error:', error));
+        }
+
+        updateRatingInfo();
+
+        if (newsId) {
+            fetch(`/news/user-rating?newsId=${newsId}`)
+                .then(response => response.json())
+                .then(userRating => {
+                setActiveButton(userRating);
+            })
+                .catch(error => console.error('Помилка:', error));
+
+            voteButtons.forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    const delta = this.getAttribute('data-delta');
+
+                    fetch(`/news/rate?newsId=${newsId}&delta=${delta}`, {
+                        method: 'GET',
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                        updateRatingInfo();
+                        ratingScore.textContent = data.rating;
+                        setActiveButton(data.userRating);
+                    })
+                        .catch(error => {
+                        console.error('Помилка:', error);
+                    });
+                });
+            });
+        }
+    });
+</script>
 </body>
 </html>

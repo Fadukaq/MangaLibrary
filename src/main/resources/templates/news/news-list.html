@@ -7,18 +7,67 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/loader.css">
+    <link rel="stylesheet" href="/css/news/news-list.css">
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <header th:insert="~{blocks/header :: header}"></header>
+<div th:insert="~{blocks/modals/deleteConfirmationModal :: deleteConfirmationModal}"></div>
 <div class="content">
-
+    <div class="container mt-3">
+        <div class="header-news mt-5">
+            <h2><i class="fas fa-newspaper"></i> Новини</h2>
+        </div>
+        <div class="news-container mt-3">
+            <div class="border-bottom-dotted mb-4"></div>
+            <div class="main-news">
+                <div th:each="news : ${newsList}" class="news-item">
+                    <div th:if="${#authentication.authorities[0].authority == 'ADMIN'}" class="news-icons">
+                        <a th:href="@{/news/edit/{newsId}(newsId=${news.id})}" class="edit-icon">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form th:action="@{/news/delete/{id}(id=${news.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-link btn-delete delete-icon">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="news-meta">
+                        <span class="news-date" th:text="${#temporals.format(news.createdAt, 'dd MMM yyyy р.', new java.util.Locale('uk', 'UA'))}">22.08.2024</span>
+                        <span class="news-author" th:text="${news.user.userName}">username</span>
+                    </div>
+                    <div class="news-title">
+                        <a th:href="@{/news/{newsId}(newsId=${news.id})}">
+                            <span th:text="${news.title}">Заголовок новини</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${newsPage.totalPages > 1}" class="pagination">
+            <ul class="pagination">
+                <li th:if="${currentPage > 1}" class="page-item">
+                    <a th:href="@{/news(page=${currentPage - 1})}" class="page-link">Previous</a>
+                </li>
+                <li th:each="i : ${#numbers.sequence(1, newsPage.totalPages)}"
+                    th:classappend="${i == currentPage ? 'active' : 'page-item'}" class="page-item">
+                    <a th:href="@{/news(page=${i})}" th:text="${i}" class="page-link"></a>
+                </li>
+                <li th:if="${currentPage < newsPage.totalPages}" class="page-item">
+                    <a th:href="@{/news(page=${currentPage + 1})}" class="page-link">Next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
+<script src="/js/confirmDelete.js"></script>
 </body>
 </html>

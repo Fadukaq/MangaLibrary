@@ -41,6 +41,9 @@
               <li class="nav-item">
                 <a class="dropdown-item" style="color:white;" href="/genre/add">Добавити жанр</a>
               </li>
+              <li class="nav-item">
+                <a class="dropdown-item" style="color:white;" href="/news/add">Добавити новину</a>
+              </li>
               <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
                 <a class="dropdown-item" style="color:white;" href="/admin-panel">Адмін-Панель</a>
               </li>

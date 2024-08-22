@@ -1,20 +1,28 @@
-.modal-content {
-    background-color: #282828;
-    border: none;
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.modal-header {
-    border-bottom: 2px dotted #4e4e4e;
+.form-container {
+    width:100%;
+    max-width: 1000px;
+    padding: 40px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background-color: #212121;
 }
 
-.modal-footer {
-    border-top: 2px dotted #4e4e4e;
+.form-group.text-end {
+    display: flex;
+    justify-content: flex-end;
 }
 
 .btn-custom-confirm {
     background-color: #282828 !important;
     border-color: #ff0080;
     color: white;
+    margin-right:10px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -23,15 +31,17 @@
     border-radius: 4px;
     transition: background-color 0.6s ease;
 }
+
 .btn-custom-confirm:hover {
     background-color: #ea0078 !important;
 }
+
 .btn-custom-confirm:focus {
     background-color: #c20065 !important;
 }
 
-.btn-close-modal {
-    background-color: #282828 !important;
+.btn-custom-back {
+    background-color: #343434 !important;
     color: white;
     text-align: center;
     text-decoration: none;
@@ -41,10 +51,10 @@
     border-radius: 4px;
     transition: background-color 0.3s ease;
 }
-.btn-close-modal:hover {
+.btn-custom-back:hover {
     background-color: #2f2f2f !important;
 }
-.btn-close-modal:focus, .btn-primary:active {
+.btn-custom-back:focus, .btn-primary:active {
     background-color: #282828 !important;
     color: #ffffff !important;
     box-shadow: none !important;
