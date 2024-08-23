@@ -1,12 +1,3 @@
-$(document).ready(function() {
-    $('.dropdown-menu-sortBy').on('click', 'a', function(event) {
-        event.preventDefault();
-        const selectedText = $(this).text();
-        $('#dropdownMenuText').text(`${selectedText}`);
-        $(this).parent().siblings().find('a').removeClass('active');
-        $(this).addClass('active');
-    });
-});
 document.addEventListener('DOMContentLoaded', function() {
     const filterBtn = document.getElementById('filter-btn');
     const filterModal = document.getElementById('filter-modal');
@@ -31,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const overlay = document.createElement('div');
         overlay.className = 'overlay';
         document.body.appendChild(overlay);
-        overlay.style.display = 'block';
         overlay.addEventListener('click', closeModal);
     }
 
@@ -44,89 +34,72 @@ document.addEventListener('DOMContentLoaded', function() {
 
     filterBtn.addEventListener('click', openModal);
     closeBtn.addEventListener('click', closeModal);
-});
-document.addEventListener('DOMContentLoaded', updateStarRatings);
-function updateStarRatings() {
-    const gradeDetails = document.querySelectorAll('.custom-grade-details');
 
-    gradeDetails.forEach(function(detail) {
-        const rating = parseFloat(detail.dataset.rating);
-        const starsContainer = detail.querySelector('.stars');
-        const ratingNumber = detail.querySelector('.rating-number');
+    function updateStarRatings() {
+        const gradeDetails = document.querySelectorAll('.custom-grade-details');
 
-        starsContainer.innerHTML = '';
+        gradeDetails.forEach(detail => {
+            const rating = parseFloat(detail.dataset.rating);
+            const starsContainer = detail.querySelector('.stars');
+            const ratingNumber = detail.querySelector('.rating-number');
 
-        for (let i = 1; i <= 5; i++) {
-            const star = document.createElement('i');
-
-            if (i <= Math.floor(rating)) {
-                star.className = 'fas fa-star';
-            } else if (i - 0.8 < rating) {
-                star.className = 'fas fa-star-half-alt';
-            } else {
-                star.className = 'far fa-star';
+            starsContainer.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement('i');
+                star.className = i <= Math.floor(rating) ? 'fas fa-star'
+                : (i - 0.8 < rating ? 'fas fa-star-half-alt' : 'far fa-star');
+                starsContainer.appendChild(star);
             }
-
-            starsContainer.appendChild(star);
-        }
-
-        ratingNumber.textContent = rating.toFixed(1);
-    });
-}
-const filterTemplate = document.getElementById('filter-template');
-const sidebarContent = document.getElementById('sidebar-content');
-const modalContent = document.getElementById('modal-content');
-
-sidebarContent.appendChild(filterTemplate.content.cloneNode(true));
-modalContent.appendChild(filterTemplate.content.cloneNode(true));
-
-document.addEventListener('DOMContentLoaded', function() {
-    const gridViewBtn = document.getElementById('grid-view');
-    const listViewBtn = document.getElementById('list-view');
-    const mangaContainer = document.querySelector('.manga-grid');
-
-    mangaContainer.classList.add('hide-manga-details');
-    gridViewBtn.classList.add('active');
-
-    function applyViewSwitchAnimation() {
-        mangaContainer.classList.add('switching');
-
-        setTimeout(() => {
-            mangaContainer.classList.remove('switching');
-        }, 500);
+            ratingNumber.textContent = rating.toFixed(1);
+        });
     }
 
-    gridViewBtn.addEventListener('click', function() {
-        mangaContainer.classList.remove('manga-list');
-        mangaContainer.classList.remove('hide-manga-details');
-        gridViewBtn.classList.add('active');
-        listViewBtn.classList.remove('active');
+    updateStarRatings();
 
-        applyViewSwitchAnimation();
-    });
+    function initializeViewSwitch() {
+        const gridViewBtn = document.getElementById('grid-view');
+        const listViewBtn = document.getElementById('list-view');
+        const mangaContainer = document.querySelector('.manga-grid');
 
-    listViewBtn.addEventListener('click', function() {
-        mangaContainer.classList.add('manga-list');
         mangaContainer.classList.add('hide-manga-details');
-        listViewBtn.classList.add('active');
-        gridViewBtn.classList.remove('active');
+        gridViewBtn.classList.add('active');
 
-        applyViewSwitchAnimation();
-    });
-});
-$(document).ready(function() {
+        function applyViewSwitchAnimation() {
+            mangaContainer.classList.add('switching');
+            setTimeout(() => mangaContainer.classList.remove('switching'), 500);
+        }
+
+        gridViewBtn.addEventListener('click', () => {
+            mangaContainer.classList.remove('manga-list', 'hide-manga-details');
+            gridViewBtn.classList.add('active');
+            listViewBtn.classList.remove('active');
+            applyViewSwitchAnimation();
+        });
+
+        listViewBtn.addEventListener('click', () => {
+            mangaContainer.classList.add('manga-list', 'hide-manga-details');
+            listViewBtn.classList.add('active');
+            gridViewBtn.classList.remove('active');
+            applyViewSwitchAnimation();
+        });
+    }
+    initializeViewSwitch();
+    const filterTemplate = document.getElementById('filter-template');
+    const sidebarContent = document.getElementById('sidebar-content');
+    const modalContent = document.getElementById('modal-content');
+
+    sidebarContent.appendChild(filterTemplate.content.cloneNode(true));
+    modalContent.appendChild(filterTemplate.content.cloneNode(true));
+
     let sortDirection = new URLSearchParams(window.location.search).get('direction') || 'desc';
     let currentSort = new URLSearchParams(window.location.search).get('sort') || 'byNew';
 
     function updateSortButton(direction) {
         const sortButton = $('#sort-up');
-        if (direction === 'asc') {
-            sortButton.removeClass('sort-desc').addClass('sort-asc');
-            sortButton.find('i').removeClass('fa-arrow-up-wide-short').addClass('fa-arrow-down-wide-short');
-        } else {
-            sortButton.removeClass('sort-asc').addClass('sort-desc');
-            sortButton.find('i').removeClass('fa-arrow-down-wide-short').addClass('fa-arrow-up-wide-short');
-        }
+        sortButton.toggleClass('sort-asc', direction === 'asc')
+            .toggleClass('sort-desc', direction === 'desc');
+        sortButton.find('i').toggleClass('fa-arrow-up-wide-short', direction === 'desc')
+            .toggleClass('fa-arrow-down-wide-short', direction === 'asc');
     }
 
     function updateSortType(sortType) {
@@ -138,20 +111,15 @@ $(document).ready(function() {
     function loadManga(sort, direction, page = 1) {
         $.ajax({
             url: '/manga',
-            data: { sort: sort, direction: direction, page: page },
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            },
+            data: { sort, direction, page },
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
             success: function(data) {
-                const mangaContainer = document.querySelector('.manga-grid');
                 $('.manga-grid').html($(data).find('.manga-grid').html());
                 $('.pagination').html($(data).find('.pagination').html());
                 history.pushState(null, '', `/manga?sort=${sort}&direction=${direction}&page=${page}`);
                 updateStarRatings();
                 mangaContainer.classList.add('switching');
-                setTimeout(() => {
-                    mangaContainer.classList.remove('switching');
-                }, 500);
+                setTimeout(() => mangaContainer.classList.remove('switching'), 500);
             }
         });
     }
@@ -177,9 +145,7 @@ $(document).ready(function() {
         const page = $(this).text();
         loadManga(currentSort, sortDirection, page);
     });
-});
-//For Sidebar fixed scrolling down.
-document.addEventListener('DOMContentLoaded', function() {
+
     const sidebar = document.querySelector('.sidebar');
     const footer = document.querySelector('footer');
     const initialTopOffset = 100;
@@ -192,16 +158,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (scrollPosition + initialTopOffset > maxTop) {
             sidebar.style.position = 'absolute';
-            sidebar.style.top = maxTop + 'px';
+            sidebar.style.top = `${maxTop}px`;
         } else {
             sidebar.style.position = 'fixed';
-            sidebar.style.top = initialTopOffset + 'px';
+            sidebar.style.top = `${initialTopOffset}px`;
         }
     }
 
     window.addEventListener('scroll', updateSidebarPosition);
-
     window.addEventListener('resize', updateSidebarPosition);
-
     updateSidebarPosition();
+
+    window.updateStarRatings = updateStarRatings;
+    window.initializeViewSwitch = initializeViewSwitch;
 });
+

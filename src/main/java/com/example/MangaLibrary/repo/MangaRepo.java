@@ -36,4 +36,21 @@ public interface MangaRepo extends CrudRepository<Manga, Long> {
     List<Manga> findByGenresIn(Set<Genre> genres);
     List<Manga> findByMangaNameStartingWith(String query);
     List<Manga> findByRelatedMangasId(Long mangaId);
+    @Query("SELECT DISTINCT m FROM Manga m " +
+            "LEFT JOIN m.genres g " +
+            "WHERE (:genreIds IS NULL OR g.id IN :genreIds) " +
+            "AND (:authorIds IS NULL OR m.author.id IN :authorIds) " +
+            "AND (:status IS NULL OR m.mangaStatus = :status) " +
+            "AND (:ageRating IS NULL OR m.adultContent = :ageRating) " +
+            "AND (:yearFrom IS NULL OR m.releaseYear >= :yearFrom) " +
+            "AND (:yearTo IS NULL OR m.releaseYear <= :yearTo)")
+    Page<Manga> findFiltered(
+            @Param("genreIds") List<Long> genreIds,
+            @Param("authorIds") List<Long> authorIds,
+            @Param("status") String status,
+            @Param("ageRating") Boolean ageRating,
+            @Param("yearFrom") Integer yearFrom,
+            @Param("yearTo") Integer yearTo,
+            Pageable pageable
+    );
 }

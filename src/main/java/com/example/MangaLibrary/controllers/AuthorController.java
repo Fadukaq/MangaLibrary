@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.ui.Model;
 import com.example.MangaLibrary.models.Author;
-import com.example.MangaLibrary.models.Genre;
 import com.example.MangaLibrary.repo.AuthorRepo;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 @Controller
 public class AuthorController {
@@ -127,5 +125,10 @@ public class AuthorController {
 
         authorRepo.delete(author);
         return "redirect:/manga";
+    }
+    @GetMapping("/authors-filter")
+    @ResponseBody
+    public List<Author> getAllAuthors() {
+        return authorRepo.findAll();
     }
 }

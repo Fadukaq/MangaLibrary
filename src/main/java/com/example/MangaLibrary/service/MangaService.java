@@ -3,10 +3,7 @@ package com.example.MangaLibrary.service;
 import ch.qos.logback.core.model.Model;
 import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.helper.manga.MangaForm;
-import com.example.MangaLibrary.models.Genre;
-import com.example.MangaLibrary.models.Manga;
-import com.example.MangaLibrary.models.Rating;
-import com.example.MangaLibrary.models.User;
+import com.example.MangaLibrary.models.*;
 import com.example.MangaLibrary.repo.GenreRepo;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.RatingRepo;
@@ -412,5 +409,6 @@ public class MangaService {
     public long getCountByFiveStar(String mangaId) {
         return userRepo.countByMangaFiveStar(Long.parseLong(mangaId));
     }
+
 }
 

@@ -832,4 +832,44 @@ public class MangaController {
         }
         return "redirect:/manga/" + randomMangaId;
     }
+    @GetMapping("/filter-manga")
+    public String filterManga(
+            @RequestParam(value = "genre", required = false) List<Long> genreIds,
+            @RequestParam(value = "author", required = false) List<Long> authorIds,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "ageRating", required = false) Boolean ageRating,
+            @RequestParam(value = "yearFrom", required = false) Integer yearFrom,
+            @RequestParam(value = "yearTo", required = false) Integer yearTo,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "sort", defaultValue = "releaseYear") String sortOrder,
+            @RequestParam(name = "direction", defaultValue = "desc") String direction,
+            Model model
+    ) {
+        Sort.Direction sortDirection = "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        String sortField = "releaseYear";
+        if ("byNew".equalsIgnoreCase(sortOrder)) {
+            sortField = "releaseYear";
+        } else if ("byTitle".equalsIgnoreCase(sortOrder)) {
+            sortField = "title";
+        }
+
+        Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, Sort.by(sortDirection, sortField));
+
+        Page<Manga> mangaPage = mangaRepo.findFiltered(
+                genreIds,
+                authorIds,
+                status,
+                ageRating,
+                yearFrom,
+                yearTo,
+                pageable
+        );
+
+        List<Manga> mangaList = mangaPage.getContent();
+
+        model.addAttribute("mangas", mangaList);
+        model.addAttribute("page", mangaPage);
+        return "manga/manga-partial :: manga-content";
+    }
 }

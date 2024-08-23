@@ -9,6 +9,36 @@
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/manga-main.css">
     <link rel="stylesheet" href="/css/loader.css">
+    <style>
+        .selected-authors-container {
+            margin-top: 10px;
+        }
+
+        .selected-genre, .selected-author {
+            display: inline-block;
+            background-color: #313131;
+            border: 1px solid #ff0080;
+            border-radius: 5px;
+            padding: 5px 14px;
+            margin: 2px;
+            position: relative;
+        }
+
+        .selected-genre .remove-genre, .selected-author .remove-author {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ff0000;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0 3px;
+        }
+        .default-option {
+            display: none;
+        }
+    </style>
 </head>
 <body >
 <div th:insert="~{blocks/loader :: loader}"></div>
@@ -21,29 +51,31 @@
             <h3 class="text-center mb-4">Фільтр <i class="fas fa-bars ml-3 fs-5" aria-hidden="true"></i></h3>
             <form id="filter-form">
                 <div class="filter-container">
-                <fieldset class="filter-group">
-                    <label class="filter-label">Жанри & Категорії</label >
-                    <input type="text" id="genre" class="filter-input" aria-label="Жанри і Категорії">
-                </fieldset>
+                    <fieldset class="filter-group">
+                        <label class="filter-label">Жанри & Категорії</label>
+                        <select id="genre-select" class="filter-select" aria-label="Жанри і Категорії">
+                        </select>
+                        <div id="selected-genres" class="selected-genres-container"></div>
+                    </fieldset>
 
-                <fieldset class="filter-group">
-                    <label class="filter-label">За автором</label >
-                    <input type="text" id="author" class="filter-input" aria-label="За автором">
-                </fieldset>
+                    <fieldset class="filter-group">
+                        <label class="filter-label">За автором</label>
+                        <select id="author-select" class="filter-select" aria-label="Автори"></select>
+                        <div id="selected-authors" class="selected-authors-container"></div>
+                    </fieldset>
 
-                <fieldset class="filter-group">
-                    <label  class="filter-label">Роки виходу</label >
-                    <div class="range-input-group">
-                        <input type="number" id="releaseYearFrom" class="filter-input" placeholder="Від" aria-label="Рік випуску від">
-                        <span class="dash mb-3" aria-hidden="true">—</span>
-                        <input type="number" id="releaseYearTo" class="filter-input" placeholder="До" aria-label="Рік випуску до">
-                    </div>
-                </fieldset>
+                    <fieldset class="filter-group">
+                        <label class="filter-label">Роки виходу</label>
+                        <div class="range-input-group">
+                            <input type="number" id="releaseYearFrom" class="filter-input" placeholder="Від" aria-label="Рік випуску від">
+                            <span class="dash mb-3" aria-hidden="true">—</span>
+                            <input type="number" id="releaseYearTo" class="filter-input" placeholder="До" aria-label="Рік випуску до">
+                        </div>
+                    </fieldset>
 
                 <fieldset class="filter-group">
                     <label class="filter-label">Статус манги</label>
                     <select id="mangaStatus" class="filter-select" aria-label="Статус манги">
-                        <option value="">Виберіть статус</option>
                         <option value="release">Реліз</option>
                         <option value="ongoing">Онгоїнг</option>
                         <option value="completed">Завершено</option>
@@ -53,9 +85,8 @@
                 <fieldset class="filter-group">
                     <label class="filter-label">Віковий рейтинг</label>
                     <select id="ageRating" class="filter-select" aria-label="Віковий рейтинг">
-                        <option value="">Виберіть рейтинг</option>
-                        <option value="no">Ні</option>
-                        <option value="18plus">18+</option>
+                        <option value="0">Ні</option>
+                        <option value="1">18+</option>
                     </select>
                 </fieldset>
                 <button type="submit" class="filter-button mt-2">Застосувати</button>
@@ -86,10 +117,10 @@
                         <button class="view-btn filter-btn" id="filter-btn" title="Фільтр">
                             <i class="fas fa-filter"></i>
                         </button>
-                        <button class="view-btn" id="grid-view" title="Сітка">
+                        <button class="view-btn grid-view" id="grid-view" title="Сітка">
                             <i class="fa fa-th"></i>
                         </button>
-                        <button class="view-btn" id="list-view" title="Список">
+                        <button class="view-btn list-view" id="list-view" title="Список">
                             <i class="fa fa-th-list"></i>
                         </button>
                         <button class="view-btn" id="sort-up" title="Сортувати за">
@@ -108,7 +139,11 @@
                 </div>
                 <div id="manga-content">
                     <div th:replace="~{manga/manga-partial :: manga-content}">
-                        </div>
+                    </div>
+                    </div>
+                <div id="no-manga-message"  class="no-manga-message" style="display: none;">
+                    <h2>Манга не знайдена</h2>
+                    <p>Спробуйте змінити фільтри.</p>
                 </div>
             </div>
         </div>
@@ -121,5 +156,6 @@
 <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
 <script src="/js/manga-main.js"></script>
+<script src="/js/manga-main-filter.js"></script>
 </body>
 </html>

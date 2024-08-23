@@ -108,6 +108,9 @@ public class GenreController {
 
         return "genre/manga-genre-view";
     }
-
-
+    @GetMapping("/genres-filter")
+    @ResponseBody
+    public List<Genre> getAllGenres() {
+        return genreRepo.findAll();
+    }
 }
