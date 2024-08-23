@@ -17,7 +17,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @NotEmpty(message = "Поле ім'я юзера не повинно бути порожнім")
-    @Size(min=4,max=120, message = "Ім'я юзера має складатися від 4 до 120 символів")
+    @Size(min=4,max=64, message = "Ім'я юзера має складатися від 4 до 64 символів")
     private String userName;
     private String ProfilePicture;
     @NotEmpty(message = "Поле пароль не повинно бути порожнім")

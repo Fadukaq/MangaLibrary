@@ -22,10 +22,10 @@
                 <div class="card-body bg-dark text-white d-flex">
                     <div class="d-flex align-items-center">
                         <img th:src="${user.profilePicture}" alt="User Profile Picture" class="profile-picture">
-                        <div class="ml-3">
-                            <p class="user-card-text"><strong>Username:</strong> <span th:text="${user.userName}"></span></p>
-                            <p class="user-card-text"><strong>UserRole:</strong> <span th:text="${user.userRole}"></span></p>
-                            <p class="user-card-text"><strong>About:</strong> <span th:text="${user.about}"></span></p>
+                        <div class="user-info ml-3">
+                            <strong>Username:</strong> <span th:text="${user.userName}"></span>
+                            <strong>UserRole:</strong> <span th:text="${user.userRole}"></span>
+                            <strong>About:</strong> <span th:text="${user.about}"></span>
                         </div>
                     </div>
                     <div  th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.name == user.userName})"

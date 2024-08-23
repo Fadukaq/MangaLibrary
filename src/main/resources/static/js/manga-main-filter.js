@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     defaultOption.textContent = 'Немає жанрів для вибору';
                     defaultOption.disabled = true;
                     defaultOption.selected = true;
-                    defaultOption.classList.add('default');
+                    defaultOption.classList.add('option-default-selected');
                     genreSelect.appendChild(defaultOption);
                 } else {
                     defaultOption.textContent = 'Немає жанрів для вибору';
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     defaultOption.textContent = 'Виберіть жанр';
                     defaultOption.disabled = true;
                     defaultOption.selected = true;
-                    defaultOption.classList.add('default');
+                    defaultOption.classList.add('option-default-selected');
                     genreSelect.appendChild(defaultOption);
                 } else {
                     defaultOption.textContent = 'Виберіть жанр';
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     defaultOption.textContent = 'Немає авторів для вибору';
                     defaultOption.disabled = true;
                     defaultOption.selected = true;
-                    defaultOption.classList.add('default');
+                    defaultOption.classList.add('option-default-selected');
                     authorSelect.appendChild(defaultOption);
                 } else {
                     defaultOption.textContent = 'Немає авторів для вибору';
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     defaultOption.textContent = 'Виберіть автора';
                     defaultOption.disabled = true;
                     defaultOption.selected = true;
-                    defaultOption.classList.add('default');
+                    defaultOption.classList.add('option-default-selected');
                     authorSelect.appendChild(defaultOption);
                 } else {
                     defaultOption.textContent = 'Виберіть автора';
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             updateGenreOptions();
         })
-            .catch(error => console.error('Ошибка при загрузке жанров:', error));
+            .catch(error => console.error('Помилка під час завантаження:', error));
 
         fetch('/authors-filter')
             .then(response => response.json())
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             updateAuthorOptions();
         })
-            .catch(error => console.error('Ошибка при загрузке авторов:', error));
+            .catch(error => console.error('Помилка під час завантаження:', error));
 
         genreSelect.addEventListener('change', function () {
             const selectedOption = this.options[this.selectedIndex];
@@ -215,27 +215,34 @@ document.addEventListener('DOMContentLoaded', function () {
             const $noMangaMessage = $('#no-manga-message');
             const $sortButtons = $('#sort-up, .dropdown-sort');
             const $viewButtons = $('.grid-view, .list-view');
+            const $headerContainer = $('.header-container');
+            const $catalogCount = $('.catalog-count');
             $sortButtons.hide();
+            $viewButtons.hide();
 
             if ($mangaGrid.children().length === 0) {
                 $viewButtons.hide();
                 $noMangaMessage.show();
+                $headerContainer.hide();
             } else {
-                $mangaGrid.show();
-                $viewButtons.show();
+                $headerContainer.show();
+                const count = $mangaGrid.children().length;
+                $catalogCount.text(count);
                 $noMangaMessage.hide();
+                $mangaGrid.show();
+                setTimeout(() => {
+                    $viewButtons.fadeIn();
+                }, 50);
             }
         }
 
 
         filterForm.addEventListener('submit', function(event) {
             event.preventDefault();
-
             const genreElements = container.querySelectorAll('#selected-genres .selected-genre');
             const genres = Array.from(genreElements).map(el => el.getAttribute('data-id'));
             const authorElements = container.querySelectorAll('#selected-authors .selected-author');
             const authors = Array.from(authorElements).map(el => el.getAttribute('data-id'));
-
             const status = container.querySelector('#mangaStatus').value;
             const ageRating = container.querySelector('#ageRating').value;
             const yearFrom = releaseYearFrom.value;
@@ -250,20 +257,35 @@ document.addEventListener('DOMContentLoaded', function () {
             params.append('yearTo', yearTo);
             params.append('page', '1');
 
-            fetch(`/filter-manga?${params.toString()}`)
-                .then(response => response.text())
-                .then(html => {
-                document.getElementById('manga-content').innerHTML = html;
-                checkIfNoManga();
-                if (typeof window.updateStarRatings === 'function') {
-                    window.updateStarRatings();
-                }
-                if (typeof window.initializeViewSwitch === 'function') {
-                    window.initializeViewSwitch();
-                }
+            const mangaContent = document.getElementById('manga-content');
 
-            })
-                .catch(error => console.error('Error fetching data:', error));
+            mangaContent.style.opacity = '0';
+            mangaContent.style.transition = 'opacity 0.3s ease-out';
+
+            setTimeout(() => {
+                fetch(`/filter-manga?${params.toString()}`)
+                    .then(response => response.text())
+                    .then(html => {
+                    mangaContent.innerHTML = html;
+                    checkIfNoManga();
+                    if (typeof window.updateStarRatings === 'function') {
+                        window.updateStarRatings();
+                    }
+                    if (typeof window.initializeViewSwitch === 'function') {
+                        window.initializeViewSwitch();
+                    }
+
+                    mangaContent.style.opacity = '1';
+
+                    const mangaItems = mangaContent.querySelectorAll('.manga-item');
+                    mangaItems.forEach((item, index) => {
+                        setTimeout(() => {
+                            item.classList.add('fade-in');
+                        }, index * 100);
+                    });
+                })
+                    .catch(error => console.error('Помилка під час завантаження:', error));
+            }, 300);
         });
     }
 });

@@ -4,11 +4,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBtn = document.getElementById('close-btn');
     const body = document.body;
 
+    filterBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+
     function openModal() {
         filterModal.style.right = '0';
         createOverlay();
         body.style.overflow = 'hidden';
         filterModal.setAttribute('aria-hidden', 'false');
+        console.log("should");
     }
 
     function closeModal() {
@@ -31,9 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
             overlay.remove();
         }
     }
-
-    filterBtn.addEventListener('click', openModal);
-    closeBtn.addEventListener('click', closeModal);
 
     function updateStarRatings() {
         const gradeDetails = document.querySelectorAll('.custom-grade-details');
@@ -117,9 +118,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 $('.manga-grid').html($(data).find('.manga-grid').html());
                 $('.pagination').html($(data).find('.pagination').html());
                 history.pushState(null, '', `/manga?sort=${sort}&direction=${direction}&page=${page}`);
+                $('.manga-grid').addClass('switching');
                 updateStarRatings();
-                mangaContainer.classList.add('switching');
-                setTimeout(() => mangaContainer.classList.remove('switching'), 500);
+                setTimeout(() => {
+                    $('.manga-grid').removeClass('switching');
+                }, 500);
             }
         });
     }

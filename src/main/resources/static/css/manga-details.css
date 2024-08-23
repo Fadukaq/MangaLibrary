@@ -45,6 +45,7 @@
     width: 100%;
 }
 
+
 .left-block {
     position: relative;
     width: 260px;
@@ -1318,4 +1319,35 @@ textarea {
     margin-bottom: 10px;
     font-size: 22px;
     margin-left: 5px;
+}
+.right-block {
+    max-width: 100%;
+    overflow: hidden;
+}
+.tab-pane p {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+.right-block .title-rating {
+    max-width: 100%;
+}
+
+.right-block .title-rating h2 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+.chapter-title {
+    display: block;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+
+.list-group-item {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
 }

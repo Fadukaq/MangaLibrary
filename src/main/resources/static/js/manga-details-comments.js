@@ -451,7 +451,7 @@ $(document).ready(function() {
                     const newReplyHtml = `
                                     <div class="comment reply" id="comment-${newReply.id}">
                                         <div class="reply-header">
-                                            <a href="/profile/${newReply.userName}" class="user-link">
+                                            <a href="/profile/${newReply.userId}" class="user-link">
                                                 <img src="${newReply.ProfilePicture}" class="user-icon" alt="${newReply.userName}'s icon">
                                                 <span class="user-name">${newReply.userName}</span>
                                             </a>

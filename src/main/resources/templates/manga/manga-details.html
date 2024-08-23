@@ -240,7 +240,7 @@
                                     <div th:if="${#authentication.authorities[0].authority == 'ADMIN' or #authentication.authorities[0].authority == 'MangaModerator'}" class="d-flex flex-column">
                                         <span>
                                             <a th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="chapter-title text-decoration-none" style="color:#ce86ff;">
-                                                <span th:text="${chapter.title}"></span>
+                                                <span class="chapter-title" th:text="${chapter.title}"></span>
                                             </a>
                                         </span>
                                         <div class="d-flex align-items-center">

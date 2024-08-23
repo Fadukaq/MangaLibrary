@@ -26,11 +26,12 @@
                     <span class="rating-number"></span>
                 </div>
                 <div class="manga-details">
-                    <div class="custom-title-details" style="font-weight:bold;" th:text="${el.mangaName}"></div>
+                    <a th:href="@{/manga/{mangaId}(mangaId=${el.id})}">
+                        <div class="custom-title-details" style="font-weight:bold;" th:text="${el.mangaName}"></div>
+                    </a>
                     <div class="manga-genres">
                         <a th:each="genre : ${el.genres}"
-                           th:href="@{'/search?q=' + ${genre.genreName} + '&type=genre'}"
-                           class="link">
+                            class="link">
                             <span th:text="${genre.genreName}"></span>
                         </a>
                     </div>

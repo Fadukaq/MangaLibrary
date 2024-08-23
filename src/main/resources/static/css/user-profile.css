@@ -1,6 +1,8 @@
 a {
     text-decoration: none;
 }
+
+
 .profile-picture {
     width: 150px;
     height: 150px;
@@ -12,9 +14,7 @@ a {
 .profile-picture:hover {
     transform: scale(1.05);
 }
-.user-card-text{
-    margin-left: 17px;
-}
+
 
 .nav-tabs .nav-link {
     border: none;
@@ -101,4 +101,35 @@ a {
 }
 .tab-notifications p{
     color:white;
+}
+
+.card-body {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+.d-flex {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.user-info {
+    margin-left: 15px;
+    max-width: 70%;
+    box-sizing: border-box;
+}
+
+.user-info strong {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.user-info span {
+    display: block;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }

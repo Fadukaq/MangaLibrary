@@ -9,36 +9,6 @@
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/manga-main.css">
     <link rel="stylesheet" href="/css/loader.css">
-    <style>
-        .selected-authors-container {
-            margin-top: 10px;
-        }
-
-        .selected-genre, .selected-author {
-            display: inline-block;
-            background-color: #313131;
-            border: 1px solid #ff0080;
-            border-radius: 5px;
-            padding: 5px 14px;
-            margin: 2px;
-            position: relative;
-        }
-
-        .selected-genre .remove-genre, .selected-author .remove-author {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: none;
-            border: none;
-            color: #ff0000;
-            cursor: pointer;
-            font-size: 18px;
-            padding: 0 3px;
-        }
-        .default-option {
-            display: none;
-        }
-    </style>
 </head>
 <body >
 <div th:insert="~{blocks/loader :: loader}"></div>
