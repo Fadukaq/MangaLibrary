@@ -516,7 +516,7 @@ input::placeholder {
         font-size: 1em;
     }
     .manga-details {
-        height: 380px;
+        height: 400px;
         width: 100%;
         left: auto;
         right: 0;
@@ -856,6 +856,16 @@ input::placeholder {
     font-size: 0.9em;
 }
 
+.custom-title span {
+    word-break: break-all;
+}
+
+.manga-details p {
+    word-break: break-all;
+}
+.custom-grade-details{
+    padding-left:5px;
+}
 .manga-list .custom-container:hover {
     background-color: #1f1f1f93;
     border: 1px solid #ff4fa7;

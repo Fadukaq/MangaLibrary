@@ -21,7 +21,9 @@
                     </div>
                 </div>
                 <a class="custom-title-link" th:href="@{/manga/{mangaId}(mangaId=${el.id})}">
-                    <div class="custom-title"  th:text="${el.mangaName}"></div>
+                    <div class="custom-title">
+                        <span th:text="${el.mangaName}"></span>
+                    </div>
                 </a>
                 <div class="custom-grade-details" th:data-rating="${el.averageRating}">
                     <span class="stars"></span>
