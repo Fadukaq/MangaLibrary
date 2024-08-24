@@ -39,6 +39,7 @@
                 </form>
             </div>
             <button class="btn-custom mt-2 btn-view">Почати перегляд</button>
+            <button class="btn-custom-subscribe mt-2 btn-view">Підписатись</button>
             <form id="addMangaForm" action="#" th:action="@{/manga/add-to-list}" th:object="${manga}" method="post" onsubmit="return false;">
                 <div class="select-wrapper">
                     <select name="listType" id="listTypeSelect" class="form-select custom-select-lists">
@@ -160,7 +161,56 @@
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                    <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                        <div class="forMobile">
+                            <div class="mobile-img-container">
+                                <img th:src="${manga.mangaPosterImg}" alt="Main Manga Image">
+                            </div>
+                            <div class="info-block-mobile">
+                                <div class="info-item">
+                                    <p class="info-title">Тип:</p>
+                                    <span>Манга</span>
+                                </div>
+                                <div class="info-item">
+                                    <p class="info-title">Рік виходу:</p>
+                                    <a th:href="@{'/search?q=' + ${manga.releaseYear} + '&type=releaseYear'}" class="link" th:text="${manga.releaseYear}"></a>
+                                </div>
+                                <div class="info-item">
+                                    <p class="info-title">Віковий рейтинг:</p>
+                                    <span th:text="${manga.adultContent} ? '18+' : 'Ні'"></span>
+                                </div>
+                                <div class="info-item">
+                                    <p class="info-title">Автор манги:</p>
+                                    <span th:text="${manga.author != null ? manga.author.name : 'Невизначено'}"></span>
+                                </div>
+                                <div class="info-item">
+                                    <p class="info-title">Статус манги:</p>
+                                    <a th:href="@{'/search?q=' + ${manga.mangaStatus} + '&type=mangaStatus'}" class="link" th:text="${translatedMangaStatus}"></a>
+                                </div>
+                                <div class="info-item">
+                                    <p class="info-title">Завантажено глав:</p>
+                                    <span th:text="${chapterCount}"></span>
+                                </div>
+                            </div>
+                            <div class="actions-menu-mobile">
+                                <div class="button-group">
+                                    <button class="btn-custom-subscribe btn-view">Підписатись</button>
+                                </div>
+                                <form id="addMangaForm-mobile" action="#" th:action="@{/manga/add-to-list}" th:object="${manga}" method="post" onsubmit="return false;">
+                                    <div class="select-wrapper ">
+                                        <select name="listType" id="listTypeSelect-mobile" class="form-select custom-select-lists custom-select-lists-mobile">
+                                            <option value="" disabled th:selected="${!isInReadingList && !isInWantToReadList && !isInRecitedList && !isInReadStoppedList}">Додати до списку</option>
+                                            <option value="reading" th:selected="${isInReadingList}">Читаю</option>
+                                            <option value="want-read" th:selected="${isInWantToReadList}">У планах</option>
+                                            <option value="recited" th:selected="${isInRecitedList}">Прочитано</option>
+                                            <option value="read-stopped" th:selected="${isInReadStoppedList}">Кинуто</option>
+                                        </select>
+                                        <div id="icon-preview-mobile" class="icon-preview"></div>
+                                    </div>
+                                    <input type="hidden" name="mangaId" th:value="${manga.id}" />
+                                </form>
+                            </div>
+                        </div>
                         <p style="color:gray;">Повний Опис</p>
                         <p th:text="${manga.mangaDescription}"></p>
                         <hr>
@@ -170,48 +220,47 @@
                         </div>
                         <hr>
                         <div th:if="${not #lists.isEmpty(relatedMangas)}">
-                            <div class="related">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <p style="color: gray;">Пов'язані</p>
-                                    <div class="carousel-controls">
-                                        <button class="btn btn-link carousel-control-prev" type="button" data-bs-target="#mangaCarouselRelated" data-bs-slide="prev">
-                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span class="visually-hidden">Previous</span>
-                                        </button>
-                                        <button class="btn btn-link carousel-control-next" type="button" data-bs-target="#mangaCarouselRelated" data-bs-slide="next">
-                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span class="visually-hidden">Next</span>
-                                        </button>
+                                <div class="related">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p style="color: gray;">Пов'язані</p>
+                                        <div class="carousel-controls">
+                                            <button class="btn btn-link carousel-control-prev" type="button" data-bs-target="#mangaCarouselRelated" data-bs-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Previous</span>
+                                            </button>
+                                            <button class="btn btn-link carousel-control-next" type="button" data-bs-target="#mangaCarouselRelated" data-bs-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Next</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div id="mangaCarouselRelated" class="carousel slide">
-                                    <div id="mangaCarouselRelatedInner" class="carousel-inner">
+                                    <div id="mangaCarouselRelated" class="carousel slide">
+                                        <div id="mangaCarouselRelatedInner" class="carousel-inner">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
                         <div th:if="${not #lists.isEmpty(similarMangas)}">
-                            <div class="related">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <p style="color: gray;">Схожі</p>
-                                    <div class="carousel-controls">
-                                        <button class="btn btn-link carousel-control-prev" type="button" data-bs-target="#mangaCarouselSimilar" data-bs-slide="prev">
-                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span class="visually-hidden">Previous</span>
-                                        </button>
-                                        <button class="btn btn-link carousel-control-next" type="button" data-bs-target="#mangaCarouselSimilar" data-bs-slide="next">
-                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span class="visually-hidden">Next</span>
-                                        </button>
+                                <div class="related">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p style="color: gray;">Схожі</p>
+                                        <div class="carousel-controls">
+                                            <button class="btn btn-link carousel-control-prev" type="button" data-bs-target="#mangaCarouselSimilar" data-bs-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Previous</span>
+                                            </button>
+                                            <button class="btn btn-link carousel-control-next" type="button" data-bs-target="#mangaCarouselSimilar" data-bs-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Next</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div id="mangaCarouselSimilar" class="carousel slide">
-                                    <div id="mangaCarouselSimilarInner" class="carousel-inner">
+                                    <div id="mangaCarouselSimilar" class="carousel slide">
+                                        <div id="mangaCarouselSimilarInner" class="carousel-inner">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         <div class="charts-wrapper">
                             <div class="chart-section">
                                 <h2>Списки</h2>
@@ -224,100 +273,100 @@
                             </div>
                         </div>
                     </div>
-                <div class="tab-pane fade" id="chapters" role="tabpanel" aria-labelledby="chapters-tab">
-                        <div class="chapter-list">
-                            <div th:if="${#lists.isEmpty(chapters)}" class="alert alert-info">
-                                <i class="fa-regular fa-face-sad-tear" style="font-size: 1.5rem;"></i>
-                                <span>Поки що не було додано глав для цієї манги.</span>
-                            </div>
-                            <div th:unless="${#lists.isEmpty(chapters)}" class="d-flex justify-content-between align-items-center mb-3" style="padding-left: 14px;">
-                                <button id="sortChapters" class="btn btn-outline-primary">
-                                    <i id="sortIcon" class="fas fa-sort-amount-down"></i> Сортувати
-                                </button>
-                            </div>
-                            <ul id="chaptersList" class="list-group">
-                                <li th:each="chapter : ${chapters}" class="list-group-item mb-1" th:data-date="${chapter.creationTime}">
-                                    <div th:if="${#authentication.authorities[0].authority == 'ADMIN' or #authentication.authorities[0].authority == 'MangaModerator'}" class="d-flex flex-column">
-                                        <span>
-                                            <a th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="chapter-title text-decoration-none" style="color:#ce86ff;">
-                                                <span class="chapter-title" th:text="${chapter.title}"></span>
-                                            </a>
-                                        </span>
-                                        <div class="d-flex align-items-center">
-                                        <span style="font-size:14px; color:gray;">
-                                            <span th:text="${#temporals.format(chapter.creationTime, 'dd MMM yyyy р.', new java.util.Locale('uk', 'UA'))}"></span>
-                                            <span style="margin: 0 5px;">|</span>
-                                            <!--<i class="fas fa-user" style="margin-right: 5px;"></i>!-->
+                    <div class="tab-pane fade" id="chapters" role="tabpanel" aria-labelledby="chapters-tab">
+                            <div class="chapter-list">
+                                <div th:if="${#lists.isEmpty(chapters)}" class="alert alert-info">
+                                    <i class="fa-regular fa-face-sad-tear" style="font-size: 1.5rem;"></i>
+                                    <span>Поки що не було додано глав для цієї манги.</span>
+                                </div>
+                                <div th:unless="${#lists.isEmpty(chapters)}" class="d-flex justify-content-between align-items-center mb-3" style="padding-left: 14px;">
+                                    <button id="sortChapters" class="btn btn-outline-primary">
+                                        <i id="sortIcon" class="fas fa-sort-amount-down"></i> Сортувати
+                                    </button>
+                                </div>
+                                <ul id="chaptersList" class="list-group">
+                                    <li th:each="chapter : ${chapters}" class="list-group-item mb-1" th:data-date="${chapter.creationTime}">
+                                        <div th:if="${#authentication.authorities[0].authority == 'ADMIN' or #authentication.authorities[0].authority == 'MangaModerator'}" class="d-flex flex-column">
                                             <span>
-                                                <a class="user-added-chapter" th:href="@{/profile/{userId}(userId=${chapter.user.id})}">
-                                                    <img th:src="${chapter.user.profilePicture}" alt="Profile Picture" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 5px;">
-                                                    <span th:text="${chapter.user.userName}"></span>
+                                                <a th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="chapter-title text-decoration-none" style="color:#ce86ff;">
+                                                    <span class="chapter-title" th:text="${chapter.title}"></span>
                                                 </a>
                                             </span>
-                                        </span>
-                                            <div class="ms-auto d-flex align-items-center">
-                                                <a th:href="@{/manga/{mangaId}/chapter/edit/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="ms-3">
-                                                    <i class="fas fas-admin fa-edit"></i>
-                                                </a>
-                                                <form th:action="@{/manga/{mangaId}/chapter/delete/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" method="post" class="d-inline ms-3">
-                                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                                                    <button type="submit" class="btn btn-delete p-0">
-                                                        <i class="fas fas-admin fa-trash-alt"></i>
-                                                    </button>
-                                                </form>
+                                            <div class="d-flex align-items-center">
+                                            <span style="font-size:14px; color:gray;">
+                                                <span th:text="${#temporals.format(chapter.creationTime, 'dd MMM yyyy р.', new java.util.Locale('uk', 'UA'))}"></span>
+                                                <span style="margin: 0 5px;">|</span>
+                                                <!--<i class="fas fa-user" style="margin-right: 5px;"></i>!-->
+                                                <span>
+                                                    <a class="user-added-chapter" th:href="@{/profile/{userId}(userId=${chapter.user.id})}">
+                                                        <img th:src="${chapter.user.profilePicture}" alt="Profile Picture" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 5px;">
+                                                        <span th:text="${chapter.user.userName}"></span>
+                                                    </a>
+                                                </span>
+                                            </span>
+                                                <div class="ms-auto d-flex align-items-center">
+                                                    <a th:href="@{/manga/{mangaId}/chapter/edit/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="ms-3">
+                                                        <i class="fas fas-admin fa-edit"></i>
+                                                    </a>
+                                                    <form th:action="@{/manga/{mangaId}/chapter/delete/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" method="post" class="d-inline ms-3">
+                                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                                        <button type="submit" class="btn btn-delete p-0">
+                                                            <i class="fas fas-admin fa-trash-alt"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div th:unless="${#authentication.authorities[0].authority == 'ADMIN' or #authentication.authorities[0].authority == 'MangaModerator'}" class="d-flex justify-content-between align-items-center">
-                                        <a th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="chapter-title text-decoration-none" style="color:#ce86ff;">
-                                            <span th:text="${chapter.title}"></span>
-                                        </a>
-                                        <span style="font-size:14px; color:gray;">
-                                            <span>
-                                                <a class="user-added-chapter" th:href="@{/profile/{userId}(userId=${chapter.user.id})}">
-                                                    <img th:src="${chapter.user.profilePicture}" alt="Profile Picture" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 5px;">
-                                                    <span th:text="${chapter.user.userName}"></span>
-                                                </a>
+                                        <div th:unless="${#authentication.authorities[0].authority == 'ADMIN' or #authentication.authorities[0].authority == 'MangaModerator'}" class="d-flex justify-content-between align-items-center">
+                                            <a th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="chapter-title text-decoration-none" style="color:#ce86ff;">
+                                                <span th:text="${chapter.title}"></span>
+                                            </a>
+                                            <span style="font-size:14px; color:gray;">
+                                                <span>
+                                                    <a class="user-added-chapter" th:href="@{/profile/{userId}(userId=${chapter.user.id})}">
+                                                        <img th:src="${chapter.user.profilePicture}" alt="Profile Picture" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 5px;">
+                                                        <span th:text="${chapter.user.userName}"></span>
+                                                    </a>
+                                                </span>
+                                                <span style="margin: 0 5px;">|</span>
+                                                <span th:text="${#temporals.format(chapter.creationTime, 'dd MMM yyyy р.', new java.util.Locale('uk', 'UA'))}"></span>
                                             </span>
-                                            <span style="margin: 0 5px;">|</span>
-                                            <span th:text="${#temporals.format(chapter.creationTime, 'dd MMM yyyy р.', new java.util.Locale('uk', 'UA'))}"></span>
-                                        </span>
+                                        </div>
+                                    </li>
+                                </ul>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab" th:data-manga-id="${manga.id}" th:data-current-user-id="${user.id}">
+                            <div class="comment-controls">
+                                <form id="add-comment-form" th:action="@{/manga/{mangaId}/add-comment(mangaId=${manga.id})}" method="post">
+                                    <div class="form-group">
+                                        <textarea id="comment-text" name="text" class="form-control" rows="4" placeholder="Залишити коментар..." required></textarea>
                                     </div>
-                                </li>
-                            </ul>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab" th:data-manga-id="${manga.id}" th:data-current-user-id="${user.id}">
-                        <div class="comment-controls">
-                            <form id="add-comment-form" th:action="@{/manga/{mangaId}/add-comment(mangaId=${manga.id})}" method="post">
-                                <div class="form-group">
-                                    <textarea id="comment-text" name="text" class="form-control" rows="4" placeholder="Залишити коментар..." required></textarea>
-                                </div>
-                            </form>
-                            <div class="controls-container">
-                                <div class="dropdown dropdown-sort">
-                                    <button class="btn dropdown-toggle view-btn"  style="background-color:#282828; color:#fff;" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Сортувати: <span id="dropdownMenuText">За оновленням</span>
+                                </form>
+                                <div class="controls-container">
+                                    <div class="dropdown dropdown-sort">
+                                        <button class="btn dropdown-toggle view-btn"  style="background-color:#282828; color:#fff;" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Сортувати: <span id="dropdownMenuText">За оновленням</span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-sortBy custom-mt" aria-labelledby="dropdownMenuButton">
+                                            <li><a class="dropdown-item active" href="#" data-sort="byNew">За оновленням</a></li>
+                                            <li><a class="dropdown-item" href="#" data-sort="byRating">За рейтингом</a></li>
+                                        </ul>
+                                    </div>
+                                    <button id="submit-comment" form="add-comment-form" type="submit" class="btn btn-primary">
+                                        <i class="fa-solid fa-paper-plane"></i> Надіслати
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-sortBy custom-mt" aria-labelledby="dropdownMenuButton">
-                                        <li><a class="dropdown-item active" href="#" data-sort="byNew">За оновленням</a></li>
-                                        <li><a class="dropdown-item" href="#" data-sort="byRating">За рейтингом</a></li>
-                                    </ul>
                                 </div>
-                                <button id="submit-comment" form="add-comment-form" type="submit" class="btn btn-primary">
-                                    <i class="fa-solid fa-paper-plane"></i> Надіслати
-                                </button>
                             </div>
-                        </div>
-                        <ul id="comments-list" class="list-group mt-3" style="padding:15px;"></ul>
-                        <div id="loading-comments-for-manga" class="loading-comments-for-manga" style="display: none;">
-                            <div class="loading">
-                                <i class="fa-solid fa-spinner fa-spin"></i> Завантаження...
+                            <ul id="comments-list" class="list-group mt-3" style="padding:15px;"></ul>
+                            <div id="loading-comments-for-manga" class="loading-comments-for-manga" style="display: none;">
+                                <div class="loading">
+                                    <i class="fa-solid fa-spinner fa-spin"></i> Завантаження...
+                                </div>
                             </div>
-                        </div>
                     </div>
                 </div>
-                </div>
+            </div>
         </div>
     </div>
 </div>

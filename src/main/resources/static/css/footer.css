@@ -85,7 +85,7 @@ footer {
 .nav-column ul li a:hover {
     color: white;
 }
-@media (max-width: 768px) {
+@media (max-width: 815px) {
     .footer-content {
         flex-direction: column;
         align-items: center;

@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const getItemsPerSlide = () => {
         if (window.innerWidth < 576) return 1;
-        if (window.innerWidth < 777) return 2;
-        if (window.innerWidth < 1166) return 3;
+        if (window.innerWidth < 768) return 2;
+        if (window.innerWidth < 992) return 3;
         return 4;
     };
 

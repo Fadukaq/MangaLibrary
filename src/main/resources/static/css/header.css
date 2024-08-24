@@ -474,3 +474,22 @@ body {
     display:none;
   }
 }
+.btn-custom-subscribe {
+  background-color: #282828 !important;
+  border-color: #ff0080;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.6s ease;
+}
+.btn-custom-subscribe:hover {
+  background-color: #ea0078 !important;
+}
+.btn-custom-subscribe:focus {
+  background-color: #c20065 !important;
+}

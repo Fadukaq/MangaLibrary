@@ -856,10 +856,12 @@ public class MangaController {
 
         Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, Sort.by(sortDirection, sortField));
 
+        String effectiveStatus = "all".equals(status) ? null : status;
+
         Page<Manga> mangaPage = mangaRepo.findFiltered(
                 genreIds,
                 authorIds,
-                status,
+                effectiveStatus,
                 ageRating,
                 yearFrom,
                 yearTo,
