@@ -76,7 +76,6 @@ public class ChapterService {
 
     public void editChapter(ChapterForm chapterForm, Manga manga, Chapter chapter) throws IOException {
         chapter.setTitle(chapterForm.getChapter().getTitle());
-        chapter.setCreationTime(LocalDateTime.now());
 
         List<String> imageUrls = new ArrayList<>();
         if (chapterForm.getChapterImage().getPagesImage() != null && chapterForm.getChapterImage().getPagesImage().stream().anyMatch(file -> file.getSize() > 0)) {
