@@ -1,15 +1,11 @@
-/* about.css */
-
-/* Стили для заголовка "Про нас" */
 .about-title {
-    color: #FFFFFF99;
+    color: #868686;
     font-family: Raleway, sans-serif;
     font-size: 36px;
     font-weight: 700;
     text-align: center;
 }
 
-/* Стили для основного текста */
 .about-text {
     font-family: Raleway, sans-serif;
     font-size: 18px;
@@ -19,17 +15,14 @@
     color: #625E5E;
 }
 
-/* Цвет для слова Manga */
 .manga {
     color: #FF0080;
 }
 
-/* Цвет для слова Library */
 .library {
     color: #FFFFFF99;
 }
 
-/* Стили для заголовка "Команда що займалась створенням сайту" */
 .team-title {
     color: #FFFFFF99;
     font-family: Raleway, sans-serif;
@@ -39,7 +32,6 @@
     padding: 10px 0;
 }
 
-/* Стили для заголовков "Дизайнери" и "Программісти" */
 .role-title {
     font-family: Raleway, sans-serif;
     font-size: 24px;
@@ -54,5 +46,5 @@
 }
 
 .role-names {
-    margin-top: 30px; /* Отступ сверху на 30 пикселей */
+    margin-top: 30px;
 }

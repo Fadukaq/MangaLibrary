@@ -56,7 +56,7 @@ public class MangaController {
     private RepliesRepo repliesRepo;
     @Autowired
     private MangaLibraryManager mangaLibraryManager;
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 25;
     @Autowired
     UserService userService;
     @Autowired
