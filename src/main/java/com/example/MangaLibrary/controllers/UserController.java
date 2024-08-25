@@ -421,10 +421,10 @@ public class UserController {
     }
     @GetMapping("/admin-dashboard")
     public String showDashboard(Model model) {
-        model.addAttribute("mangaList", mangaRepo.findAll());
-        model.addAttribute("newsList", newsRepo.findAll());
-        model.addAttribute("authorList", authorRepo.findAll());
-        model.addAttribute("genreList", genreRepo.findAll());
+        model.addAttribute("mangaList", mangaRepo.findAllByOrderByIdDesc());
+        model.addAttribute("newsList", newsRepo.findAllByOrderByIdDesc());
+        model.addAttribute("authorList", authorRepo.findAllByOrderByIdDesc());
+        model.addAttribute("genreList", genreRepo.findAllByOrderByIdDesc());
         return "user/admin-dashboard";
     }
 }

@@ -62,12 +62,18 @@ document.addEventListener('DOMContentLoaded', function() {
         iconPreview.innerHTML = iconClass ? `<i class="fa-solid ${iconClass}"></i>` : '';
     }
 
-    // Инициализация и установка иконок для каждого select
     selects.forEach((select, index) => {
         const iconPreview = iconPreviews[index];
         updateIcon(select, iconPreview);
 
         select.addEventListener('change', function() {
+            updateIcon(select, iconPreview);
+        });
+    });
+
+    window.addEventListener('resize', function() {
+        selects.forEach((select, index) => {
+            const iconPreview = iconPreviews[index];
             updateIcon(select, iconPreview);
         });
     });

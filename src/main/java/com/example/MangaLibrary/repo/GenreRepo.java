@@ -8,5 +8,7 @@ import java.util.List;
 public interface GenreRepo extends CrudRepository<Genre, Long>{
     Genre findByGenreName(String genreName);
     List<Genre> findAll();
+    List<Genre> findAllByOrderByIdDesc();
+
 
 }

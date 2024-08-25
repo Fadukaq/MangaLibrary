@@ -217,16 +217,15 @@ document.addEventListener('DOMContentLoaded', function () {
             const $viewButtons = $('.grid-view, .list-view');
             const $headerContainer = $('.header-container');
             const $catalogCount = $('.catalog-count');
+            const count = $mangaGrid.children().length;
             $sortButtons.hide();
             $viewButtons.hide();
 
             if ($mangaGrid.children().length === 0) {
                 $viewButtons.hide();
                 $noMangaMessage.show();
-                $headerContainer.hide();
+                $catalogCount.text(count);
             } else {
-                $headerContainer.show();
-                const count = $mangaGrid.children().length;
                 $catalogCount.text(count);
                 $noMangaMessage.hide();
                 $mangaGrid.show();

@@ -4,43 +4,51 @@ document.addEventListener('DOMContentLoaded', () => {
         { formId: 'addMangaForm-mobile', selectId: 'listTypeSelect-mobile' }
     ];
 
+    const syncSelects = (selectedValue) => {
+        forms.forEach(({ selectId }) => {
+            const selectElement = document.getElementById(selectId);
+            if (selectElement) {
+                selectElement.value = selectedValue;
+            }
+        });
+    };
+
     forms.forEach(({ formId, selectId }) => {
         const selectElement = document.getElementById(selectId);
         const form = document.getElementById(formId);
 
-        let selectedOption = selectElement.querySelector('option:checked');
-        if (selectedOption) {
-            selectedOption.hidden = true;
-        }
+        if (selectElement) {
+            syncSelects(selectElement.value);
 
-        selectElement.addEventListener('change', function(event) {
-            if (selectedOption) {
-                selectedOption.hidden = false;
-            }
-            selectedOption = selectElement.querySelector('option:checked');
-            if (selectedOption) {
-                selectedOption.hidden = true;
-            }
+            selectElement.addEventListener('change', function(event) {
+                const selectedValue = selectElement.value;
+                syncSelects(selectedValue);
 
-            const formData = new FormData(form);
+                const formData = new FormData(form);
 
-            fetch(form.action, {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                if (data.success) {
-                    showNotification(data.message);
-                } else {
-                    showNotification(data.message, 'error');
-                }
-            })
-                .catch(error => {
-                console.error('Error:', error);
-                showNotification('Сталася помилка під час додавання манги до списку', 'error');
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                    if (data.success) {
+                        showNotification(data.message);
+                    } else {
+                        showNotification(data.message, 'error');
+                    }
+                })
+                    .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Сталася помилка під час додавання манги до списку', 'error');
+                });
             });
-        });
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        const selectedValue = document.querySelector('#listTypeSelect').value;
+        syncSelects(selectedValue);
     });
 });
 

@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface NewsRepo extends CrudRepository<News, Long> {
     Page<News> findAll(Pageable pageable);
+    List<News> findAllByOrderByIdDesc();
+
 }

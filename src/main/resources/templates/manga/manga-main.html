@@ -113,15 +113,15 @@
                 <div id="manga-content">
                     <div th:replace="~{manga/manga-partial :: manga-content}">
                     </div>
-                    </div>
-                    <div id="no-manga-message"  class="no-manga-message" style="display: none;">
-                        <h2>За даними фільтрами не знайдено результатів</h2>
-                        <p>Спробуйте змінити фільтри.</p>
-                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+    <div id="no-manga-message"  class="no-manga-message" style="display: none;">
+        <h2>За даними фільтрами не знайдено результатів</h2>
+        <p>Спробуйте змінити фільтри.</p>
+    </div>
 </div>
 <footer th:insert="~{blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

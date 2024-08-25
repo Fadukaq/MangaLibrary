@@ -36,6 +36,8 @@ public interface MangaRepo extends CrudRepository<Manga, Long> {
     List<Manga> findByGenresIn(Set<Genre> genres);
     List<Manga> findByMangaNameStartingWith(String query);
     List<Manga> findByRelatedMangasId(Long mangaId);
+    List<Manga> findAllByOrderByIdDesc();
+
     @Query("SELECT DISTINCT m FROM Manga m " +
             "LEFT JOIN m.genres g " +
             "WHERE (:genreIds IS NULL OR g.id IN :genreIds) " +
