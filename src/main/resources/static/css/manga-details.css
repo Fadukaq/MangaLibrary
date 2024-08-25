@@ -754,46 +754,59 @@
     width: 100%;
     height: auto;
 }
+.mobile-img-container {
+    position: relative;
+    display: inline-block;
+}
 
-#addMangaFavoritesForm {
+#addMangaFavoritesForm,
+#addMangaFavoritesForm-mobile {
     position: absolute;
     top: 6px;
     right: 10px;
     margin: 0;
 }
 
-#addToFavorites {
+#addToFavorites,
+#addToFavorites-mobile {
     background: transparent;
     border: none;
     padding: 0;
     cursor: pointer;
 }
 
-#addToFavorites.btn-link {
+#addToFavorites.btn-link,
+#addToFavorites-mobile.btn-link {
     color: #6c6c6c;
     transition: color 0.3s;
 }
 
-#addToFavorites.btn-link:hover {
+#addToFavorites.btn-link:hover,
+#addToFavorites-mobile.btn-link:hover {
     color: #8100ff;
 }
 
-#addToFavorites.btn-link.favorited {
+#addToFavorites.btn-link.favorited,
+#addToFavorites-mobile.btn-link.favorited {
     color: #FF0080;
 }
 
-#addToFavorites.btn-link.favorited:hover {
+#addToFavorites.btn-link.favorited:hover,
+#addToFavorites-mobile.btn-link.favorited:hover {
     color: #ff6cb2;
 }
 
-#addToFavorites .fa-heart {
+#addToFavorites .fa-heart,
+#addToFavorites-mobile .fa-heart {
     font-size: 24px;
     transition: color 0.3s, transform 0.3s;
 }
 
-#addToFavorites.btn-link.favorited .fa-heart {
+#addToFavorites.btn-link.favorited .fa-heart,
+#addToFavorites-mobile.btn-link.favorited .fa-heart {
     transform: scale(1.2);
 }
+
 .rating-container {
     display: flex;
     flex-direction: column;

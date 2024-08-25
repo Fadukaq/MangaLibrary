@@ -43,9 +43,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
 document.addEventListener('DOMContentLoaded', function() {
-    const select = document.getElementById('listTypeSelect');
-    const iconPreview = document.getElementById('icon-preview');
+    const selects = document.querySelectorAll('#listTypeSelect, #listTypeSelect-mobile');
+    const iconPreviews = document.querySelectorAll('#icon-preview, #icon-preview-mobile');
 
     const icons = {
         '': 'fa-folder',
@@ -55,15 +56,21 @@ document.addEventListener('DOMContentLoaded', function() {
         'read-stopped': 'fa-times'
     };
 
-    function updateIcon() {
+    function updateIcon(select, iconPreview) {
         const selectedValue = select.value;
         const iconClass = icons[selectedValue] || '';
         iconPreview.innerHTML = iconClass ? `<i class="fa-solid ${iconClass}"></i>` : '';
     }
 
-    updateIcon();
+    // Инициализация и установка иконок для каждого select
+    selects.forEach((select, index) => {
+        const iconPreview = iconPreviews[index];
+        updateIcon(select, iconPreview);
 
-    select.addEventListener('change', updateIcon);
+        select.addEventListener('change', function() {
+            updateIcon(select, iconPreview);
+        });
+    });
 });
 
 document.addEventListener('DOMContentLoaded', function() {

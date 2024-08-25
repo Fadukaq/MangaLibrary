@@ -40,8 +40,7 @@ public class ChapterService {
     public boolean isValidChapterForm(ChapterForm chapterForm, BindingResult bindingResult) {
         boolean isValid = true;
 
-        if (chapterForm.getChapter().getTitle() == null || chapterForm.getChapter().getTitle().trim().isEmpty()) {
-            bindingResult.rejectValue("chapter.title", "error.title", "Введіть заголовок глави");
+        if (chapterForm.getChapter().getTitle() == null || chapterForm.getChapter().getTitle().trim().isEmpty() || chapterForm.getChapter().getTitle().length() < 2 || chapterForm.getChapter().getTitle().length() > 255) {
             isValid = false;
         }
 
@@ -53,7 +52,7 @@ public class ChapterService {
                 !chapterForm.getChapterImage().getExistingImages().isEmpty();
 
         if (!hasNewImages && !hasExistingImages) {
-            bindingResult.rejectValue("chapterImage.pagesImage", "error.pagesImage", "Додайте хоча б одне зображення глави або виберіть існуючі");
+            bindingResult.rejectValue("chapterImage.pagesImage", "error.pagesImage", "Додайте хоча б одне зображення глави.");
             isValid = false;
         }
 

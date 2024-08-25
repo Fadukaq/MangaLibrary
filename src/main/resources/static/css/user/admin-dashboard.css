@@ -1,0 +1,123 @@
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    width: 100%;
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #282828;
+    border: 1px solid #ff0080;
+}
+.tab-pane{
+    margin-right:15px;
+}
+.tab-content {
+    height: 70vh;
+    overflow-y: auto;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table-actions {
+    text-align: center;
+}
+
+th {
+    background-color: #1f1f1f;
+}
+
+tbody tr:hover {
+    background-color: #2a2a2a;
+}
+
+.manga-name {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fa {
+    margin-right: 10px;
+    color: gray;
+    transition: color 0.3s;
+}
+
+.fa:hover {
+    color: #ff0080;
+}
+
+a {
+    text-decoration: none;
+}
+.table-filter {
+    width: 95%;
+    margin: 15px auto;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.no-results {
+    text-align: center;
+    padding: 20px;
+    background-color: #313131;
+    border: 1px solid #ff0080;
+    border-radius: 4px;
+    color: #fff;
+    margin-top: 15px;
+}
+.no-results.hidden {
+    opacity: 0;
+    display: none;
+}
+.nav-tabs {
+    background-color: #1d1d1d;
+    border-radius: 5px;
+    padding: 10px;
+}
+.nav-link:hover,
+.nav-link:focus {
+    color: #dedede;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+.nav-link {
+    color: #dedede;
+    font-weight: bold;
+    border: none !important;
+    border-radius: 0;
+    background-color: transparent;
+    margin-right: 10px;
+}
+
+.nav-link.active {
+    border: none;
+    border-radius:0px;
+    background-color: #1d1d1d !important;
+    color: #ffffff !important;
+    border-bottom: 2px solid #ff0080 !important;
+}
+
+.tab-content {
+    padding: 20px;
+    background-color: #282828;
+    color: #ffffff;
+}

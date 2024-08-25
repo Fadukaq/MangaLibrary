@@ -66,44 +66,30 @@ public class NewsController {
     }
     @GetMapping("/news/add")
     public String newsAddGet(Model model, Principal principal) {
-        String username = principal.getName();
-        User currentUser = userRepo.findByUserName(username);
-        if(currentUser.getUserRole().equals("ADMIN")) {
-            model.addAttribute("news", new News());
-            return "news/news-add";
-        } else {
-            model.addAttribute("errorMessage", "У вас недостатньо прав для додавання новин.");
-            return "main/error";
-        }
+        model.addAttribute("news", new News());
+        return "news/news-add";
     }
     @PostMapping("/news/add")
-    public String newsAddPost(@Valid News news, BindingResult result, Model model, Principal principal) {
+    public String newsAddPost(@Valid News news, BindingResult result,Principal principal) {
         if (result.hasErrors()) {
             return "news/news-add";
         }
         String username = principal.getName();
         User currentUser = userRepo.findByUserName(username);
-        if(currentUser.getUserRole().equals("ADMIN")) {
-            news.setUser(currentUser);
-            news.setCreatedAt(LocalDateTime.now());
-            newsRepo.save(news);
-            return "redirect:/news";
-        } else {
-            model.addAttribute("errorMessage", "У вас недостатньо прав для додавання новин.");
-            return "main/error";
-        }
+        news.setUser(currentUser);
+        news.setCreatedAt(LocalDateTime.now());
+        newsRepo.save(news);
+        return "redirect:/news";
     }
 
     @GetMapping("/news/edit/{id}")
-    public String newsEditGet(@PathVariable Long id, Model model, Principal principal) {
-        String username = principal.getName();
-        User currentUser = userRepo.findByUserName(username);
-        if(currentUser.getUserRole().equals("ADMIN")) {
-            News news = newsRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid news ID: " + id));
-            model.addAttribute("news", news);
+    public String newsEditGet(@PathVariable Long id, Model model) {
+        Optional<News> news = newsRepo.findById(id);
+        if(news.isPresent()){
+            model.addAttribute("news", news.get());
             return "news/news-edit";
         } else {
-            model.addAttribute("errorMessage", "У вас недостатньо прав для редагування новин.");
+            model.addAttribute("errorMessage", "Такої новини не знайдено!");
             return "main/error";
         }
     }
@@ -111,32 +97,28 @@ public class NewsController {
     public String newsEditPost(@PathVariable Long id, @ModelAttribute("news") @Valid News news, BindingResult result, Model model, Principal principal) {
         if (result.hasErrors()) {
             model.addAttribute("news", news);
-            return "news/new-edit";
+            return "news/news-edit";
         }
-
-        String username = principal.getName();
-        User currentUser = userRepo.findByUserName(username);
-        if(currentUser.getUserRole().equals("ADMIN")) {
-            News existingNews = newsRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid news ID: " + id));
-            existingNews.setTitle(news.getTitle());
-            existingNews.setText(news.getText());
-            newsRepo.save(existingNews);
+        Optional<News> existingNews = newsRepo.findById(id);
+        if(existingNews.isPresent()) {
+            News currentNews = existingNews.get();
+            currentNews.setTitle(news.getTitle());
+            currentNews.setText(news.getText());
+            newsRepo.save(currentNews);
             return "redirect:/news";
         } else {
-            model.addAttribute("errorMessage", "У вас недостатньо прав для редагування новин.");
+            model.addAttribute("errorMessage", "Такої новини не знайдено!");
             return "main/error";
         }
     }
     @PostMapping("/news/delete/{id}")
     public String newsDeletePost(@PathVariable Long id, Model model, Principal principal) {
-        String username = principal.getName();
-        User currentUser = userRepo.findByUserName(username);
-        if(currentUser.getUserRole().equals("ADMIN")) {
-            News existingNews = newsRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid news ID: " + id));
-            newsRepo.delete(existingNews);
+        Optional<News> existingNews = newsRepo.findById(id);
+        if(existingNews.isPresent()) {
+            newsRepo.delete(existingNews.get());
             return "redirect:/news";
-        } else {
-            model.addAttribute("errorMessage", "У вас недостатньо прав для видалення новин.");
+        }else {
+            model.addAttribute("errorMessage", "Такої новини не знайдено!");
             return "main/error";
         }
     }

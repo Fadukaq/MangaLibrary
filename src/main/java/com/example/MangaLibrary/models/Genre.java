@@ -11,7 +11,7 @@ public class Genre {
     private Long id;
 
     @NotEmpty(message = "Поле жанр не повинно бути порожнім")
-    @Size(min=3, message = "Жанр має складатися від 3")
+    @Size(min=3,max=255, message = "Жанр має складатися від 3 до 255")
     @Column(nullable = false, unique = true)
     private String genreName;
 

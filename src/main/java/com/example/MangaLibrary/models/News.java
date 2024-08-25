@@ -13,10 +13,10 @@ public class News {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotEmpty(message = "Назва новини не повинно бути порожнім")
-    @Size(min=5,max=512, message = "Назва новини має складатися від 10 до 512 символів")
+    @Size(min=10,max=512, message = "Назва новини має складатися від 10 до 512 символів")
     private String title;
     @NotEmpty(message = "Опис новини не повинно бути порожнім")
-    @Size(min=5,max= 9999, message = "Опис новини має складатися від 10 до 9999 символів")
+    @Size(min=10,max= 9999, message = "Опис новини має складатися від 10 до 9999 символів")
     private String text;
     @ManyToOne
     @JoinColumn(name = "user_id")

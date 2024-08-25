@@ -47,6 +47,9 @@
               <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
                 <a class="dropdown-item" style="color:white;" href="/admin-panel">Адмін-Панель</a>
               </li>
+              <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'})">
+                <a class="dropdown-item" style="color:white;" href="/admin-dashboard">Керування БД</a>
+              </li>
             </ul>
           </li>
           <li class="nav-item dropdown site-dropdown" th:if="${#authorization.expression('isAuthenticated()')}">

@@ -43,11 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('addMangaFavoritesForm');
-    const button = document.getElementById('addToFavorites');
 
-    if (form && button) {
+document.addEventListener('DOMContentLoaded', () => {
+    const forms = document.querySelectorAll('#addMangaFavoritesForm, #addMangaFavoritesForm-mobile');
+    const buttons = document.querySelectorAll('#addToFavorites, #addToFavorites-mobile');
+
+    forms.forEach((form, index) => {
+        const button = buttons[index];
         const mangaId = form.querySelector('input[name="mangaId"]').value;
 
         form.addEventListener('submit', function(event) {
@@ -68,6 +70,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         button.classList.remove("favorited");
                     }
                     showNotification(data.message);
+
+                    buttons.forEach(btn => {
+                        if (data.message.includes("додана")) {
+                            btn.classList.add("favorited");
+                        } else if (data.message.includes("видалена")) {
+                            btn.classList.remove("favorited");
+                        }
+                    });
                 } else {
                     showNotification(data.message, 'error');
                 }
@@ -77,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification('Сталася помилка під час обробки запиту', 'error');
             });
         });
-    }
+    });
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -119,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('Реакція мережі була незадовільною');
             }
             return response.json();
         })
@@ -131,8 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
             .catch(error => {
-            console.error('Ошибка:', error);
-            showNotification('Произошла ошибка при сохранении оценки', 'danger');
+            console.error('помилка:', error);
+            showNotification('Сталася помилка під час збереження оцінки', 'danger');
         });
     }
 
@@ -145,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('Реакція мережі була незадовільною');
             }
             return response.json();
         })
@@ -166,8 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
             .catch(error => {
-            console.error('Ошибка:', error);
-            showNotification('Произошла ошибка при удалении оценки', 'danger');
+            console.error('помилка:', error);
+            showNotification('Сталася помилка під час видалення оцінки', 'danger');
         });
     }
 

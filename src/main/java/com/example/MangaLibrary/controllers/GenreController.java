@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,7 +44,7 @@ public class GenreController {
         }
         Genre existingGenre = genreRepo.findByGenreName(thisGenre.getGenreName());
         if (existingGenre != null) {
-            result.rejectValue("genreName", "error.genre", "Жанр с таким именем уже существует");
+            result.rejectValue("genreName", "error.genre", "Такий жанр вже існує");
             return "genre/manga-genre-add";
         }
 
@@ -53,11 +54,14 @@ public class GenreController {
     }
     @GetMapping("/genre/edit/{id}")
     public String genreEdit(@PathVariable("id") Long id, Model model) {
-        Genre genre = genreRepo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid genre Id:" + id));
-
-        model.addAttribute("genre", genre);
-        return "genre/manga-genre-edit";
+        Optional<Genre> genre = genreRepo.findById(id);
+        if(genre.isPresent()) {
+            model.addAttribute("genre", genre.get());
+            return "genre/manga-genre-edit";
+        }else {
+            model.addAttribute("errorMessage", "Такого жанру не знайдено!");
+            return "main/error";
+        }
     }
 
     @PostMapping("/genre/edit/{id}")
@@ -77,36 +81,20 @@ public class GenreController {
 
     @PostMapping("/genre/delete/{id}")
     public String GenrePostDelete(@PathVariable(value ="id") long id,Model model) {
-        Genre genreToDelete = genreRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Id:" + id));
-        genreRepo.delete(genreToDelete);
-        return "redirect:/manga";
-    }
-
-    @GetMapping("/genre/{genreName}")
-    public String genreView(
-            @PathVariable String genreName,
-            @RequestParam(name = "page", defaultValue = "1", required = false) int page,
-            Model model
-    ) {
-        Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending());
-        Page<Manga> mangaPage = mangaRepo.findAllByGenreNamePagination(genreName, pageable);
-        Genre getGenreId = genreRepo.findByGenreName(genreName);
-
-        if (mangaPage.isEmpty()) {
-            model.addAttribute("genreName", genreName);
-            model.addAttribute("noResults", true);
-        } else
-        {
-            List<Manga> mangaList = mangaPage.getContent();
-
-            model.addAttribute("noResults", false);
-            model.addAttribute("genreName", genreName);
-            model.addAttribute("id", getGenreId.getId());
-            model.addAttribute("mangas", mangaList);
-            model.addAttribute("page", mangaPage);
+        Optional<Genre> genreToDelete = genreRepo.findById(id);
+        if (genreToDelete.isPresent()){
+            genreRepo.delete(genreToDelete.get());
+            return "redirect:/manga";
+        } else {
+            model.addAttribute("errorMessage", "Такого жанру не знайдено!");
+            return "main/error";
         }
+    }
+    @GetMapping("genres-list")
+    public String GenresList(@PathVariable(value ="id") long id,Model model) {
 
-        return "genre/manga-genre-view";
+
+        return "genre/genres-list";
     }
     @GetMapping("/genres-filter")
     @ResponseBody

@@ -1,16 +1,13 @@
 package com.example.MangaLibrary.service;
 
-import ch.qos.logback.core.model.Model;
 import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.helper.manga.MangaForm;
 import com.example.MangaLibrary.models.*;
-import com.example.MangaLibrary.repo.GenreRepo;
-import com.example.MangaLibrary.repo.MangaRepo;
-import com.example.MangaLibrary.repo.RatingRepo;
-import com.example.MangaLibrary.repo.UserRepo;
+import com.example.MangaLibrary.repo.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -34,7 +32,8 @@ public class MangaService {
     private UserRepo userRepo;
     @Autowired
     private GenreRepo genreRepo;
-
+    @Autowired
+    private AuthorRepo authorRepo;
     @Autowired
     private RatingRepo ratingRepo;
     private static final Map<String, String> statusTranslation = new HashMap<>();
@@ -288,8 +287,6 @@ public class MangaService {
         folder.delete();
     }
 
-
-
     public static void addMangaStatusAttributes(User user, Long mangaId, ModelMap model) {
         List<List<String>> userLists = List.of(
                 user.getMangaReading(),
@@ -311,7 +308,6 @@ public class MangaService {
             model.addAttribute(attributeNames[i], isInList);
         }
     }
-
 
     @Transactional
     public void saveRating(Long mangaId, Long userId, int ratingValue) {
@@ -356,6 +352,8 @@ public class MangaService {
             mangaRepo.save(manga);
         }
     }
+
+
     public String getMangaTranslatedStatus(String status) {
         return statusTranslation.getOrDefault(status, status);
     }

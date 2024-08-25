@@ -5,9 +5,7 @@ import com.example.MangaLibrary.helper.user.UserForm;
 import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.models.UserSettings;
-import com.example.MangaLibrary.repo.MangaRepo;
-import com.example.MangaLibrary.repo.UserRepo;
-import com.example.MangaLibrary.repo.UserSettingsRepo;
+import com.example.MangaLibrary.repo.*;
 import com.example.MangaLibrary.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -43,6 +41,12 @@ public class UserController {
     private MangaLibraryManager directoryLocator;
     @Autowired
     private UserSettingsRepo userSettingsRepo;
+    @Autowired
+    private NewsRepo newsRepo;
+    @Autowired
+    private AuthorRepo authorRepo;
+    @Autowired
+    private GenreRepo genreRepo;
     private List<Manga> readingManga = new ArrayList<>();
     private List<Manga> recitedManga = new ArrayList<>();
     private List<Manga> wantToReadManga = new ArrayList<>();
@@ -414,5 +418,13 @@ public class UserController {
             return ResponseEntity.ok(Map.of("success", true));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "User not authenticated"));
+    }
+    @GetMapping("/admin-dashboard")
+    public String showDashboard(Model model) {
+        model.addAttribute("mangaList", mangaRepo.findAll());
+        model.addAttribute("newsList", newsRepo.findAll());
+        model.addAttribute("authorList", authorRepo.findAll());
+        model.addAttribute("genreList", genreRepo.findAll());
+        return "user/admin-dashboard";
     }
 }
