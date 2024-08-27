@@ -3,12 +3,14 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#genre-select').select2({
             placeholder: 'Оберіть жанри',
             allowClear: true,
+            closeOnSelect: false,
             minimumResultsForSearch: Infinity,
         });
 
         $('#author-select').select2({
             placeholder: 'Оберіть автора',
             allowClear: true,
+            closeOnSelect: false,
             minimumResultsForSearch: Infinity
         });
 
