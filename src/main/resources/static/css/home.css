@@ -428,10 +428,11 @@ body {
 .manga-card.featured.first-manga {
     grid-column: span 2;
     grid-row: span 2;
+    max-height: 700px;
 }
 
 .manga-card.featured.first-manga img {
-    height: 560px;
+    height: 473px;
     width: 100%;
 }
 

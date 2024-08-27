@@ -6,9 +6,11 @@
     <title>Каталог манги</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/manga-main.css">
     <link rel="stylesheet" href="/css/loader.css">
+    <link rel="stylesheet" href="/css/main/custom-select.css">
 </head>
 <body >
 <div th:insert="~{blocks/loader :: loader}"></div>
@@ -23,14 +25,15 @@
                 <div class="filter-container">
                     <fieldset class="filter-group">
                         <label class="filter-label">Жанри & Категорії</label>
-                        <select id="genre-select" class="filter-select" aria-label="Жанри і Категорії">
+                        <select id="genre-select" class="filter-select" aria-label="Жанри і Категорії" multiple="multiple">
                         </select>
                         <div id="selected-genres" class="selected-genres-container"></div>
                     </fieldset>
 
                     <fieldset class="filter-group">
                         <label class="filter-label">За автором</label>
-                        <select id="author-select" class="filter-select" aria-label="Автори"></select>
+                        <select id="author-select" class="filter-select" aria-label="Автори" multiple="multiple">
+                        </select>
                         <div id="selected-authors" class="selected-authors-container"></div>
                     </fieldset>
 
@@ -56,13 +59,12 @@
                     <fieldset class="filter-group">
                         <label class="filter-label">Віковий рейтинг</label>
                         <select id="ageRating" class="filter-select" aria-label="Віковий рейтинг">
-                            <option value="">Всі</option>
+                            <option value="all">Всі</option>
                             <option value="0">Ні</option>
                             <option value="1">18+</option>
                         </select>
                     </fieldset>
-
-                <button type="submit" class="filter-button mt-2">Застосувати</button>
+                    <button type="submit" class="filter-button mt-2">Застосувати</button>
                 </div>
             </form>
         </template>
@@ -113,6 +115,7 @@
                 <div id="manga-content">
                     <div th:replace="~{manga/manga-partial :: manga-content}">
                     </div>
+                    <input type="hidden" id="mangas-count" value="${mangasCount}">
                 </div>
             </div>
         </div>
@@ -123,9 +126,11 @@
         <p>Спробуйте змінити фільтри.</p>
     </div>
 </div>
+<span id="total-manga-count" style="display: none;">123</span>
 <footer th:insert="~{blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
 <script src="/js/manga-main.js"></script>

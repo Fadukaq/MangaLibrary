@@ -38,7 +38,9 @@ body {
     gap: 15px;
     margin-top: 2rem;
 }
-
+.manga-grid .custom-info {
+    position: relative;
+}
 .custom-container {
     display: flex;
     flex-direction: column;
@@ -302,18 +304,19 @@ input::placeholder {
     color: #ffffff;
     padding: 8px 16px;
     text-decoration: none;
+    background-color: #1B1B1B;
     transition: background-color 0.3s;
-    border: 1px solid #ff65b3;
+    border: 1px solid #767676;
     margin: 0 4px;
     border-radius: 5px;
 }
 
 .pagination a:hover {
-    background-color: #e80778;
+    background-color: #282828;
 }
 
 .pagination .active {
-    background-color: #ff369a;
+    border: 1px solid #ff0080;
 }
 
 .header-container {
@@ -742,8 +745,8 @@ input::placeholder {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.custom-info {
-    position: relative;
+.manga-list .custom-info {
+    position: static;
 }
 
 .manga-list .custom-info {
@@ -766,8 +769,8 @@ input::placeholder {
 @media (max-width:954px) {
     .manga-list .custom-grade-details {
         position: absolute;
-        top: -5px;
-            right: 10px;
+        top: 4px;
+        right: 10px;
         display: flex;
         gap: 2px;
     }
@@ -875,4 +878,7 @@ input::placeholder {
 .manga-list .custom-container:hover {
     background-color: #1f1f1f93;
     border: 1px solid #ff4fa7;
+}
+.select2-container--default .select2-results__option--selected {
+    display: none;
 }

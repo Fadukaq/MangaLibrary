@@ -1,27 +1,43 @@
+$(document).ready(function() {
+    $('#listTypeSelect, #listTypeSelect-mobile').select2({
+        closeOnSelect: true,
+        minimumResultsForSearch: Infinity
+    });
+    $('#listTypeSelect-mobile').select2({
+        width: '100%',
+        closeOnSelect: true,
+        minimumResultsForSearch: Infinity
+    });
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const forms = [
         { formId: 'addMangaForm', selectId: 'listTypeSelect' },
         { formId: 'addMangaForm-mobile', selectId: 'listTypeSelect-mobile' }
     ];
 
+    let isSyncing = false;
+
     const syncSelects = (selectedValue) => {
+        if (isSyncing) return;
+
+        isSyncing = true;
         forms.forEach(({ selectId }) => {
-            const selectElement = document.getElementById(selectId);
-            if (selectElement) {
-                selectElement.value = selectedValue;
+            const selectElement = $(`#${selectId}`);
+            if (selectElement.length) {
+                selectElement.val(selectedValue).trigger('change.select2');
             }
         });
+        isSyncing = false;
     };
 
     forms.forEach(({ formId, selectId }) => {
-        const selectElement = document.getElementById(selectId);
+        const selectElement = $(`#${selectId}`);
         const form = document.getElementById(formId);
 
-        if (selectElement) {
-            syncSelects(selectElement.value);
-
-            selectElement.addEventListener('change', function(event) {
-                const selectedValue = selectElement.value;
+        if (selectElement.length) {
+            selectElement.on('change', function() {
+                const selectedValue = selectElement.val();
                 syncSelects(selectedValue);
 
                 const formData = new FormData(form);
@@ -47,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('resize', () => {
-        const selectedValue = document.querySelector('#listTypeSelect').value;
+        const selectedValue = $('#listTypeSelect').val();
         syncSelects(selectedValue);
     });
 });

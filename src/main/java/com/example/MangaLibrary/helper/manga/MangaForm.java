@@ -5,6 +5,7 @@ import com.example.MangaLibrary.models.Genre;
 import com.example.MangaLibrary.models.Manga;
 import jakarta.validation.Valid;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MangaForm {
@@ -14,7 +15,7 @@ public class MangaForm {
     private MangaImage mangaImage;
     private MangaImage backGroundImg;
     @Valid
-    private List<Genre> genres;
+    private List<Genre> genres = new ArrayList<>();
     @Valid
     private Author author;
     public Manga getManga() {

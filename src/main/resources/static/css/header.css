@@ -493,3 +493,22 @@ body {
 .btn-custom-subscribe:focus {
   background-color: #c20065 !important;
 }
+.btn-custom-back {
+  background-color: #282828 !important;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+.btn-custom-back:hover {
+  background-color: #2f2f2f !important;
+}
+.btn-custom-back:focus, .btn-custom-back:active {
+  background-color: #282828 !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}

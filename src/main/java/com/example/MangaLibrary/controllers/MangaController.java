@@ -95,10 +95,8 @@ public class MangaController {
         if (page > totalPages) {
             return "redirect:/manga?page=" + totalPages;
         }
-
         model.addAttribute("mangas", mangaList);
         model.addAttribute("page", mangaPage);
-
         if (request.getHeader("X-Requested-With") != null && request.getHeader("X-Requested-With").equals("XMLHttpRequest")) {
             return "manga/manga-partial :: manga-content";
         }
@@ -159,6 +157,8 @@ public class MangaController {
             model.addAttribute("genres", genres);
             model.addAttribute("authors", authors);
             model.addAttribute("mangaForm", mangaForm);
+            model.addAttribute("posterImageUrl", manga.getMangaPosterImg());
+            model.addAttribute("backGroundImageUrl", manga.getMangaBackGround());
             return "manga/manga-edit";
         } else {
             model.addAttribute("errorMessage", "Такої манги не знайдено!");
@@ -866,7 +866,8 @@ public class MangaController {
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "sort", defaultValue = "releaseYear") String sortOrder,
             @RequestParam(name = "direction", defaultValue = "desc") String direction,
-            Model model
+            Model model,
+            ModelMap modelMap
     ) {
         Sort.Direction sortDirection = "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
@@ -880,7 +881,6 @@ public class MangaController {
         Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, Sort.by(sortDirection, sortField));
 
         String effectiveStatus = "all".equals(status) ? null : status;
-
         Page<Manga> mangaPage = mangaRepo.findFiltered(
                 genreIds,
                 authorIds,
@@ -890,10 +890,9 @@ public class MangaController {
                 yearTo,
                 pageable
         );
-
         List<Manga> mangaList = mangaPage.getContent();
-
         model.addAttribute("mangas", mangaList);
+        modelMap.addAttribute("mangasCount", mangaPage.getTotalElements());
         model.addAttribute("page", mangaPage);
         return "manga/manga-partial :: manga-content";
     }

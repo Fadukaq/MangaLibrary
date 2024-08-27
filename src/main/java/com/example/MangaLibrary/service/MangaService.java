@@ -45,12 +45,14 @@ public class MangaService {
     }
 
     public boolean isValidAddMangaForm(MangaForm mangaForm, BindingResult bindingResult) {
-        List<Long> genreIds = mangaForm.getGenres().stream()
+        List<Genre> genres = mangaForm.getGenres();
+        List<Long> genreIds = (genres != null) ? genres.stream()
                 .map(Genre::getId)
-                .toList();
+                .toList()
+                : Collections.emptyList();
 
         MultipartFile posterImage = mangaForm.getMangaImage().getPosterImage();
-        long fileSizePosterInBytes = posterImage.getSize();
+        long fileSizePosterInBytes = posterImage != null ? posterImage.getSize() : 0;
         double fileSizePosterInMB = (double) fileSizePosterInBytes / (1024 * 1024);
 
         String mangaStatus = mangaForm.getManga().getMangaStatus();
@@ -58,25 +60,28 @@ public class MangaService {
             bindingResult.rejectValue("manga.mangaStatus", "error.mangaStatus", "Оберіть коректний статус манги (release, ongoing, completed).");
             return false;
         }
+
         if (bindingResult.hasErrors()
                 || genreIds.isEmpty()
-                || mangaForm.getMangaImage().getPosterImage().isEmpty()
+                || (posterImage != null && posterImage.isEmpty())
                 || fileSizePosterInMB > 5) {
 
             if (genreIds.isEmpty()) {
                 bindingResult.rejectValue("genres", "error.genres", "Будь ласка, оберіть хоча б один жанр.");
             }
 
-            if (mangaForm.getMangaImage().getPosterImage().isEmpty()) {
+            if (posterImage == null || posterImage.isEmpty()) {
                 bindingResult.rejectValue("mangaImage.posterImage", "error.missingFile", "Постер манги не був загруженний.");
             }
+
             if (fileSizePosterInMB > 5) {
                 bindingResult.rejectValue("mangaImage.posterImage", "error.fileSize", "Розмір завантажуваної картинки перевищує 5 МБ");
             }
-            if(mangaForm.getManga().getAuthor() == null)
-            {
+
+            if (mangaForm.getManga().getAuthor() == null) {
                 bindingResult.rejectValue("manga.author", "error.author", "Виберіть автора манги.");
             }
+
             return false;
         }
 

@@ -45,8 +45,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const selects = document.querySelectorAll('#listTypeSelect, #listTypeSelect-mobile');
-    const iconPreviews = document.querySelectorAll('#icon-preview, #icon-preview-mobile');
+    const selects = $('#listTypeSelect, #listTypeSelect-mobile');
+    const iconPreviews = ['#icon-preview', '#icon-preview-mobile'];
 
     const icons = {
         '': 'fa-folder',
@@ -57,28 +57,29 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     function updateIcon(select, iconPreview) {
-        const selectedValue = select.value;
+        const selectedValue = select.val();
         const iconClass = icons[selectedValue] || '';
-        iconPreview.innerHTML = iconClass ? `<i class="fa-solid ${iconClass}"></i>` : '';
+        $(iconPreview).html(iconClass ? `<i class="fa-solid ${iconClass}"></i>` : '');
     }
 
-    selects.forEach((select, index) => {
+    selects.each(function(index) {
+        const selectElement = $(this);
         const iconPreview = iconPreviews[index];
-        updateIcon(select, iconPreview);
+        updateIcon(selectElement, iconPreview);
 
-        select.addEventListener('change', function() {
-            updateIcon(select, iconPreview);
+        selectElement.on('change', function() {
+            updateIcon(selectElement, iconPreview);
         });
     });
 
     window.addEventListener('resize', function() {
-        selects.forEach((select, index) => {
+        selects.each(function(index) {
+            const selectElement = $(this);
             const iconPreview = iconPreviews[index];
-            updateIcon(select, iconPreview);
+            updateIcon(selectElement, iconPreview);
         });
     });
 });
-
 document.addEventListener('DOMContentLoaded', function() {
     const hash = window.location.hash;
     if (hash) {
