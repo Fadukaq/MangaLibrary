@@ -88,6 +88,7 @@ function previewImage(event, previewId, iconId) {
         reader.onload = function(e) {
             preview.src = e.target.result;
             preview.style.display = 'block';
+            if(icon!=null)
             icon.style.display = 'none';
         }
 
@@ -95,6 +96,7 @@ function previewImage(event, previewId, iconId) {
     } else {
         preview.src = '';
         preview.style.display = 'none';
+        if(icon!=null)
         icon.style.display = 'block';
     }
 }

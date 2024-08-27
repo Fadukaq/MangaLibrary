@@ -13,7 +13,7 @@ public class MainController {
     public String home(Model model) {
         model.addAttribute("latestUpdatesList", mainService.getLatestMangaWithChapters(16));
         model.addAttribute("NewMangaListMap", mainService.getNewMangaList(8));
-        model.addAttribute("mangaByGenre", mainService.getMangaByGenre(3, 11, 4));
+        model.addAttribute("mangaByGenre", mainService.getMangaByGenre(3, 11, 7));
         return "main/home";
     }
 

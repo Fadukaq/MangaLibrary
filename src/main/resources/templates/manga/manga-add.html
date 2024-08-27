@@ -29,7 +29,7 @@
                     <div style="color:red" th:if="${#fields.hasErrors('mangaImage.posterImage')}" th:errors="*{mangaImage.posterImage}">posterImage error</div>
                 </div>
                 <div class="custom-file-upload-wrapper">
-                    <div class="custom-file-upload-container" onclick="document.getElementById('backGroundImage').click();">
+                    <div class="custom-file-upload-container custom-file-upload-container-background" onclick="document.getElementById('backGroundImage').click();">
                         <input type="file" th:field="*{mangaImage.backGroundMangaImg}" id="backGroundImage" accept="image/jpeg, image/png" style="display: none;" onchange="previewImage(event, 'backGroundImagePreview', 'backGroundUploadIcon');">
                         <img id="backGroundImagePreview" class="preview-image" alt="Фон манги" style="display:none;">
                         <i id="backGroundUploadIcon" class="fas fa-upload"></i>

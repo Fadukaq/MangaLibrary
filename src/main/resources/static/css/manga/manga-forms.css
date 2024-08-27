@@ -28,7 +28,10 @@
     transition: border-color 0.3s ease;
     margin: 10px;
 }
-
+.custom-file-upload-container-background {
+    max-width: 430px;
+    height: 215px;
+}
 .custom-file-upload-wrapper {
     display: flex;
     flex-direction: column;

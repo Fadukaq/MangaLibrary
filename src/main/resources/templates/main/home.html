@@ -69,6 +69,8 @@
                             <span class="manga-genre" th:text="${manga.genres[1].genreName}"></span>
                         </span>
                         <p class="manga-status" th:text="${manga.mangaStatus}"></p>
+                        <p th:if="${mangaStat.first}" class="manga-description"
+                           th:text="${manga.mangaDescription.length() > 64} ? ${manga.mangaDescription.substring(0, 64)} + '...' : ${manga.mangaDescription}"></p>
                     </div>
                 </a>
             </div>

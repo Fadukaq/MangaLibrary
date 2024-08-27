@@ -440,7 +440,6 @@ public class MangaController {
             chapterForm.setManga(manga);
             chapterForm.setChapter(chapter);
             chapterForm.getChapterImage().setExistingImages(Arrays.asList(chapterImageUrls));
-
             model.addAttribute("chapterForm", chapterForm);
             model.addAttribute("manga", manga);
             model.addAttribute("chapter", chapter);

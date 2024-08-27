@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Manga Edit</title>
+    <title>Редагування манги</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -25,16 +25,14 @@
                         <div class="custom-file-upload-container" onclick="document.getElementById('posterImage').click();">
                             <input type="file" th:field="*{mangaImage.posterImage}" id="posterImage" accept="image/jpeg, image/png" style="display: none;" onchange="previewImage(event, 'posterImagePreview', 'posterUploadIcon');">
                             <img id="posterImagePreview" class="preview-image" alt="Обложка манги" th:src="@{${posterImageUrl}}" style="display:block;">
-                            <i id="posterUploadIcon" class="fas fa-upload"></i>
                         </div>
                         <p>Обкладинка манги</p>
                         <div style="color:red" th:if="${#fields.hasErrors('mangaImage.posterImage')}" th:errors="*{mangaImage.posterImage}">posterImage error</div>
                     </div>
                     <div class="custom-file-upload-wrapper">
-                        <div class="custom-file-upload-container" onclick="document.getElementById('backGroundImage').click();">
+                        <div class="custom-file-upload-container custom-file-upload-container-background" onclick="document.getElementById('backGroundImage').click();">
                             <input type="file" th:field="*{mangaImage.backGroundMangaImg}" id="backGroundImage" accept="image/jpeg, image/png" style="display: none;" onchange="previewImage(event, 'backGroundImagePreview', 'backGroundUploadIcon');">
                             <img id="backGroundImagePreview" class="preview-image" alt="Фон манги" th:src="@{${backGroundImageUrl}}" style="display:block;">
-                            <i id="backGroundUploadIcon" class="fas fa-upload"></i>
                         </div>
                         <p>Фон манги</p>
                         <div style="color:red" th:if="${#fields.hasErrors('mangaImage.backGroundMangaImg')}" th:errors="*{mangaImage.backGroundMangaImg}">backGroundImage error</div>
@@ -80,7 +78,7 @@
                     <label for="mangaDescription">Опис манги</label>
                     <textarea id="mangaDescription" th:field="*{manga.mangaDescription}" placeholder="Введіть опис манги" class="form-control" autocomplete="off"></textarea>
                 </div>
-                <button type="submit" class="btn btn-custom-subscribe" style="padding:6px 12px;">Додати мангу</button>
+                <button type="submit" class="btn btn-custom-subscribe" style="padding:6px 12px;">Редагувати мангу</button>
                 <a href="/manga" class="btn btn-custom-back">Повернутись</a>
             </form>
         </div>

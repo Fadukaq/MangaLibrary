@@ -90,12 +90,6 @@ public class GenreController {
             return "main/error";
         }
     }
-    @GetMapping("genres-list")
-    public String GenresList(@PathVariable(value ="id") long id,Model model) {
-
-
-        return "genre/genres-list";
-    }
     @GetMapping("/genres-filter")
     @ResponseBody
     public List<Genre> getAllGenres() {
