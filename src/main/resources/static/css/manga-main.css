@@ -129,7 +129,14 @@ body {
     width: 100%;
     margin-top: 20px;
 }
-
+.link-back{
+    text-decoration: none;
+    color:white;
+}
+.link-back:hover{
+    color:#ff0080;
+    text-decoration: underline;
+}
 .filter-button {
     width: 100%;
     padding: 15px 20px;
@@ -653,7 +660,25 @@ input::placeholder {
         width: 100%;
     }
 }
-
+@media (max-width: 499px) {
+    .manga-grid {
+        width: 90% !important;
+    }
+    .catalog-title{
+        display:none;
+    }
+}
+@media (max-width: 453px) {
+    .manga-grid {
+        width: 78% !important;
+    }
+    .manga-grid .manga-list {
+        width: 80% !important;
+    }
+    .manga-list .stars{
+        display:none;
+    }
+}
 @media (max-width: 578px) {
     .custom-title-details{
         font-size: 0.94em;
