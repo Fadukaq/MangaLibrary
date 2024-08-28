@@ -52,7 +52,7 @@
 }
 
 .manga-genre {
-    font-size: 14px;
+    font-size: 13px;
     color: #888;
     margin: 0 0 5px 0;
 }
@@ -503,18 +503,29 @@ body {
     .manga-card.featured.first-manga img {
         height: 160px;
     }
+    .manga-title {
+        font-size: 15px !important;
+    }
+
     .genre-label{
         margin-left:15px;
     }
-    .manga-title {
-        font-size: 15px;
-    }
+
     .manga-description {
         display:none;
     }
     .manga-author,
     .manga-status {
-        font-size: 13px;
+        font-size: 13px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .more-genres{
+        display:none;
+    }
+    .manga-card.featured .manga-info {
+        padding: 10px;
     }
 }
 @media (max-width: 710px) {

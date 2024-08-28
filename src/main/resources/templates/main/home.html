@@ -64,7 +64,7 @@
                         <h3 class="manga-title" th:text="${manga.mangaName}"></h3>
                         <h3 class="manga-author" th:text="${manga.author.name}"></h3>
                         <span class="manga-genre" th:text="${manga.genres[0].genreName}"></span>
-                        <span th:if="${manga.genres.size() >= 2}">
+                        <span class="more-genres" th:if="${manga.genres.size() >= 2}">
                             <span style="color:gray;">-</span>
                             <span class="manga-genre" th:text="${manga.genres[1].genreName}"></span>
                         </span>
