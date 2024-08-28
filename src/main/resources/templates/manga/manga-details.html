@@ -62,6 +62,12 @@
                         <span>Манга</span>
                     </div>
                 </a>
+                <a th:href="@{'/profile/' + ${manga.publishedBy.id}}" class="link full-link">
+                    <div class="info-item">
+                        <p class="info-title">Опубликовано:</p>
+                        <span th:text="${manga.publishedBy.userName}">Имя пользователя</span>
+                    </div>
+                </a>
                 <div class="info-item">
                     <p class="info-title">Рік виходу:</p>
                     <a th:href="@{'/search?q=' + ${manga.releaseYear} + '&type=releaseYear'}" class="link" th:text="${manga.releaseYear}"></a>

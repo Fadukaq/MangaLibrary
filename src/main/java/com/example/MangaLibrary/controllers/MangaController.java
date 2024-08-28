@@ -132,7 +132,10 @@ public class MangaController {
             return "manga/manga-add";
         }
         try {
-            mangaService.saveManga(mangaForm);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            User user = userRepo.findByUserName(username);
+            mangaService.saveManga(mangaForm, user);
         } catch (IllegalArgumentException e) {
             bindingResult.rejectValue("manga.mangaName", "error.manga", e.getMessage());
             return "manga/manga-add";

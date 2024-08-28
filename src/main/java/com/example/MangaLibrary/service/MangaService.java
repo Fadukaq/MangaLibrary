@@ -123,7 +123,7 @@ public class MangaService {
     private boolean isValidMangaStatus(String status) {
         return status.equals("release") || status.equals("ongoing") || status.equals("completed");
     }
-    public void saveManga(MangaForm mangaForm) throws IOException {
+    public void saveManga(MangaForm mangaForm,User user) throws IOException {
         Manga existingManga = mangaRepo.findByMangaName(mangaForm.getManga().getMangaName());
         if (existingManga != null) {
             throw new IllegalArgumentException("Манга з такою назвою вже існує");
@@ -145,6 +145,7 @@ public class MangaService {
 
         String posterPath = createPosterManga(mangaForm.getMangaImage().getPosterImage(), manga, mangaFolderPath);
         manga.setMangaPosterImg(posterPath);
+        manga.setPublishedBy(user);
 
         if (!mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()) {
             String backGroundPath = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), manga, mangaFolderPath);

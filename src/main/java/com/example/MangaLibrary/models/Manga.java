@@ -62,6 +62,9 @@ public class Manga {
     @OneToMany(mappedBy = "manga", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "published_by")
+    private User publishedBy;
     public Manga() {}
     public Manga(Manga manga) {
         this.mangaName = manga.getMangaName();
@@ -188,5 +191,13 @@ public class Manga {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public User getPublishedBy() {
+        return publishedBy;
+    }
+
+    public void setPublishedBy(User publishedBy) {
+        this.publishedBy = publishedBy;
     }
 }
