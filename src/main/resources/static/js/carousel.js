@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         genreSpan.textContent = genre.name;
                         mangaGenres.appendChild(genreSpan);
 
-                        if (index === 0 && manga.genres.length > 2) {
+                        if (index === 0 && manga.genres.length > 1) {
                             const ellipsisSpan = document.createElement('span');
                             ellipsisSpan.textContent = ' - ';
                             mangaGenres.appendChild(ellipsisSpan);
