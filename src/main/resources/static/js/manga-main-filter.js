@@ -1,50 +1,49 @@
 document.addEventListener('DOMContentLoaded', function () {
-    $(document).ready(function() {
-        $('#genre-select').select2({
+    const filterTemplateFl = document.getElementById('filter-template-fl');
+    const filterTemplateMobile = document.getElementById('filter-template-mobile');
+    const sidebarContent = document.getElementById('sidebar-content');
+    const modalContent = document.getElementById('modal-content');
+
+    if (filterTemplateFl && filterTemplateMobile && sidebarContent && modalContent) {
+        sidebarContent.innerHTML = filterTemplateFl.innerHTML;
+        modalContent.innerHTML = filterTemplateMobile.innerHTML;
+
+        initializeFilters(sidebarContent, 'fl');
+        initializeFilters(modalContent, 'mobile');
+    }
+
+    function initializeFilters(container, type) {
+        const genreSelect = $(container).find(`#genre-select-${type}`);
+        const authorSelect = $(container).find(`#author-select-${type}`);
+        const mangaStatusSelect = $(container).find(`#mangaStatus-${type}`);
+        const ageRatingSelect = $(container).find(`#ageRating-${type}`);
+        const releaseYearFrom = container.querySelector(`#releaseYearFrom-${type}`);
+        const releaseYearTo = container.querySelector(`#releaseYearTo-${type}`);
+        const filterForm = container.querySelector(`#filter-form-${type}`);
+
+        $(genreSelect).select2({
             placeholder: 'Оберіть жанри',
             allowClear: true,
             closeOnSelect: false,
             minimumResultsForSearch: Infinity,
         });
 
-        $('#author-select').select2({
+        $(authorSelect).select2({
             placeholder: 'Оберіть автора',
             allowClear: true,
             closeOnSelect: false,
             minimumResultsForSearch: Infinity
         });
 
-        $('#mangaStatus').select2({
+        $(mangaStatusSelect).select2({
             placeholder: 'Виберіть статус манги',
             minimumResultsForSearch: Infinity
         });
 
-        $('#ageRating').select2({
+        $(ageRatingSelect).select2({
             placeholder: 'Виберіть віковий рейтинг',
             minimumResultsForSearch: Infinity
         });
-    });
-
-    const filterTemplate = document.getElementById('filter-template');
-    const sidebarContent = document.getElementById('sidebar-content');
-    const modalContent = document.getElementById('modal-content');
-
-    if (filterTemplate && sidebarContent && modalContent) {
-        sidebarContent.innerHTML = filterTemplate.innerHTML;
-        modalContent.innerHTML = filterTemplate.innerHTML;
-
-        initializeFilters(sidebarContent);
-        initializeFilters(modalContent);
-    }
-
-    function initializeFilters(container) {
-        const genreSelect = $(container).find('#genre-select');
-        const authorSelect = $(container).find('#author-select');
-        const mangaStatusSelect = $(container).find('#mangaStatus');
-        const ageRatingSelect = $(container).find('#ageRating');
-        const releaseYearFrom = container.querySelector('#releaseYearFrom');
-        const releaseYearTo = container.querySelector('#releaseYearTo');
-        const filterForm = container.querySelector('#filter-form');
 
         fetch('/genres-filter')
             .then(response => response.json())
@@ -55,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             genreSelect.trigger('change.select2');
         })
-            .catch(error => console.error('Помилка під час завантаження жанрів:', error));
+            .catch(error => console.error('Ошибка при загрузке жанров:', error));
 
         fetch('/authors-filter')
             .then(response => response.json())
@@ -66,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             authorSelect.trigger('change.select2');
         })
-            .catch(error => console.error('Помилка під час завантаження авторів:', error));
+            .catch(error => console.error('Ошибка при загрузке авторов:', error));
 
         const currentYear = new Date().getFullYear();
         const minYear = 1902;
@@ -132,9 +131,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         window.initializeViewSwitch();
                     }
                 })
-                    .catch(error => console.error('Помилка під час завантаження:', error));
+                    .catch(error => console.error('Ошибка при загрузке:', error));
             }, 300);
         });
+
         function checkIfNoManga() {
             const $mangaGrid = $('.manga-grid');
             const $noMangaMessage = $('#no-manga-message');
@@ -149,12 +149,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 $noMangaMessage.show();
                 $catalogCount.show();
                 $catalogCount.text('0');
-            } else if(count >= 25){
-                $catalogCount.text((count - 1)+">");
+            } else if (count >= 25) {
+                $catalogCount.text((count - 1) + ">");
                 setTimeout(() => {
                     $viewButtons.fadeIn();
                 }, 50);
-            }else {
+            } else {
                 $catalogCount.text(count);
                 $catalogCount.show();
                 $noMangaMessage.hide();

@@ -31,6 +31,7 @@
     color: #ffffff;
     height: 40px;
     padding: 5px;
+    min-width: 256px;
 }
 
 .select2-container--default .select2-selection--single:hover {
@@ -99,6 +100,7 @@
     color: #ffffff;
     height: auto;
     padding: 5px;
+    min-width: 256px;
 }
 
 .select2-container--default .select2-selection--multiple:hover {

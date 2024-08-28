@@ -112,11 +112,22 @@ public class NewsController {
         }
     }
     @PostMapping("/news/delete/{id}")
-    public String newsDeletePost(@PathVariable Long id, Model model, Principal principal) {
+    public String newsDeletePost(@PathVariable Long id, Model model) {
         Optional<News> existingNews = newsRepo.findById(id);
         if(existingNews.isPresent()) {
             newsRepo.delete(existingNews.get());
             return "redirect:/news";
+        }else {
+            model.addAttribute("errorMessage", "Такої новини не знайдено!");
+            return "main/error";
+        }
+    }
+    @PostMapping("/news/deleteByAdminDashBoard/{id}")
+    public String newsDeletePostByAdminDashBoard(@PathVariable Long id, Model model) {
+        Optional<News> existingNews = newsRepo.findById(id);
+        if(existingNews.isPresent()) {
+            newsRepo.delete(existingNews.get());
+            return "redirect:/admin-dashboard?tab=newsTable";
         }else {
             model.addAttribute("errorMessage", "Такої новини не знайдено!");
             return "main/error";

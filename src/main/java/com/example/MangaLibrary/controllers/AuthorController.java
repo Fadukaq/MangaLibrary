@@ -122,10 +122,27 @@ public class AuthorController {
             manga.setAuthor(null);
             mangaRepo.save(manga);
         }
-
         authorRepo.delete(author);
         return "redirect:/manga";
     }
+
+    @PostMapping("/author/deleteByAdminDashBoard/{id}")
+    public String postAuthorDeleteByAdminDashBoard(@PathVariable("id") long id,  Model model) {
+        Author author = authorRepo.findById(id);
+        if (author == null) {
+            model.addAttribute("errorMessage", "Автора не знайдено!");
+            return "main/error";
+        }
+
+        List<Manga> mangas = mangaRepo.findByAuthor(author);
+        for (Manga manga : mangas) {
+            manga.setAuthor(null);
+            mangaRepo.save(manga);
+        }
+        authorRepo.delete(author);
+        return "redirect:/admin-dashboard?tab=authorsTable";
+    }
+
     @GetMapping("/authors-filter")
     @ResponseBody
     public List<Author> getAllAuthors() {

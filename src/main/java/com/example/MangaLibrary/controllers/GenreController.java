@@ -84,7 +84,7 @@ public class GenreController {
         Optional<Genre> genreToDelete = genreRepo.findById(id);
         if (genreToDelete.isPresent()){
             genreRepo.delete(genreToDelete.get());
-            return "redirect:/manga";
+            return "redirect:/admin-dashboard?tab=genresTable";
         } else {
             model.addAttribute("errorMessage", "Такого жанру не знайдено!");
             return "main/error";

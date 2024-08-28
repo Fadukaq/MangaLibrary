@@ -1,0 +1,50 @@
+<div th:fragment="filter-template-fl">
+    <template id="filter-template-fl">
+        <h3 class="text-center mb-4">Фільтр <i class="fas fa-bars ml-3 fs-5" aria-hidden="true"></i></h3>
+        <form id="filter-form-fl">
+            <div class="filter-container">
+                <fieldset class="filter-group">
+                    <label class="filter-label">Жанри & Категорії</label>
+                    <select id="genre-select-fl" class="filter-select" aria-label="Жанри і Категорії" multiple="multiple"></select>
+                </fieldset>
+
+                <fieldset class="filter-group">
+                    <label class="filter-label">За автором</label>
+                    <select id="author-select-fl" class="filter-select" aria-label="Автори" multiple="multiple"></select>
+                </fieldset>
+
+                <fieldset class="filter-group">
+                    <label class="filter-label">Роки виходу</label>
+                    <div class="range-input-group">
+                        <input type="number" id="releaseYearFrom-fl" class="filter-input" placeholder="Від" aria-label="Рік випуску від">
+                        <span class="dash mb-3" aria-hidden="true">—</span>
+                        <input type="number" id="releaseYearTo-fl" class="filter-input" placeholder="До" aria-label="Рік випуску до">
+                    </div>
+                </fieldset>
+
+                <fieldset class="filter-group">
+                    <label class="filter-label">Статус манги</label>
+                    <select id="mangaStatus-fl" class="filter-select" aria-label="Статус манги">
+                        <option value="all">Всі</option>
+                        <option value="release">Реліз</option>
+                        <option value="ongoing">Онгоїнг</option>
+                        <option value="completed">Завершено</option>
+                    </select>
+                </fieldset>
+
+                <fieldset class="filter-group">
+                    <label class="filter-label">Віковий рейтинг</label>
+                    <select id="ageRating-fl" class="filter-select" aria-label="Віковий рейтинг">
+                        <option value="all">Всі</option>
+                        <option value="0">Ні</option>
+                        <option value="1">18+</option>
+                    </select>
+                </fieldset>
+                <br>
+                <button type="submit" class="filter-button mt-2 mb-3">Застосувати</button>
+                <br>
+            </div>
+        </form>
+    </template>
+
+</div>

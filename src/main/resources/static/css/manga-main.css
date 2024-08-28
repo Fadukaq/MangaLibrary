@@ -8,11 +8,20 @@ body {
 
 .container {
     display: flex;
-    max-width: 1200px;
+    width: 1200px;
     min-height: 800px;
     margin: 0 auto;
     padding: 20px;
     margin-left: 55px;
+}
+.select2-container{
+    z-index:10000;
+}
+@media (max-width: 1200px) {
+    .container {
+        width: 90%;
+        margin-left: 0;
+    }
 }
 
 .sidebar {
@@ -318,18 +327,11 @@ input::placeholder {
 .pagination .active {
     border: 1px solid #ff0080;
 }
-
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
 }
-
-.header-container h2 {
-    margin: 0;
-}
-
 .view-switcher {
     display: flex;
     gap: 10px;
@@ -400,12 +402,6 @@ input::placeholder {
     background-color: #ff0080;
     color: #ffffff;
 }
-.view-switcher {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
 
 .view-btn:hover {
     background-color: #ff44a4;

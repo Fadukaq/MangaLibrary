@@ -214,19 +214,20 @@ public class MangaController {
     }
     @PostMapping("/manga/delete/{id}")
     public String mangaDelete(@PathVariable(value = "id") long id) {
-        Optional<Manga> mangaToDelete = mangaRepo.findById(id);
-        if (mangaToDelete.isPresent()) {
+            Optional<Manga> mangaToDelete = mangaRepo.findById(id);
+            if (mangaToDelete.isPresent()) {
             mangaRepo.delete(mangaToDelete.get());
             mangaService.deleteFolder(mangaToDelete.get().getId());
             Iterable<User> usersIterable = userRepo.findAll();
             List<User> users = new ArrayList<>();
             usersIterable.forEach(users::add);
             userService.deleteMangaFromUsersList(users, id);
-            return "redirect:/manga-list";
+                return "redirect:/admin-dashboard?tab=mangaTable";
         } else {
             return "redirect:/error?message=Такої манги не знайдено!";
         }
     }
+
     @GetMapping("/manga/{id}")
     public String getManga(@PathVariable Long id, ModelMap model, Principal principal) {
         Optional<Manga> optionalManga = mangaRepo.findById(id);

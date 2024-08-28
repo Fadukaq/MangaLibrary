@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
         createOverlay();
         body.style.overflow = 'hidden';
         filterModal.setAttribute('aria-hidden', 'false');
-        console.log("should");
     }
 
     function closeModal() {
@@ -85,13 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     initializeViewSwitch();
-    const filterTemplate = document.getElementById('filter-template');
-    const sidebarContent = document.getElementById('sidebar-content');
-    const modalContent = document.getElementById('modal-content');
-
-    sidebarContent.appendChild(filterTemplate.content.cloneNode(true));
-    modalContent.appendChild(filterTemplate.content.cloneNode(true));
-
     let sortDirection = new URLSearchParams(window.location.search).get('direction') || 'desc';
     let currentSort = new URLSearchParams(window.location.search).get('sort') || 'byNew';
 

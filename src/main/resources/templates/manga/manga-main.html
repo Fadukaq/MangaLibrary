@@ -19,55 +19,8 @@
 <div class="content mb-5">
 <div class="container-fluid">
     <div class="row">
-        <template id="filter-template">
-            <h3 class="text-center mb-4">Фільтр <i class="fas fa-bars ml-3 fs-5" aria-hidden="true"></i></h3>
-            <form id="filter-form">
-                <div class="filter-container">
-                    <fieldset class="filter-group">
-                        <label class="filter-label">Жанри & Категорії</label>
-                        <select id="genre-select" class="filter-select" aria-label="Жанри і Категорії" multiple="multiple">
-                        </select>
-                        <div id="selected-genres" class="selected-genres-container"></div>
-                    </fieldset>
-
-                    <fieldset class="filter-group">
-                        <label class="filter-label">За автором</label>
-                        <select id="author-select" class="filter-select" aria-label="Автори" multiple="multiple">
-                        </select>
-                        <div id="selected-authors" class="selected-authors-container"></div>
-                    </fieldset>
-
-                    <fieldset class="filter-group">
-                        <label class="filter-label">Роки виходу</label>
-                        <div class="range-input-group">
-                            <input type="number" id="releaseYearFrom" class="filter-input" placeholder="Від" aria-label="Рік випуску від">
-                            <span class="dash mb-3" aria-hidden="true">—</span>
-                            <input type="number" id="releaseYearTo" class="filter-input" placeholder="До" aria-label="Рік випуску до">
-                        </div>
-                    </fieldset>
-
-                    <fieldset class="filter-group">
-                        <label class="filter-label">Статус манги</label>
-                        <select id="mangaStatus" class="filter-select" aria-label="Статус манги">
-                            <option value="all">Всі</option>
-                            <option value="release">Реліз</option>
-                            <option value="ongoing">Онгоїнг</option>
-                            <option value="completed">Завершено</option>
-                        </select>
-                    </fieldset>
-
-                    <fieldset class="filter-group">
-                        <label class="filter-label">Віковий рейтинг</label>
-                        <select id="ageRating" class="filter-select" aria-label="Віковий рейтинг">
-                            <option value="all">Всі</option>
-                            <option value="0">Ні</option>
-                            <option value="1">18+</option>
-                        </select>
-                    </fieldset>
-                    <button type="submit" class="filter-button mt-2">Застосувати</button>
-                </div>
-            </form>
-        </template>
+        <div th:insert="~{blocks/filter/filter-template-fl :: filter-template-fl}"></div>
+        <div th:insert="~{blocks/filter/filter-template-mobile :: filter-template-mobile}"></div>
 
         <aside class="sidebar col-md-3 col-lg-2 ml-5">
             <div id="sidebar-content"></div>
@@ -76,7 +29,7 @@
         <div id="filter-modal" class="filter-modal mb-5" aria-hidden="true">
             <div class="filter-modal-content" role="dialog" aria-labelledby="filter-modal-title">
                 <button class="close-btn" id="close-btn" aria-label="Закрити">&times;</button>
-                <h3 id="filter-modal-title"></h3>
+                <h3 id="filter-modal-title">Фільтр</h3>
                 <div id="modal-content"></div>
             </div>
         </div>
