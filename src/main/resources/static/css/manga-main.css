@@ -561,9 +561,6 @@ input::placeholder {
         margin-left: 0;
         max-width: 90%;
     }
-    .container {
-        padding: 15px;
-    }
     .manga-details h4{
         font-size: 1em;
     }
@@ -602,9 +599,6 @@ input::placeholder {
         white-space: normal;
         font-size: 0.9em;
     }
-    .container {
-        padding: 10px;
-    }
 }
 
 @media (min-width: 1024px) {
@@ -637,9 +631,10 @@ input::placeholder {
 @media (max-width: 835px) {
     .manga-grid {
         grid-template-columns: repeat(3, 1fr);
+        width: 767px;
     }
     container{
-     width:776px !important;
+     width:82px !important;
     }
 }
 @media (max-width: 768px) {
@@ -648,6 +643,17 @@ input::placeholder {
         margin-left: 0;
     }
 }
+@media (max-width: 796px) {
+    .manga-grid {
+        width: 700px;
+    }
+}
+@media (max-width: 735px) {
+    .manga-grid {
+        width: 100%;
+    }
+}
+
 @media (max-width: 578px) {
     .custom-title-details{
         font-size: 0.94em;
