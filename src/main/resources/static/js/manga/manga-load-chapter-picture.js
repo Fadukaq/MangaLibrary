@@ -6,7 +6,6 @@ function previewMultipleImages(event) {
     previewContainer.style.display = 'flex';
     previewContainer.innerHTML = '';
 
-    // Обновление списка файлов
     fileList = Array.from(files);
 
     fileList.forEach((file, index) => {

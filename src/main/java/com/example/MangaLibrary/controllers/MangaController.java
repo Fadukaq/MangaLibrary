@@ -1,5 +1,6 @@
 package com.example.MangaLibrary.controllers;
 import com.example.MangaLibrary.helper.manga.ChapterForm;
+import com.example.MangaLibrary.helper.manga.ChapterImage;
 import com.example.MangaLibrary.helper.manga.MangaForm;
 import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.models.*;
@@ -451,11 +452,12 @@ public class MangaController {
 
     @PostMapping("/manga/{mangaId}/chapter/edit/{chapterId}")
     public String chapterEditPost(@PathVariable Long mangaId, @PathVariable Long chapterId,
-                                    @Valid @ModelAttribute("chapterForm") ChapterForm chapterForm,
-                                    BindingResult result, RedirectAttributes redirectAttributes,
-                                    Model model) throws IOException {
+                                  @Valid @ModelAttribute("chapterForm") ChapterForm chapterForm,
+                                  BindingResult result, RedirectAttributes redirectAttributes,
+                                  Model model) throws IOException {
         Optional<Manga> mangaOptional = mangaRepo.findById(mangaId);
         Optional<Chapter> chapterOptional = chapterRepo.findById(chapterId);
+
         if (mangaOptional.isEmpty() || chapterOptional.isEmpty()) {
             model.addAttribute("errorMessage", "Такої глави, або манги не знайдено!");
             return "main/error";
@@ -468,6 +470,7 @@ public class MangaController {
             chapterService.addChapterDataToModel(model, manga, chapter, chapterForm);
             return "manga/manga-chapter-edit";
         }
+
         try {
             chapterService.editChapter(chapterForm, manga, chapter);
             redirectAttributes.addFlashAttribute("message", "Главу успішно оновлено");
@@ -479,8 +482,6 @@ public class MangaController {
         return "redirect:/manga/"+mangaId;
     }
 
-
-
     @PostMapping("/manga/{mangaId}/chapter/delete/{chapterId}")
     public String deleteChapter(@PathVariable Long mangaId, @PathVariable Long chapterId, RedirectAttributes redirectAttributes) {
         try {
@@ -491,8 +492,6 @@ public class MangaController {
         }
         return "redirect:/manga/"+mangaId+"#chapters";
     }
-
-
 
     @PostMapping("/manga/add-to-list")
     @ResponseBody

@@ -35,13 +35,13 @@
                 <p>Завантажити картинки глави</p>
                 <div class="text-danger" th:if="${#fields.hasErrors('chapterImage.pagesImage')}" th:errors="*{chapterImage.pagesImage}">Ошибка загрузки картинок главы</div>
             </div>
-            <input type="hidden" name="fileOrder" id="fileOrder">
             <br>
+            <input type="hidden" id="fileOrder" name="fileOrder" />
+            <input type="hidden" id="imageUrlsHidden" name="imageUrls" />
             <button type="submit" class="btn btn-custom-subscribe" style="padding:6px 12px;">Оновити главу</button>
             <a th:href="@{/manga/{mangaId}(mangaId=${mangaId})}" class="btn btn-custom-back">Повернутись</a>
         </form>
-        <div id="imagePreviewSection" class="image-preview-section" style="display:flex;">
-        </div>
+        <div id="imagePreviewSection" class="image-preview-section" style="display:flex;"></div>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -49,53 +49,9 @@
 <script src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
 <script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-        const chapterImageUrls = /*[[${chapterImageUrls}]]*/ [];
-
-        const previewContainer = document.getElementById('imagePreviewSection');
-        previewContainer.style.display = 'flex';
-
-        chapterImageUrls.forEach((url, index) => {
-            const imgWrapper = document.createElement('div');
-            imgWrapper.className = 'image-wrapper';
-            imgWrapper.dataset.index = index;
-
-            const img = document.createElement('img');
-            img.src = url;
-            img.className = 'preview-image';
-            imgWrapper.appendChild(img);
-
-            const moveUpBtn = document.createElement('button');
-            moveUpBtn.className = 'move-up-btn';
-            moveUpBtn.textContent = '⬆';
-            moveUpBtn.onclick = function() {
-                moveImage(imgWrapper, 'up');
-                reorderFiles();
-            };
-            imgWrapper.appendChild(moveUpBtn);
-
-            const moveDownBtn = document.createElement('button');
-            moveDownBtn.className = 'move-down-btn';
-            moveDownBtn.textContent = '⬇';
-            moveDownBtn.onclick = function() {
-                moveImage(imgWrapper, 'down');
-                reorderFiles();
-            };
-            imgWrapper.appendChild(moveDownBtn);
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-image-btn';
-            deleteBtn.textContent = 'Удалить';
-            deleteBtn.onclick = function() {
-                imgWrapper.remove();
-                reorderFiles();
-            };
-            imgWrapper.appendChild(deleteBtn);
-
-            previewContainer.appendChild(imgWrapper);
-        });
-    });
+    var chapterImageUrls = /*[[${chapterImageUrls}]]*/ [];
 </script>
+<script src="/js/manga/manga-chapter-edit.js"></script>
 <script src="/js/manga/manga-load-chapter-picture.js"></script>
 </body>
 </html>

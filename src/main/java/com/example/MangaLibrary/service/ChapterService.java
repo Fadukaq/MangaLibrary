@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,14 +66,20 @@ public class ChapterService {
 
     public void editChapter(ChapterForm chapterForm, Manga manga, Chapter chapter) throws IOException {
         chapter.setTitle(chapterForm.getChapter().getTitle());
-        System.out.println("title.");
-        List<String> imageUrls = new ArrayList<>();
-        if (chapterForm.getChapterImage().getPagesImage() != null && chapterForm.getChapterImage().getPagesImage().stream().anyMatch(file -> file.getSize() > 0)) {
-            clearChapterFolder(manga,chapter);
+
+        List<String> imageUrls;
+        if (chapterForm.getChapterImage().getPagesImage() != null &&
+                chapterForm.getChapterImage().getPagesImage().stream().anyMatch(file -> file.getSize() > 0)) {
+            clearChapterFolder(manga, chapter);
             imageUrls = createPagesManga(chapterForm.getChapterImage().getPagesImage(), manga, chapter);
-            System.out.println("new urls.");
         } else {
             imageUrls = Arrays.asList(chapter.getChapterPages().split(","));
+        }
+
+        String fileOrder = chapterForm.getFileOrder();
+        if (fileOrder != null && !fileOrder.isEmpty()) {
+            List<String> orderedImageUrls = Arrays.asList(fileOrder.split(","));
+            imageUrls = orderedImageUrls;
         }
 
         chapter.setChapterPages(String.join(",", imageUrls));
@@ -174,6 +179,7 @@ public class ChapterService {
             }
         }
     }
+
     private String getChapterFolderPath(Long mangaId, Long chapterId) {
         return mangaLibraryManager.getResourcePathManga() + File.separator + mangaId + File.separator + "chapters" + File.separator + chapterId;
     }

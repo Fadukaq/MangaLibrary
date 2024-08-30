@@ -14,7 +14,7 @@ public class ChapterForm {
     private Chapter chapter;
     @Valid
     private ChapterImage chapterImage;
-    private String fileOrder; // Это поле для хранения порядка изображений
+    private String fileOrder;
 
     public Manga getManga() {
         return manga;
