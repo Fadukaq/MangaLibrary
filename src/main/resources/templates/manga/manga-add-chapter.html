@@ -42,12 +42,13 @@
                 Це просто список усіх доступних сторінок. Якщо потрібно скинути порядок і почати заново, просто виберіть необхідні зображення знову.
                 Вони відобразяться в блоці нижче.
             </p>
-            <div id="imagePreviewSection" class="image-preview-section" style="display:none;"></div>
+            <input type="hidden" id="fileOrder" name="fileOrder" value="">
             <br>
             <hr>
             <button type="submit" class="btn btn-custom-subscribe" style="padding:6px 12px;">Додати главу</button>
             <a th:href="@{/manga/{mangaId}(mangaId=${mangaId})}" class="btn btn-custom-back">Повернутись</a>
         </form>
+        <div id="imagePreviewSection" class="image-preview-section" style="display:none;"></div>
     </div>
 </div>
 

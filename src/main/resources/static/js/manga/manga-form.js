@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     $('#authorSelect').select2({
         placeholder: 'Оберіть автора',
-        allowClear: true,
         width: '100%'
     });
 

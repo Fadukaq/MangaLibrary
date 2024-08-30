@@ -21,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -370,30 +371,24 @@ public class MangaController {
     }
 
     @PostMapping("/manga/{mangaId}/chapter/add")
-    public String chapterAddPost(@PathVariable Long mangaId,@Valid @ModelAttribute ChapterForm chapterForm,
-                                    BindingResult result,
-                                    RedirectAttributes redirectAttributes,
-                                    Model model) throws IOException {
-        if (!chapterService.isValidChapterForm(chapterForm,result)) {
+    public String chapterAddPost(@PathVariable Long mangaId, @Valid @ModelAttribute ChapterForm chapterForm,
+                                 BindingResult result, RedirectAttributes redirectAttributes, Model model) throws IOException {
+        if (!chapterService.isValidChapterForm(chapterForm, result)) {
             model.addAttribute("mangaId", mangaId);
             return "manga/manga-add-chapter";
         }
+
         Optional<Manga> thisManga = mangaRepo.findById(mangaId);
-        if(thisManga.isPresent()) {
+        if (thisManga.isPresent()) {
             Manga manga = thisManga.get();
-            boolean chapterExists = chapterRepo.existsByMangaIdAndTitle(mangaId, chapterForm.getChapter().getTitle());
-            if (chapterExists) {
-                result.rejectValue("chapter.title", "error.title", "Глава с таким названием уже существует");
-                model.addAttribute("mangaId", mangaId);
-                return "manga/manga-add-chapter";
-            }
+
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             User user = userRepo.findByUserName(username);
 
             chapterService.addChapter(chapterForm, manga, user);
-            return "redirect:/manga/"+mangaId;
-        }else {
+            return "redirect:/manga/" + mangaId;
+        } else {
             model.addAttribute("errorMessage", "Такої манги не знайдено!");
             return "main/error";
         }
@@ -443,7 +438,6 @@ public class MangaController {
             ChapterForm chapterForm = new ChapterForm();
             chapterForm.setManga(manga);
             chapterForm.setChapter(chapter);
-            chapterForm.getChapterImage().setExistingImages(Arrays.asList(chapterImageUrls));
             model.addAttribute("chapterForm", chapterForm);
             model.addAttribute("manga", manga);
             model.addAttribute("chapter", chapter);
@@ -462,7 +456,6 @@ public class MangaController {
                                     Model model) throws IOException {
         Optional<Manga> mangaOptional = mangaRepo.findById(mangaId);
         Optional<Chapter> chapterOptional = chapterRepo.findById(chapterId);
-
         if (mangaOptional.isEmpty() || chapterOptional.isEmpty()) {
             model.addAttribute("errorMessage", "Такої глави, або манги не знайдено!");
             return "main/error";
@@ -471,23 +464,15 @@ public class MangaController {
         Manga manga = mangaOptional.get();
         Chapter chapter = chapterOptional.get();
 
-        if (!chapterService.isValidChapterForm(chapterForm, result)) {
+        if (!chapterService.isValidChapterForm(chapterForm , result)) {
             chapterService.addChapterDataToModel(model, manga, chapter, chapterForm);
             return "manga/manga-chapter-edit";
         }
-
-        boolean chapterExists = chapterRepo.existsByMangaIdAndTitleAndIdNot(mangaId, chapterForm.getChapter().getTitle(), chapterId);
-        if (chapterExists) {
-            result.rejectValue("chapter.title", "error.title", "Глава с таким названием уже существует");
-            chapterService.addChapterDataToModel(model, manga, chapter, chapterForm);
-            return "manga/manga-chapter-edit";
-        }
-
         try {
             chapterService.editChapter(chapterForm, manga, chapter);
-            redirectAttributes.addFlashAttribute("message", "Глава успешно обновлена");
+            redirectAttributes.addFlashAttribute("message", "Главу успішно оновлено");
         } catch (IOException e) {
-            model.addAttribute("errorMessage", "Ошибка при обновлении главы: " + e.getMessage());
+            model.addAttribute("errorMessage", "Помилка під час оновлення глави: " + e.getMessage());
             return "main/error";
         }
 
@@ -504,7 +489,7 @@ public class MangaController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Помилка видалення глави: " + e.getMessage());
         }
-        return "redirect:/manga/"+mangaId;
+        return "redirect:/manga/"+mangaId+"#chapters";
     }
 
 

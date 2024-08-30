@@ -52,26 +52,26 @@
                 <input type="number" id="releaseYear" name="manga.releaseYear" placeholder="Введіть рік релізу манги(YYYY)" class="form-control" min="1902" th:max="${maxYear}" autocomplete="off">
                 <div class="error-message" th:if="${#fields.hasErrors('manga.releaseYear')}" th:errors="*{manga.releaseYear}">releaseYear error</div>
             </div>
-            <div class="form-group" style="position: relative; padding-bottom: 40px; margin-bottom:0px;">
+            <div class="form-group" style="position: relative; padding-bottom: 38px; margin-bottom:0px;">
                 <label for="authorSelect"><i class="fas fa-circle pink-dot"></i> Автор</label>
                 <select id="authorSelect" name="manga.author" class="form-control">
                     <option value="">Оберіть автора</option>
                     <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.name}"></option>
                 </select>
                 <div class="error-message" th:if="${#fields.hasErrors('manga.author')}" th:errors="*{manga.author}">author error</div>
-                <a style="color: #625E5E; position: absolute; bottom: 10px; right: 0;" href="/author/add">Немає нужного автора?</a>
+                <a class="link-to-add" href="/author/add">Немає потрібного автора?</a>
             </div>
-            <div class="form-group" style="position: relative; padding-bottom: 40px; margin-bottom:0px;">
-                <label for="genreSelect"><i class="fas fa-circle pink-dot"></i> Жанри</label>
+            <div class="form-group" style="position: relative; padding-bottom: 38px; margin-bottom:0px;">
+                <label for="genreSelect"><i class="fas fa-circle pink-dot"></i> Жанри & Категорії</label>
                 <select id="genreSelect" name="genres" class="form-control" multiple="multiple">
-                    <option value="" disabled>Оберіть жанри</option>
+                    <option value="" disabled>Оберіть жанри йцу</option>
                     <option th:each="genre : ${genres}"
                             th:value="${genre.id}"
                             th:text="${genre.genreName}"></option>
                 </select>
-                <div id="noGenresLeft" style="color: #FF5BABFF; margin-top:10px;">Ви обрали всі жанри, більше немає жанрів для вибору.</div>
+                <div id="noGenresLeft" style="color: #FF5BABFF; margin-top:10px;">Ви обрали всі жанри, більше немає жанрів & категорії для вибору.</div>
                 <div class="error-message" th:if="${#fields.hasErrors('genres')}" th:errors="*{genres}">genre error</div>
-                <a style="color: #625E5E; position: absolute; bottom: 10px; right: 0;" href="/genre/add">Немає нужного жанру?</a>
+                <a class="link-to-add" href="/genre/add">Немає потрібного жанру & категорії?</a>
             </div>
             <div class="form-group">
                 <label for="mangaStatus">Статус манги:</label>

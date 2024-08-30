@@ -43,15 +43,7 @@ public class ChapterService {
         if (chapterForm.getChapter().getTitle() == null || chapterForm.getChapter().getTitle().trim().isEmpty() || chapterForm.getChapter().getTitle().length() < 2 || chapterForm.getChapter().getTitle().length() > 255) {
             isValid = false;
         }
-
-        boolean hasNewImages = chapterForm.getChapterImage().getPagesImage() != null &&
-                !chapterForm.getChapterImage().getPagesImage().isEmpty() &&
-                chapterForm.getChapterImage().getPagesImage().stream().anyMatch(file -> file.getSize() > 0);
-
-        boolean hasExistingImages = chapterForm.getChapterImage().getExistingImages() != null &&
-                !chapterForm.getChapterImage().getExistingImages().isEmpty();
-
-        if (!hasNewImages && !hasExistingImages) {
+        if (chapterForm.getChapterImage().getPagesImage().isEmpty()) {
             bindingResult.rejectValue("chapterImage.pagesImage", "error.pagesImage", "Додайте хоча б одне зображення глави.");
             isValid = false;
         }
@@ -75,11 +67,12 @@ public class ChapterService {
 
     public void editChapter(ChapterForm chapterForm, Manga manga, Chapter chapter) throws IOException {
         chapter.setTitle(chapterForm.getChapter().getTitle());
-
+        System.out.println("title.");
         List<String> imageUrls = new ArrayList<>();
         if (chapterForm.getChapterImage().getPagesImage() != null && chapterForm.getChapterImage().getPagesImage().stream().anyMatch(file -> file.getSize() > 0)) {
             clearChapterFolder(manga,chapter);
             imageUrls = createPagesManga(chapterForm.getChapterImage().getPagesImage(), manga, chapter);
+            System.out.println("new urls.");
         } else {
             imageUrls = Arrays.asList(chapter.getChapterPages().split(","));
         }
@@ -123,7 +116,7 @@ public class ChapterService {
 
     public List<String> createPagesManga(List<MultipartFile> files, Manga manga, Chapter chapter) throws IOException {
         List<String> pagePaths = new ArrayList<>();
-        Long mangaId  = manga.getId();
+        Long mangaId = manga.getId();
 
         String targetRootPath = mangaLibraryManager.getTargetPathManga();
         String chapterFolderPath = targetRootPath + File.separator + mangaId + File.separator + "chapters" + File.separator + chapter.getId();
@@ -173,7 +166,6 @@ public class ChapterService {
     private void clearChapterFolder(Manga manga, Chapter chapter) {
         String chapterFolderPath = getChapterFolderPath(manga.getId(), chapter.getId());
         File chapterFolder = new File(chapterFolderPath);
-
         if (chapterFolder.exists() && chapterFolder.isDirectory()) {
             for (File file : chapterFolder.listFiles()) {
                 if (file.isFile()) {
@@ -183,6 +175,6 @@ public class ChapterService {
         }
     }
     private String getChapterFolderPath(Long mangaId, Long chapterId) {
-        return mangaLibraryManager.getTargetPathManga() + File.separator + mangaId + File.separator + "chapters" + File.separator + chapterId;
+        return mangaLibraryManager.getResourcePathManga() + File.separator + mangaId + File.separator + "chapters" + File.separator + chapterId;
     }
 }

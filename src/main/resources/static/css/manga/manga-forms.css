@@ -32,6 +32,18 @@
     max-width: 430px;
     height: 215px;
 }
+.link-to-add{
+    color: #767474;
+    position: absolute;
+    bottom: 10px;
+    right: 0;
+    font-size: 14px;
+    text-decoration:none;
+}
+.link-to-add:hover{
+    color: #8f8f8f;
+    text-decoration:underline;
+}
 .custom-file-upload-wrapper {
     display: flex;
     flex-direction: column;

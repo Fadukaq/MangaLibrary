@@ -14,6 +14,8 @@ public class ChapterForm {
     private Chapter chapter;
     @Valid
     private ChapterImage chapterImage;
+    private String fileOrder; // Это поле для хранения порядка изображений
+
     public Manga getManga() {
         return manga;
     }
@@ -40,5 +42,13 @@ public class ChapterForm {
 
     public ChapterForm() {
         this.chapterImage = new ChapterImage();
+    }
+
+    public String getFileOrder() {
+        return fileOrder;
+    }
+
+    public void setFileOrder(String fileOrder) {
+        this.fileOrder = fileOrder;
     }
 }
