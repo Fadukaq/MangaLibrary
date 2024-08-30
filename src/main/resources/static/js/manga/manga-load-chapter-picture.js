@@ -6,6 +6,11 @@ function previewMultipleImages(event) {
     const previewContainer = document.getElementById('imagePreviewSection');
     previewContainer.style.display = 'flex';
 
+    if (fileList.length > 0) {
+        previewContainer.innerHTML = '';
+        fileList = [];
+    }
+
     const newFiles = Array.from(files).map(file => ({
         originalIndex: nextIndex++,
         file: file
@@ -99,6 +104,7 @@ function moveImage(element, direction) {
 
 function updateDisplayOrder() {
     const container = document.getElementById('imagePreviewSection');
+
     Array.from(container.children).forEach((child, idx) => {
         const displayIndex = idx + 1;
         child.querySelector('.image-index').textContent = displayIndex;
