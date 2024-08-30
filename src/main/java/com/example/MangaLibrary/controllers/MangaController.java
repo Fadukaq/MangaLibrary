@@ -374,7 +374,7 @@ public class MangaController {
     @PostMapping("/manga/{mangaId}/chapter/add")
     public String chapterAddPost(@PathVariable Long mangaId, @Valid @ModelAttribute ChapterForm chapterForm,
                                  BindingResult result, RedirectAttributes redirectAttributes, Model model) throws IOException {
-        if (!chapterService.isValidChapterForm(chapterForm, result)) {
+        if (!chapterService.isValidChapterFormAdd(chapterForm, result)) {
             model.addAttribute("mangaId", mangaId);
             return "manga/manga-add-chapter";
         }

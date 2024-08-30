@@ -35,14 +35,29 @@ public class ChapterService {
     private MangaRepo mangaRepo;
     @Autowired
     private MangaLibraryManager mangaLibraryManager;
+    public boolean isValidChapterFormAdd(ChapterForm chapterForm, BindingResult bindingResult) {
+        boolean isValid = true;
 
+        if (chapterForm.getChapter().getTitle() == null || chapterForm.getChapter().getTitle().trim().isEmpty() || chapterForm.getChapter().getTitle().length() < 2 || chapterForm.getChapter().getTitle().length() > 255) {
+            isValid = false;
+        }
+        if (chapterForm.getChapterImage().getPagesImage() == null &&
+                chapterForm.getChapterImage().getPagesImage().stream().anyMatch(file -> file.getSize() < 0)
+                ||chapterForm.getChapterImage().getPagesImage().getFirst().getOriginalFilename().equals("")) {
+            bindingResult.rejectValue("chapterImage.pagesImage", "error.pagesImage", "Додайте хоча б одне зображення глави.");
+            isValid = false;
+        }
+
+        return isValid;
+    }
     public boolean isValidChapterForm(ChapterForm chapterForm, BindingResult bindingResult) {
         boolean isValid = true;
 
         if (chapterForm.getChapter().getTitle() == null || chapterForm.getChapter().getTitle().trim().isEmpty() || chapterForm.getChapter().getTitle().length() < 2 || chapterForm.getChapter().getTitle().length() > 255) {
             isValid = false;
         }
-        if (chapterForm.getChapterImage().getPagesImage().isEmpty()) {
+        if (chapterForm.getChapterImage().getPagesImage() == null &&
+                chapterForm.getChapterImage().getPagesImage().stream().anyMatch(file -> file.getSize() < 0)) {
             bindingResult.rejectValue("chapterImage.pagesImage", "error.pagesImage", "Додайте хоча б одне зображення глави.");
             isValid = false;
         }

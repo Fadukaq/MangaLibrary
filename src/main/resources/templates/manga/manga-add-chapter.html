@@ -14,7 +14,7 @@
 <header th:insert="~{blocks/header :: header}"></header>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="container mt-5 mb-5">
-    <div class="container-form">
+    <div class="container-form mb-5">
         <h2 class="mb-5" style="text-align: center; color: #ff0080;">Завантаження глави</h2>
 
         <form action="#" method="POST" th:action="@{/manga/{mangaId}/chapter/add(mangaId=${mangaId})}" th:object="${chapterForm}" enctype="multipart/form-data">
@@ -36,19 +36,16 @@
                 <p>Завантажити картинки глави</p>
                 <div class="text-danger" th:if="${#fields.hasErrors('chapterImage.pagesImage')}" th:errors="*{chapterImage.pagesImage}">Ошибка загрузки картинок главы</div>
             </div>
-            <p style="color:gray; text-align:center;">Це не порядок сторінок, а лише їхнє відображення.
-                Порядок сторінок задаєте ви під час додавання.
-                Наприклад, якщо ви вибрали сторінку як першу (1), вона буде першою і тд.
-                Це просто список усіх доступних сторінок. Якщо потрібно скинути порядок і почати заново, просто виберіть необхідні зображення знову.
-                Вони відобразяться в блоці нижче.
+            <p style="color:gray; text-align:center;">
+                Ми рекомендуємо перед додаванням картинкок глав на сайт пронумерувати їх від 1 до кінцевої картинки. Це дасть змогу відразу завантажити сторінки по порядку.
+                Якщо ви не хочете, то вам доведеться вибудовувати ланцюжок картинок самому за допомогою інтерфейсу сайту.
             </p>
+            <div id="imagePreviewSection" class="image-preview-section" style="display:none;"></div>
             <input type="hidden" id="fileOrder" name="fileOrder" value="">
             <br>
-            <hr>
-            <button type="submit" class="btn btn-custom-subscribe" style="padding:6px 12px;">Додати главу</button>
-            <a th:href="@{/manga/{mangaId}(mangaId=${mangaId})}" class="btn btn-custom-back">Повернутись</a>
+            <button type="submit" class="btn btn-custom-subscribe mt-5" style="padding:6px 12px;">Додати главу</button>
+            <a th:href="@{/manga/{mangaId}(mangaId=${mangaId})}" class="btn btn-custom-back mt-5">Повернутись</a>
         </form>
-        <div id="imagePreviewSection" class="image-preview-section" style="display:none;"></div>
     </div>
 </div>
 

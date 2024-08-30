@@ -4,15 +4,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const previewContainer = document.getElementById('imagePreviewSection');
     previewContainer.style.display = 'flex';
-
     function updateFileOrder() {
         const fileOrderInput = document.getElementById('fileOrder');
         const imagePreviews = previewContainer.querySelectorAll('.image-wrapper');
         const orderArray = Array.from(imagePreviews).map(wrapper => wrapper.dataset.fileName);
         fileOrderInput.value = orderArray.join(',');
+
+        imagePreviews.forEach((wrapper, index) => {
+            const numberSpan = wrapper.querySelector('.image-number');
+            numberSpan.textContent = index + 1;
+        });
     }
 
-    chapterImageUrls.forEach((url) => {
+    chapterImageUrls.forEach((url, index) => {
         const imgWrapper = document.createElement('div');
         imgWrapper.className = 'image-wrapper';
         imgWrapper.dataset.fileName = url.split('/').pop();
@@ -22,25 +26,37 @@ document.addEventListener('DOMContentLoaded', function() {
         img.className = 'preview-image';
         imgWrapper.appendChild(img);
 
+        const buttonGroup = document.createElement('div');
+        buttonGroup.className = 'button-group';
+
         const moveUpBtn = document.createElement('button');
         moveUpBtn.className = 'move-up-btn';
-        moveUpBtn.textContent = '⬆';
+        moveUpBtn.textContent = '⭠';
         moveUpBtn.onclick = function() {
+            event.preventDefault();
             moveImage(imgWrapper, 'up');
         };
-        imgWrapper.appendChild(moveUpBtn);
+        buttonGroup.appendChild(moveUpBtn);
 
         const moveDownBtn = document.createElement('button');
         moveDownBtn.className = 'move-down-btn';
-        moveDownBtn.textContent = '⬇';
+        moveDownBtn.textContent = '⭢';
         moveDownBtn.onclick = function() {
+            event.preventDefault();
             moveImage(imgWrapper, 'down');
         };
-        imgWrapper.appendChild(moveDownBtn);
+        buttonGroup.appendChild(moveDownBtn);
+
+        imgWrapper.appendChild(buttonGroup);
+
+        const numberSpan = document.createElement('span');
+        numberSpan.className = 'image-number';
+        numberSpan.textContent = index + 1;
+        imgWrapper.appendChild(numberSpan);
 
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-image-btn';
-        deleteBtn.textContent = 'Удалить';
+        deleteBtn.textContent = 'X';
         deleteBtn.onclick = function() {
             imgWrapper.remove();
             updateFileOrder();
