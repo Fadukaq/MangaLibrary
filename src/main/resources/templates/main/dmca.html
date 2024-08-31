@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>FAQ</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/loader.css">
+    <link rel="stylesheet" href="/css/about.css">
+</head>
+<body class="loading">
+<div th:insert="~{blocks/loader :: loader}"></div>
+<header th:insert="~{blocks/header :: header}"></header>
+<input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 text-center">
+            <h1 class="header">Правовласникам</h1>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-md-10">
+            <div class="content">
+                <p class="about-text">
+                    Адміністрація платформи або сайту, або ресурсу <span class="manga">Manga</span><span class="library">Library</span>
+                    розташованого в інтернеті за адресою - <span class="manga">mangalibrary.com.ua</span>,
+                    відповідно до Digital Millennium Copyright Act («DMCA») реагуватиме на будь-які повідомлення про порушення авторських прав та
+                    вживатиме відповідних дій відповідно до Digital Millennium Copyright Act («DMCA») та інших чинних законів про інтелектуальну власність
+                </p>
+                <p class="about-text">
+                    Ми вживаємо заходів щодо захисту інтелектуальних прав відповідно до законодавства України.
+                    Якщо користувачі завантажують контент на Сайт, який може порушувати авторські права, адміністрація виступає як інформаційний посередник і вживає
+                    заходів щодо припинення порушень за заявами правовласників. Якщо ви виявили на Сайті контент, який, на вашу думку, є незаконним, вам необхідно
+                    надати достатню інформацію про порушення та належність прав, щоб адміністрація могла ефективно відреагувати на вашу заяву.
+                </p>
+                <p class="about-text">
+                    У випадку, якщо ви виявили на <span class="manga">mangalibrary.com.ua</span> контент, який може порушувати ваші авторські права або суміжні права,
+                    ви можете надіслати повідомлення про це на адресу нашої електронної пошти <span class="manga">mangalibrary@gmail.com</span> Після отримання повідомлення,
+                    ми негайно заблокуємо матеріали, перелічені у повідомленні.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:insert="~{/blocks/footer :: footer}"></footer>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
+<script src="/js/showEmail.js"></script>
+<script src="/js/loader-spinner.js"></script>
+</body>
+</html>
