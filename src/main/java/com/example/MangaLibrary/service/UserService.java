@@ -46,9 +46,6 @@ public class UserService {
     private MailSender mailSender;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    private String userBackgroundImageUrl;
-
-
     public void createUser(User user){
 
         String plainPassword = user.getUserPassword();
