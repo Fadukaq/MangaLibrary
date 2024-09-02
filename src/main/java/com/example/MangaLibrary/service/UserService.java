@@ -90,41 +90,11 @@ public class UserService {
         userRepo.save(user);
         return true;
     }
-    public void getUserMangaLists(User user, List<Manga> readingManga, List<Manga> recitedManga, List<Manga> wantToReadManga, List<Manga> favoriteManga, List<Manga> stoppedReadingManga, int page, int size) {
-        readingManga.clear();
-        List<Long> readingMangaIds = user.getMangaReading().stream()
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
-        readingManga.addAll(mangaRepo.findAllByIdIn(readingMangaIds, PageRequest.of(page, size)).getContent());
-
-
-        recitedManga.clear();
-        List<Long> recitedMangaIds = user.getMangaRecited().stream()
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
-        recitedManga.addAll(mangaRepo.findAllByIdIn(recitedMangaIds, PageRequest.of(page, size)).getContent());
-
-        wantToReadManga.clear();
-        List<Long> wantToReadMangaIds = user.getMangaWantToRead().stream()
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
-        wantToReadManga.addAll(mangaRepo.findAllByIdIn(wantToReadMangaIds, PageRequest.of(page, size)).getContent());
-
-        favoriteManga.clear();
-        List<Long> favoriteMangaIds = user.getMangaFavorites().stream()
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
-        favoriteManga.addAll(mangaRepo.findAllByIdIn(favoriteMangaIds, PageRequest.of(page, size)).getContent());
-
-
-        stoppedReadingManga.clear();
-        List<Long> stoppedReadingMangaIds = user.getMangaStoppedReading().stream()
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
-        stoppedReadingManga.addAll(mangaRepo.findAllByIdIn(stoppedReadingMangaIds, PageRequest.of(page, size)).getContent());
-
+    public Page<Manga> getMangaPage(List<String> mangaIds, Pageable pageable) {
+        List<Long> ids = mangaIds.stream().map(Long::valueOf).collect(Collectors.toList());
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("averageRating").descending());
+        return mangaRepo.findAllByIdIn(ids, sortedPageable);
     }
-
     public User updateUserProfile(long id, UserForm userForm, String currentPassword, String userPasswordNew, boolean changePasswordCheckbox) {
         User userToUpdate = userRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));

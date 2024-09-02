@@ -150,26 +150,16 @@ public class UserController {
             model.addAttribute("user", user);
             model.addAttribute("username", user.getUserName());
 
-            model.addAttribute("readingMangaPage", getMangaPage(user.getMangaReading(), pageable));
-            model.addAttribute("recitedMangaPage", getMangaPage(user.getMangaRecited(), pageable));
-            model.addAttribute("wantToReadMangaPage", getMangaPage(user.getMangaWantToRead(), pageable));
-            model.addAttribute("favoriteMangaPage", getMangaPage(user.getMangaFavorites(), pageable));
-            model.addAttribute("stoppedReadingMangaPage", getMangaPage(user.getMangaStoppedReading(), pageable));
-
-
+            model.addAttribute("readingMangaPage", userService.getMangaPage(user.getMangaReading(), pageable));
+            model.addAttribute("recitedMangaPage", userService.getMangaPage(user.getMangaRecited(), pageable));
+            model.addAttribute("wantToReadMangaPage", userService.getMangaPage(user.getMangaWantToRead(), pageable));
+            model.addAttribute("favoriteMangaPage", userService.getMangaPage(user.getMangaFavorites(), pageable));
+            model.addAttribute("stoppedReadingMangaPage", userService.getMangaPage(user.getMangaStoppedReading(), pageable));
             return "user/user-profile";
         } else {
             model.addAttribute("errorMessage", "Користувач: " + id + " не знайдений");
             return "main/error";
         }
-    }
-
-    private Page<Manga> getMangaPage(List<String> mangaIds, Pageable pageable) {
-        List<Long> ids = mangaIds.stream().map(Long::valueOf).collect(Collectors.toList());
-
-        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("averageRating").descending());
-
-        return mangaRepo.findAllByIdIn(ids, sortedPageable);
     }
 
     @GetMapping("/profile/edit/{id}")
