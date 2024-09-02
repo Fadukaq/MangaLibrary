@@ -546,13 +546,30 @@ public class MangaController {
 
     @GetMapping("/search")
     @ResponseBody
-    public ResponseEntity<List<Manga>> searchManga(@RequestParam(value = "q", defaultValue = "") String query) {
+    public ResponseEntity<List<MangaDTO>> searchManga(@RequestParam(value = "q", defaultValue = "") String query) {
         try {
             if (query.isEmpty()) {
                 return ResponseEntity.ok(Collections.emptyList());
             }
             List<Manga> results = mangaRepo.findByMangaNameStartingWith(query);
-            return ResponseEntity.ok(results);
+
+            List<MangaDTO> mangaDTOs = results.stream()
+                    .map(manga -> {
+                        MangaDTO dto = new MangaDTO();
+                        dto.setId(manga.getId());
+                        dto.setMangaName(manga.getMangaName());
+                        dto.setMangaDescription(manga.getMangaDescription());
+                        dto.setMangaStatus(manga.getMangaStatus());
+                        dto.setMangaPosterImg(manga.getMangaPosterImg());
+                        dto.setMangaBackGround(manga.getMangaBackGround());
+                        dto.setReleaseYear(manga.getReleaseYear());
+                        dto.setAdultContent(manga.getAdultContent());
+                        dto.setAverageRating(manga.getAverageRating());
+                        dto.setTotalRatings(manga.getTotalRatings());
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(mangaDTOs);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

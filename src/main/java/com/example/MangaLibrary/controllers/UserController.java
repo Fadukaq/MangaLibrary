@@ -6,6 +6,7 @@ import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.models.UserSettings;
 import com.example.MangaLibrary.repo.*;
+import com.example.MangaLibrary.service.MangaService;
 import com.example.MangaLibrary.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -33,6 +35,8 @@ public class UserController {
     private UserRepo userRepo;
     @Autowired
     private UserService userService;
+    @Autowired
+    private MangaService mangaService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -50,6 +54,7 @@ public class UserController {
     private List<Manga> readingManga = new ArrayList<>();
     private List<Manga> recitedManga = new ArrayList<>();
     private List<Manga> wantToReadManga = new ArrayList<>();
+    private List<Manga> favoriteManga = new ArrayList<>();
     private List<Manga> stoppedReadingManga = new ArrayList<>();
     @GetMapping("/registration")
     public String registration(Model model) {
@@ -135,12 +140,13 @@ public class UserController {
 
             model.addAttribute("user", user);
             model.addAttribute("username", user.getUserName());
-            userService.getUserMangaLists(user, readingManga, recitedManga, wantToReadManga, stoppedReadingManga);
+            userService.getUserMangaLists(user, readingManga, recitedManga, wantToReadManga,favoriteManga, stoppedReadingManga);
 
-            model.addAttribute("readingManga", readingManga);
-            model.addAttribute("recitedManga", recitedManga);
-            model.addAttribute("wantToReadManga", wantToReadManga);
-            model.addAttribute("stoppedReadingManga", stoppedReadingManga);
+            model.addAttribute("readingManga", mangaService.sortByRatingDescending(readingManga));
+            model.addAttribute("recitedManga", mangaService.sortByRatingDescending(recitedManga));
+            model.addAttribute("wantToReadManga", mangaService.sortByRatingDescending(wantToReadManga));
+            model.addAttribute("favoriteManga", mangaService.sortByRatingDescending(favoriteManga));
+            model.addAttribute("stoppedReadingManga", mangaService.sortByRatingDescending(stoppedReadingManga));
 
             return "user/user-profile";
         } else {

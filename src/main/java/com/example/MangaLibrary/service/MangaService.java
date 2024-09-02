@@ -87,6 +87,13 @@ public class MangaService {
 
         return true;
     }
+
+    public List<Manga> sortByRatingDescending(List<Manga> mangaList) {
+        return mangaList.stream()
+                .sorted(Comparator.comparing(Manga::getAverageRating).reversed())
+                .collect(Collectors.toList());
+    }
+
     public boolean isValidUpdateMangaForm(MangaForm mangaForm, BindingResult bindingResult) {
         List<Long> genreIds = mangaForm.getManga().getGenres().stream()
                 .map(Genre::getId)

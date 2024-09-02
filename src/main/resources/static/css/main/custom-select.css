@@ -1,6 +1,6 @@
 .custom-select {
     background-color: #2f2f2f;
-    border: 1px solid #910048;
+    border: 1px solid #625E5E;
     border-radius: 5px;
     color: #ffffff;
     padding: 10px;
@@ -26,7 +26,7 @@
 
 .select2-container--default .select2-selection--single {
     background-color: #2f2f2f;
-    border: 1px solid #910048;
+    border: 1px solid #625E5E;
     border-radius: 5px;
     color: #ffffff;
     height: 40px;
@@ -95,7 +95,7 @@
 }
 .select2-container--default .select2-selection--multiple {
     background-color: #2f2f2f;
-    border: 1px solid #910048;
+    border: 1px solid #625E5E;
     border-radius: 5px;
     color: #ffffff;
     height: auto;

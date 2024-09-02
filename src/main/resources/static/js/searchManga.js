@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
             .catch(error => {
             console.error('Error:', error);
-            searchResults.innerHTML = '<li>Произошла ошибка при поиске</li>';
+            searchResults.innerHTML = '<li>Ми нічого не знайшли</li>';
         });
     }
 

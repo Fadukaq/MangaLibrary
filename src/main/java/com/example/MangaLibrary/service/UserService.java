@@ -89,7 +89,7 @@ public class UserService {
         userRepo.save(user);
         return true;
     }
-    public void getUserMangaLists(User user, List<Manga> readingManga, List<Manga> recitedManga, List<Manga> wantToReadManga, List<Manga> stoppedReadingManga) {
+    public void getUserMangaLists(User user, List<Manga> readingManga, List<Manga> recitedManga, List<Manga> wantToReadManga,List<Manga> favoriteManga, List<Manga> stoppedReadingManga) {
         readingManga.clear();
         List<Long> readingMangaIds = user.getMangaReading().stream()
                 .map(Long::valueOf)
@@ -109,6 +109,13 @@ public class UserService {
                 .map(Long::valueOf)
                 .collect(Collectors.toList());
         wantToReadManga.addAll(StreamSupport.stream(mangaRepo.findAllById(wantToReadMangaIds).spliterator(), false)
+                .toList());
+
+        favoriteManga.clear();
+        List<Long> favoriteMangaIds = user.getMangaFavorites().stream()
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
+        favoriteManga.addAll(StreamSupport.stream(mangaRepo.findAllById(favoriteMangaIds).spliterator(), false)
                 .toList());
 
         stoppedReadingManga.clear();

@@ -168,7 +168,7 @@ body {
 }
 
 .filter-input {
-    border: 1px solid #910048;
+    border: 1px solid #625E5E;
     background-color: #2c2c2c;
     color: #e0e0e0;
     width: 100%;
@@ -809,7 +809,7 @@ input::placeholder {
 .fa-star {
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
-    color: gold;
+    color: #f5cd00;
 }
 .fa-star-half-alt{
     font-family: "Font Awesome 6 Free";

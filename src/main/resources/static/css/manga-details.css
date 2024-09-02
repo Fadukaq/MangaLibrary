@@ -202,11 +202,11 @@
 }
 
 .stars i {
-    color: gold;
+    color: #f5cd00;
     font-size: 21px;
 }
 .star {
-    color: gold;
+    color: #f5cd00;
     font-size: 20px;
     margin-right: 2px;
 }
@@ -948,12 +948,12 @@
 .fa-star {
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
-    color: gold;
+    color: #f5cd00;
 }
 .fa-star-half-alt{
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
-    color: gold;
+    color: #f5cd00;
 }
 
 .comment-header {

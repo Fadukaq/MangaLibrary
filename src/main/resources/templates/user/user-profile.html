@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Profile</title>
+    <title th:text="${user.userName}"></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
-    <link rel="stylesheet" href="/css/user-profile.css">
+    <link rel="stylesheet" href="/css/user/user-profile.css">
     <link rel="stylesheet" href="/css/form-styles.css">
     <link rel="stylesheet" href="/css/loader.css">
 </head>
@@ -12,226 +12,258 @@
 <div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
-<div class="container  mt-5 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card border-primary">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="card-title">User Profile</h5>
-                </div>
-                <div class="card-body bg-dark text-white d-flex">
-                    <div class="d-flex align-items-center">
-                        <img th:src="${user.profilePicture}" alt="User Profile Picture" class="profile-picture">
-                        <div class="user-info ml-3">
-                            <strong>Username:</strong> <span th:text="${user.userName}"></span>
-                            <strong>UserRole:</strong> <span th:text="${user.userRole}"></span>
-                            <strong>About:</strong> <span th:text="${user.about}"></span>
-                        </div>
-                    </div>
-                    <div  th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.name == user.userName})"
-                            class="position-absolute end-0 mt-2 me-3">
-                        <a th:href="@{'/profile/edit/' + ${user.id}}" class="btn btn-light">Edit</a>
-                    </div>
-                </div>
-                <div th:if="${profilePrivacy != 'private'}" class="container mt-2">
-                    <ul class="nav nav-tabs" id="mainTab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="lists-tab" data-toggle="tab" href="#lists" role="tab" aria-controls="lists" aria-selected="true">Списки</a>
-                        </li>
-                        <!--
-                        <li class="nav-item">
-                            <a class="nav-link" id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false">Друзі</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="notifications-tab" data-toggle="tab" href="#notifications" role="tab" aria-controls="notifications" aria-selected="false">Повідомлення</a>
-                        </li>!-->
-                    </ul>
-                    <div class="tab-content" id="mainTabContent">
-                        <div class="tab-pane tab-lists fade show active" id="lists" role="tabpanel" aria-labelledby="lists-tab">
-                            <div class="search-container mb-3">
-                                <input type="text" id="search" class="form-control" placeholder="Пошук в поточному списку...">
+<div class="content">
+    <div class="container mt-5 mb-5">
+        <div class="profile-header">
+            <div class="header-info">
+                <img class="user-picture" th:src="${user.ProfilePicture}" alt="userProfilePicture">
+                <span class="user-name" th:text="${user.userName}"></span>
+                <span class="dash">-</span>
+                <span class="user-role" th:text="${user.userRole}"></span>
+                <span th:if="${#authentication.name == user.userName}" class="user-settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <a class="btn-custom-settings" th:href="@{'/profile/edit/' + ${user.id}}">Налаштування</a>
+                </span>
+            </div>
+            <div class="footer-info">
+                <hr>
+                <ul class="nav nav-tabs nav-tabs-profile" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="user-link nav-link" th:classappend="${selectedTab == 'userList'} ? 'active' : ''" href="#userList" data-bs-toggle="tab">Списки</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="user-link nav-link" th:classappend="${selectedTab == 'userFriends'} ? 'active' : ''" href="#userFriends" data-bs-toggle="tab">Друзі</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="user-link nav-link" th:classappend="${selectedTab == 'userComments'} ? 'active' : ''" href="#userComments" data-bs-toggle="tab">Коментарі</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="user-link nav-link" th:classappend="${selectedTab == 'userNotification'} ? 'active' : ''" href="#userNotification" data-bs-toggle="tab">Сповіщення</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="user-link nav-link" th:classappend="${selectedTab == 'userProfile'} ? 'active' : ''" href="#userProfile" data-bs-toggle="tab">Профіль</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="user-link nav-link" th:classappend="${selectedTab == 'userChat'} ? 'active' : ''" href="#userChat" data-bs-toggle="tab">Чат</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+            <div class="tab-content mt-4">
+                <div id="userList" class="tab-pane fade">
+                    <div class="main-content">
+                        <div class="left-block" id="leftBlock">
+                            <div class="divider">
+                                <span>Списки</span>
                             </div>
-                            <p class="text-center" id="noResultsMessage" style="display: none; color: #e91e63;">Немає результатів</p>
-                            <ul class="nav nav-pills flex-column flex-sm-row mt-3" id="listsSubTab" role="tablist">
-                                <li class="nav-item flex-sm-fill text-sm-center">
-                                    <a class="nav-link active" id="reading-tab" href="#reading" data-toggle="pill" role="tab" aria-controls="reading" aria-selected="true">Читаю</a>
-                                </li>
-                                <li class="nav-item flex-sm-fill text-sm-center">
-                                    <a class="nav-link" id="plan-tab" href="#plan" data-toggle="pill" role="tab" aria-controls="plan" aria-selected="false">Буду читати</a>
-                                </li>
-                                <li class="nav-item flex-sm-fill text-sm-center">
-                                    <a class="nav-link" id="dropped-tab" href="#dropped" data-toggle="pill" role="tab" aria-controls="dropped" aria-selected="false">Припинив читати</a>
-                                </li>
-                                <li class="nav-item flex-sm-fill text-sm-center">
-                                    <a class="nav-link" id="completed-tab" href="#recited" data-toggle="pill" role="tab" aria-controls="completed" aria-selected="false">Прочитав</a>
-                                </li>
-                            </ul>
-                            <div class="tab-content mt-3" id="listsSubTabContent">
-                                <div class="tab-pane fade" id="reading" role="tabpanel" aria-labelledby="reading-tab">
-                                    <div th:if="${#lists.isEmpty(readingManga)}">
-                                        <p class="isEmptyMessage">Список 'Читаю' пустий</p>
-                                    </div>
-                                    <div th:unless="${#lists.isEmpty(readingManga)}" th:each="manga : ${readingManga}">
-                                        <div class="card_manga_container position-relative">
-                                            <a th:href="@{/manga/{id}(id=${manga.id})}">
-                                                <div class="card_manga mb-3">
-                                                    <div class="row no-gutters">
-                                                        <div class="col-md-2">
-                                                            <img th:src="${manga.mangaPosterImg}" class="card-img" alt="...">
-                                                        </div>
-                                                        <div class="col-md-10">
-                                                            <div class="card-body">
-                                                                <div class="top-right">
-                                                                    <img class="evoStar" src="/images/icons/star_icon.png" alt="">
-                                                                    <span th:text="8"></span>
-                                                                </div>
-                                                                <h5 class="card-title" th:text="${#strings.length(manga.mangaName) > 40 ? #strings.substring(manga.mangaName, 0, 40) + '...' : manga.mangaName}"></h5>
-                                                                <span class="card-text" style="font-size:18px; font-weight: bold; color:#BCA3D3" th:text="${manga.author.name}"></span>
-                                                                <p class="card-text" th:text="${#strings.length(manga.mangaDescription) > 124 ? #strings.substring(manga.mangaDescription, 0, 124) + '...' : manga.mangaDescription}"></p>
-                                                            </div>
+                            <div class="lists">
+                                    <ul class="nav nav-tabs nav-tabs-lists" id="myTabLists" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <a class="user-link nav-link" th:classappend="${selectedList == 'reading'} ? 'active' : ''" href="#reading" data-bs-toggle="tab">Читаю</a>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="user-link nav-link" th:classappend="${selectedList == 'plan'} ? 'active' : ''" href="#plan" data-bs-toggle="tab">Буду читати</a>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="user-link nav-link" th:classappend="${selectedList == 'dropped'} ? 'active' : ''" href="#dropped" data-bs-toggle="tab">Прочитано</a>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="user-link nav-link" th:classappend="${selectedList == 'favorite'} ? 'active' : ''" href="#favorite" data-bs-toggle="tab">Улюблене</a>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="user-link nav-link" th:classappend="${selectedList == 'recited'} ? 'active' : ''" href="#recited" data-bs-toggle="tab">Кинуто</a>
+                                        </li>
+                                    </ul>
+                            </div>
+                            <div class="divider">
+                                <span>Вигляд</span>
+                            </div>
+                            <div class="typeView">
+                                <ul class="nav nav-tabs nav-tabs-lists" id="myTabType" role="tablist">
+                                    <li class="nav-item d-flex align-items-center" role="presentation" style="margin-left: 15px;">
+                                        <i class="fa fa-th me-0"></i>
+                                        <a class="user-link nav-link" th:classappend="${selectedView == 'gridType'} ? 'active' : ''" href="#gridType" data-bs-toggle="tab">Плитка</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="right-block" id="rightBlock">
+                            <div class="input-wrapper">
+                                <input type="text" class="form-control mb-3 input-filter" placeholder="Пошук по назві манги" id="filterInput">
+                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            </div>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade" id="reading" th:classappend="${selectedList == 'reading'} ? 'show active' : ''" role="tabpanel" aria-labelledby="reading-tab">
+                                    <div class="manga-grid">
+                                        <div th:each="el : ${readingManga}" class="custom-container">
+                                            <div class="manga">
+                                                <img class="poster-manga-link" th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy" th:onclick="'window.location.href=\'/manga/' + ${el.id} + '\''">
+                                                <div class="custom-info">
+                                                    <div class="custom-genres">
+                                                        <div class="custom-genre" th:if="${el.genres.size() > 0}" th:text="${el.genres[0].genreName}"></div>
+                                                        <div class="custom-genre" th:if="${el.genres.size() > 1}">
+                                                            <span> - </span>
+                                                            <span th:text="${el.genres[1].genreName}"></span>
                                                         </div>
                                                     </div>
-                                                    <form th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.name == user.userName})"
-                                                            class="position-absolute top-0 end-0 mt-2 custom-mr"
-                                                            th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
-                                                            method="post">
-                                                        <input type="hidden" name="panel" th:value="'#reading'" />
-                                                        <button class="btn btn-danger" type="submit">X</button>
-                                                    </form>
+                                                    <a class="custom-title-link" th:href="@{/manga/{mangaId}(mangaId=${el.id})}">
+                                                        <div class="custom-title">
+                                                            <span th:text="${el.mangaName}"></span>
+                                                        </div>
+                                                    </a>
+                                                    <div class="custom-grade-details" th:data-rating="${el.averageRating}">
+                                                        <span class="stars"></span>
+                                                        <span class="rating-number"></span>
+                                                    </div>
                                                 </div>
-                                            </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="plan" role="tabpanel" aria-labelledby="plan-tab">
-                                    <div th:if="${#lists.isEmpty(wantToReadManga)}">
-                                        <p class="isEmptyMessage">Список 'Буду читати' пустий</p>
-                                    </div>
-                                    <div th:unless="${#lists.isEmpty(wantToReadManga)}" th:each="manga : ${wantToReadManga}">
-                                        <a th:href="@{/manga/{id}(id=${manga.id})}">
-                                            <div class="card_manga mb-3">
-                                                <div class="row no-gutters">
-                                                    <div class="col-md-2">
-                                                        <img th:src="${manga.mangaPosterImg}" class="card-img" alt="...">
-                                                    </div>
-                                                    <div class="col-md-10">
-                                                        <div class="card-body">
-                                                            <div class="top-right">
-                                                                <img class="evoStar" src="/images/icons/star_icon.png" alt="">
-                                                                <span th:text="8"></span>
-                                                            </div>
-                                                            <h5 class="card-title" th:text="${#strings.length(manga.mangaName) > 40 ? #strings.substring(manga.mangaName, 0, 40) + '...' : manga.mangaName}"></h5>
-                                                            <span class="card-text" style="font-size:18px; font-weight: bold; color:#BCA3D3" th:text="${manga.author.name}"></span>
-                                                            <p class="card-text" th:text="${#strings.length(manga.mangaDescription) > 124 ? #strings.substring(manga.mangaDescription, 0, 124) + '...' : manga.mangaDescription}"></p>
+                                <div class="tab-pane fade" id="plan" th:classappend="${selectedList == 'plan'} ? 'show active' : ''" role="tabpanel" aria-labelledby="plan-tab">
+                                    <div class="manga-grid">
+                                        <div th:each="el : ${wantToReadManga}" class="custom-container">
+                                            <div class="manga">
+                                                <img class="poster-manga-link" th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy" th:onclick="'window.location.href=\'/manga/' + ${el.id} + '\''">
+                                                <div class="custom-info">
+                                                    <div class="custom-genres">
+                                                        <div class="custom-genre" th:if="${el.genres.size() > 0}" th:text="${el.genres[0].genreName}"></div>
+                                                        <div class="custom-genre" th:if="${el.genres.size() > 1}">
+                                                            <span> - </span>
+                                                            <span th:text="${el.genres[1].genreName}"></span>
                                                         </div>
                                                     </div>
+                                                    <a class="custom-title-link" th:href="@{/manga/{mangaId}(mangaId=${el.id})}">
+                                                        <div class="custom-title">
+                                                            <span th:text="${el.mangaName}"></span>
+                                                        </div>
+                                                    </a>
+                                                    <div class="custom-grade-details" th:data-rating="${el.averageRating}">
+                                                        <span class="stars"></span>
+                                                        <span class="rating-number"></span>
+                                                    </div>
                                                 </div>
-                                                <form th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.name == user.userName})"
-                                                        class="position-absolute top-0 end-0 mt-2 custom-mr"
-                                                        th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
-                                                        method="post">
-                                                    <input type="hidden" name="panel" th:value="'#plan'" />
-                                                    <button class="btn btn-danger" type="submit">X</button>
-                                                </form>
                                             </div>
-                                        </a>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="dropped" role="tabpanel" aria-labelledby="dropped-tab">
-                                    <div th:if="${#lists.isEmpty(stoppedReadingManga)}">
-                                        <p class="isEmptyMessage">Список 'Припинив читати' пустий</p>
-                                    </div>
-                                    <div th:unless="${#lists.isEmpty(stoppedReadingManga)}" th:each="manga : ${stoppedReadingManga}">
-                                        <a th:href="@{/manga/{id}(id=${manga.id})}">
-                                            <div class="card_manga mb-3">
-                                                <div class="row no-gutters">
-                                                    <div class="col-md-2">
-                                                        <img th:src="${manga.mangaPosterImg}" class="card-img" alt="...">
-                                                    </div>
-                                                    <div class="col-md-10">
-                                                        <div class="card-body">
-                                                            <div class="top-right">
-                                                                <img class="evoStar" src="/images/icons/star_icon.png" alt="">
-                                                                <span th:text="8"></span>
-                                                            </div>
-                                                            <h5 class="card-title" th:text="${#strings.length(manga.mangaName) > 40 ? #strings.substring(manga.mangaName, 0, 40) + '...' : manga.mangaName}"></h5>
-                                                            <span class="card-text" style="font-size:18px; font-weight: bold; color:#BCA3D3" th:text="${manga.author.name}"></span>
-                                                            <p class="card-text" th:text="${#strings.length(manga.mangaDescription) > 124 ? #strings.substring(manga.mangaDescription, 0, 124) + '...' : manga.mangaDescription}"></p>
+                                <div class="tab-pane fade" id="dropped" th:classappend="${selectedList == 'dropped'} ? 'show active' : ''" role="tabpanel" aria-labelledby="dropped-tab">
+                                    <div class="manga-grid">
+                                        <div th:each="el : ${stoppedReadingManga}" class="custom-container">
+                                            <div class="manga">
+                                                <img class="poster-manga-link" th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy" th:onclick="'window.location.href=\'/manga/' + ${el.id} + '\''">
+                                                <div class="custom-info">
+                                                    <div class="custom-genres">
+                                                        <div class="custom-genre" th:if="${el.genres.size() > 0}" th:text="${el.genres[0].genreName}"></div>
+                                                        <div class="custom-genre" th:if="${el.genres.size() > 1}">
+                                                            <span> - </span>
+                                                            <span th:text="${el.genres[1].genreName}"></span>
                                                         </div>
                                                     </div>
+                                                    <a class="custom-title-link" th:href="@{/manga/{mangaId}(mangaId=${el.id})}">
+                                                        <div class="custom-title">
+                                                            <span th:text="${el.mangaName}"></span>
+                                                        </div>
+                                                    </a>
+                                                    <div class="custom-grade-details" th:data-rating="${el.averageRating}">
+                                                        <span class="stars"></span>
+                                                        <span class="rating-number"></span>
+                                                    </div>
                                                 </div>
-                                                <form th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.name == user.userName})"
-                                                        class="position-absolute top-0 end-0 mt-2 custom-mr"
-                                                        th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
-                                                        method="post">
-                                                    <input type="hidden" name="panel" th:value="'#dropped'" />
-                                                    <button class="btn btn-danger" type="submit">X</button>
-                                                </form>
                                             </div>
-                                        </a>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="recited" role="tabpanel" aria-labelledby="recited-tab">
-                                    <div th:if="${#lists.isEmpty(recitedManga)}">
-                                        <p class="isEmptyMessage">Список 'Прочитав' пустий</p>
-                                    </div>
-                                    <div th:unless="${#lists.isEmpty(recitedManga)}" th:each="manga : ${recitedManga}">
-                                        <a th:href="@{/manga/{id}(id=${manga.id})}">
-                                            <div class="card_manga mb-3">
-                                                <div class="row no-gutters">
-                                                    <div class="col-md-2">
-                                                        <img th:src="${manga.mangaPosterImg}" class="card-img" alt="...">
-                                                    </div>
-                                                    <div class="col-md-10">
-                                                        <div class="card-body">
-                                                            <div class="top-right">
-                                                                <img class="evoStar" src="/images/icons/star_icon.png" alt="">
-                                                                <span th:text="8"></span>
-                                                            </div>
-                                                            <h5 class="card-title" th:text="${#strings.length(manga.mangaName) > 40 ? #strings.substring(manga.mangaName, 0, 40) + '...' : manga.mangaName}"></h5>
-                                                            <span class="card-text" style="font-size:18px; font-weight: bold; color:#BCA3D3" th:text="${manga.author.name}"></span>
-                                                            <p class="card-text" th:text="${#strings.length(manga.mangaDescription) > 124 ? #strings.substring(manga.mangaDescription, 0, 124) + '...' : manga.mangaDescription}"></p>
+                                <div class="tab-pane fade" id="favorite" th:classappend="${selectedList == 'favorite'} ? 'show active' : ''" role="tabpanel" aria-labelledby="favorite-tab">
+                                    <div class="manga-grid">
+                                        <div th:each="el : ${favoriteManga}" class="custom-container">
+                                            <div class="manga">
+                                                <img class="poster-manga-link" th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy" th:onclick="'window.location.href=\'/manga/' + ${el.id} + '\''">
+                                                <div class="custom-info">
+                                                    <div class="custom-genres">
+                                                        <div class="custom-genre" th:if="${el.genres.size() > 0}" th:text="${el.genres[0].genreName}"></div>
+                                                        <div class="custom-genre" th:if="${el.genres.size() > 1}">
+                                                            <span> - </span>
+                                                            <span th:text="${el.genres[1].genreName}"></span>
                                                         </div>
                                                     </div>
+                                                    <a class="custom-title-link" th:href="@{/manga/{mangaId}(mangaId=${el.id})}">
+                                                        <div class="custom-title">
+                                                            <span th:text="${el.mangaName}"></span>
+                                                        </div>
+                                                    </a>
+                                                    <div class="custom-grade-details" th:data-rating="${el.averageRating}">
+                                                        <span class="stars"></span>
+                                                        <span class="rating-number"></span>
+                                                    </div>
                                                 </div>
-                                                <form th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.name == user.userName})"
-                                                        class="position-absolute top-0 end-0 mt-2 custom-mr"
-                                                        th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${manga.id})}"
-                                                        method="post">
-                                                    <input type="hidden" name="panel" th:value="'#recited'" />
-                                                    <button class="btn btn-danger" type="submit">X</button>
-                                                </form>
                                             </div>
-                                        </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="recited" th:classappend="${selectedList == 'recited'} ? 'show active' : ''" role="tabpanel" aria-labelledby="recited-tab">
+                                    <div class="manga-grid">
+                                        <div th:each="el : ${recitedManga}" class="custom-container">
+                                            <div class="manga">
+                                                <img class="poster-manga-link" th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy" th:onclick="'window.location.href=\'/manga/' + ${el.id} + '\''">
+                                                <div class="custom-info">
+                                                    <div class="custom-genres">
+                                                        <div class="custom-genre" th:if="${el.genres.size() > 0}" th:text="${el.genres[0].genreName}"></div>
+                                                        <div class="custom-genre" th:if="${el.genres.size() > 1}">
+                                                            <span> - </span>
+                                                            <span th:text="${el.genres[1].genreName}"></span>
+                                                        </div>
+                                                    </div>
+                                                    <a class="custom-title-link" th:href="@{/manga/{mangaId}(mangaId=${el.id})}">
+                                                        <div class="custom-title">
+                                                            <span th:text="${el.mangaName}"></span>
+                                                        </div>
+                                                    </a>
+                                                    <div class="custom-grade-details" th:data-rating="${el.averageRating}">
+                                                        <span class="stars"></span>
+                                                        <span class="rating-number"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                    </div>
-                        <div class="tab-pane tab-friends fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
-                            <p>Friends</p>
-                        </div>
-                        <div class="tab-pane tab-notifications fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
-                            <p>Notification</p>
                         </div>
                     </div>
+                </div>
+                <div id="userFriends" class="tab-pane fade">
+                    <div class="input-wrapper">
+                        <input type="text" class="form-control mb-3 input-filter" placeholder="Пошук за Ім'ям користувача">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    </div>
+
                 </div>
 
-                <div th:if="${profilePrivacy == 'private'}" class="container mt-2" style="text-align: center;">
-                    <h2 style="color:#ff0080">Profile is private!</h2>
+                <div id="userComments" class="tab-pane fade">
+
                 </div>
-            </div>
+
+                <div id="userProfile" class="tab-pane fade">
+
+                </div>
+                <div id="userNotification" class="tab-pane fade">
+
+                </div>
         </div>
     </div>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/burger-menu.js"></script><script src="/js/loadFirstListUser.js"></script>
-<script src="/js/loader-spinner.js"></script>
-<script src="/js/searchMangaInList.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="/js/burger-menu.js"></script>
+<script src="/js/loader-spinner.js"></script>
+<script src="/js/user/user-profile.js"></script>
+<script src="/js/user/user-profile-search-manga.js"></script>
+<script src="/js/user/user-profile-tabs.js"></script>
 </body>
 </html>
