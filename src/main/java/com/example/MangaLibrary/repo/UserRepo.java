@@ -3,6 +3,8 @@ package com.example.MangaLibrary.repo;
 
 import com.example.MangaLibrary.models.Manga;
 import com.example.MangaLibrary.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -47,4 +49,5 @@ public interface UserRepo extends CrudRepository<User, Long> {
 
     @Query("SELECT COUNT(r) FROM Rating r WHERE r.manga.id = :mangaId AND r.rating = 5")
     long countByMangaFiveStar(@Param("mangaId") Long mangaId);
+
 }

@@ -1,9 +1,6 @@
 package com.example.MangaLibrary.repo;
 
-import com.example.MangaLibrary.models.Author;
-import com.example.MangaLibrary.models.Chapter;
-import com.example.MangaLibrary.models.Genre;
-import com.example.MangaLibrary.models.Manga;
+import com.example.MangaLibrary.models.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -55,4 +52,6 @@ public interface MangaRepo extends CrudRepository<Manga, Long> {
             @Param("yearTo") Integer yearTo,
             Pageable pageable
     );
+
+    Page<Manga> findAllByIdIn(List<Long> ids, Pageable pageable);
 }

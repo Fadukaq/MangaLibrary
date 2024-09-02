@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="/css/user/user-profile.css">
     <link rel="stylesheet" href="/css/form-styles.css">
     <link rel="stylesheet" href="/css/loader.css">
+    <link rel="stylesheet" href="/css/pagination.css">
+    <style>
+        .no-manga-message p{
+            text-align:center;
+            color:#ff0080;
+            font-size:28px;
+        }
+    </style>
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
@@ -49,31 +57,51 @@
                 </ul>
             </div>
         </div>
-            <div class="tab-content mt-4">
+        <div th:if="${profilePrivacy != 'private'}" class="tab-content mt-4">
                 <div id="userList" class="tab-pane fade">
-                    <div class="main-content">
+                    <div th:if="${profilePrivacy != 'private'}"  class="main-content">
                         <div class="left-block" id="leftBlock">
                             <div class="divider">
                                 <span>Списки</span>
                             </div>
                             <div class="lists">
-                                    <ul class="nav nav-tabs nav-tabs-lists" id="myTabLists" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <a class="user-link nav-link" th:classappend="${selectedList == 'reading'} ? 'active' : ''" href="#reading" data-bs-toggle="tab">Читаю</a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <a class="user-link nav-link" th:classappend="${selectedList == 'plan'} ? 'active' : ''" href="#plan" data-bs-toggle="tab">Буду читати</a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <a class="user-link nav-link" th:classappend="${selectedList == 'dropped'} ? 'active' : ''" href="#dropped" data-bs-toggle="tab">Прочитано</a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <a class="user-link nav-link" th:classappend="${selectedList == 'favorite'} ? 'active' : ''" href="#favorite" data-bs-toggle="tab">Улюблене</a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <a class="user-link nav-link" th:classappend="${selectedList == 'recited'} ? 'active' : ''" href="#recited" data-bs-toggle="tab">Кинуто</a>
-                                        </li>
-                                    </ul>
+                                <ul class="nav nav-tabs nav-tabs-lists" id="myTabLists" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <a class="user-link nav-link"
+                                            id="reading-tab"
+                                            href="#reading"
+                                            data-bs-toggle="tab"
+                                            data-list="reading">Читаю</a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="user-link nav-link"
+                                            id="plan-tab"
+                                            href="#plan"
+                                            data-bs-toggle="tab"
+                                            data-list="plan">Буду читати</a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="user-link nav-link"
+                                            id="recited-tab"
+                                            href="#recited"
+                                            data-bs-toggle="tab"
+                                            data-list="recited">Прочитано</a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="user-link nav-link"
+                                            id="favorite-tab"
+                                            href="#favorite"
+                                            data-bs-toggle="tab"
+                                            data-list="favorite">Улюблене</a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="user-link nav-link"
+                                            id="dropped-tab"
+                                            href="#dropped"
+                                            data-bs-toggle="tab"
+                                            data-list="dropped">Кинув</a>
+                                    </li>
+                                </ul>
                             </div>
                             <div class="divider">
                                 <span>Вигляд</span>
@@ -94,8 +122,11 @@
                             </div>
                             <div class="tab-content" id="myTabContent">
                                 <div class="tab-pane fade" id="reading" th:classappend="${selectedList == 'reading'} ? 'show active' : ''" role="tabpanel" aria-labelledby="reading-tab">
-                                    <div class="manga-grid">
-                                        <div th:each="el : ${readingManga}" class="custom-container">
+                                    <div th:if="${#lists.isEmpty(readingMangaPage.content)}" class="no-manga-message">
+                                        <p>Не знайдено манг у поточному списку.</p>
+                                    </div>
+                                    <div th:if="${!#lists.isEmpty(readingMangaPage.content)}" class="manga-grid">
+                                        <div th:each="el : ${readingMangaPage}" class="custom-container">
                                             <div class="manga">
                                                 <img class="poster-manga-link" th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy" th:onclick="'window.location.href=\'/manga/' + ${el.id} + '\''">
                                                 <div class="custom-info">
@@ -119,10 +150,31 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <nav aria-label="Page navigation">
+                                        <ul th:if="${readingMangaPage.totalPages > 1}" class="pagination">
+                                            <li class="page-item" th:classappend="${readingMangaPage.hasPrevious() ? '' : 'disabled'}">
+                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='reading', page=${readingMangaPage.number - 1}, size=${readingMangaPage.size})}" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            <li th:each="i : ${#numbers.sequence(1, readingMangaPage.totalPages)}"
+                                                th:classappend="${i == readingMangaPage.number + 1 ? 'active' : ''}" class="page-item">
+                                                <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='reading', page=${i - 1}, size=${readingMangaPage.size})}" th:text="${i}" class="page-link"></a>
+                                            </li>
+                                            <li class="page-item" th:classappend="${readingMangaPage.hasNext() ? '' : 'disabled'}">
+                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='reading', page=${readingMangaPage.number + 1}, size=${readingMangaPage.size})}" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
                                 </div>
                                 <div class="tab-pane fade" id="plan" th:classappend="${selectedList == 'plan'} ? 'show active' : ''" role="tabpanel" aria-labelledby="plan-tab">
-                                    <div class="manga-grid">
-                                        <div th:each="el : ${wantToReadManga}" class="custom-container">
+                                    <div th:if="${#lists.isEmpty(wantToReadMangaPage.content)}" class="no-manga-message">
+                                        <p>Не знайдено манг у поточному списку.</p>
+                                    </div>
+                                    <div th:if="${!#lists.isEmpty(wantToReadMangaPage.content)}" class="manga-grid">
+                                        <div th:each="el : ${wantToReadMangaPage}" class="custom-container">
                                             <div class="manga">
                                                 <img class="poster-manga-link" th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy" th:onclick="'window.location.href=\'/manga/' + ${el.id} + '\''">
                                                 <div class="custom-info">
@@ -146,10 +198,32 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <nav aria-label="Page navigation">
+                                        <ul th:if="${wantToReadMangaPage.totalPages > 1}" class="pagination">
+                                            <li class="page-item" th:classappend="${wantToReadMangaPage.hasPrevious() ? '' : 'disabled'}">
+                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='wantToRead', page=${wantToReadMangaPage.number - 1}, size=${wantToReadMangaPage.size})}" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            <li th:each="i : ${#numbers.sequence(1, wantToReadMangaPage.totalPages)}"
+                                                th:classappend="${i == wantToReadMangaPage.number + 1 ? 'active' : ''}" class="page-item">
+                                                <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='wantToRead', page=${i - 1}, size=${wantToReadMangaPage.size})}" th:text="${i}" class="page-link"></a>
+                                            </li>
+                                            <li class="page-item" th:classappend="${wantToReadMangaPage.hasNext() ? '' : 'disabled'}">
+                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='wantToRead', page=${wantToReadMangaPage.number + 1}, size=${wantToReadMangaPage.size})}" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+
                                 </div>
                                 <div class="tab-pane fade" id="dropped" th:classappend="${selectedList == 'dropped'} ? 'show active' : ''" role="tabpanel" aria-labelledby="dropped-tab">
-                                    <div class="manga-grid">
-                                        <div th:each="el : ${stoppedReadingManga}" class="custom-container">
+                                    <div th:if="${#lists.isEmpty(stoppedReadingMangaPage.content)}" class="no-manga-message">
+                                        <p>Не знайдено манг у поточному списку.</p>
+                                    </div>
+                                    <div th:if="${!#lists.isEmpty(stoppedReadingMangaPage.content)}" class="manga-grid">
+                                        <div th:each="el : ${stoppedReadingMangaPage}" class="custom-container">
                                             <div class="manga">
                                                 <img class="poster-manga-link" th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy" th:onclick="'window.location.href=\'/manga/' + ${el.id} + '\''">
                                                 <div class="custom-info">
@@ -173,10 +247,31 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <nav aria-label="Page navigation">
+                                        <ul th:if="${stoppedReadingMangaPage.totalPages > 1}" class="pagination">
+                                            <li class="page-item" th:classappend="${stoppedReadingMangaPage.hasPrevious() ? '' : 'disabled'}">
+                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='stoppedReading', page=${stoppedReadingMangaPage.number - 1}, size=${stoppedReadingMangaPage.size})}" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            <li th:each="i : ${#numbers.sequence(1, stoppedReadingMangaPage.totalPages)}"
+                                                th:classappend="${i == stoppedReadingMangaPage.number + 1 ? 'active' : ''}" class="page-item">
+                                                <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='stoppedReading', page=${i - 1}, size=${stoppedReadingMangaPage.size})}" th:text="${i}" class="page-link"></a>
+                                            </li>
+                                            <li class="page-item" th:classappend="${stoppedReadingMangaPage.hasNext() ? '' : 'disabled'}">
+                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='stoppedReading', page=${stoppedReadingMangaPage.number + 1}, size=${stoppedReadingMangaPage.size})}" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
                                 </div>
                                 <div class="tab-pane fade" id="favorite" th:classappend="${selectedList == 'favorite'} ? 'show active' : ''" role="tabpanel" aria-labelledby="favorite-tab">
-                                    <div class="manga-grid">
-                                        <div th:each="el : ${favoriteManga}" class="custom-container">
+                                    <div th:if="${#lists.isEmpty(favoriteMangaPage.content)}" class="no-manga-message">
+                                        <p>Не знайдено манг у поточному списку.</p>
+                                    </div>
+                                    <div th:if="${!#lists.isEmpty(favoriteMangaPage.content)}" class="manga-grid">
+                                        <div th:each="el : ${favoriteMangaPage}" class="custom-container">
                                             <div class="manga">
                                                 <img class="poster-manga-link" th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy" th:onclick="'window.location.href=\'/manga/' + ${el.id} + '\''">
                                                 <div class="custom-info">
@@ -200,10 +295,31 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <nav aria-label="Page navigation">
+                                        <ul th:if="${favoriteMangaPage.totalPages > 1}" class="pagination">
+                                            <li class="page-item" th:classappend="${favoriteMangaPage.hasPrevious() ? '' : 'disabled'}">
+                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='favorite', page=${favoriteMangaPage.number - 1}, size=${favoriteMangaPage.size})}" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            <li th:each="i : ${#numbers.sequence(1, favoriteMangaPage.totalPages)}"
+                                                th:classappend="${i == favoriteMangaPage.number + 1 ? 'active' : ''}" class="page-item">
+                                                <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='favorite', page=${i - 1}, size=${favoriteMangaPage.size})}" th:text="${i}" class="page-link"></a>
+                                            </li>
+                                            <li class="page-item" th:classappend="${favoriteMangaPage.hasNext() ? '' : 'disabled'}">
+                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='favorite', page=${favoriteMangaPage.number + 1}, size=${favoriteMangaPage.size})}" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
                                 </div>
                                 <div class="tab-pane fade" id="recited" th:classappend="${selectedList == 'recited'} ? 'show active' : ''" role="tabpanel" aria-labelledby="recited-tab">
-                                    <div class="manga-grid">
-                                        <div th:each="el : ${recitedManga}" class="custom-container">
+                                    <div th:if="${#lists.isEmpty(recitedMangaPage.content)}" class="no-manga-message">
+                                        <p>Не знайдено манг у поточному списку.</p>
+                                    </div>
+                                    <div th:if="${!#lists.isEmpty(recitedMangaPage.content)}" class="manga-grid">
+                                            <div th:each="el : ${recitedMangaPage}" class="custom-container">
                                             <div class="manga">
                                                 <img class="poster-manga-link" th:src="@{${el.mangaPosterImg}}" alt="manga image" loading="lazy" th:onclick="'window.location.href=\'/manga/' + ${el.id} + '\''">
                                                 <div class="custom-info">
@@ -227,6 +343,24 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <nav aria-label="Page navigation">
+                                        <ul th:if="${recitedMangaPage.totalPages > 1}" class="pagination">
+                                            <li class="page-item" th:classappend="${recitedMangaPage.hasPrevious() ? '' : 'disabled'}">
+                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='recited', page=${recitedMangaPage.number - 1}, size=${recitedMangaPage.size})}" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            <li th:each="i : ${#numbers.sequence(1, recitedMangaPage.totalPages)}"
+                                                th:classappend="${i == recitedMangaPage.number + 1 ? 'active' : ''}" class="page-item">
+                                                <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='recited', page=${i - 1}, size=${recitedMangaPage.size})}" th:text="${i}" class="page-link"></a>
+                                            </li>
+                                            <li class="page-item" th:classappend="${recitedMangaPage.hasNext() ? '' : 'disabled'}">
+                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='recited', page=${recitedMangaPage.number + 1}, size=${recitedMangaPage.size})}" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
                                 </div>
                             </div>
                         </div>
@@ -251,6 +385,9 @@
 
                 </div>
         </div>
+        <div th:unless="${profilePrivacy != 'private'}">
+            <img class="access-denied" src="/images/settingsPicture/access-denied.png" alt="">
+        </div>
     </div>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
@@ -262,8 +399,8 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
-<script src="/js/user/user-profile.js"></script>
-<script src="/js/user/user-profile-search-manga.js"></script>
-<script src="/js/user/user-profile-tabs.js"></script>
+<script th:if="${profilePrivacy != 'private'}" src="/js/user/user-profile.js"></script>
+<script th:if="${profilePrivacy != 'private'}" src="/js/user/user-profile-search-manga.js"></script>
+<script th:if="${profilePrivacy != 'private'}" src="/js/user/user-profile-tabs.js"></script>
 </body>
 </html>

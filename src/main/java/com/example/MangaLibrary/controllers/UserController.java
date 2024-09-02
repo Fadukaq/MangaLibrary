@@ -12,6 +12,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -121,7 +125,10 @@ public class UserController {
     }
 
     @GetMapping("/profile/{id}")
-    public String userProfileOId(@PathVariable Long id, Model model) {
+    public String userProfileOId(@PathVariable Long id,
+                                 @RequestParam(defaultValue = "0") int page,
+                                 @RequestParam(defaultValue = "10") int size,
+                                 Model model) {
         Optional<User> userOptional = userRepo.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -138,21 +145,31 @@ public class UserController {
                 return "user/user-profile";
             }
 
+            Pageable pageable = PageRequest.of(page, size);
+
             model.addAttribute("user", user);
             model.addAttribute("username", user.getUserName());
-            userService.getUserMangaLists(user, readingManga, recitedManga, wantToReadManga,favoriteManga, stoppedReadingManga);
 
-            model.addAttribute("readingManga", mangaService.sortByRatingDescending(readingManga));
-            model.addAttribute("recitedManga", mangaService.sortByRatingDescending(recitedManga));
-            model.addAttribute("wantToReadManga", mangaService.sortByRatingDescending(wantToReadManga));
-            model.addAttribute("favoriteManga", mangaService.sortByRatingDescending(favoriteManga));
-            model.addAttribute("stoppedReadingManga", mangaService.sortByRatingDescending(stoppedReadingManga));
+            model.addAttribute("readingMangaPage", getMangaPage(user.getMangaReading(), pageable));
+            model.addAttribute("recitedMangaPage", getMangaPage(user.getMangaRecited(), pageable));
+            model.addAttribute("wantToReadMangaPage", getMangaPage(user.getMangaWantToRead(), pageable));
+            model.addAttribute("favoriteMangaPage", getMangaPage(user.getMangaFavorites(), pageable));
+            model.addAttribute("stoppedReadingMangaPage", getMangaPage(user.getMangaStoppedReading(), pageable));
+
 
             return "user/user-profile";
         } else {
             model.addAttribute("errorMessage", "Користувач: " + id + " не знайдений");
             return "main/error";
         }
+    }
+
+    private Page<Manga> getMangaPage(List<String> mangaIds, Pageable pageable) {
+        List<Long> ids = mangaIds.stream().map(Long::valueOf).collect(Collectors.toList());
+
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("averageRating").descending());
+
+        return mangaRepo.findAllByIdIn(ids, sortedPageable);
     }
 
     @GetMapping("/profile/edit/{id}")
