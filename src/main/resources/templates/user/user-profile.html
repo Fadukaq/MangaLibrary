@@ -9,9 +9,6 @@
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/pagination.css">
     <meta name="_csrf" content="${_csrf.token}" />
-    <style>
-
-    </style>
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
@@ -400,13 +397,13 @@
                         </div>
                         <div class="sortBy">
                             <ul class="nav nav-tabs nav-tabs-lists" role="tablist">
-                                <li class="nav-item d-flex align-items-center" role="presentation">
-                                    <a class="user-link nav-link active" href="#sortByDate" data-bs-toggle="tab">
+                                <li class="nav-item nav-item-sort-by d-flex align-items-center" role="presentation">
+                                    <a class="user-link nav-link active" href="#sortByDate" id="date-nav-item" data-bs-toggle="tab">
                                         По часу <i class="fa-solid fa-arrow-up"></i>
                                     </a>
                                 </li>
-                                <li class="nav-item d-flex align-items-center" role="presentation">
-                                    <a class="user-link nav-link" href="#sortByRating" data-bs-toggle="tab">
+                                <li class="nav-item nav-item-sort-by d-flex align-items-center" role="presentation" >
+                                    <a class="user-link nav-link" href="#sortByRating" id="rating-nav-item" data-bs-toggle="tab">
                                         По рейтингу <i class="fa-solid fa-arrow-up"></i>
                                     </a>
                                 </li>
