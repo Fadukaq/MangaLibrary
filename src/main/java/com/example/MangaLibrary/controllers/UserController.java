@@ -5,6 +5,7 @@ import com.example.MangaLibrary.helper.user.UserForm;
 import com.example.MangaLibrary.models.*;
 import com.example.MangaLibrary.repo.*;
 import com.example.MangaLibrary.service.MangaService;
+import com.example.MangaLibrary.service.UserReportService;
 import com.example.MangaLibrary.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.WebAttributes;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,6 +58,10 @@ public class UserController {
     private AuthorRepo authorRepo;
     @Autowired
     private GenreRepo genreRepo;
+    @Autowired
+    private UserReportRepo userReportRepo;
+    @Autowired
+    private UserReportService userReportService;
     private List<Manga> readingManga = new ArrayList<>();
     private List<Manga> recitedManga = new ArrayList<>();
     private List<Manga> wantToReadManga = new ArrayList<>();
@@ -452,6 +459,26 @@ public class UserController {
         model.addAttribute("genreList", genreRepo.findAllByOrderByIdDesc());
         return "user/admin-dashboard";
     }
+    @GetMapping("/report/user")
+    @ResponseBody
+    public Map<String, Object> reportUser(@RequestParam("reportedUserId") Long reportedUserId,
+                                            @RequestParam("reporterUserId") Long reporterUserId,
+                                            @RequestParam("reason") String reason) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> reportedUser = userRepo.findById(reportedUserId);
+        Optional<User> reporterUser = userRepo.findById(reporterUserId);
+        if (reportedUser.isPresent() && reporterUser.isPresent()) {
+            try {
+                userReportService.reportUser(reportedUser.get(), reporterUser.get(), reason);
+                response.put("success", true);
+            } catch (IllegalArgumentException e) {
+                response.put("success", false);
+                response.put("message", e.getMessage());
+            }
+        }
+        return response;
+    }
+
      /*@GetMapping("/manga/user/{userId}/role")
     public ResponseEntity<User> getUserRole(@PathVariable Long userId) {
         Optional<User> userOptional = userRepo.findById(userId);

@@ -9,6 +9,17 @@
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/pagination.css">
     <meta name="_csrf" content="${_csrf.token}" />
+    <style>
+        .report-user-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: none;
+            background-color: transparent;
+            margin-left: 25px;
+        }
+    </style>
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
@@ -20,7 +31,24 @@
 <div th:insert="~{blocks/modals/errorModal :: errorModal}"></div>
 <div th:insert="~{blocks/modals/commentEditModal :: edit-comment-modal}"></div>
 <div th:insert="~{blocks/modals/replyEditModal :: edit-reply-modal}"></div>
-
+<div class="modal fade" id="reportUserModal" tabindex="-1" aria-labelledby="reportUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportUserModalLabel">Поскаржитися на користувача</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <form id="report-user-form">
+                    <input type="hidden" id="reportedUserId" name="reportedUserId" value="">
+                    <input type="hidden" id="reporterUserId" name="reporterUserId" value="">
+                    <textarea id="reportReasonProfile" class="form-control" rows="3" required></textarea>
+                    <button type="button" id="submit-report-btn" class="btn-custom-subscribe mt-3" style="padding:5px; float:right;">Отправить жалобу</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="content">
     <div class="container mt-5 mb-5">
@@ -30,6 +58,12 @@
                 <span class="user-name" th:text="${user.userName}"></span>
                 <span class="dash">-</span>
                 <span class="user-role" th:text="${user.userRole}"></span>
+                <button th:if="${user != currentUser}" class="btn report-user-btn"
+                        th:data-currentUser-id="${currentUser.id}"
+                        th:data-user-id="${user.id}"
+                        title="Поскаржитися">
+                    <i class="fa fa-flag"></i>
+                </button>
                 <span th:if="${#authentication.name == user.userName}" class="user-settings">
                     <i class="fa-solid fa-gear"></i>
                     <a class="btn-custom-settings" th:href="@{'/profile/edit/' + ${user.id}}">Налаштування</a>

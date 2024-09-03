@@ -75,7 +75,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const commentId = reportCommentId.value;
         const userId = reportUserId.value;
         const reason = document.getElementById('reportReason').value;
-
+        const maxLength = 255;
+        if (!reason || reason.trim() === '') {
+            reportCommentModal.hide();
+            $('#errorMessage').text('Будь ласка, введіть причину скарги.');
+            $('#errorModal').modal('show');
+            return;
+        }else if (reason.length > maxLength) {
+            reportCommentModal.hide();
+            $('#errorMessage').text(`Причина занадто довга. Максимальна довжина: ${maxLength} символів.`);
+            $('#errorModal').modal('show');
+            document.getElementById('reportReason').value = '';
+            return;
+        }
         if (reason) {
             fetch(`/comment/${commentId}/report?userId=${userId}&reason=${encodeURIComponent(reason)}`, {
                 method: 'GET'
@@ -124,6 +136,19 @@ $(document).on('click', '.report-reply', function(e) {
 $('#confirmReportReplyButton').click(function() {
     if (replyToReport) {
         const reason = $('#reportReplyReason').val();
+        const maxLength = 255;
+        if (!reason || reason.trim() === '') {
+            $('#reportReplyModal').modal('hide');
+            $('#errorMessage').text('Будь ласка, введіть причину скарги.');
+            $('#errorModal').modal('show');
+            return;
+        }else if (reason.length > maxLength) {
+            $('#reportReplyModal').modal('hide');
+            $('#errorMessage').text(`Причина занадто довга. Максимальна довжина: ${maxLength} символів.`);
+            $('#errorModal').modal('show');
+            $('#reportReplyReason').val('');
+            return;
+        }
         if (reason) {
             $.ajax({
                 url: `/reply/${replyToReport}/report`,
@@ -134,7 +159,6 @@ $('#confirmReportReplyButton').click(function() {
                     $('#successMessage').text('Ваше повідомлення про порушення надіслано.');
                     $('#successModal').modal('show');
                     $('#reportReplyReason').val('');
-
                 },
                 error: function(xhr, status, error) {
                     $('#reportReplyModal').modal('hide');
@@ -150,7 +174,64 @@ $('#confirmReportReplyButton').click(function() {
         }
     }
 });
+document.addEventListener('DOMContentLoaded', () => {
+    const reportButtons = document.querySelectorAll('.report-user-btn');
 
+    reportButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const reportedUserId = button.getAttribute('data-user-id');
+            const reporterUserId = button.getAttribute('data-currentUser-id');
+            document.getElementById('reportedUserId').value = reportedUserId;
+            document.getElementById('reporterUserId').value = reporterUserId;
+            const reportUserModal = new bootstrap.Modal(document.getElementById('reportUserModal'));
+            reportUserModal.show();
+        });
+    });
+
+    document.getElementById('submit-report-btn').addEventListener('click', () => {
+        const reportedUserId = document.getElementById('reportedUserId').value;
+        const reporterUserId = document.getElementById('reporterUserId').value;
+        const reason = document.getElementById('reportReasonProfile').value;
+        const maxLength = 255;
+
+        if (!reason || reason.trim() === '') {
+            document.getElementById('reportUserModal').querySelector('.btn-close').click();
+            $('#errorMessage').text('Будь ласка, введіть причину скарги.');
+            $('#errorModal').modal('show');
+            return;
+        }else if (reason.length > maxLength) {
+            document.getElementById('reportUserModal').querySelector('.btn-close').click();
+            $('#errorMessage').text(`Причина занадто довга. Максимальна довжина: ${maxLength} символів.`);
+            $('#errorModal').modal('show');
+            $('#reportReasonProfile').val('');
+            return;
+        }
+
+        const url = `/report/user?reportedUserId=${encodeURIComponent(reportedUserId)}&reporterUserId=${encodeURIComponent(reporterUserId)}&reason=${encodeURIComponent(reason)}`;
+
+        fetch(url, {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+            if (data.success) {
+                document.getElementById('reportUserModal').querySelector('.btn-close').click();
+                $('#successMessage').text('Ваше повідомлення про порушення надіслано.');
+                $('#successModal').modal('show');
+                $('#reportReasonProfile').val('');
+            } else {
+                document.getElementById('reportUserModal').querySelector('.btn-close').click();
+                $('#errorModal').modal('show');
+                $('#errorMessage').text(`Сталася помилка: ${data.message}`);
+                $('#reportReasonProfile').val('');
+            }
+        })
+            .catch(error => {
+            console.error('Помилка:', error);
+            alert('Сталася помилка під час надсилання звіту.');
+        });
+    });
+});
 document.addEventListener('DOMContentLoaded', function() {
     const deleteButtons = document.querySelectorAll('.delete-comment');
     let commentIdToDelete = null;

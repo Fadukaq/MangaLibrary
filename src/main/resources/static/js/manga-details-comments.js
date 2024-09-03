@@ -260,7 +260,19 @@ $(document).ready(function() {
                         const commentId = $('#reportCommentId').val();
                         const userId = $('#reportUserId').val();
                         const reason = $('#reportReason').val();
-
+                        const maxLength = 255;
+                        if (!reason || reason.trim() === '') {
+                            $('#reportCommentModal').modal('hide');
+                            $('#errorMessage').text('Будь ласка, введіть причину скарги.');
+                            $('#errorModal').modal('show');
+                            return;
+                        }else if (reason.length > maxLength) {
+                            $('#reportCommentModal').modal('hide');
+                            $('#errorMessage').text(`Причина занадто довга. Максимальна довжина: ${maxLength} символів.`);
+                            $('#errorModal').modal('show');
+                            $('#reportReason').val('');
+                            return;
+                        }
                         if (reason) {
                             $.ajax({
                                 url: `/manga/comment/${commentId}/report`,
@@ -537,6 +549,19 @@ $(document).ready(function() {
     $('#confirmReportReplyButton').click(function() {
         if (replyToReport) {
             const reason = $('#reportReplyReason').val();
+            const maxLength = 255;
+            if (!reason || reason.trim() === '') {
+                $('#reportReplyModal').modal('hide');
+                $('#errorMessage').text('Будь ласка, введіть причину скарги.');
+                $('#errorModal').modal('show');
+                return;
+            }else if (reason.length > maxLength) {
+                $('#reportReplyModal').modal('hide');
+                $('#errorMessage').text(`Причина занадто довга. Максимальна довжина: ${maxLength} символів.`);
+                $('#errorModal').modal('show');
+                $('#reportReplyReason').val('');
+                return;
+            }
             if (reason) {
                 const userId = $('#comments').data('current-user-id');
                 $.ajax({
