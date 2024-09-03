@@ -95,35 +95,56 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Получаем текущую панель, которая активна
     const activePaneId = document.querySelector('.tab-pane.show').id;
 
-    // Находим вкладку, соответствующую активной панели
     const activeTab = document.querySelector(`#myTabLists .nav-link[href="#${activePaneId}"]`);
 
-    // Добавляем класс active к активной вкладке
     if (activeTab) {
         activeTab.classList.add('active');
     }
 
-    // Добавляем обработчик кликов для обновления активной вкладки
     const tabs = document.querySelectorAll('#myTabLists .nav-link');
     tabs.forEach(tab => {
         tab.addEventListener('click', function(event) {
             event.preventDefault();
 
-            // Получаем id панели, соответствующей вкладке
             const targetPaneId = this.getAttribute('href').substring(1);
-
-            // Обновляем URL с учетом текущей вкладки и сбрасываем параметры пагинации
             const url = new URL(window.location.href);
             url.searchParams.set('list', this.getAttribute('data-list'));
             url.searchParams.set('page', '0');
             url.searchParams.set('size', '15');
-
-            // Переход к новому URL
             window.location.href = url.toString();
         });
     });
+});
+$('#myTab a, #myTabLists a, #myTabType a').on('click', function(e) {
+    e.preventDefault();
+    const target = $(this).attr('href').substring(1);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('page', '0');
+    urlParams.delete('size');
+    urlParams.delete('list');
+
+    if ($(this).closest('#myTab').length) {
+        urlParams.set('tab', target);
+    } else if ($(this).closest('#myTabLists').length) {
+    } else if ($(this).closest('#myTabType').length) {
+        urlParams.set('view', target);
+        urlParams.set('tab', $('#myTab .nav-link.active').attr('href').substring(1));
+    }
+    history.pushState(null, null, '?' + urlParams.toString());
+    $(this).tab('show');
+    location.reload();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const firstTab = document.getElementById('toManga');
+    const tabLink = document.querySelector('a[href="#userComments"]');
+    const commentsTab = document.getElementById('comment-manga-tab');
+    firstTab.classList.add('active');
+    commentsTab.classList.add('active');
+    firstTab.classList.remove('fade');
 });

@@ -835,6 +835,7 @@ public class MangaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting reply");
         }
     }
+
     @GetMapping("/manga/reply/{replyId}/report")
     public ResponseEntity<String> reportReply(
             @PathVariable Long replyId,

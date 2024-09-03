@@ -2,9 +2,7 @@ package com.example.MangaLibrary.controllers;
 import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.helper.user.UserAgreementRequest;
 import com.example.MangaLibrary.helper.user.UserForm;
-import com.example.MangaLibrary.models.Manga;
-import com.example.MangaLibrary.models.User;
-import com.example.MangaLibrary.models.UserSettings;
+import com.example.MangaLibrary.models.*;
 import com.example.MangaLibrary.repo.*;
 import com.example.MangaLibrary.service.MangaService;
 import com.example.MangaLibrary.service.UserService;
@@ -31,6 +29,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Controller
@@ -65,16 +65,8 @@ public class UserController {
         model.addAttribute("user", new User());
         return "registration";
     }
-    @GetMapping("/manga/user/{userId}/role")
-    public ResponseEntity<User> getUserRole(@PathVariable Long userId) {
-        Optional<User> userOptional = userRepo.findById(userId);
-        if(userOptional.isPresent())
-        {
-            User user = userOptional.get();
-            return ResponseEntity.ok(user);
-        }
-        return ResponseEntity.ok(null);
-    }
+
+
     @PostMapping("/registration")
     public String addUser(@ModelAttribute("user") @Valid User user, BindingResult result, Map<String, Object> model, Model _model) {
         if (result.hasErrors()) {
@@ -146,10 +138,30 @@ public class UserController {
             }
 
             Pageable pageable = PageRequest.of(page, size);
+            Pageable pageableComment = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+            Page<Comment> commentsUser = userService.findCommentsByUserId(user, pageableComment);
+            Page<Replies> repliesUser = userService.findRepliesByUserId(user, pageableComment);
+
+            for (Replies reply : repliesUser) {
+                Long replyUserId = userService.extractUserIdFromComment(reply.getText());
+                if (replyUserId != null) {
+                    Optional<User> replyUserOptional = userRepo.findById(replyUserId);
+                    if (replyUserOptional.isPresent()) {
+                        User replyUser = replyUserOptional.get();
+                        String userName = replyUser.getUserName();
+
+                        String updatedText = reply.getText().replaceAll("\\d+", userName);
+                        reply.setText(updatedText);
+                    }
+                }
+            }
 
             model.addAttribute("user", user);
-            model.addAttribute("username", user.getUserName());
+            model.addAttribute("currentUser", currentUser);
 
+            model.addAttribute("commentsUser", commentsUser);
+            model.addAttribute("repliesUser", repliesUser);
             model.addAttribute("readingMangaPage", userService.getMangaPage(user.getMangaReading(), pageable));
             model.addAttribute("recitedMangaPage", userService.getMangaPage(user.getMangaRecited(), pageable));
             model.addAttribute("wantToReadMangaPage", userService.getMangaPage(user.getMangaWantToRead(), pageable));
@@ -440,4 +452,14 @@ public class UserController {
         model.addAttribute("genreList", genreRepo.findAllByOrderByIdDesc());
         return "user/admin-dashboard";
     }
+     /*@GetMapping("/manga/user/{userId}/role")
+    public ResponseEntity<User> getUserRole(@PathVariable Long userId) {
+        Optional<User> userOptional = userRepo.findById(userId);
+        if(userOptional.isPresent())
+        {
+            User user = userOptional.get();
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.ok(null);
+    }*/
 }

@@ -44,6 +44,12 @@ public class CommentService {
 
         commentRepo.save(comment);
     }
+    public boolean updateComment(Long id, String content) {
+        Comment comment = commentRepo.findById(id).orElseThrow(() -> new RuntimeException("Comment not found"));
+        comment.setText(content);
+        commentRepo.save(comment);
+        return true;
+    }
     public void updateRating(Long commentId, Long userId, int delta) {
         CommentRating existingRating = commentRatingRepo.findByCommentIdAndUserId(commentId, userId);
 
@@ -77,6 +83,7 @@ public class CommentService {
         comment.setRating(newRatingScore);
         commentRepo.save(comment);
     }
+
     public boolean reportComment(Long commentId, Long userId, String reason) {
         Comment comment = commentRepo.findById(commentId).orElse(null);
         User user = userRepo.findById(userId).orElse(null);
@@ -97,26 +104,6 @@ public class CommentService {
 
         commentReportRepo.save(report);
         return true;
-    }
-    public Map<Long, Integer> getUserRatingsForComments(Long userId, List<Long> commentIds) {
-        List<CommentRating> ratings = commentRatingRepo.findByUserIdAndCommentIdIn(userId, commentIds);
-        return ratings.stream()
-                .collect(Collectors.toMap(
-                        rating -> rating.getComment().getId(),
-                        CommentRating::getDelta
-                ));
-    }
-    public Map<String, Object> getCommentRatingInfo(Long commentId) {
-        long upvotes = commentRatingRepo.countByCommentIdAndDelta(commentId, 1);
-        long downvotes = commentRatingRepo.countByCommentIdAndDelta(commentId, -1);
-        int totalRating = (int) (upvotes - downvotes);
-
-        Map<String, Object> ratingInfo = new HashMap<>();
-        ratingInfo.put("upvotes", upvotes);
-        ratingInfo.put("downvotes", downvotes);
-        ratingInfo.put("totalRating", totalRating);
-
-        return ratingInfo;
     }
     public Replies addReply(Long parentCommentId, String text, Long userId, Long mangaId) {
         Comment parentComment = commentRepo.findById(parentCommentId)

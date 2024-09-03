@@ -587,7 +587,7 @@ $(document).ready(function() {
         const replyElement = $(this).closest('.reply');
         const replyId = replyElement.data('reply-id');
         const newText = replyElement.find('.edit-reply-text').val();
-        const formattedText = linkifyUsernames(newText);
+        const formattedText = linkifyUsernamesAndReplaceIds(newText);
 
         $.ajax({
             type: 'GET',
@@ -740,13 +740,10 @@ $(document).ready(function() {
                     text = text.replace(`@${userId}`, `<a href="/profile/${userId}" class="user-mention">@${username}</a>`);
                 },
                 error: function() {
-                    console.error(`Не удалось получить никнейм для ID ${userId}`);
+                    console.error(`не вдалося отримати нікнейм для ID ${userId}`);
                 }
             });
         }
-
         return text;
     }
-
 });
-

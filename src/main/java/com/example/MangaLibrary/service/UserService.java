@@ -2,9 +2,7 @@ package com.example.MangaLibrary.service;
 
 import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.helper.user.UserForm;
-import com.example.MangaLibrary.models.Manga;
-import com.example.MangaLibrary.models.User;
-import com.example.MangaLibrary.models.UserSettings;
+import com.example.MangaLibrary.models.*;
 import com.example.MangaLibrary.repo.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +23,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -346,6 +346,30 @@ public class UserService {
             return true;
         }
         return false;
+    }
+    public Page<Comment> findCommentsByUserId(User user, Pageable pageable) {
+        return commentRepo.findByUser(user, pageable);
+    }
+
+    public Page<Replies> findRepliesByUserId(User user, Pageable pageable) {
+        return replyRepo.findByUser(user, pageable);
+    }
+    public Long extractUserIdFromComment(String commentText) {
+        Pattern pattern = Pattern.compile("\\b(\\d+)\\b");
+        Matcher matcher = pattern.matcher(commentText);
+        if (matcher.find()) {
+            return Long.parseLong(matcher.group(1));
+        }
+        return null;
+    }
+    public User extractUserFromComment(String commentText) {
+        Pattern pattern = Pattern.compile("@([A-Za-z0-9_]+)");
+        Matcher matcher = pattern.matcher(commentText);
+        if (matcher.find()) {
+            String username = matcher.group(1);
+            return userRepo.findByUserName(username);
+        }
+        return null;
     }
 
 }

@@ -10,6 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserRepo extends CrudRepository<User, Long> {
     List<User> findAll();
@@ -49,5 +50,4 @@ public interface UserRepo extends CrudRepository<User, Long> {
 
     @Query("SELECT COUNT(r) FROM Rating r WHERE r.manga.id = :mangaId AND r.rating = 5")
     long countByMangaFiveStar(@Param("mangaId") Long mangaId);
-
 }
