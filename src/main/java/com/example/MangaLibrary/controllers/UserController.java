@@ -125,7 +125,7 @@ public class UserController {
 
     @GetMapping("/profile/{id}")
     public String userProfileOId(@PathVariable Long id,
-                                 @RequestParam(defaultValue = "0") int page,
+                                 @RequestParam(defaultValue = "1") int page,
                                  @RequestParam(defaultValue = "10") int size,
                                  Model model) {
         Optional<User> userOptional = userRepo.findById(id);
@@ -144,8 +144,8 @@ public class UserController {
                 return "user/user-profile";
             }
 
-            Pageable pageable = PageRequest.of(page, size);
-            Pageable pageableComment = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+            Pageable pageable = PageRequest.of(page - 1, size);
+            Pageable pageableComment = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
             Page<Comment> commentsUser = userService.findCommentsByUserId(user, pageableComment);
             Page<Replies> repliesUser = userService.findRepliesByUserId(user, pageableComment);

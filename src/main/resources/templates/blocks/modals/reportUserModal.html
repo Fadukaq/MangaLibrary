@@ -1,0 +1,20 @@
+<div th:fragment="reportUserModal">
+<div class="modal fade" id="reportUserModal" tabindex="-1" aria-labelledby="reportUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportUserModalLabel">Поскаржитися на користувача</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <form id="report-user-form">
+                    <input type="hidden" id="reportedUserId" name="reportedUserId" value="">
+                    <input type="hidden" id="reporterUserId" name="reporterUserId" value="">
+                    <textarea id="reportReasonProfile" class="form-control" rows="3" required></textarea>
+                    <button type="button" id="submit-report-btn" class="btn-custom-subscribe mt-3" style="padding:5px; float:right;">Отправить жалобу</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
