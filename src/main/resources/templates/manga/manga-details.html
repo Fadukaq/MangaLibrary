@@ -226,7 +226,10 @@
                             </div>
                         </div>
                         <p style="color:gray;">Повний Опис</p>
-                        <p th:text="${manga.mangaDescription}"></p>
+                        <div id="mangaDescriptionContainer">
+                            <p id="shortDescription" th:text="${manga.mangaDescription.substring(0, 200)}" class="description" style="display: block;"></p>
+                            <p id="fullDescription" th:text="${manga.mangaDescription}" class="description" style="display: none;"></p>
+                            <button class="btn btn-primary" id="toggleDescriptionBtn">Показати більше</button> </div>
                         <hr>
                         <p style="color:gray;">Жанри & Категорії</p>
                         <div class="genres">

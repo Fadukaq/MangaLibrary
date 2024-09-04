@@ -71,3 +71,22 @@ $(document).ready(function() {
         commentsTab.classList.add('active');
     }
 });
+
+/*document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.nav-link[data-list]');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const list = this.getAttribute('data-list');
+            updatePaginationLinks(list);
+        });
+    });
+
+    function updatePaginationLinks(list) {
+        const paginationLinks = document.querySelectorAll('.pagination a');
+        paginationLinks.forEach(link => {
+            let href = link.getAttribute('href');
+            href = href.replace(/list=[\w-]+/, `list=${list}`);
+            link.setAttribute('href', href);
+        });
+    }
+});*/

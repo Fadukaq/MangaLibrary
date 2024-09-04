@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,7 +48,6 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     public void createUser(User user){
-
         String plainPassword = user.getUserPassword();
         String hashedPassword = passwordEncoder.encode(plainPassword);
         userRepo.save(user);
@@ -66,6 +66,7 @@ public class UserService {
 
         user.setUserPassword(hashedPassword);
         user.setUserRole("USER");
+        user.setRegistrationDate(LocalDateTime.now());
         user.setEnabled(false);
         user.setVerificationToken(UUID.randomUUID().toString());
         userRepo.save(user);
@@ -351,7 +352,7 @@ public class UserService {
         return commentRepo.findByUser(user, pageable);
     }
 
-    public List<Replies> findRepliesByUserId(User user) {
+    public List<Replies> findRepliesByUser(User user) {
         return replyRepo.findByUser(user);
     }
     public Long extractUserIdFromComment(String commentText) {

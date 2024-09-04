@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Email;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,13 +56,14 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
-
-
+    @Column(name = "registration_date")
+    private LocalDateTime registrationDate;
     public User() {}
     public User(User user) {
         this.userName = user.getUserName();
         this.userPassword = user.getUserPassword();
         this.userRole= user.getUserRole();
+        this.registrationDate = LocalDateTime.now();
     }
     public long getId() {
         return id;
@@ -204,5 +206,12 @@ public class User {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+    public LocalDateTime getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate;
     }
 }

@@ -30,6 +30,7 @@
                 <span class="user-name" th:text="${user.userName}"></span>
                 <span class="dash">-</span>
                 <span class="user-role" th:text="${user.userRole}"></span>
+                <small class="register-date" style="margin-left:15px;" th:text="${formattedRegisterDate}"></small>
                 <button th:if="${user != currentUser}" class="btn report-user-btn"
                         th:data-currentUser-id="${currentUser.id}"
                         th:data-user-id="${user.id}"
@@ -384,23 +385,23 @@
 
             <div id="userComments" class="tab-pane fade">
                 <div class="left-block">
-                        <div class="divider">
-                            <span>Коментар до</span>
-                        </div>
+                    <div class="divider">
+                        <span>Коментар до</span>
+                    </div>
                     <div class="lists">
                         <ul class="nav nav-tabs nav-tabs-lists" id="tabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="user-link nav-link" id="comment-manga-tab" href="#toManga" data-bs-toggle="tab" data-list="reading">До Манги</a>
+                                <a class="user-link nav-link" id="comment-manga-tab" href="#toManga" data-bs-toggle="tab" data-list="toManga">До Манги</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="user-link nav-link" id="comment-to-reply-tab" href="#toReply" data-bs-toggle="tab" data-list="plan">До Відповіді</a>
+                                <a class="user-link nav-link" id="comment-to-reply-tab" href="#toReply" data-bs-toggle="tab" data-list="toReply">До Відповіді</a>
                             </li>
                         </ul>
                     </div>
-                        <div class="divider">
-                            <span>Сортування</span>
-                        </div>
-                        <div class="sortBy">
+                    <div class="divider">
+                        <span>Сортування</span>
+                    </div>
+                    <div class="sortBy">
                             <ul class="nav nav-tabs nav-tabs-lists" role="tablist">
                                 <li class="nav-item nav-item-sort-by d-flex align-items-center" role="presentation">
                                     <a class="user-link nav-link active" href="#sortByDate" id="date-nav-item" data-bs-toggle="tab">
@@ -417,7 +418,7 @@
                     </div>
                 <div class="right-block">
                     <div class="tab-content" id="tab-content-1">
-                        <div class="tab-pane fade" id="toManga" role="tabpanel">
+                        <div class="tab-pane fade" id="toManga" role="tabpanel" aria-labelledby="comment-manga-tab">
                             <ul id="comments-list" class="list-group comments-list">
                                 <li th:each="comment : ${commentsUser.content}" class="list-group-item comment-item"
                                     th:data-date="${comment.createdAt}"
@@ -478,7 +479,7 @@
                                 </ul>
                             </nav>
                         </div>
-                        <div class="tab-pane fade" id="toReply" role="tabpanel">
+                        <div class="tab-pane fade" id="toReply" role="tabpanel" aria-labelledby="comment-to-reply-tab">
                             <ul id="replies-list" class="list-group replies-list">
                                 <li th:each="reply : ${repliesUser}" class="list-group-item reply-item"
                                     th:data-date="${reply.createdAt}"
@@ -549,25 +550,5 @@
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-profile.js"></script>
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-profile-search-manga.js"></script>
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-profile-tabs.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const tabs = document.querySelectorAll('.nav-link[data-list]');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                const list = this.getAttribute('data-list');
-                updatePaginationLinks(list);
-            });
-        });
-
-        function updatePaginationLinks(list) {
-            const paginationLinks = document.querySelectorAll('.pagination a');
-            paginationLinks.forEach(link => {
-                let href = link.getAttribute('href');
-                href = href.replace(/list=[\w-]+/, `list=${list}`);
-                link.setAttribute('href', href);
-            });
-        }
-    });
-</script>
 </body>
 </html>

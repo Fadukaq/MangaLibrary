@@ -118,3 +118,29 @@ $('#cancelDeleteButton').click(function() {
     deleteUrl = '';
     $('#deleteConfirmationModal').modal('hide');
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const shortDescription = document.getElementById('shortDescription');
+    const fullDescription = document.getElementById('fullDescription');
+    const button = document.getElementById('toggleDescriptionBtn');
+
+    if (fullDescription.innerText.length > shortDescription.innerText.length) {
+        shortDescription.style.display = 'block';
+        fullDescription.style.display = 'none';
+        button.style.display = 'block';
+
+        button.addEventListener('click', function() {
+            if (fullDescription.style.display === 'none') {
+                shortDescription.style.display = 'none';
+                fullDescription.style.display = 'block';
+                button.innerText = 'Показати менше';
+            } else {
+                shortDescription.style.display = 'block';
+                fullDescription.style.display = 'none';
+                button.innerText = 'Показати більше';
+            }
+        });
+    } else {
+        button.style.display = 'none';
+    }
+});

@@ -31,6 +31,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,7 +76,7 @@ public class UserController {
 
 
     @PostMapping("/registration")
-    public String addUser(@ModelAttribute("user") @Valid User user, BindingResult result, Map<String, Object> model, Model _model) {
+    public String addUser(@ModelAttribute("user") @Valid User user, BindingResult result, Map<String, Object> model, Model _model, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "registration";
         }
@@ -91,6 +92,7 @@ public class UserController {
         }
 
         userService.createUser(user);
+        redirectAttributes.addFlashAttribute("registrationSuccessMessage", "Ви успішно зареєструвались!");
         return "redirect:/login";
     }
     @GetMapping("/login")
@@ -148,7 +150,7 @@ public class UserController {
             Pageable pageableComment = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
             Page<Comment> commentsUser = userService.findCommentsByUserId(user, pageableComment);
-            List<Replies> repliesUser = userService.findRepliesByUserId(user);
+            List<Replies> repliesUser = userService.findRepliesByUser(user);
 
             for (Replies reply : repliesUser) {
                 Long replyUserId = userService.extractUserIdFromComment(reply.getText());
@@ -163,10 +165,12 @@ public class UserController {
                     }
                 }
             }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm", new Locale("uk", "UA"));
+            String formattedRegisterDate = user.getRegistrationDate().format(formatter);
 
             model.addAttribute("user", user);
             model.addAttribute("currentUser", currentUser);
-
+            model.addAttribute("formattedRegisterDate", formattedRegisterDate);
             model.addAttribute("commentsUser", commentsUser);
             model.addAttribute("repliesUser", repliesUser);
             model.addAttribute("readingMangaPage", userService.getMangaPage(user.getMangaReading(), pageable));

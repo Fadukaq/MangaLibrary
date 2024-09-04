@@ -132,3 +132,26 @@
     color:#cbcbcb;
     text-decoration: underline;
 }
+.alert {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    padding: 15px 20px;
+    background-color: #323232;
+    color: #ffffff;
+    border: 1px solid #ff0080;
+    border-radius: 5px;
+    z-index: 1000;
+    text-align: center;
+}
+
+.alert p {
+    margin: 0;
+}
+.alert .message {
+    font-weight: bold;
+}
+.alert .details {
+    font-size: 0.9em;
+    color: #ff0080;
+}
