@@ -16,5 +16,5 @@ public interface RepliesRepo extends JpaRepository<Replies, Long> {
 
     List<Replies> findByParentCommentId(long id);
 
-    Page<Replies> findByUser(User user, Pageable pageable);
+    List<Replies> findByUser(User user);
 }

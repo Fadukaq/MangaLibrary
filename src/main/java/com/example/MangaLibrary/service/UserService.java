@@ -351,8 +351,8 @@ public class UserService {
         return commentRepo.findByUser(user, pageable);
     }
 
-    public Page<Replies> findRepliesByUserId(User user, Pageable pageable) {
-        return replyRepo.findByUser(user, pageable);
+    public List<Replies> findRepliesByUserId(User user) {
+        return replyRepo.findByUser(user);
     }
     public Long extractUserIdFromComment(String commentText) {
         Pattern pattern = Pattern.compile("\\b(\\d+)\\b");

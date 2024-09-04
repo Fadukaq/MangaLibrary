@@ -15,7 +15,7 @@ $(document).ready(function() {
         const $this = $(this);
         const target = $this.attr('href').substring(1);
 
-        const currentPage = parseInt(urlParams.get('page')) || 1;
+        const currentPage = parseInt(urlParams.get('page')) || 2;
 
         if (currentPage >= 2) {
             urlParams.set('page', '1');

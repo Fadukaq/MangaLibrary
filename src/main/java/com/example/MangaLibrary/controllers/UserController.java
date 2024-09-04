@@ -126,7 +126,7 @@ public class UserController {
     @GetMapping("/profile/{id}")
     public String userProfileOId(@PathVariable Long id,
                                  @RequestParam(defaultValue = "1") int page,
-                                 @RequestParam(defaultValue = "10") int size,
+                                 @RequestParam(defaultValue = "15") int size,
                                  Model model) {
         Optional<User> userOptional = userRepo.findById(id);
         if (userOptional.isPresent()) {
@@ -148,7 +148,7 @@ public class UserController {
             Pageable pageableComment = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
             Page<Comment> commentsUser = userService.findCommentsByUserId(user, pageableComment);
-            Page<Replies> repliesUser = userService.findRepliesByUserId(user, pageableComment);
+            List<Replies> repliesUser = userService.findRepliesByUserId(user);
 
             for (Replies reply : repliesUser) {
                 Long replyUserId = userService.extractUserIdFromComment(reply.getText());
