@@ -476,7 +476,7 @@ body {
 }
 .btn-custom-subscribe {
   background-color: #282828 !important;
-  border-color: #ff0080;
+  border: 2px solid #ff0080;
   color: white;
   padding: 10px 20px;
   text-align: center;
@@ -485,13 +485,19 @@ body {
   font-size: 16px;
   cursor: pointer;
   border-radius: 4px;
-  transition: background-color 0.6s ease;
+  transition: background-color 0.6s ease, border-color 0.6s ease;
+  outline: none;
 }
+
 .btn-custom-subscribe:hover {
   background-color: #ea0078 !important;
 }
-.btn-custom-subscribe:focus {
+
+.btn-custom-subscribe:focus, .btn-custom-subscribe:active {
   background-color: #c20065 !important;
+  border-color: #c20065;
+  box-shadow: none;
+  outline: none;
 }
 .btn-custom-back {
   background-color: #282828 !important;

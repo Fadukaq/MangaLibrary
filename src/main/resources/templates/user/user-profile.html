@@ -21,7 +21,22 @@
 <div th:insert="~{blocks/modals/commentEditModal :: edit-comment-modal}"></div>
 <div th:insert="~{blocks/modals/replyEditModal :: edit-reply-modal}"></div>
 <div th:insert="~{blocks/modals/reportUserModal :: reportUserModal}"></div>
-
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileModalLabel">Профіль</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Здесь будет информация о профиле пользователя.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-custom-subscribe" style="padding:7px 15px;" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="content">
     <div class="container mt-5 mb-5">
@@ -58,8 +73,8 @@
                     <li th:if="${user == currentUser}" class="nav-item" role="presentation">
                         <a class="user-link nav-link" th:classappend="${selectedTab == 'userNotification'} ? 'active' : ''" href="#userNotification" data-bs-toggle="tab">Сповіщення</a>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="user-link nav-link" th:classappend="${selectedTab == 'userProfile'} ? 'active' : ''" href="#userProfile" data-bs-toggle="tab">Профіль</a>
+                    <li>
+                        <button id="openProfileModal" class="btn btn-custom-profile">Профіль</button>
                     </li>
                     <li th:if="${user == currentUser}" class="nav-item" role="presentation">
                         <a class="user-link nav-link" th:classappend="${selectedTab == 'userChat'} ? 'active' : ''" href="#userChat" data-bs-toggle="tab">Чат</a>
@@ -71,7 +86,7 @@
         <div th:if="${profilePrivacy != 'private'}" class="tab-content mt-4">
             <div id="userList" class="tab-pane fade">
                 <div th:if="${profilePrivacy != 'private'}"  class="main-content">
-                    <div class="left-block" id="leftBlock">
+                    <div class="left-block mb-4" id="leftBlock">
                             <div class="divider">
                                 <span>Списки</span>
                             </div>
@@ -132,7 +147,7 @@
                                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
                             </div>
                             <div class="tab-content" id="myTabContent">
-                                <div class="tab-pane fade" id="reading" th:classappend="${selectedList == 'reading'} ? 'show active' : ''" role="tabpanel" aria-labelledby="reading-tab">
+                            <div class="tab-pane fade" id="reading" th:classappend="${selectedList == 'reading'} ? 'show active' : ''" role="tabpanel" aria-labelledby="reading-tab">
                                     <div th:if="${#lists.isEmpty(readingMangaPage.content)}" class="no-manga-message">
                                         <p>Не знайдено манг у поточному списку.</p>
                                     </div>
@@ -179,8 +194,8 @@
                                             </li>
                                         </ul>
                                     </nav>
-                                </div>
-                                <div class="tab-pane fade" id="plan" th:classappend="${selectedList == 'plan'} ? 'show active' : ''" role="tabpanel" aria-labelledby="plan-tab">
+                            </div>
+                            <div class="tab-pane fade" id="plan" th:classappend="${selectedList == 'plan'} ? 'show active' : ''" role="tabpanel" aria-labelledby="plan-tab">
                                     <div th:if="${#lists.isEmpty(wantToReadMangaPage.content)}" class="no-manga-message">
                                         <p>Не знайдено манг у поточному списку.</p>
                                     </div>
@@ -228,7 +243,7 @@
                                         </ul>
                                     </nav>
                                 </div>
-                                <div class="tab-pane fade" id="dropped" th:classappend="${selectedList == 'dropped'} ? 'show active' : ''" role="tabpanel" aria-labelledby="dropped-tab">
+                            <div class="tab-pane fade" id="dropped" th:classappend="${selectedList == 'dropped'} ? 'show active' : ''" role="tabpanel" aria-labelledby="dropped-tab">
                                     <div th:if="${#lists.isEmpty(stoppedReadingMangaPage.content)}" class="no-manga-message">
                                         <p>Не знайдено манг у поточному списку.</p>
                                     </div>
@@ -276,7 +291,7 @@
                                         </ul>
                                     </nav>
                                 </div>
-                                <div class="tab-pane fade" id="favorite" th:classappend="${selectedList == 'favorite'} ? 'show active' : ''" role="tabpanel" aria-labelledby="favorite-tab">
+                            <div class="tab-pane fade" id="favorite" th:classappend="${selectedList == 'favorite'} ? 'show active' : ''" role="tabpanel" aria-labelledby="favorite-tab">
                                     <div th:if="${#lists.isEmpty(favoriteMangaPage.content)}" class="no-manga-message">
                                         <p>Не знайдено манг у поточному списку.</p>
                                     </div>
@@ -324,7 +339,7 @@
                                         </ul>
                                     </nav>
                                 </div>
-                                <div class="tab-pane fade" id="recited" th:classappend="${selectedList == 'recited'} ? 'show active' : ''" role="tabpanel" aria-labelledby="recited-tab">
+                            <div class="tab-pane fade" id="recited" th:classappend="${selectedList == 'recited'} ? 'show active' : ''" role="tabpanel" aria-labelledby="recited-tab">
                                     <div th:if="${#lists.isEmpty(recitedMangaPage.content)}" class="no-manga-message">
                                         <p>Не знайдено манг у поточному списку.</p>
                                     </div>
@@ -373,19 +388,50 @@
                                     </nav>
                                 </div>
                             </div>
-                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div id="userFriends" class="tab-pane fade">
-                    <div class="input-wrapper">
-                        <input type="text" class="form-control mb-3 input-filter" placeholder="Пошук за Ім'ям користувача">
-                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    </div>
+            <div id="userFriends" class="tab-pane fade" data-list="userFriends">
+                        <div class="left-block mb-4">
+                            <div class="divider">
+                                <span>Друзі</span>
+                            </div>
+                            <div class="friends">
+                                <ul class="nav nav-tabs nav-tabs-friends" id="myTabFriends" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <a class="user-link nav-link" id="friends-tab" href="#" data-bs-toggle="tab" data-list="friends">Друзі</a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="user-link nav-link" id="my-requests-tab" href="#" data-bs-toggle="tab" data-list="my-requests">Мої запити</a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="user-link nav-link" id="requests-tab" href="#" data-bs-toggle="tab" data-list="friend-requests">Вхідні запити</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="right-block">
+                            <div class="input-wrapper">
+                                <input type="text" class="form-control mb-3 input-filter" placeholder="Пошук за Ім'ям користувача">
+                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            </div>
+                            <div class="tab-content" id="tabContent">
+                                <div class="tab-pane tab-pane-friends fade" id="friends-content" role="tabpanel">
+                                    <p>Тут відображатимуться ваші друзі.</p>
+                                </div>
+                                <div class="tab-pane tab-pane-friends fade" id="friend-requests-content" role="tabpanel">
+                                    <p>Тут відображаються вхідні запити в друзі.</p>
+                                </div>
+                                <div class="tab-pane tab-pane-friends fade" id="my-requests-content" role="tabpanel">
+                                    <p>Тут відображаються ваші відправлені запити в друзі.</p>
+                                </div>
+                            </div>
+                        </div>
                 </div>
 
             <div id="userComments" class="tab-pane fade">
-                <div class="left-block">
+                <div class="left-block mb-4">
                     <div class="divider">
                         <span>Коментар до</span>
                     </div>
@@ -435,8 +481,8 @@
                                             <img th:src="@{${comment.user.profilePicture}}" alt="Profile Picture" class="profile-picture">
                                         </div>
                                         <div class="comment-content" th:data-comment-id="${comment.id}">
-                                            <h5 th:text="${comment.user.userName}" class="username">qwe</h5>
-                                            <p class="comment-text" th:text="${comment.text}">qwe</p>
+                                            <h5 th:text="${comment.user.userName}" class="username"></h5>
+                                            <p class="comment-text" th:text="${comment.text}"></p>
                                             <div class="rating">
                                             <span th:classappend="${comment.rating < 0} ? 'rating-negative' : (${comment.rating > 0} ? 'rating-positive' : 'rating-neutral')"
                                                     th:text="${comment.rating}">
@@ -534,13 +580,40 @@
                 </div>
             </div>
 
-            <div id="userProfile" class="tab-pane fade">
-
+            <div id="userNotification" class="tab-pane fade" data-list="userNotification">
+                <div class="left-block mb-4">
+                    <div class="divider">
+                        <span>Сповіщення</span>
+                    </div>
+                    <div class="notifications">
+                        <ul class="nav nav-tabs nav-tabs-notifications" id="myTabNotification" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="user-link nav-link" id="manga-notification-tab" href="#" data-bs-toggle="tab" data-list="manga-notification">Сповіщення манги</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="user-link nav-link" id="author-notification-tab" href="#" data-bs-toggle="tab" data-list="author-notification">Сповіщення автора</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="right-block">
+                    <div class="input-wrapper">
+                        <input type="text" class="form-control mb-3 input-filter" placeholder="Пошук за Ім'ям користувача">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    </div>
+                    <div class="tab-content" id="tabContentNotifications">
+                        <div class="tab-pane tab-pane-notification fade" id="manga-notification" role="tabpanel">
+                            <p>Тут відображатимуться сповіщення стосовно манги.</p>
+                        </div>
+                        <div class="tab-pane tab-pane-notification fade" id="author-notification" role="tabpanel">
+                            <p>Тут відображатимуться сповіщення стосовно автора.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="userNotification" class="tab-pane fade">
 
-            </div>
         </div>
+
         <div th:unless="${profilePrivacy != 'private'}">
             <img class="access-denied" src="/images/settingsPicture/access-denied.png" alt="">
         </div>
@@ -554,5 +627,18 @@
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-profile.js"></script>
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-profile-search-manga.js"></script>
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-profile-tabs.js"></script>
+<script th:if="${profilePrivacy != 'private'}" src="/js/user/user-notification-panel.js"></script>
+<script th:if="${profilePrivacy != 'private'}" src="/js/user/user-friends-panel.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
+        const profileButton = document.querySelector('#openProfileModal');
+        if (profileButton) {
+            profileButton.addEventListener('click', function() {
+                profileModal.show();
+            });
+        }
+    });
+</script>
 </body>
 </html>
