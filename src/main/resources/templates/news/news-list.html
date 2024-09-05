@@ -23,7 +23,7 @@
             <div class="border-bottom-dotted mb-4"></div>
             <div class="main-news">
                 <div th:each="news : ${newsList}" class="news-item">
-                    <div th:if="${#authentication.authorities[0].authority == 'ADMIN'}" class="news-icons">
+                    <div th:if="${#authentication.authorities[0].authority == 'ADMIN' or #authentication.authorities[0].authority == 'MODERATOR'}" class="news-icons">
                         <a th:href="@{/news/edit/{newsId}(newsId=${news.id})}" class="edit-icon">
                             <i class="fas fa-edit"></i>
                         </a>

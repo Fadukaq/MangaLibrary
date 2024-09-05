@@ -43,7 +43,7 @@
             <tr th:each="user : ${users}">
                 <td th:text="${user.id}"></td>
                 <td class="link">
-                    <a th:href="@{/profile/{userName}(userName=${user.userName})}">
+                    <a th:href="@{/profile/{userId}(userId=${user.id})}">
                         <span th:text="${user.userName}"></span>
                     </a>
                 </td>
@@ -56,7 +56,7 @@
                                 onchange="this.form.submit()">
                             <option th:value="USER" th:text="'USER'" th:selected="${user.userRole == 'USER'}"></option>
                             <option th:value="ADMIN" th:text="'ADMIN'" th:selected="${user.userRole == 'ADMIN'}"></option>
-                            <option th:value="MangaModerator" th:text="'MangaModerator'" th:selected="${user.userRole == 'MangaModerator'}"></option>
+                            <option th:value="MODERATOR" th:text="'MODERATOR'" th:selected="${user.userRole == 'MODERATOR'}"></option>
                         </select>
                     </form>
                 </td>

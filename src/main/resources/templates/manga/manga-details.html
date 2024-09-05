@@ -145,7 +145,7 @@
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="comments-tab" data-bs-toggle="tab" href="#comments" role="tab" aria-controls="comments" aria-selected="false">Коментарі</a>
                     </li>
-                    <li th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MangaModerator'})" class="nav-item ms-3 admin-panel">
+                    <li th:if="${#authorization.expression('isAuthenticated()')} and (${#authentication.authorities[0].authority == 'ADMIN'} or ${#authentication.authorities[0].authority == 'MODERATOR'})" class="nav-item ms-3 admin-panel">
                         <button class="btn btn-custom-admin-panel" type="button" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             Меню Автора
                         </button>
@@ -303,7 +303,7 @@
                                 </div>
                                 <ul id="chaptersList" class="list-group">
                                     <li th:each="chapter : ${chapters}" class="list-group-item mb-1" th:data-date="${chapter.creationTime}">
-                                        <div th:if="${#authentication.authorities[0].authority == 'ADMIN' or #authentication.authorities[0].authority == 'MangaModerator'}" class="d-flex flex-column">
+                                        <div th:if="${#authentication.authorities[0].authority == 'ADMIN' or #authentication.authorities[0].authority == 'MODERATOR'}" class="d-flex flex-column">
                                             <span>
                                                 <a th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="chapter-title text-decoration-none" style="color:#ce86ff;">
                                                     <span class="chapter-title" th:text="${chapter.title}"></span>
@@ -334,7 +334,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div th:unless="${#authentication.authorities[0].authority == 'ADMIN' or #authentication.authorities[0].authority == 'MangaModerator'}" class="d-flex justify-content-between align-items-center">
+                                        <div th:unless="${#authentication.authorities[0].authority == 'ADMIN' or #authentication.authorities[0].authority == 'MODERATOR'}" class="d-flex justify-content-between align-items-center">
                                             <a th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}" class="chapter-title text-decoration-none" style="color:#ce86ff;">
                                                 <span th:text="${chapter.title}"></span>
                                             </a>

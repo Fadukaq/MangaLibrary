@@ -21,22 +21,8 @@
 <div th:insert="~{blocks/modals/commentEditModal :: edit-comment-modal}"></div>
 <div th:insert="~{blocks/modals/replyEditModal :: edit-reply-modal}"></div>
 <div th:insert="~{blocks/modals/reportUserModal :: reportUserModal}"></div>
-<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="profileModalLabel">Профіль</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Здесь будет информация о профиле пользователя.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-custom-subscribe" style="padding:7px 15px;" data-bs-dismiss="modal">Закрыть</button>
-            </div>
-        </div>
-    </div>
-</div>
+<div th:insert="~{blocks/modals/userProfileModal :: userProfileModal}"></div>
+
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="content">
     <div class="container mt-5 mb-5">
@@ -45,8 +31,7 @@
                 <img class="user-picture" th:src="${user.ProfilePicture}" alt="userProfilePicture">
                 <span class="user-name" th:text="${user.userName}"></span>
                 <span class="dash">-</span>
-                <span class="user-role" th:text="${user.userRole}"></span>
-                <small class="register-date" style="margin-left:15px;" th:text="${formattedRegisterDate}"></small>
+                <span class="user-role" th:text="${formattedUserRole}"></span>
                 <button th:if="${user != currentUser}" class="btn report-user-btn"
                         th:data-currentUser-id="${currentUser.id}"
                         th:data-user-id="${user.id}"
@@ -629,16 +614,6 @@
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-profile-tabs.js"></script>
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-notification-panel.js"></script>
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-friends-panel.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
-        const profileButton = document.querySelector('#openProfileModal');
-        if (profileButton) {
-            profileButton.addEventListener('click', function() {
-                profileModal.show();
-            });
-        }
-    });
-</script>
+<script th:if="${profilePrivacy != 'private'}" src="/js/user/user-info-modal.js"></script>
 </body>
 </html>

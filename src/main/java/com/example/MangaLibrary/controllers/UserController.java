@@ -168,9 +168,12 @@ public class UserController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm", new Locale("uk", "UA"));
             String formattedRegisterDate = user.getRegistrationDate().format(formatter);
 
+            String formattedUserRole = userService.formattingUserRole(user.getUserRole());
+
             model.addAttribute("user", user);
             model.addAttribute("currentUser", currentUser);
             model.addAttribute("formattedRegisterDate", formattedRegisterDate);
+            model.addAttribute("formattedUserRole", formattedUserRole);
             model.addAttribute("commentsUser", commentsUser);
             model.addAttribute("repliesUser", repliesUser);
             model.addAttribute("readingMangaPage", userService.getMangaPage(user.getMangaReading(), pageable));
@@ -184,6 +187,7 @@ public class UserController {
             return "main/error";
         }
     }
+
 
     @GetMapping("/profile/edit/{id}")
     public String userEditProfile(@PathVariable("id") long id ,

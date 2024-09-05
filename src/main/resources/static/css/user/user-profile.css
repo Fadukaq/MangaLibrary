@@ -40,11 +40,12 @@
 .dash {
     margin-left: 5px;
     margin-right: 5px;
-    font-size: 20px;
+    margin-bottom: 5px;
+    font-size: 29px;
     color: #6c6c6c;
 }
 .header-info .user-role {
-    font-size: 14px;
+    font-size: 16px;
     color: #6c6c6c;
 }
 .user-settings{
@@ -85,6 +86,7 @@
     margin-right: 10px;
     color: gray;
     transition: color 0.3s;
+    font-size: 14px;
 }
 
 .fa:hover {
@@ -746,4 +748,49 @@ a {
     padding: 10px;
     font-size: 16px;
     color: #ff0080;
+}
+.modal-content {
+    height: 100%;
+    width: 350px;
+}
+.modal-dialog-end {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+}
+.user-picture-modal {
+    border-radius: 50%;
+    width: 160px;
+    height: 160px;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 15px;
+}
+.modal-dialog {
+    height: 100%;
+    margin: 0;
+}
+.user-name{
+    text-align: center;
+}
+.highlight-admin {
+    color: #ff0080;
+}
+.highlight-moderator {
+    color: #ff3ea1;
+}
+.highlight-author {
+    color: #ff77c1;
+}
+.highlight-user {
+    color: #ffd3ea;
+}
+.status-active {
+    color: #4caf50;
+}
+
+.status-inactive {
+    color: #f44336;
 }

@@ -1,0 +1,27 @@
+<div th:fragment="userProfileModal">
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-end">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileModalLabel">Профіль</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="user-info">
+                    <img class="user-picture-modal" th:src="${user.ProfilePicture}" alt="Профиль пользователя" />
+                    <div class="user-details">
+                        <h5 class="user-name mb-4" th:text="${user.userName}"></h5>
+                        <p class="user-role">Роль користувача: <span class="user-role-modal" th:text="${formattedUserRole}"></span></p>
+                        <p class="user-role">Дата реєстрації: <span th:text="${formattedRegisterDate}"></span></p>
+                        <p class="account-status"> Статус аккаунту: <span class="status-modal" th:text="${user.enabled ? 'Активований' : 'Не активований'}"></span></p>
+                        <p class="user-about">Про себе: <span th:text="${user.about}"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-custom-subscribe" style="padding:7px 15px;" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

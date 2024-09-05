@@ -340,7 +340,7 @@ public class UserService {
     }
 
     public boolean isValidateRoleAndEnabled(User user, String role, String enabled) {
-        if (role != null && (role.equals("ADMIN") || role.equals("USER") || role.equals("MangaModerator"))) {
+        if (role != null && (role.equals("ADMIN") || role.equals("USER") || role.equals("MODERATOR"))) {
             return true;
         }
         if (enabled != null && (enabled.equals("true") || enabled.equals("false")) && !"ADMIN".equals(user.getUserRole())) {
@@ -371,5 +371,14 @@ public class UserService {
             return userRepo.findByUserName(username);
         }
         return null;
+    }
+    public String formattingUserRole(String userRole) {
+        return switch (userRole.toUpperCase()) {
+            case "ADMIN" -> "Адміністратор";
+            case "MODERATOR" -> "Модератор";
+            case "AUTHOR" -> "Автор";
+            case "USER" -> "Користувач";
+            default -> userRole;
+        };
     }
 }

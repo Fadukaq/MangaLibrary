@@ -21,7 +21,7 @@
                 <div class="header-title">
                     <h2 th:text="${news.title}"></h2>
                 </div>
-                <div th:if="${#authentication.authorities[0].authority == 'ADMIN'}" class="news-icons">
+                <div th:if="${#authentication.authorities[0].authority == 'ADMIN' or #authentication.authorities[0].authority == 'MODERATOR'}" class="news-icons">
                     <a th:href="@{/news/edit/{newsId}(newsId=${news.id})}" class="edit-icon">
                         <i class="fas fa-edit"></i>
                     </a>
