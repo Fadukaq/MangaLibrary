@@ -227,7 +227,7 @@
                         </div>
                         <p style="color:gray;">Повний Опис</p>
                         <div id="mangaDescriptionContainer">
-                            <p id="shortDescription" th:text="${manga.mangaDescription.substring(0, 200)}" class="description" style="display: block;"></p>
+                            <p id="shortDescription" th:text="${#strings.length(manga.mangaDescription) <= 200 ? manga.mangaDescription : manga.mangaDescription.substring(0, 200) + '...'}" class="description" style="display: block;"></p>
                             <p id="fullDescription" th:text="${manga.mangaDescription}" class="description" style="display: none;"></p>
                             <button class="btn btn-primary" id="toggleDescriptionBtn">Показати більше</button> </div>
                         <hr>

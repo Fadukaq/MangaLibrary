@@ -21,6 +21,7 @@
 <div th:insert="~{blocks/modals/commentEditModal :: edit-comment-modal}"></div>
 <div th:insert="~{blocks/modals/replyEditModal :: edit-reply-modal}"></div>
 <div th:insert="~{blocks/modals/reportUserModal :: reportUserModal}"></div>
+
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="content">
     <div class="container mt-5 mb-5">
@@ -484,7 +485,7 @@
                                 <li th:each="reply : ${repliesUser}" class="list-group-item reply-item"
                                     th:data-date="${reply.createdAt}"
                                     th:data-reply-id="${reply.id}"
-                                    th:data-user-id="${currentUser.id}">
+                                    th:data-user-id="${currentUser.id}" style="display: none;">
                                     <a class="link-manga" th:href="@{/profile/{id}(id=${reply.parentComment.user.id})}">
                                     <span class="to-title">Під коментарем користувача:
                                         <span class="title-name" th:text="${reply.parentComment.user.userName}"></span>
@@ -525,6 +526,9 @@
                                     </div>
                                 </li>
                             </ul>
+                            <div id="loading-indicator" class="loading-indicator" style="display: none;">
+                                Загрузка...
+                            </div>
                         </div>
                     </div>
                 </div>
