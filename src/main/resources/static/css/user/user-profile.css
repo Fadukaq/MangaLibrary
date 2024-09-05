@@ -749,11 +749,11 @@ a {
     font-size: 16px;
     color: #ff0080;
 }
-.modal-content {
+.modal-content-profile {
     height: 100%;
     width: 350px;
 }
-.modal-dialog-end {
+.modal-dialog-end-profile {
     margin: 0;
     position: absolute;
     top: 0;
@@ -768,7 +768,7 @@ a {
     margin: 0 auto;
     margin-bottom: 15px;
 }
-.modal-dialog {
+.modal-dialog-profile {
     height: 100%;
     margin: 0;
 }
