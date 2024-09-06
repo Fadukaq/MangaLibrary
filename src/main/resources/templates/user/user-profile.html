@@ -161,24 +161,24 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <nav aria-label="Page navigation">
-                                        <ul th:if="${readingMangaPage.totalPages > 1}" class="pagination">
-                                            <li class="page-item" th:classappend="${readingMangaPage.hasPrevious() ? '' : 'disabled'}">
-                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='reading', page=${readingMangaPage.number}, size=${readingMangaPage.size})}" aria-label="Previous">
-                                                    <span aria-hidden="true">&laquo;</span>
-                                                </a>
-                                            </li>
-                                            <li th:each="i : ${#numbers.sequence(1, readingMangaPage.totalPages)}"
-                                                th:classappend="${i == readingMangaPage.number + 1 ? 'active' : ''}" class="page-item">
-                                                <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='reading', page=${i}, size=${readingMangaPage.size})}" th:text="${i}" class="page-link"></a>
-                                            </li>
-                                            <li class="page-item" th:classappend="${readingMangaPage.hasNext() ? '' : 'disabled'}">
-                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='reading', page=${readingMangaPage.number + 2}, size=${readingMangaPage.size})}" aria-label="Next">
-                                                    <span aria-hidden="true">&raquo;</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                <nav aria-label="Page navigation">
+                                    <ul th:if="${readingMangaPage.totalPages > 1}" class="pagination">
+                                        <li class="page-item" th:classappend="${readingMangaPage.hasPrevious() ? '' : 'disabled'}">
+                                            <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='reading', page=${readingMangaPage.number})}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <li th:each="i : ${#numbers.sequence(1, readingMangaPage.totalPages)}"
+                                            th:classappend="${i == readingMangaPage.number + 1 ? 'active' : ''}" class="page-item">
+                                            <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='reading', page=${i})}" th:text="${i}" class="page-link"></a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${readingMangaPage.hasNext() ? '' : 'disabled'}">
+                                            <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='reading', page=${readingMangaPage.number + 2})}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                             <div class="tab-pane fade" id="plan" th:classappend="${selectedList == 'plan'} ? 'show active' : ''" role="tabpanel" aria-labelledby="plan-tab">
                                     <div th:if="${#lists.isEmpty(wantToReadMangaPage.content)}" class="no-manga-message">
@@ -209,24 +209,24 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <nav aria-label="Page navigation">
-                                        <ul th:if="${wantToReadMangaPage.totalPages > 1}" class="pagination">
-                                            <li class="page-item" th:classappend="${wantToReadMangaPage.hasPrevious() ? '' : 'disabled'}">
-                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='plan', page=${wantToReadMangaPage.number}, size=${wantToReadMangaPage.size})}" aria-label="Previous">
-                                                    <span aria-hidden="true">&laquo;</span>
-                                                </a>
-                                            </li>
-                                            <li th:each="i : ${#numbers.sequence(1, wantToReadMangaPage.totalPages)}"
-                                                th:classappend="${i == wantToReadMangaPage.number + 1 ? 'active' : ''}" class="page-item">
-                                                <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='plan', page=${i}, size=${wantToReadMangaPage.size})}" th:text="${i}" class="page-link"></a>
-                                            </li>
-                                            <li class="page-item" th:classappend="${wantToReadMangaPage.hasNext() ? '' : 'disabled'}">
-                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='plan', page=${wantToReadMangaPage.number + 2}, size=${wantToReadMangaPage.size})}" aria-label="Next">
-                                                    <span aria-hidden="true">&raquo;</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                <nav aria-label="Page navigation">
+                                    <ul th:if="${wantToReadMangaPage.totalPages > 1}" class="pagination">
+                                        <li class="page-item" th:classappend="${wantToReadMangaPage.hasPrevious() ? '' : 'disabled'}">
+                                            <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='plan', page=${wantToReadMangaPage.number})}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <li th:each="i : ${#numbers.sequence(1, wantToReadMangaPage.totalPages)}"
+                                            th:classappend="${i == wantToReadMangaPage.number + 1 ? 'active' : ''}" class="page-item">
+                                            <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='plan', page=${i})}" th:text="${i}" class="page-link"></a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${wantToReadMangaPage.hasNext() ? '' : 'disabled'}">
+                                            <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='plan', page=${wantToReadMangaPage.number + 2})}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                                 </div>
                             <div class="tab-pane fade" id="dropped" th:classappend="${selectedList == 'dropped'} ? 'show active' : ''" role="tabpanel" aria-labelledby="dropped-tab">
                                     <div th:if="${#lists.isEmpty(stoppedReadingMangaPage.content)}" class="no-manga-message">
@@ -257,24 +257,24 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <nav aria-label="Page navigation">
-                                        <ul th:if="${stoppedReadingMangaPage.totalPages > 1}" class="pagination">
-                                            <li class="page-item" th:classappend="${stoppedReadingMangaPage.hasPrevious() ? '' : 'disabled'}">
-                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='dropped', page=${stoppedReadingMangaPage.number}, size=${stoppedReadingMangaPage.size})}" aria-label="Previous">
-                                                    <span aria-hidden="true">&laquo;</span>
-                                                </a>
-                                            </li>
-                                            <li th:each="i : ${#numbers.sequence(1, stoppedReadingMangaPage.totalPages)}"
-                                                th:classappend="${i == stoppedReadingMangaPage.number + 1 ? 'active' : ''}" class="page-item">
-                                                <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='dropped', page=${i}, size=${stoppedReadingMangaPage.size})}" th:text="${i}" class="page-link"></a>
-                                            </li>
-                                            <li class="page-item" th:classappend="${stoppedReadingMangaPage.hasNext() ? '' : 'disabled'}">
-                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='dropped', page=${stoppedReadingMangaPage.number + 2}, size=${stoppedReadingMangaPage.size})}" aria-label="Next">
-                                                    <span aria-hidden="true">&raquo;</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                <nav aria-label="Page navigation">
+                                    <ul th:if="${stoppedReadingMangaPage.totalPages > 1}" class="pagination">
+                                        <li class="page-item" th:classappend="${stoppedReadingMangaPage.hasPrevious() ? '' : 'disabled'}">
+                                            <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='dropped', page=${stoppedReadingMangaPage.number})}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <li th:each="i : ${#numbers.sequence(1, stoppedReadingMangaPage.totalPages)}"
+                                            th:classappend="${i == stoppedReadingMangaPage.number + 1 ? 'active' : ''}" class="page-item">
+                                            <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='dropped', page=${i})}" th:text="${i}" class="page-link"></a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${stoppedReadingMangaPage.hasNext() ? '' : 'disabled'}">
+                                            <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='dropped', page=${stoppedReadingMangaPage.number + 2})}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                                 </div>
                             <div class="tab-pane fade" id="favorite" th:classappend="${selectedList == 'favorite'} ? 'show active' : ''" role="tabpanel" aria-labelledby="favorite-tab">
                                     <div th:if="${#lists.isEmpty(favoriteMangaPage.content)}" class="no-manga-message">
@@ -305,24 +305,24 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <nav aria-label="Page navigation">
-                                        <ul th:if="${favoriteMangaPage.totalPages > 1}" class="pagination">
-                                            <li class="page-item" th:classappend="${favoriteMangaPage.hasPrevious() ? '' : 'disabled'}">
-                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='favorite', page=${favoriteMangaPage.number}, size=${favoriteMangaPage.size})}" aria-label="Previous">
-                                                    <span aria-hidden="true">&laquo;</span>
-                                                </a>
-                                            </li>
-                                            <li th:each="i : ${#numbers.sequence(1, favoriteMangaPage.totalPages)}"
-                                                th:classappend="${i == favoriteMangaPage.number + 1 ? 'active' : ''}" class="page-item">
-                                                <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='favorite', page=${i}, size=${favoriteMangaPage.size})}" th:text="${i}" class="page-link"></a>
-                                            </li>
-                                            <li class="page-item" th:classappend="${favoriteMangaPage.hasNext() ? '' : 'disabled'}">
-                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='favorite', page=${favoriteMangaPage.number + 2}, size=${favoriteMangaPage.size})}" aria-label="Next">
-                                                    <span aria-hidden="true">&raquo;</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                <nav aria-label="Page navigation">
+                                    <ul th:if="${favoriteMangaPage.totalPages > 1}" class="pagination">
+                                        <li class="page-item" th:classappend="${favoriteMangaPage.hasPrevious() ? '' : 'disabled'}">
+                                            <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='favorite', page=${favoriteMangaPage.number})}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <li th:each="i : ${#numbers.sequence(1, favoriteMangaPage.totalPages)}"
+                                            th:classappend="${i == favoriteMangaPage.number + 1 ? 'active' : ''}" class="page-item">
+                                            <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='favorite', page=${i})}" th:text="${i}" class="page-link"></a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${favoriteMangaPage.hasNext() ? '' : 'disabled'}">
+                                            <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='favorite', page=${favoriteMangaPage.number + 2})}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                                 </div>
                             <div class="tab-pane fade" id="recited" th:classappend="${selectedList == 'recited'} ? 'show active' : ''" role="tabpanel" aria-labelledby="recited-tab">
                                     <div th:if="${#lists.isEmpty(recitedMangaPage.content)}" class="no-manga-message">
@@ -353,24 +353,24 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <nav aria-label="Page navigation">
-                                        <ul th:if="${recitedMangaPage.totalPages > 1}" class="pagination">
-                                            <li class="page-item" th:classappend="${recitedMangaPage.hasPrevious() ? '' : 'disabled'}">
-                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='recited', page=${recitedMangaPage.number}, size=${recitedMangaPage.size})}" aria-label="Previous">
-                                                    <span aria-hidden="true">&laquo;</span>
-                                                </a>
-                                            </li>
-                                            <li th:each="i : ${#numbers.sequence(1, recitedMangaPage.totalPages)}"
-                                                th:classappend="${i == recitedMangaPage.number + 1 ? 'active' : ''}" class="page-item">
-                                                <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='recited', page=${i}, size=${recitedMangaPage.size})}" th:text="${i}" class="page-link"></a>
-                                            </li>
-                                            <li class="page-item" th:classappend="${recitedMangaPage.hasNext() ? '' : 'disabled'}">
-                                                <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='recited', page=${recitedMangaPage.number + 2}, size=${recitedMangaPage.size})}" aria-label="Next">
-                                                    <span aria-hidden="true">&raquo;</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                <nav aria-label="Page navigation">
+                                    <ul th:if="${recitedMangaPage.totalPages > 1}" class="pagination">
+                                        <li class="page-item" th:classappend="${recitedMangaPage.hasPrevious() ? '' : 'disabled'}">
+                                            <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='recited', page=${recitedMangaPage.number})}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <li th:each="i : ${#numbers.sequence(1, recitedMangaPage.totalPages)}"
+                                            th:classappend="${i == recitedMangaPage.number + 1 ? 'active' : ''}" class="page-item">
+                                            <a th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='recited', page=${i})}" th:text="${i}" class="page-link"></a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${recitedMangaPage.hasNext() ? '' : 'disabled'}">
+                                            <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userList', list='recited', page=${recitedMangaPage.number + 2})}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                                 </div>
                             </div>
                     </div>
@@ -495,16 +495,16 @@
                             <nav aria-label="Page navigation">
                                 <ul th:if="${commentsUser.totalPages > 1}" class="pagination">
                                     <li class="page-item" th:classappend="${commentsUser.hasPrevious() ? '' : 'disabled'}">
-                                        <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userComments', list='toManga', page=${commentsUser.number > 1 ? commentsUser.number - 1 : 1}, size=${commentsUser.size})}" aria-label="Previous">
+                                        <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userComments', list='toManga', page=${commentsUser.number > 1 ? commentsUser.number - 1 : 1})}" aria-label="Previous">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
                                     <li th:each="i : ${#numbers.sequence(1, commentsUser.totalPages)}"
                                         th:classappend="${i == commentsUser.number + 1 ? 'active' : ''}" class="page-item">
-                                        <a th:href="@{/profile/{id}(id=${user.id}, tab='userComments', list='toManga', page=${i}, size=${commentsUser.size})}" th:text="${i}" class="page-link"></a>
+                                        <a th:href="@{/profile/{id}(id=${user.id}, tab='userComments', list='toManga', page=${i})}" th:text="${i}" class="page-link"></a>
                                     </li>
                                     <li class="page-item" th:classappend="${commentsUser.hasNext() ? '' : 'disabled'}">
-                                        <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userComments', list='toManga', page=${commentsUser.number < commentsUser.totalPages ? commentsUser.number + 1 : commentsUser.totalPages}, size=${commentsUser.size})}" aria-label="Next">
+                                        <a class="page-link" th:href="@{/profile/{id}(id=${user.id}, tab='userComments', list='toManga', page=${commentsUser.number < commentsUser.totalPages ? commentsUser.number + 1 : commentsUser.totalPages})}" aria-label="Next">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>

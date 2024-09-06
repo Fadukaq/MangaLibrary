@@ -14,39 +14,27 @@ $(document).ready(function() {
         e.preventDefault();
         const $this = $(this);
         const target = $this.attr('href').substring(1);
-
-        const currentPage = parseInt(urlParams.get('page')) || 2;
-
-        if (currentPage >= 2) {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (paramName === 'tab') {
+            urlParams.set('tab', target);
+            urlParams.delete('list');
             urlParams.set('page', '1');
-            urlParams.set(paramName, target);
             history.pushState(null, null, '?' + urlParams.toString());
             location.reload();
-            return;
-        }
-
-        urlParams.set(paramName, target);
-        urlParams.set('page', '1');
-
-        if (paramName === 'list') {
-            urlParams.set('size', '15');
-        } else {
-            urlParams.delete('size');
-            urlParams.delete('list');
-        }
-
-        if (paramName !== 'tab') {
-            urlParams.set('tab', $('#myTab .nav-link.active').attr('href').substring(1));
-        }
-
-        history.pushState(null, null, '?' + urlParams.toString());
-        $this.tab('show');
-
-        if (paramName === 'tab') {
+        } else if (paramName === 'list') {
+            urlParams.set('list', target);
+            urlParams.set('page', '1');
+            history.pushState(null, null, '?' + urlParams.toString());
             location.reload();
         } else {
+            urlParams.set(paramName, target);
+            urlParams.delete('tab');
+            urlParams.delete('list');
+            history.pushState(null, null, '?' + urlParams.toString());
             updateContent(paramName, target);
         }
+
+        $this.tab('show');
     }
 
     $('#myTab a').on('click', function(e) { handleTabClick.call(this, e, 'tab'); });
