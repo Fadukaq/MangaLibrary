@@ -58,6 +58,24 @@ public class User {
     private List<Comment> comments = new ArrayList<>();
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
+
+    @ManyToMany
+    @JoinTable(
+            name = "friends",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    @JsonManagedReference
+    private List<User> friends = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<FriendRequest> sentRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<FriendRequest> receivedRequests = new ArrayList<>();
+
     public User() {}
     public User(User user) {
         this.userName = user.getUserName();
@@ -213,5 +231,31 @@ public class User {
 
     public void setRegistrationDate(LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+
+
+    public void setSentRequests(List<FriendRequest> sentRequests) {
+        this.sentRequests = sentRequests;
+    }
+
+    public List<FriendRequest> getReceivedRequests() {
+        return receivedRequests;
+    }
+
+    public void setReceivedRequests(List<FriendRequest> receivedRequests) {
+        this.receivedRequests = receivedRequests;
+    }
+
+    public List<User> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<User> friends) {
+        this.friends = friends;
+    }
+
+    public List<FriendRequest> getSentRequests() {
+        return sentRequests;
     }
 }

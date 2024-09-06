@@ -1,9 +1,11 @@
 package com.example.MangaLibrary.controllers;
 import com.example.MangaLibrary.helper.MangaLibraryManager;
+import com.example.MangaLibrary.helper.user.RequestStatus;
 import com.example.MangaLibrary.helper.user.UserAgreementRequest;
 import com.example.MangaLibrary.helper.user.UserForm;
 import com.example.MangaLibrary.models.*;
 import com.example.MangaLibrary.repo.*;
+import com.example.MangaLibrary.service.FriendRequestService;
 import com.example.MangaLibrary.service.MangaService;
 import com.example.MangaLibrary.service.UserReportService;
 import com.example.MangaLibrary.service.UserService;
@@ -68,6 +70,8 @@ public class UserController {
     private List<Manga> wantToReadManga = new ArrayList<>();
     private List<Manga> favoriteManga = new ArrayList<>();
     private List<Manga> stoppedReadingManga = new ArrayList<>();
+    @Autowired
+    FriendRequestRepo friendRequestRepo;
     @GetMapping("/registration")
     public String registration(Model model) {
         model.addAttribute("user", new User());
@@ -167,15 +171,21 @@ public class UserController {
             }
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm", new Locale("uk", "UA"));
             String formattedRegisterDate = user.getRegistrationDate().format(formatter);
-
             String formattedUserRole = userService.formattingUserRole(user.getUserRole());
 
+            List<FriendRequest> friendRequests = friendRequestRepo.findByReceiverAndStatus(currentUser, RequestStatus.PENDING);
+            List<FriendRequest> sentRequests = friendRequestRepo.findBySenderAndStatus(currentUser,RequestStatus.PENDING);
+
+            List<User> userFriends = user.getFriends();
             model.addAttribute("user", user);
             model.addAttribute("currentUser", currentUser);
             model.addAttribute("formattedRegisterDate", formattedRegisterDate);
             model.addAttribute("formattedUserRole", formattedUserRole);
             model.addAttribute("commentsUser", commentsUser);
             model.addAttribute("repliesUser", repliesUser);
+            model.addAttribute("friendRequests", friendRequests);
+            model.addAttribute("sentRequests", sentRequests);
+            model.addAttribute("userFriends", userFriends);
             model.addAttribute("readingMangaPage", userService.getMangaPage(user.getMangaReading(), pageable));
             model.addAttribute("recitedMangaPage", userService.getMangaPage(user.getMangaRecited(), pageable));
             model.addAttribute("wantToReadMangaPage", userService.getMangaPage(user.getMangaWantToRead(), pageable));

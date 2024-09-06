@@ -38,6 +38,15 @@
                         title="Поскаржитися">
                     <i class="fa fa-flag"></i>
                 </button>
+
+                <form th:if="${user != currentUser && !currentUser.friends.contains(user)}" method="post" action="#" th:action="@{/friends/sendFriendRequest}" onsubmit="return false;">
+                    <input type="hidden" name="currentUserId" th:value="${currentUser.id}">
+                    <input type="hidden" name="userId" th:value="${user.id}">
+                    <button type="submit" class="btn add-friend-btn" title="Додати в друзі">
+                        <i class="fa fa-user-plus"></i> Додати в друзі
+                    </button>
+                </form>
+
                 <span th:if="${#authentication.name == user.userName}" class="user-settings">
                     <i class="fa-solid fa-gear"></i>
                     <a class="btn-custom-settings" th:href="@{'/profile/edit/' + ${user.id}}">Налаштування</a>
@@ -387,10 +396,10 @@
                                     <li class="nav-item" role="presentation">
                                         <a class="user-link nav-link" id="friends-tab" href="#" data-bs-toggle="tab" data-list="friends">Друзі</a>
                                     </li>
-                                    <li class="nav-item" role="presentation">
+                                    <li th:if="${user == currentUser}" class="nav-item" role="presentation">
                                         <a class="user-link nav-link" id="my-requests-tab" href="#" data-bs-toggle="tab" data-list="my-requests">Мої запити</a>
                                     </li>
-                                    <li class="nav-item" role="presentation">
+                                    <li th:if="${user == currentUser}" class="nav-item" role="presentation">
                                         <a class="user-link nav-link" id="requests-tab" href="#" data-bs-toggle="tab" data-list="friend-requests">Вхідні запити</a>
                                     </li>
                                 </ul>
@@ -403,13 +412,57 @@
                             </div>
                             <div class="tab-content" id="tabContent">
                                 <div class="tab-pane tab-pane-friends fade" id="friends-content" role="tabpanel">
-                                    <p>Тут відображатимуться ваші друзі.</p>
+                                    <ul id="friends" class="list-group">
+                                        <li th:each="friend : ${userFriends}" class="list-group-item">
+                                            <div class="d-flex align-items-center">
+                                                <img th:src="${friend.profilePicture ?: 'https://www.riseandfall.xyz/unrevealed.png'}"
+                                                     th:alt="${friend.userName ?: 'Unknown User'}"
+                                                     class="me-2" style="width: 30px; height: 30px; border-radius: 50%;">
+                                                <span th:text="${friend.userName ?: 'Unknown User'}"></span>
+                                            </div>
+                                            <form th:if="${user == currentUser}" class="ms-2" th:action="@{/friends/remove}" method="post" onsubmit="return handleFormSubmit(event)">
+                                                <input type="hidden" name="friendId" th:value="${friend.id}">
+                                                <br>
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="fa fa-times"></i> Віддалити
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div class="tab-pane tab-pane-friends fade" id="friend-requests-content" role="tabpanel">
-                                    <p>Тут відображаються вхідні запити в друзі.</p>
+                                <div th:if="${user == currentUser}" class="tab-pane tab-pane-friends fade" id="friend-requests-content" role="tabpanel">
+                                    <ul id="friendRequestsList" class="list-group">
+                                        <li th:each="request : ${friendRequests}" class="list-group-item">
+                                            <div class="d-flex align-items-center">
+                                                <img th:src="${request.sender.ProfilePicture ?: 'https://www.riseandfall.xyz/unrevealed.png'}"
+                                                     th:alt="${request.sender.userName ?: 'Unknown User'}"
+                                                     class="me-2" style="width: 30px; height: 30px; border-radius: 50%;">
+                                                <span th:text="${request.sender.userName ?: 'Unknown User'}"></span>
+                                                <form class="ms-2" th:action="@{/friends/respondRequest}" method="post">
+                                                    <input type="hidden" name="requestId" th:value="${request.id}">
+                                                    <button type="button" class="btn btn-success btn-sm" th:onclick="'handleResponse(this, \'' + ${request.id} + '\', \'accept\')'">Прийняти</button>
+                                                    <button type="button" class="btn btn-danger btn-sm" th:onclick="'handleResponse(this, \'' + ${request.id} + '\', \'decline\')'">Відхилити</button>
+                                                </form>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div class="tab-pane tab-pane-friends fade" id="my-requests-content" role="tabpanel">
-                                    <p>Тут відображаються ваші відправлені запити в друзі.</p>
+                                <div th:if="${user == currentUser}" class="tab-pane tab-pane-friends fade" id="my-requests-content" role="tabpanel">
+                                    <ul class="list-group">
+                                        <li th:each="sentRequest : ${sentRequests}" class="list-group-item">
+                                            <div class="d-flex align-items-center">
+                                                <img th:src="${sentRequest.receiver.ProfilePicture ?: 'https://www.riseandfall.xyz/unrevealed.png'}"
+                                                     th:alt="${sentRequest.receiver.userName ?: 'Unknown User'}"
+                                                     class="me-2" style="width: 30px; height: 30px; border-radius: 50%;">
+                                                <span th:text="${sentRequest.receiver.userName ?: 'Unknown User'}"></span>
+                                                <span class="ms-2">Статус: Очікує на підтвердження</span>
+                                                <form method="post" th:action="@{/friends/cancelRequest}" data-ajax="true">
+                                                    <input type="hidden" name="requestId" th:value="${sentRequest.id}">
+                                                    <button type="submit" class="btn btn-danger btn-sm ms-2">Скасувати запит</button>
+                                                </form>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -615,5 +668,6 @@
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-notification-panel.js"></script>
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-friends-panel.js"></script>
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-info-modal.js"></script>
+<script th:if="${profilePrivacy != 'private'}" src="/js/user/friends-functionality.js"></script>
 </body>
 </html>
