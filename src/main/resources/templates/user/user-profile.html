@@ -31,7 +31,7 @@
         .list-group-item-friends img {
             border: 2px solid #555;
         }
-        form {
+        .form-friends {
             display: flex;
             align-items: center;
             margin-left: auto;
@@ -63,10 +63,12 @@
 <div th:insert="~{blocks/modals/reportReplyModal :: reportReplyModal}"></div>
 <div th:insert="~{blocks/modals/successModal :: successModal}"></div>
 <div th:insert="~{blocks/modals/errorModal :: errorModal}"></div>
-<div th:insert="~{blocks/modals/commentEditModal :: edit-comment-modal}"></div>
-<div th:insert="~{blocks/modals/replyEditModal :: edit-reply-modal}"></div>
+<div th:insert="~{blocks/modals/commentEditModal :: editCommentModal}"></div>
+<div th:insert="~{blocks/modals/replyEditModal :: editReplyModal}"></div>
 <div th:insert="~{blocks/modals/reportUserModal :: reportUserModal}"></div>
 <div th:insert="~{blocks/modals/userProfileModal :: userProfileModal}"></div>
+<div th:insert="~{blocks/modals/confirmDeleteModalComment :: confirmDeleteModalComment}"></div>
+<div th:insert="~{blocks/modals/confirmDeleteModalReply :: confirmDeleteModalReply}"></div>
 
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
 <div class="content">
@@ -77,12 +79,15 @@
                 <span class="user-name" th:text="${user.userName}"></span>
                 <span class="dash">-</span>
                 <span class="user-role" th:text="${formattedUserRole}"></span>
-                <button th:if="${user != currentUser}" class="btn report-user-btn"
-                        th:data-currentUser-id="${currentUser.id}"
-                        th:data-user-id="${user.id}"
-                        title="Поскаржитися">
-                    <i class="fa fa-flag"></i>
-                </button>
+
+                <form id="reportUserForm" th:if="${user != currentUser}" method="post" th:action="@{/report/user}" onsubmit="return false;">
+                    <input type="hidden" name="reportedUserId" th:value="${user.id}"/>
+                    <input type="hidden" name="reporterUserId" th:value="${currentUser.id}"/>
+                    <input type="hidden" name="reason" id="reportReasonProfileForm" value="">
+                    <button class="btn report-user-btn" th:data-user-id="${user.id}" th:data-currentUser-id="${currentUser.id}" title="Поскаржитися">
+                        <i class="fa fa-flag"></i>
+                    </button>
+                </form>
 
                 <form th:if="${user != currentUser && !currentUser.friends.contains(user)}" method="post" action="#" th:action="@{/friends/sendFriendRequest}" onsubmit="return false;">
                     <input type="hidden" name="currentUserId" th:value="${currentUser.id}">
@@ -470,7 +475,7 @@
                                                     <span th:text="${friend.userName ?: 'Unknown User'}"></span>
                                                     </a>
                                             </div>
-                                            <form th:if="${user == currentUser}" th:action="@{/friends/remove}" method="post" onsubmit="return handleFormSubmit(event)">
+                                            <form class="form-friends" th:if="${user == currentUser}" th:action="@{/friends/remove}" method="post" onsubmit="return handleFormSubmit(event)">
                                                 <input type="hidden" name="friendId" th:value="${friend.id}">
                                                 <button type="submit" class="btn btn-custom-subscribe" style="padding: 5px 10px;">
                                                     <i class="fa fa-times"></i> Віддалити
@@ -493,7 +498,7 @@
                                                          class="me-2" style="width: 50px; height: 50px; border-radius: 50%;">
                                                     <span th:text="${request.sender.userName ?: 'Unknown User'}"></span>
                                                 </div>
-                                                <form class="d-flex ms-2" th:action="@{/friends/respondRequest}" method="post">
+                                                <form class="d-flex ms-2 form-friends" th:action="@{/friends/respondRequest}" method="post">
                                                     <input type="hidden" name="requestId" th:value="${request.id}">
                                                     <button type="button" class="btn btn-custom-subscribe" style="margin-right: 20px; padding: 5px 10px;" th:onclick="'handleResponse(this, \'' + ${request.id} + '\', \'accept\')'">Прийняти</button>
                                                     <button type="button" class="btn btn-custom-subscribe" style="padding: 5px 10px;" th:onclick="'handleResponse(this, \'' + ${request.id} + '\', \'decline\')'">Відхилити</button>
@@ -516,7 +521,7 @@
                                                     <span th:text="${sentRequest.receiver.userName ?: 'Unknown User'}"></span>
                                                     <span class="ms-2">| Статус: Очікує на підтвердження |</span>
                                                 </div>
-                                                <form method="post" th:action="@{/friends/cancelRequest}" data-ajax="true">
+                                                <form class="form-friends" method="post" th:action="@{/friends/cancelRequest}" data-ajax="true">
                                                     <input type="hidden" name="requestId" th:value="${sentRequest.id}">
                                                     <button type="submit" class="btn btn-custom-subscribe" style="padding: 5px 10px;">Скасувати запит</button>
                                                 </form>
@@ -590,13 +595,32 @@
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-${comment.id}">
-                                                        <li th:if="${user != currentUser}"><a class="dropdown-item report-comment" href="#" th:data-user-id="${currentUser.id}" th:data-comment-id="${comment.id}"><i class="fas fa-flag"></i>Поскаржитися</a></li>
-                                                        <form th:unless="${user != currentUser}" th:action="@{/manga/comment/{id}/delete(id=${comment.id})}" method="post" class="d-inline">
-                                                            <input type="hidden" name="comment-id" th:value="${comment.id}">
-                                                            <button class="dropdown-item delete-comment" type="button"><i class="fas fa-trash-alt"></i> Видалити</button>
-                                                        </form>
+                                                        <li th:if="${user != currentUser}">
+                                                            <form id="reportCommentForm" action="#" th:action="@{/comment/report}" method="post" class="report-comment-form" onsubmit="return false;">
+                                                                <input type="hidden" id="commentIdForm" name="commentId" th:value="${comment.id}" />
+                                                                <input type="hidden" id="userIdForm" name="userId" th:value="${currentUser.id}" />
+                                                                <input type="hidden" name="reason" id="reportReasonCommentForm" value="" />
+                                                                <button type="button" class="dropdown-item report-comment" data-bs-toggle="modal" data-bs-target="#reportCommentModal">
+                                                                    <i class="fas fa-flag"></i> Поскаржитися
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                        <li>
+                                                            <form th:unless="${user != currentUser}" th:action="@{/comment/{id}/delete(id=${comment.id})}" method="post" class="d-inline">
+                                                                <input type="hidden" name="comment-id" th:value="${comment.id}">
+                                                                <button class="dropdown-item delete-comment" type="button"><i class="fas fa-trash-alt"></i> Видалити</button>
+                                                            </form>
+                                                        </li>
+                                                        <li>
+                                                            <form id="editCommentForm" th:unless="${user != currentUser}" method="post" action="#" th:action="@{/comment/edit}" onsubmit="return false;">
+                                                                <input type="hidden" id="commentIdEdit" name="commentIdEdit" th:value="${comment.id}"/>
+                                                                <input type="hidden" id="commentTextEdit" name="text" th:value="${comment.text}"/>
+                                                                <button type="button" class="dropdown-item edit-comment" title="Редагувати" data-bs-toggle="modal" data-bs-target="#editCommentModal">
+                                                                    <i class="fas fa-pencil-alt"></i> Редагувати
+                                                                </button>
+                                                            </form>
+                                                        </li>
 
-                                                        <li th:unless="${user != currentUser}"><a class="dropdown-item edit-comment" href="#" th:data-comment-id="${comment.id}"><i class="fas fa-pencil-alt"></i> Редагувати</a></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -649,18 +673,27 @@
                                                     </button>
                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-${reply.id}">
                                                         <li th:if="${user != currentUser}">
-                                                            <a class="dropdown-item report-reply" href="#" th:data-user-id="${currentUser.id}" th:data-reply-id="${reply.id}">
-                                                                <i class="fas fa-flag"></i> Поскаржитися
-                                                            </a>
+                                                            <form id="reportReplyForm" action="#" th:action="@{/reply/report}" method="post" class="report-reply-form" onsubmit="return false;">
+                                                                <input type="hidden" id="replyIdFormReply" name="replyId" th:value="${reply.id}" />
+                                                                <input type="hidden" id="userIdFormReply" name="userId" th:value="${currentUser.id}" />
+                                                                <input type="hidden" name="reason" id="reportReasonReplyForm" value="" />
+                                                                <button type="button" class="dropdown-item report-reply" data-bs-toggle="modal" data-bs-target="#reportReplyModal">
+                                                                    <i class="fas fa-flag"></i> Поскаржитися
+                                                                </button>
+                                                            </form>
                                                         </li>
-                                                        <form th:unless="${user != currentUser}" th:if="${reply != null}"  th:action="@{/manga/reply/{id}/delete(id=${reply.id})}" method="post" class="d-inline">
-                                                            <input type="hidden" name="reply-id" th:value="${reply.id}">
+                                                        <form id="deleteReplyForm" th:unless="${user != currentUser}" th:if="${reply != null}"  th:action="@{/reply/{id}/delete(id=${reply.id})}" method="post" class="d-inline">
+                                                            <input type="hidden" id="replyIdDelete" name="reply-id" th:value="${reply.id}">
                                                             <button class="dropdown-item delete-reply" type="button"><i class="fas fa-trash-alt"></i> Видалити</button>
                                                         </form>
                                                         <li th:unless="${user != currentUser}">
-                                                            <a class="dropdown-item edit-reply" href="#" th:data-reply-id="${reply.id}">
-                                                                <i class="fas fa-pencil-alt"></i> Редагувати
-                                                            </a>
+                                                            <form id="editReplyForm" th:unless="${user != currentUser}" method="post" action="#" th:action="@{/reply/edit}" onsubmit="return false;">
+                                                                <input type="hidden" id="replyIdEdit" name="replyIdEdit" th:value="${reply.id}"/>
+                                                                <input type="hidden" id="replyTextEdit" name="text" th:value="${reply.text}"/>
+                                                                <button type="button" class="dropdown-item edit-reply" title="Редагувати" data-bs-toggle="modal" data-bs-target="#editReplyModal">
+                                                                    <i class="fas fa-pencil-alt"></i> Редагувати
+                                                                </button>
+                                                            </form>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -729,5 +762,7 @@
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-friends-panel.js"></script>
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/user-info-modal.js"></script>
 <script th:if="${profilePrivacy != 'private'}" src="/js/user/friends-functionality.js"></script>
+<script th:if="${profilePrivacy != 'private'}" src="/js/user/comment-logic.js"></script>
+<script th:if="${profilePrivacy != 'private'}" src="/js/user/reply-logic.js"></script>
 </body>
 </html>

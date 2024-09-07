@@ -101,12 +101,16 @@ public class UserService {
         boolean isPasswordMatch = passwordEncoder.matches(currentPassword, realUserPassword);
 
         if (isPasswordMatch) {
+            User existingUser = userRepo.findByUserName(userForm.getUser().getUserName());
+
+            if (existingUser != null && existingUser.getUserName().equals(userForm.getUser().getUserName())) {
+                throw new IllegalArgumentException("Нік вже зайнятий іншим користувачем");
+            }
             if (!userForm.getProfilePicture().getProfileImage().isEmpty()) {
                 String rootPath = directoryLocator.getResourcePathProfilePicture();
                 String userPath = loadProfilePicture(userForm.getProfilePicture().getProfileImage(), userForm.getUser(), rootPath);
                 userToUpdate.setProfilePicture(userPath);
             }
-
             if (changePasswordCheckbox && isValidResetPass(userPasswordNew)) {
                 String hashedPassword = hashPassword(userPasswordNew);
                 userToUpdate.setUserPassword(hashedPassword);

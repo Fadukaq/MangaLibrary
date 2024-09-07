@@ -1,21 +1,27 @@
 <div th:fragment="reportReplyModal">
   <link rel="stylesheet" href="/css/modal-styles.css">
-<div class="modal fade" id="reportReplyModal" tabindex="-1" aria-labelledby="reportReplyModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="background-color: #212121; color: #ffffff;">
-      <div class="modal-header">
-        <h5 class="modal-title" id="reportReplyModalLabel">Поскаржитися на відповідь</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body mb-3">
-        <p>Будь ласка, вкажіть причину скарги:</p>
-        <textarea id="reportReplyReason" class="form-control" rows="3" placeholder="Введіть причину скарги..."></textarea>
-      </div>
-      <div class="modal-footer">
-        <button id="confirmReportReplyButton" type="button" class="btn btn-custom-confirm">Надіслати скаргу</button>
-        <button type="button" class="btn btn-close-modal" data-bs-dismiss="modal">Скасувати</button>
+  <div class="modal fade" id="reportReplyModal" tabindex="-1" aria-labelledby="reportReplyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reportReplyModalLabel">Поскаржитися на відповідь</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="report-reply-form-modal" method="post">
+            <div class="mb-3">
+              <label for="reportReplyReason" class="form-label">Введіть причину скарги:</label>
+              <textarea id="reportReplyReason" name="reason" class="form-control" rows="3" required></textarea>
+            </div>
+            <input type="hidden" id="reportReplyId" name="replyId" value="">
+            <input type="hidden" id="reportReplyUserId" name="userId" value="">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button id="confirmReportReplyButton" type="button" class="btn btn-custom-confirm">Відправити скаргу</button>
+          <button type="button" class="btn btn-close-modal" data-bs-dismiss="modal">Закрити</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </div>

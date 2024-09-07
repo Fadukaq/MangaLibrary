@@ -1,27 +1,27 @@
 <div th:fragment="reportCommentModal">
     <link rel="stylesheet" href="/css/modal-styles.css">
-<div class="modal fade" id="reportCommentModal" tabindex="-1" aria-labelledby="reportCommentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="reportCommentModalLabel">Поскаржитися на коментар</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="reportCommentForm">
-                    <div class="mb-3">
-                        <label for="reportReason" class="form-label">Введіть причину скарги:</label>
-                        <textarea id="reportReason" class="form-control" rows="3" required></textarea>
-                    </div>
-                    <input type="hidden" id="reportCommentId" value="">
-                    <input type="hidden" id="reportUserId" value="">
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button id="submitReport" type="button" class="btn btn-custom-confirm">Відправити скаргу</button>
-                <button type="button" class="btn btn-close-modal" data-bs-dismiss="modal">Закрити</button>
+    <div class="modal fade" id="reportCommentModal" tabindex="-1" aria-labelledby="reportCommentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportCommentModalLabel">Поскаржитися на коментар</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="report-comment-form-modal" method="post">
+                        <div class="mb-3">
+                            <label for="reportReasonComment" class="form-label">Введіть причину скарги:</label>
+                            <textarea id="reportReasonComment" name="reason" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <input type="hidden" id="reportCommentId" name="commentId" value="">
+                        <input type="hidden" id="reportUserId" name="userId" value="">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="submitReport" type="button" class="btn btn-custom-confirm">Відправити скаргу</button>
+                    <button type="button" class="btn btn-close-modal" data-bs-dismiss="modal">Закрити</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </div>

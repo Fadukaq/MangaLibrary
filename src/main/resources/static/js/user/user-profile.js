@@ -47,134 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const reportCommentForm = document.getElementById('reportCommentForm');
-    const reportCommentId = document.getElementById('reportCommentId');
-    const reportUserId = document.getElementById('reportUserId');
-    const submitReportButton = document.getElementById('submitReport');
-    const successModalElement = document.getElementById('successModal');
-    const errorModalElement = document.getElementById('errorModal');
-    const successModal = new bootstrap.Modal(successModalElement);
-    const errorModal = new bootstrap.Modal(errorModalElement);
-    const reportCommentModalElement = document.getElementById('reportCommentModal');
-    const reportCommentModal = new bootstrap.Modal(reportCommentModalElement);
-
-    document.querySelectorAll('.report-comment').forEach(button => {
-        button.addEventListener('click', (event) => {
-            event.preventDefault();
-            const commentId = button.getAttribute('data-comment-id');
-            const userId = button.getAttribute('data-user-id');
-
-            reportCommentId.value = commentId;
-            reportUserId.value = userId;
-
-            reportCommentModal.show();
-        });
-    });
-
-    submitReportButton.addEventListener('click', () => {
-        const commentId = reportCommentId.value;
-        const userId = reportUserId.value;
-        const reason = document.getElementById('reportReason').value;
-        const maxLength = 255;
-        if (!reason || reason.trim() === '') {
-            reportCommentModal.hide();
-            $('#errorMessage').text('Будь ласка, введіть причину скарги.');
-            $('#errorModal').modal('show');
-            return;
-        }else if (reason.length > maxLength) {
-            reportCommentModal.hide();
-            $('#errorMessage').text(`Причина занадто довга. Максимальна довжина: ${maxLength} символів.`);
-            $('#errorModal').modal('show');
-            document.getElementById('reportReason').value = '';
-            return;
-        }
-        if (reason) {
-            fetch(`/comment/${commentId}/report?userId=${userId}&reason=${encodeURIComponent(reason)}`, {
-                method: 'GET'
-            })
-                .then(response => {
-                if (response.status === 200) {
-                    return response.text().then(text => {
-                        document.getElementById('successMessage').textContent = text;
-                        reportCommentModal.hide();
-                        successModal.show();
-                    });
-                } else if (response.status === 403) {
-                    return response.text().then(text => {
-                        document.getElementById('errorMessage').textContent = text;
-                        reportCommentModal.hide();
-                        errorModal.show();
-                    });
-                } else {
-                    throw new Error('Неочікуваний код стану: ' + response.status);
-                }
-            })
-                .catch(error => {
-                console.error('Error reporting comment:', error);
-                document.getElementById('errorMessage').textContent = 'Виникла помилка. Спробуйте ще раз.';
-                reportCommentModal.hide();
-                errorModal.show();
-            })
-                .finally(() => {
-                document.getElementById('reportReason').value = '';
-            });;
-        } else {
-            alert('Будь ласка, введіть причину скарги.');
-        }
-    });
-});
-
-$(document).on('click', '.report-reply', function(e) {
-    e.preventDefault();
-    const replyId = $(this).data('reply-id');
-    const userId = $(this).data('user-id');
-    replyToReport = replyId;
-    userToReport = userId;
-    $('#reportReplyModal').modal('show');
-});
-
-$('#confirmReportReplyButton').click(function() {
-    if (replyToReport) {
-        const reason = $('#reportReplyReason').val();
-        const maxLength = 255;
-        if (!reason || reason.trim() === '') {
-            $('#reportReplyModal').modal('hide');
-            $('#errorMessage').text('Будь ласка, введіть причину скарги.');
-            $('#errorModal').modal('show');
-            return;
-        }else if (reason.length > maxLength) {
-            $('#reportReplyModal').modal('hide');
-            $('#errorMessage').text(`Причина занадто довга. Максимальна довжина: ${maxLength} символів.`);
-            $('#errorModal').modal('show');
-            $('#reportReplyReason').val('');
-            return;
-        }
-        if (reason) {
-            $.ajax({
-                url: `/reply/${replyToReport}/report`,
-                method: 'GET',
-                data: { userId: userToReport, reason: reason },
-                success: function(response) {
-                    $('#reportReplyModal').modal('hide');
-                    $('#successMessage').text('Ваше повідомлення про порушення надіслано.');
-                    $('#successModal').modal('show');
-                    $('#reportReplyReason').val('');
-                },
-                error: function(xhr, status, error) {
-                    $('#reportReplyModal').modal('hide');
-                    $('#errorMessage').text('Ви вже надіслали повідомлення про порушення цієї відповіді.');
-                    $('#errorModal').modal('show');
-                    $('#reportReplyReason').val('');
-                }
-            });
-        } else {
-            $('#reportReplyModal').modal('hide');
-            $('#errorMessage').text('Будь ласка, введіть причину скарги.');
-            $('#errorModal').modal('show');
-        }
-    }
-});
-document.addEventListener('DOMContentLoaded', () => {
     const reportButtons = document.querySelectorAll('.report-user-btn');
 
     reportButtons.forEach(button => {
@@ -189,229 +61,72 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('submit-report-btn').addEventListener('click', () => {
-        const reportedUserId = document.getElementById('reportedUserId').value;
-        const reporterUserId = document.getElementById('reporterUserId').value;
-        const reason = document.getElementById('reportReasonProfile').value;
-        const maxLength = 255;
-
-        if (!reason || reason.trim() === '') {
-            document.getElementById('reportUserModal').querySelector('.btn-close').click();
-            $('#errorMessage').text('Будь ласка, введіть причину скарги.');
-            $('#errorModal').modal('show');
-            return;
-        }else if (reason.length > maxLength) {
-            document.getElementById('reportUserModal').querySelector('.btn-close').click();
-            $('#errorMessage').text(`Причина занадто довга. Максимальна довжина: ${maxLength} символів.`);
-            $('#errorModal').modal('show');
-            $('#reportReasonProfile').val('');
-            return;
-        }
-
-        const url = `/report/user?reportedUserId=${encodeURIComponent(reportedUserId)}&reporterUserId=${encodeURIComponent(reporterUserId)}&reason=${encodeURIComponent(reason)}`;
-
-        fetch(url, {
-            method: 'GET'
-        })
-            .then(response => response.json())
-            .then(data => {
-            if (data.success) {
-                document.getElementById('reportUserModal').querySelector('.btn-close').click();
-                $('#successMessage').text('Ваше повідомлення про порушення надіслано.');
-                $('#successModal').modal('show');
-                $('#reportReasonProfile').val('');
-            } else {
-                document.getElementById('reportUserModal').querySelector('.btn-close').click();
-                $('#errorModal').modal('show');
-                $('#errorMessage').text(`Сталася помилка: ${data.message}`);
-                $('#reportReasonProfile').val('');
-            }
-        })
-            .catch(error => {
-            console.error('Помилка:', error);
-            alert('Сталася помилка під час надсилання звіту.');
-        });
+        submitReportForm();
     });
 });
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.delete-comment');
-    let commentIdToDelete = null;
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            commentIdToDelete = this.closest('form').querySelector('input[name="comment-id"]').value;
-            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
-            modal.show();
-        });
-    });
+function submitReportForm() {
+    const form = document.getElementById('reportUserForm');
+    const formData = new FormData(form);
+    const url = form.action;
+    const reason = document.getElementById('reportReasonProfile').value;
+    const reportUserModal = bootstrap.Modal.getInstance(document.getElementById('reportUserModal'));
+    const maxLength = 255;
 
-    const confirmDeleteButton = document.getElementById('confirmDeleteButton');
-    confirmDeleteButton.addEventListener('click', function() {
-        if (commentIdToDelete) {
-            fetch(`/manga/comment/${commentIdToDelete}/delete`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
-                }
-            })
-                .then(response => {
-                if (response.ok) {
-                    const commentElement = document.querySelector(`.comment-item input[name="comment-id"][value="${commentIdToDelete}"]`).closest('.comment-item');
-                    if (commentElement) {
-                        commentElement.remove();
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal'));
-                        modal.hide();
-                    } else {
-                        console.error(`Элемент с ID ${commentIdToDelete} не найден.`);
-                    }
-                } else {
-                    alert('Помилка під час видалення коментаря.');
-                }
-            })
-                .catch(error => {
-                console.error('Помилка:', error);
-            });
-        }
-    });
-});
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.delete-reply');
-    let replyIdToDelete = null;
-    let modal = null;
-
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const form = event.target.closest('form');
-            if (form) {
-                replyIdToDelete = form.querySelector('input[name="reply-id"]').value;
-                modal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
-                modal.show();
-            }
-        });
-    });
-
-    const confirmDeleteButton = document.getElementById('confirmDeleteButton');
-    if (confirmDeleteButton) {
-        confirmDeleteButton.addEventListener('click', function() {
-            if (replyIdToDelete) {
-                fetch(`/manga/reply/${replyIdToDelete}/delete`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value,
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: `reply-id=${replyIdToDelete}`
-                })
-                    .then(response => {
-                    if (response.ok) {
-                        const replyElement = document.querySelector(`.reply-item input[name="reply-id"][value="${replyIdToDelete}"]`).closest('.reply-item');
-                        if (replyElement) {
-                            replyElement.remove();
-                            modal.hide();
-                        } else {
-                            console.error(`Елемент з ID ${replyIdToDelete} не знайдений.`);
-                        }
-                    } else {
-                        alert('Помилка під час видалення відповіді.');
-                    }
-                })
-                    .catch(error => {
-                    console.error('Помилка:', error);
-                });
-            }
-        });
+    if (!reason || reason.trim() === '') {
+        reportUserModal.hide();
+        $('#errorMessage').text('Будь ласка, введіть причину скарги.');
+        $('#errorModal').modal('show');
+        return;
+    } else if (reason.length > maxLength) {
+        reportUserModal.hide();
+        $('#errorMessage').text(`Причина занадто довга. Максимальна довжина: ${maxLength} символів.`);
+        $('#errorModal').modal('show');
+        $('#reportReasonProfile').val('');
+        return;
     }
-});
+    document.getElementById('reportReasonProfileForm').value = reason;
+    formData.set('reason', reason);
+
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+    })
+        .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            reportUserModal.hide();
+            $('#errorMessage').text('Помилка надсилання звіту');
+            $('#errorModal').modal('show');
+            throw new Error('Помилка надсилання звіту');
+        }
+    })
+        .then(data => {
+        if (data.status === 'success') {
+            reportUserModal.hide();
+            $('#successMessage').text('Звіт успішно надіслано');
+            $('#successModal').modal('show');
+        } else {
+            reportUserModal.hide();
+            $('#errorMessage').text(data.message || 'Помилка надсилання звіту');
+            $('#errorModal').modal('show');
+        }
+    })
+        .catch(error => {
+        reportUserModal.hide();
+        $('#errorMessage').text('Помилка надсилання звіту');
+        $('#errorModal').modal('show');
+    }).finally(() => {
+        document.getElementById('reportReasonProfile').value = '';
+    });
+}
 
 function formatDate(dateString) {
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
     const date = new Date(dateString);
     return date.toLocaleDateString('uk-UA', options);
 }
-
-$(document).ready(function() {
-    $('.edit-comment').on('click', function(e) {
-        e.preventDefault();
-        const commentId = $(this).data('comment-id');
-        const commentTextElement = $(`#comments-list li.comment-item[data-comment-id="${commentId}"] .comment-text`);
-
-        if (commentTextElement.length) {
-            const commentText = commentTextElement.text();
-            console.log(commentText);
-            $('#edit-comment-modal').modal('show');
-            $('#edit-comment-text').val(commentText);
-            $('#edit-comment-modal').data('comment-id', commentId);
-        } else {
-            console.error('Comment text element not found for comment ID:', commentId);
-        }
-    });
-
-    $('#edit-comment-form').on('submit', function(e) {
-        e.preventDefault();
-        const commentId = $('#edit-comment-modal').data('comment-id');
-        const commentText = $('#edit-comment-text').val();
-
-        $.ajax({
-            type: 'GET',
-            url: `/manga/comments/${commentId}/edit`,
-            data: { content: commentText },
-            success: function(data) {
-                const commentTextElement = $(`#comments-list li.comment-item[data-comment-id="${commentId}"] .comment-text`);
-                if (commentTextElement.length) {
-                    commentTextElement.text(commentText);
-                } else {
-                    console.error('Comment text element not found for comment ID:', commentId);
-                }
-                $('#edit-comment-modal').modal('hide');
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-            }
-        });
-    });
-});
-$(document).ready(function() {
-    $('.edit-reply').on('click', function(e) {
-        e.preventDefault();
-        const replyId = $(this).data('reply-id');
-        const replyTextElement = $(`#replies-list li.reply-item[data-reply-id="${replyId}"] .reply-text`);
-
-        if (replyTextElement.length) {
-            const replyText = replyTextElement.text();
-            console.log(replyText);
-            $('#edit-reply-modal').modal('show');
-            $('#edit-reply-text').val(replyText);
-            $('#edit-reply-modal').data('reply-id', replyId);
-        } else {
-            console.error('Reply text element not found for reply ID:', replyId);
-        }
-    });
-
-    $('#edit-reply-form').on('submit', function(e) {
-        e.preventDefault();
-        const replyId = $('#edit-reply-modal').data('reply-id');
-        const replyText = $('#edit-reply-text').val();
-
-        $.ajax({
-            type: 'GET',
-            url: `/reply/${replyId}/edit`,
-            data: { content: replyText },
-            success: function(data) {
-                const replyTextElement = $(`#replies-list li.reply-item[data-reply-id="${replyId}"] .reply-text`);
-                if (replyTextElement.length) {
-                    replyTextElement.text(replyText);
-                } else {
-                    console.error('Reply text element not found for reply ID:', replyId);
-                }
-                $('#edit-reply-modal').modal('hide');
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-            }
-        });
-    });
-});
 
 let currentSort = 'sortByDate';
 let isAscending = true;

@@ -1,6 +1,6 @@
-<div th:fragment="edit-reply-modal">
+<div th:fragment="editReplyModal">
     <link rel="stylesheet" href="/css/modal-styles.css">
-    <div class="modal fade" id="edit-reply-modal" tabindex="-1" aria-labelledby="edit-reply-modal-label" aria-hidden="true">
+    <div class="modal fade" id="editReplyModal" tabindex="-1" aria-labelledby="edit-reply-modal-label" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -9,7 +9,8 @@
                 </div>
                 <div class="modal-body">
                     <form id="edit-reply-form">
-                        <textarea id="edit-reply-text" class="form-control"></textarea>
+                        <input type="hidden" id="edit-reply-id" name="replyIdEdit" value="">
+                        <textarea id="edit-reply-text" name="text" class="form-control"></textarea>
                         <button type="submit" class="btn btn-custom-confirm mt-3" style="float: right;">Зберегти зміни</button>
                     </form>
                 </div>

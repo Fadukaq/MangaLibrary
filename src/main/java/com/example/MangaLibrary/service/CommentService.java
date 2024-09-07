@@ -25,10 +25,6 @@ public class CommentService {
     @Autowired
     private UserRepo userRepo;
     @Autowired
-    private RepliesRepo repliesRepo;
-    @Autowired
-    private ReplyReportRepo replyReportRepo;
-    @Autowired
     private MangaRepo mangaRepo;
     public void addComment(Long mangaId, String text, Long userId) {
         Manga manga = mangaRepo.findById(mangaId)
@@ -50,6 +46,7 @@ public class CommentService {
         commentRepo.save(comment);
         return true;
     }
+
     public void updateRating(Long commentId, Long userId, int delta) {
         CommentRating existingRating = commentRatingRepo.findByCommentIdAndUserId(commentId, userId);
 
@@ -103,75 +100,6 @@ public class CommentService {
         report.setReason(reason);
 
         commentReportRepo.save(report);
-        return true;
-    }
-    public Replies addReply(Long parentCommentId, String text, Long userId, Long mangaId) {
-        Comment parentComment = commentRepo.findById(parentCommentId)
-                .orElseThrow(() -> new RuntimeException("Parent comment not found"));
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Manga manga = mangaRepo.findById(mangaId)
-                .orElseThrow(() -> new RuntimeException("Manga not found"));
-
-        Replies reply = new Replies();
-        reply.setText(text);
-        reply.setParentComment(parentComment);
-        reply.setUser(user);
-        reply.setCreatedAt(LocalDateTime.now());
-        reply.setManga(manga);
-
-        return repliesRepo.save(reply);
-    }
-
-    public void updateReply(Long replyId, String newText, String currentUsername) {
-        Replies reply = repliesRepo.findById(replyId)
-                .orElseThrow(() -> new EntityNotFoundException("Reply not found"));
-
-        User replyAuthor = userRepo.findById(reply.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        if (!replyAuthor.getUserName().equals(currentUsername)) {
-            return;
-        }
-
-        reply.setText(newText);
-        repliesRepo.save(reply);
-    }
-
-    public void deleteReply(Long replyId, String currentUsername) {
-        Replies reply = repliesRepo.findById(replyId)
-                .orElseThrow(() -> new EntityNotFoundException("Reply not found"));
-
-        User replyAuthor = userRepo.findById(reply.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        if (!replyAuthor.getUserName().equals(currentUsername)) {
-        return;
-        }
-
-        repliesRepo.delete(reply);
-    }
-
-    public boolean reportReply(Long replyId, Long userId, String reason) {
-        Replies reply = repliesRepo.findById(replyId)
-                .orElseThrow(() -> new IllegalArgumentException("Reply not found"));
-
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        boolean alreadyReported = replyReportRepo.existsByReplyAndUser(reply, user);
-
-        if (alreadyReported) {
-            return false;
-        }
-
-        ReplyReport replyReport = new ReplyReport();
-        replyReport.setReply(reply);
-        replyReport.setUser(user);
-        replyReport.setReportedAt(LocalDateTime.now());
-        replyReport.setReason(reason);
-
-        replyReportRepo.save(replyReport);
         return true;
     }
 }

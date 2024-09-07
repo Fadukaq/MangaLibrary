@@ -1,0 +1,21 @@
+<div th:fragment="confirmDeleteModalReply">
+    <link rel="stylesheet" href="/css/modal-styles.css">
+    <div class="modal fade" id="confirmDeleteModalReply" tabindex="-1" aria-labelledby="deleteReplyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color: #212121; color: #ffffff;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteReplyModalLabel">Підтвердження видалення</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Ви впевнені, що хочете видалити цю відповідь?
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmDeleteReplyButton" type="button" class="btn btn-custom-confirm">Видалити</button>
+                    <button type="button" class="btn btn-close-modal" data-bs-dismiss="modal">Скасувати</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

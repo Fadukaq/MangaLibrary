@@ -241,32 +241,37 @@ public class UserController {
             model.addAttribute("validationErrors", bindingResult.getAllErrors());
             return "user/user-edit-profile";
         }
-
-        User updatedUser = userService.updateUserProfile(id, userForm, currentPassword, userPasswordNew, changePasswordCheckbox);
-
-        if (updatedUser == null) {
-            model.addAttribute("errorMessage", "Обов'язково введіть правильний пароль!");
+        try {
+            User updatedUser = userService.updateUserProfile(id, userForm, currentPassword, userPasswordNew, changePasswordCheckbox);
+            if (updatedUser == null) {
+                model.addAttribute("errorMessage", "Обов'язково введіть правильний пароль!");
+                model.addAttribute("user", userForm.getUser());
+                model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
+                model.addAttribute("userForm", userForm);
+                return "user/user-edit-profile";
+            }
+            if (changePasswordCheckbox && !userService.isValidResetPass(userPasswordNew)) {
+                model.addAttribute("changePasswordCheckbox", "on");
+                model.addAttribute("errorPassword", "Поле Новий пароль повинно бути від 10 символів до 255!");
+                model.addAttribute("user", userForm.getUser());
+                model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
+                model.addAttribute("userForm", userForm);
+                return "user/user-edit-profile";
+            }
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            if(!Objects.equals(updatedUser.getUserName(), username)){
+                session.invalidate();
+                return "redirect:/login";
+            }
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("user.userName", "error.user", e.getMessage());
             model.addAttribute("user", userForm.getUser());
             model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
             model.addAttribute("userForm", userForm);
             return "user/user-edit-profile";
         }
-
-        if (changePasswordCheckbox && !userService.isValidResetPass(userPasswordNew)) {
-            model.addAttribute("changePasswordCheckbox", "on");
-            model.addAttribute("errorPassword", "Поле Новий пароль повинно бути від 10 символів до 255!");
-            model.addAttribute("user", userForm.getUser());
-            model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
-            model.addAttribute("userForm", userForm);
-            return "user/user-edit-profile";
-        }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        if(!Objects.equals(updatedUser.getUserName(), username)){
-            session.invalidate();
-            return "redirect:/login";
-        }
-        return "redirect:/profile/"+updatedUser.getId();
+        return "user/user-edit-profile";
     }
 
     @GetMapping("/profile/settings/{id}")
@@ -477,22 +482,27 @@ public class UserController {
         model.addAttribute("genreList", genreRepo.findAllByOrderByIdDesc());
         return "user/admin-dashboard";
     }
-    @GetMapping("/report/user") ////////////////////////////////////////////////////////////////////////////////////////
+    @PostMapping("/report/user")
     @ResponseBody
     public Map<String, Object> reportUser(@RequestParam("reportedUserId") Long reportedUserId,
-                                            @RequestParam("reporterUserId") Long reporterUserId,
-                                            @RequestParam("reason") String reason) {
+                                          @RequestParam("reporterUserId") Long reporterUserId,
+                                          @RequestParam("reason") String reason) {
         Map<String, Object> response = new HashMap<>();
         Optional<User> reportedUser = userRepo.findById(reportedUserId);
         Optional<User> reporterUser = userRepo.findById(reporterUserId);
+
         if (reportedUser.isPresent() && reporterUser.isPresent()) {
             try {
                 userReportService.reportUser(reportedUser.get(), reporterUser.get(), reason);
-                response.put("success", true);
+                response.put("status", "success");
+                response.put("message", "Скаргу успішно надіслано.");
             } catch (IllegalArgumentException e) {
-                response.put("success", false);
+                response.put("status", "error");
                 response.put("message", e.getMessage());
             }
+        } else {
+            response.put("status", "error");
+            response.put("message", "Користувача не знайдено.");
         }
         return response;
     }
