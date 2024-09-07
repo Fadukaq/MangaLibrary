@@ -47,14 +47,24 @@
                 <div class="feedback-container" th:data-news-id="${news.id}">
                     <span class="feedback-span">Чи була ця новина корисна для вас?</span>
                     <div class="vote-buttons">
-                        <a class="btn btn-link upvote-button" th:data-news-id="${news.id}" data-delta="1" th:classappend="${userRating == 1 ? 'active' : ''}">
-                            <i class="fa-solid fa-arrow-up"></i>
-                        </a>
+                        <form th:action="@{/news/rate}" method="post" class="upvote-form">
+                            <input type="hidden" name="newsId" th:value="${news.id}">
+                            <input type="hidden" name="delta" value="1">
+                            <button type="submit" class="btn btn-link upvote-button" th:classappend="${userRating == 1 ? 'active' : ''}">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </button>
+                        </form>
+
                         <span class="rating-score" th:text="${news.rating}" th:title="${positiveAndNegative}">
                         </span>
-                        <a class="btn btn-link downvote-button" th:data-news-id="${news.id}" data-delta="-1" th:classappend="${userRating == -1 ? 'active' : ''}">
-                            <i class="fa-solid fa-arrow-down"></i>
-                        </a>
+
+                        <form th:action="@{/news/rate}" method="post" class="downvote-form">
+                            <input type="hidden" name="newsId" th:value="${news.id}">
+                            <input type="hidden" name="delta" value="-1">
+                            <button type="submit" class="btn btn-link downvote-button" th:classappend="${userRating == -1 ? 'active' : ''}">
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -68,64 +78,6 @@
 <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
 <script src="/js/confirmDelete.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const feedbackContainer = document.querySelector('.feedback-container');
-        const voteButtons = document.querySelectorAll('.upvote-button, .downvote-button');
-        const ratingScore = document.querySelector('.rating-score');
-        const newsId = feedbackContainer.getAttribute('data-news-id');
-
-        function setActiveButton(userRating) {
-            voteButtons.forEach(btn => btn.classList.remove('active'));
-            if (userRating === 1) {
-                document.querySelector('.upvote-button').classList.add('active');
-            } else if (userRating === -1) {
-                document.querySelector('.downvote-button').classList.add('active');
-            }
-        }
-
-        function updateRatingInfo() {
-            fetch(`/news/rating-info/${newsId}`)
-                .then(response => response.json())
-                .then(data => {
-                ratingScore.textContent = data.total;
-                ratingScore.title = `Плюсів: ${data.positive} | Мінусів: ${data.negative}`;
-            })
-                .catch(error => console.error('Error:', error));
-        }
-
-        updateRatingInfo();
-
-        if (newsId) {
-            fetch(`/news/user-rating?newsId=${newsId}`)
-                .then(response => response.json())
-                .then(userRating => {
-                setActiveButton(userRating);
-            })
-                .catch(error => console.error('Помилка:', error));
-
-            voteButtons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-
-                    const delta = this.getAttribute('data-delta');
-
-                    fetch(`/news/rate?newsId=${newsId}&delta=${delta}`, {
-                        method: 'GET',
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                        updateRatingInfo();
-                        ratingScore.textContent = data.rating;
-                        setActiveButton(data.userRating);
-                    })
-                        .catch(error => {
-                        console.error('Помилка:', error);
-                    });
-                });
-            });
-        }
-    });
-</script>
+<script src="/js/news/news.js"></script>
 </body>
 </html>

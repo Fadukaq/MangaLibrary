@@ -133,10 +133,15 @@ public class NewsController {
             return "main/error";
         }
     }
-    @GetMapping("/news/rate")
+    @PostMapping("/news/rate")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> rateNews(@RequestParam Long newsId, @RequestParam int delta, Principal principal) {
-        News news = newsRepo.findById(newsId).orElseThrow(() -> new IllegalArgumentException("Invalid news ID: " + newsId));
+    public ResponseEntity<Map<String, Object>> rateNews(
+            @RequestParam Long newsId,
+            @RequestParam int delta,
+            Principal principal) {
+
+        News news = newsRepo.findById(newsId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid news ID: " + newsId));
         String username = principal.getName();
         User user = userRepo.findByUserName(username);
 
