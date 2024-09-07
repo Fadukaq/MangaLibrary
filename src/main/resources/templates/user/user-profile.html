@@ -9,6 +9,51 @@
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/pagination.css">
     <meta name="_csrf" content="${_csrf.token}" />
+    <style>
+            .tab-pane-friends {
+            background-color: #1c1c1c;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .list-group-item-friends {
+            background-color: #2a2a2a;
+            color: #fff;
+            border: none;
+            border-bottom: 1px solid #444;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .list-group-item-friends img {
+            border: 2px solid #555;
+        }
+        form {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        .no-content-message {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            color: #ff0080;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 5px;
+        }
+
+        .no-content-message p {
+            font-size:17px;
+            font-weight:bold;
+            margin: 0;
+        }
+    </style>
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
@@ -412,53 +457,68 @@
                             </div>
                             <div class="tab-content" id="tabContent">
                                 <div class="tab-pane tab-pane-friends fade" id="friends-content" role="tabpanel">
-                                    <ul id="friends" class="list-group">
-                                        <li th:each="friend : ${userFriends}" class="list-group-item">
+                                    <div th:if="${#lists.isEmpty(userFriends)}" class="no-content-message">
+                                        <p>Тут нічого немає</p>
+                                    </div>
+                                    <ul id="friends" class="list-group" th:if="${!#lists.isEmpty(userFriends)}">
+                                        <li th:each="friend : ${userFriends}" class="list-group-item list-group-item-friends">
                                             <div class="d-flex align-items-center">
-                                                <img th:src="${friend.profilePicture ?: 'https://www.riseandfall.xyz/unrevealed.png'}"
-                                                     th:alt="${friend.userName ?: 'Unknown User'}"
-                                                     class="me-2" style="width: 30px; height: 30px; border-radius: 50%;">
-                                                <span th:text="${friend.userName ?: 'Unknown User'}"></span>
+                                                <a class="friends-user-link" th:href="@{/profile/{friendId}(friendId=${friend.id})}">
+                                                        <img th:src="${friend.profilePicture ?: 'https://www.riseandfall.xyz/unrevealed.png'}"
+                                                            th:alt="${friend.userName ?: 'Unknown User'}"
+                                                            class="me-2" style=" width: 50px; height: 50px; border-radius: 50%;">
+                                                    <span th:text="${friend.userName ?: 'Unknown User'}"></span>
+                                                    </a>
                                             </div>
-                                            <form th:if="${user == currentUser}" class="ms-2" th:action="@{/friends/remove}" method="post" onsubmit="return handleFormSubmit(event)">
+                                            <form th:if="${user == currentUser}" th:action="@{/friends/remove}" method="post" onsubmit="return handleFormSubmit(event)">
                                                 <input type="hidden" name="friendId" th:value="${friend.id}">
-                                                <br>
-                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                <button type="submit" class="btn btn-custom-subscribe" style="padding: 5px 10px;">
                                                     <i class="fa fa-times"></i> Віддалити
                                                 </button>
                                             </form>
                                         </li>
                                     </ul>
                                 </div>
+
                                 <div th:if="${user == currentUser}" class="tab-pane tab-pane-friends fade" id="friend-requests-content" role="tabpanel">
-                                    <ul id="friendRequestsList" class="list-group">
-                                        <li th:each="request : ${friendRequests}" class="list-group-item">
-                                            <div class="d-flex align-items-center">
-                                                <img th:src="${request.sender.ProfilePicture ?: 'https://www.riseandfall.xyz/unrevealed.png'}"
-                                                     th:alt="${request.sender.userName ?: 'Unknown User'}"
-                                                     class="me-2" style="width: 30px; height: 30px; border-radius: 50%;">
-                                                <span th:text="${request.sender.userName ?: 'Unknown User'}"></span>
-                                                <form class="ms-2" th:action="@{/friends/respondRequest}" method="post">
+                                    <div th:if="${#lists.isEmpty(friendRequests)}" class="no-content-message">
+                                        <p>Тут нічого немає</p>
+                                    </div>
+                                    <ul id="friendRequestsList" class="list-group" th:if="${!#lists.isEmpty(friendRequests)}">
+                                        <li th:each="request : ${friendRequests}" class="list-group-item list-group-item-friends">
+                                            <div class="d-flex align-items-center justify-content-between w-100">
+                                                <div class="d-flex align-items-center">
+                                                    <img th:src="${request.sender.ProfilePicture ?: 'https://www.riseandfall.xyz/unrevealed.png'}"
+                                                         th:alt="${request.sender.userName ?: 'Unknown User'}"
+                                                         class="me-2" style="width: 50px; height: 50px; border-radius: 50%;">
+                                                    <span th:text="${request.sender.userName ?: 'Unknown User'}"></span>
+                                                </div>
+                                                <form class="d-flex ms-2" th:action="@{/friends/respondRequest}" method="post">
                                                     <input type="hidden" name="requestId" th:value="${request.id}">
-                                                    <button type="button" class="btn btn-success btn-sm" th:onclick="'handleResponse(this, \'' + ${request.id} + '\', \'accept\')'">Прийняти</button>
-                                                    <button type="button" class="btn btn-danger btn-sm" th:onclick="'handleResponse(this, \'' + ${request.id} + '\', \'decline\')'">Відхилити</button>
+                                                    <button type="button" class="btn btn-custom-subscribe" style="margin-right: 20px; padding: 5px 10px;" th:onclick="'handleResponse(this, \'' + ${request.id} + '\', \'accept\')'">Прийняти</button>
+                                                    <button type="button" class="btn btn-custom-subscribe" style="padding: 5px 10px;" th:onclick="'handleResponse(this, \'' + ${request.id} + '\', \'decline\')'">Відхилити</button>
                                                 </form>
                                             </div>
                                         </li>
                                     </ul>
                                 </div>
                                 <div th:if="${user == currentUser}" class="tab-pane tab-pane-friends fade" id="my-requests-content" role="tabpanel">
-                                    <ul class="list-group">
-                                        <li th:each="sentRequest : ${sentRequests}" class="list-group-item">
-                                            <div class="d-flex align-items-center">
-                                                <img th:src="${sentRequest.receiver.ProfilePicture ?: 'https://www.riseandfall.xyz/unrevealed.png'}"
-                                                     th:alt="${sentRequest.receiver.userName ?: 'Unknown User'}"
-                                                     class="me-2" style="width: 30px; height: 30px; border-radius: 50%;">
-                                                <span th:text="${sentRequest.receiver.userName ?: 'Unknown User'}"></span>
-                                                <span class="ms-2">Статус: Очікує на підтвердження</span>
+                                    <div th:if="${#lists.isEmpty(sentRequests)}" class="no-content-message">
+                                        <p>Тут нічого немає</p>
+                                    </div>
+                                    <ul class="list-group" th:if="${!#lists.isEmpty(sentRequests)}">
+                                        <li th:each="sentRequest : ${sentRequests}" class="list-group-item list-group-item-friends">
+                                            <div class="d-flex align-items-center justify-content-between w-100">
+                                                <div class="d-flex align-items-center">
+                                                    <img th:src="${sentRequest.receiver.ProfilePicture ?: 'https://www.riseandfall.xyz/unrevealed.png'}"
+                                                         th:alt="${sentRequest.receiver.userName ?: 'Unknown User'}"
+                                                         class="me-2" style="width: 50px; height: 50px; border-radius: 50%;">
+                                                    <span th:text="${sentRequest.receiver.userName ?: 'Unknown User'}"></span>
+                                                    <span class="ms-2">| Статус: Очікує на підтвердження |</span>
+                                                </div>
                                                 <form method="post" th:action="@{/friends/cancelRequest}" data-ajax="true">
                                                     <input type="hidden" name="requestId" th:value="${sentRequest.id}">
-                                                    <button type="submit" class="btn btn-danger btn-sm ms-2">Скасувати запит</button>
+                                                    <button type="submit" class="btn btn-custom-subscribe" style="padding: 5px 10px;">Скасувати запит</button>
                                                 </form>
                                             </div>
                                         </li>

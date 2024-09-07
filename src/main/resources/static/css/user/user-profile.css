@@ -113,10 +113,18 @@ a {
 .nav-tabs-profile {
     border: none;
 }
+.friends-user-link{
+    text-decoration:none;
+    color: #dedede;
+}
+.friends-user-link:hover,
+.friends-user-link:focus{
+    color: #ff0080;
+}
 
 .user-link:hover,
 .user-link:focus {
-    color: #fff;
+    color: #ff0080;
     background-color: #282828 !important;
     border: none;
     outline: none;

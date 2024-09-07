@@ -477,7 +477,7 @@ public class UserController {
         model.addAttribute("genreList", genreRepo.findAllByOrderByIdDesc());
         return "user/admin-dashboard";
     }
-    @GetMapping("/report/user")
+    @GetMapping("/report/user") ////////////////////////////////////////////////////////////////////////////////////////
     @ResponseBody
     public Map<String, Object> reportUser(@RequestParam("reportedUserId") Long reportedUserId,
                                             @RequestParam("reporterUserId") Long reporterUserId,

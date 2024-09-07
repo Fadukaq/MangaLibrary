@@ -198,7 +198,7 @@ public class MangaController {
         return "redirect:/manga/"+id;
     }
 
-    @GetMapping("/manga/delete/{id}")
+    @GetMapping("/manga/delete/{id}") ///////////////////////////////////////////////////////////////////////////////////
     public String MangaDelete(@PathVariable(value ="id") long id,Model model) {
         Optional<Manga> mangaToDelete = mangaRepo.findById(id);
         if(mangaToDelete.isPresent()) {
@@ -679,7 +679,7 @@ public class MangaController {
         return response;
     }
 
-    @GetMapping("/manga/comment/{commentId}/edit")
+    @GetMapping("/manga/comment/{commentId}/edit") /////////////////////////////////////////////////////////////////////
     public @ResponseBody ResponseEntity<?> editComment(@PathVariable Long commentId, @RequestParam String commentText, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User currentUser = userRepo.findByUserName(userDetails.getUsername());
@@ -699,7 +699,7 @@ public class MangaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/manga/comment/{commentId}/delete")
+    @GetMapping("/manga/comment/{commentId}/delete") ///////////////////////////////////////////////////////////////////
     public @ResponseBody ResponseEntity<?> deleteComment(@PathVariable Long commentId, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User currentUser = userRepo.findByUserName(userDetails.getUsername());
@@ -714,7 +714,7 @@ public class MangaController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
-    @GetMapping("/manga/comment/{commentId}/rate")
+    @GetMapping("/manga/comment/{commentId}/rate") /////////////////////////////////////////////////////////////////////
     public ResponseEntity<Map<String, Object>> updateRatingGET(@PathVariable Long commentId,
                                                                @RequestParam Long userId,
                                                                @RequestParam int delta) {
@@ -733,7 +733,7 @@ public class MangaController {
         ratingInfo.put("ratingTitle", ratingTitle);
         return ResponseEntity.ok(ratingInfo);
     }
-    @GetMapping("/manga/comment/{commentId}/report")
+    @GetMapping("/manga/comment/{commentId}/report") ///////////////////////////////////////////////////////////////////
     public ResponseEntity<String> reportComment(
             @PathVariable Long commentId,
             @RequestParam Long userId,
@@ -747,7 +747,7 @@ public class MangaController {
         }
     }
 
-    @GetMapping("/manga/comment/reply")
+    @GetMapping("/manga/comment/reply") ///////////////////////////////////////////////////////////////////////////////
     @ResponseBody
     public ResponseEntity<Map<String, Object>> addReply(
             @RequestParam("text") String text,
@@ -807,7 +807,7 @@ public class MangaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
-    @GetMapping("/manga/reply/{replyId}/edit")
+    @GetMapping("/manga/reply/{replyId}/edit") /////////////////////////////////////////////////////////////////////////
     @ResponseBody
     public ResponseEntity<?> editReply(
             @PathVariable Long replyId,
@@ -822,7 +822,7 @@ public class MangaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating reply");
         }
     }
-    @GetMapping("/manga/reply/{replyId}/delete")
+    @GetMapping("/manga/reply/{replyId}/delete") //////////////////////////////////////////////////////////////////////
     @ResponseBody
     public ResponseEntity<?> deleteReply(
             @PathVariable Long replyId,
@@ -836,7 +836,7 @@ public class MangaController {
         }
     }
 
-    @GetMapping("/manga/reply/{replyId}/report")
+    @GetMapping("/manga/reply/{replyId}/report") //////////////////////////////////////////////////////////////////////
     public ResponseEntity<String> reportReply(
             @PathVariable Long replyId,
             @RequestParam Long userId,

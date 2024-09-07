@@ -58,7 +58,7 @@ public class CommentController {
         return ResponseEntity.ok().body("Коментар не знайдено.");
     }
 
-    @GetMapping("/comment/{commentId}/report")
+    @GetMapping("/comment/{commentId}/report") /////////////////////////////////////
     public ResponseEntity<String> reportComment(
             @PathVariable Long commentId,
             @RequestParam Long userId,
@@ -72,7 +72,7 @@ public class CommentController {
         }
     }
 
-    @GetMapping("/manga/comments/{id}/edit")
+    @GetMapping("/manga/comments/{id}/edit") //////////////////////////////
     @ResponseBody
     public ResponseEntity<String> editComment(@PathVariable Long id, @RequestParam String content) {
         boolean success = commentService.updateComment(id, content);
@@ -96,7 +96,7 @@ public class CommentController {
         }
         return Collections.singletonMap("success", false);
     }
-    @GetMapping("/reply/{id}/edit")
+    @GetMapping("/reply/{id}/edit") /////////////////////////////////////////////////////////////////////
     @ResponseBody
     public ResponseEntity<String> editReply(@PathVariable Long id, @RequestParam String content, Principal principal) {
         String currentUserName = principal.getName();
@@ -118,7 +118,7 @@ public class CommentController {
         repliesRepo.save(reply);
         return ResponseEntity.ok("Reply edited successfully.");
     }
-    @GetMapping("/reply/{replyId}/report")
+    @GetMapping("/reply/{replyId}/report") //////////////////////////////////////////////////////////////////////////////
     public ResponseEntity<String> reportReply(
             @PathVariable Long replyId,
             @RequestParam Long userId,
