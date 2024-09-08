@@ -1,0 +1,289 @@
+/* Основные стили */
+body {
+    background-color: #202020;
+    margin: 0;
+    padding: 0;
+}
+
+html{
+    scroll-behavior: smooth;
+}
+
+.pink-text{
+    color: #FF0080;
+}
+
+.white-text {
+    color: #FFFFFF;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.left-div {
+    width: 310px;
+    padding: 15px;
+    box-sizing: border-box;
+    position: fixed; /* Закрепляем левый блок */
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 100vh; /* Высота на весь экран */
+    background-color: #202020;
+    z-index: 1000; /* Устанавливаем высокий z-index, чтобы блок был выше остальных */
+}
+
+.left-div::before {
+    content: "";
+    position: absolute;
+    top: 10px; /* Начало линии от верхнего элемента */
+    left: 100%;
+    width: 2px;
+    margin-top: 210px;
+    height: 240px; /* Указываем высоту линии в пикселях */
+    border-right: 2px dotted #797979; /* Пунктирная вертикальная линия */
+}
+
+.left-div a {
+    text-decoration: none;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    display: block;
+    color: #625E5E; /* Цвет по умолчанию */
+    padding: 0; /* Сбрасываем отступы */
+    margin: 0; /* Сбрасываем внешние отступы */
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .left-div {
+        width: 100%;
+        position: static; /* Убираем фиксированное положение на мобильных */
+    }
+
+    .right-div {
+        margin-left: 0; /* На мобильных экранах убираем отступ */
+    }
+
+    .text-item {
+        margin-bottom: 15px;
+    }
+}
+
+/* Стили текста в левой колонке */
+.text-container {
+    width: 150px;
+    height: auto;
+    position: absolute;
+    top: 220px;
+    left: 100px;
+}
+
+.text-item {
+    color: #625E5E;
+    display: block;
+    text-decoration: none;
+    margin-bottom: 20px; /* Увеличиваем вертикальное расстояние между пунктами */
+    font-family: Raleway, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16px;
+    transition: color 0.3s ease;
+}
+
+.text-item {
+    color: #625E5E;
+    margin-bottom: 20px; /* Увеличим вертикальное расстояние */
+}
+
+/* Цвет для активной ссылки */
+.text-item.active {
+    color: #A90055;
+}
+
+/* Для начальной активной ссылки "Манга" */
+.text-item.initial-active {
+    color: #A90055;
+}
+
+#common-questions:target ~ .text-container a[href="#common-questions"],
+#profile:target ~ .text-container a[href="#profile"],
+#manga:target ~ .text-container a[href="#manga"],
+#read:target ~ .text-container a[href="#read"],
+#problem:target ~ .text-container a[href="#problem"],
+#rule:target ~ .text-container a[href="#rule"],
+#forum:target ~ .text-container a[href="#forum"],
+#pid:target ~ .text-container a[href="#pid"] {
+    color: #A90055;
+}
+
+.right-div {
+    flex-grow: 1;
+    padding: 15px; /* Устанавливаем отступы со всех сторон */
+    box-sizing: border-box; /* Устанавливаем модель коробки для расчета отступов */
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-left: 340px; /* Отодвигаем правый блок от левого на ширину левого блока (310px + 30px для отступа) */
+}
+
+/* Стили для надписи "Манга" и горизонтальной линии */
+.manga-title {
+    font-family: Raleway, sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 28px;
+    text-align: center;
+    color: #FFFFFF;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+    top: 165px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.manga-line {
+    width: 80%;
+    border-top: 2px dotted #FFFFFF;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+    top: calc(165px + 55px); /* Позиционирование линии под заголовком */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Загальні питання */
+.que-title,
+.profile-title,
+.read-title,
+.problem-title,
+.rule-title,
+.pid-title,
+.forum-title{
+    font-family: Raleway, sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 28px;
+    text-align: center;
+    color: #FFFFFF;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%); /* Горизонтальное центрирование */
+}
+
+.que-line,
+.profile-line,
+.read-line,
+.problem-line,
+.rule-line,
+.forum-line,
+.pid-line{
+    width: 80%;
+    border-top: 2px dotted #FFFFFF;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.accordion#faqAccordion2,
+.accordion#faqAccordion3,
+.accordion#faqAccordion4,
+.accordion#faqAccordion5,
+.accordion#faqAccordion6,
+.accordion#faqAccordion7,
+.accordion#faqAccordion8{
+    margin-top: 0; /* Уменьшаем отступ */
+}
+
+
+/* Стили для Accordion */
+.accordion {
+    width: 80%; /* Ширина такая же, как у линии */
+    margin-top: calc(165px + 55px + 30px); /* Увеличиваем отступ от линии до аккордеона */
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #202020; /* Цвет фона аккордеона */
+    border-radius: 5px 0 0 0;
+}
+
+.accordion-item {
+    background-color: #202020; /* Фон для аккордеон-блоков */
+    border-radius: 5px;
+    border: 1px solid #FFFFFF; /* Белый бордер */
+    margin-bottom: 20px; /* Пробел между блоками */
+}
+
+.accordion-button {
+    background-color: #202020; /* Цвет кнопки аккордеона */
+    font-family: Raleway, sans-serif;
+    font-size: 20px;
+    color: #FFFFFF; /* Цвет текста */
+    border: none;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    border-radius: 5px; /* Добавляем радиус для кнопки */
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #202020;
+    color: #FF0080; /* Цвет текста при раскрытии */
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+.accordion-button:hover {
+    background-color: #333333;
+    cursor: pointer;
+}
+.text-item:hover {
+    color: #FF0080;
+}
+
+.accordion-body {
+    background-color: #202020; /* Цвет фона раскрытого содержимого */
+    color: #757575;
+    padding: 15px;
+}
+
+/* Треугольник справа */
+.accordion-button::after {
+    border-left: 17px solid transparent;
+    border-right: 17px solid transparent;
+    border-bottom: 16px solid #FFFFFF;
+    transform: rotate(90deg);
+    transition: transform 0.4s ease, border-bottom-color 0.4s ease;
+}
+
+.accordion-button:not(.collapsed)::after {
+    border-bottom-color: #FF0080;
+    transform: rotate(180deg);
+}
+
+.accordion-button.collapsed::after {
+    transform: rotate(0deg);
+}
+
+.accordion-collapse {
+    transition: max-height 0.6s ease;
+}
