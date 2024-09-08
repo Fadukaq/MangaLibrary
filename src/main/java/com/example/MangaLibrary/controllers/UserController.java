@@ -448,14 +448,13 @@ public class UserController {
                     user.setResetCode(null);
                     userRepo.save(user);
                     userService.sendResetSuccess(user);
-                    model.addAttribute("successPassword", "Password successfully reset.");
+                    model.addAttribute("successPassword", "Пароль успішно скинуто.");
                     return "redirect:/login";
                 } else {
-
-                    model.addAttribute("successCode", "Code verified. Enter new password.");
+                    model.addAttribute("successCode", "Код підтверджено. Введіть новий пароль.");
                 }
             } else {
-                model.addAttribute("errorCode", "Invalid reset code.");
+                model.addAttribute("errorCode", "Неправильний код скидання.");
             }
         }
 

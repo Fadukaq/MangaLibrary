@@ -26,6 +26,10 @@ public class MainController {
     public String faq(Model model) {
         return "main/faq";
     }
+    @GetMapping("/faqdlc")
+    public String faqdlc(Model model) {
+        return "main/faqdlc";
+    }
     @GetMapping("/dmca")
     public String dmca(Model model) {
         return "main/dmca";

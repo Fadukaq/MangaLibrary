@@ -4,11 +4,15 @@ import com.example.MangaLibrary.helper.MangaLibraryManager;
 import com.example.MangaLibrary.helper.user.UserForm;
 import com.example.MangaLibrary.models.*;
 import com.example.MangaLibrary.repo.*;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.*;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,6 +51,8 @@ public class UserService {
     private MailSender mailSender;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    HttpSession session;
     public void createUser(User user){
         String plainPassword = user.getUserPassword();
         String hashedPassword = passwordEncoder.encode(plainPassword);
@@ -326,13 +332,15 @@ public class UserService {
     @Transactional
     public void updateUserRole(Long userId, String role) {
         Optional<User> user = userRepo.findById(userId);
-        if(user.isPresent())
-        {
+        if(user.isPresent()) {
             User useToUpdate = user.get();
             useToUpdate.setUserRole(role);
             userRepo.save(useToUpdate);
+
+
         }
     }
+
     @Transactional
     public void updateUserEnabledStatus(Long userId, Boolean enabled) {
         Optional<User> user = userRepo.findById(userId);
