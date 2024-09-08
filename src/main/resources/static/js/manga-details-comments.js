@@ -40,37 +40,7 @@ $(document).ready(function() {
         $form.find('.username-block').show();
     });
 
-    $('#submit-comment').click(function(event) {
-        event.preventDefault();
-        const $button = $(this);
-        const formData = $('#add-comment-form').serialize();
-        const mangaId = $('#comments').data('manga-id');
-        const currentUserId = $('#comments').data('current-user-id');
 
-        $button.prop('disabled', true);
-
-        $.ajax({
-            type: 'POST',
-            url: `/manga/${mangaId}/add-comment`,
-            data: formData,
-            success: function(comment) {
-                $('#comment-text').val('');
-                $('#comments-list').empty();
-                currentPage = 1;
-                hasMoreComments = true;
-                loadComments(sortOption, currentPage, pageSize);
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Error adding comment:', textStatus, errorThrown);
-                alert('Произошла ошибка. Попробуйте снова.');
-            },
-            complete: function() {
-                setTimeout(() => {
-                    $button.prop('disabled', false);
-                }, 3000);
-            }
-        });
-    });
 
     function loadComments(sortBy, page, size) {
         const mangaId = $('#comments').data('manga-id');
@@ -433,120 +403,65 @@ $(document).ready(function() {
     });
 
     //Reply
-    $('#comments-list').on('submit', '.reply-form', function(event) {
-        event.preventDefault();
 
-        const $form = $(this);
-        const formData = $form.serializeArray();
-        const parentId = $form.data('parent-id');
-        const mangaId = $('#comments').data('manga-id');
 
-        const formDataObject = {};
-        formData.forEach(item => {
-            formDataObject[item.name] = item.value;
-        });
+    /*$(document).on('click', '.delete-reply', function(e) {
+       e.preventDefault();
+       const form = $(this).closest('form');
+       const replyId = form.find('input[name="reply-id"]').val();
+       const commentId = $(this).closest('.comment').attr('id').split('-')[1];
 
-        formDataObject.parentCommentId = parentId;
-        formDataObject.mangaId = mangaId;
+       replyToDelete = { replyId: replyId, commentId: commentId };
+       $('#deleteReplyModal').modal('show');
+   });
 
-        const queryString = $.param(formDataObject);
+   /*$('#confirmDeleteReplyButton').click(function() {
+       if (replyToDelete) {
+           $.ajax({
+               url: `/manga/reply/${replyToDelete.replyId}/delete`,
+               method: 'GET',
+               success: function(response) {
+                   const $reply = $(`.reply[data-reply-id="${replyToDelete.replyId}"]`);
+                   if ($reply.length) {
+                       $reply.remove();
+                   } else {
+                       console.warn('Reply not found for ID:', replyToDelete.replyId);
+                   }
 
-        $.ajax({
-            type: 'GET',
-            url: '/manga/comment/reply?' + queryString,
-            success: function(response) {
-                if (response.success) {
-                    const newReply = response.reply;
-                    const formattedDate = formatDate(newReply.createdAt);
-                    const replyText = linkifyUsernamesAndReplaceIds(newReply.text);
+                   const $comment = $(`.comment[id="comment-${replyToDelete.commentId}"]`);
+                   if ($comment.length) {
+                       const replies = $comment.find('.reply');
+                       const repliesCount = replies.length;
 
-                    const newReplyHtml = `
-                                    <div class="comment reply" id="comment-${newReply.id}">
-                                        <div class="reply-header">
-                                            <a href="/profile/${newReply.userId}" class="user-link">
-                                                <img src="${newReply.ProfilePicture}" class="user-icon" alt="${newReply.userName}'s icon">
-                                                <span class="user-name">${newReply.userName}</span>
-                                            </a>
-                                        </div>
-                                            <p class="user-reply-text">${replyText}</p>
-                                            <div class="reply-footer">
-                                                <small class="comment-time">${formattedDate}</small>
-                                            </div>
-                                    </div>
-                                    <hr>
-                                `;
-                    $(`#comment-${parentId}`).append(newReplyHtml);
+                       const $showRepliesButton = $comment.find('.show-replies-button');
+                       if (repliesCount > 0) {
+                           $showRepliesButton.find('.replies-count').text(repliesCount);
+                       } else {
+                           $showRepliesButton.hide();
+                       }
+                   } else {
+                       console.warn('Comment not found for ID:', replyToDelete.commentId);
+                   }
 
-                    $form.closest('.reply-form-container').hide();
-                    $form.closest('.reply-on-reply-form-container').hide();
-                    $form.find('textarea').val("");
-                } else {
-                    alert('Помилка під час додавання відповіді');
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Помилка під час додавання відповіді:', textStatus, errorThrown);
-            }
-        });
-    });
+                   $('#deleteReplyModal').modal('hide');
+               },
+               error: function(xhr, status, error) {
+                   $('#deleteReplyModal').modal('hide');
+                   $('#errorMessage').text('Помилка видалення відповіді. Спробуйте пізніше.');
+                   $('#errorModal').modal('show');
+               }
+           });
+       }
+   });
 
-    $(document).on('click', '.delete-reply', function(e) {
-        e.preventDefault();
-        const form = $(this).closest('form');
-        const replyId = form.find('input[name="reply-id"]').val();
-        const commentId = $(this).closest('.comment').attr('id').split('-')[1];
+   $(document).on('click', '.report-reply', function(e) {
+       e.preventDefault();
+       const replyId = $(this).closest('.reply').data('reply-id');
+       replyToReport = replyId;
+       $('#reportReplyModal').modal('show');
+   });*/
 
-        replyToDelete = { replyId: replyId, commentId: commentId };
-        $('#deleteReplyModal').modal('show');
-    });
-
-    $('#confirmDeleteReplyButton').click(function() {
-        if (replyToDelete) {
-            $.ajax({
-                url: `/manga/reply/${replyToDelete.replyId}/delete`,
-                method: 'GET',
-                success: function(response) {
-                    const $reply = $(`.reply[data-reply-id="${replyToDelete.replyId}"]`);
-                    if ($reply.length) {
-                        $reply.remove();
-                    } else {
-                        console.warn('Reply not found for ID:', replyToDelete.replyId);
-                    }
-
-                    const $comment = $(`.comment[id="comment-${replyToDelete.commentId}"]`);
-                    if ($comment.length) {
-                        const replies = $comment.find('.reply');
-                        const repliesCount = replies.length;
-
-                        const $showRepliesButton = $comment.find('.show-replies-button');
-                        if (repliesCount > 0) {
-                            $showRepliesButton.find('.replies-count').text(repliesCount);
-                        } else {
-                            $showRepliesButton.hide();
-                        }
-                    } else {
-                        console.warn('Comment not found for ID:', replyToDelete.commentId);
-                    }
-
-                    $('#deleteReplyModal').modal('hide');
-                },
-                error: function(xhr, status, error) {
-                    $('#deleteReplyModal').modal('hide');
-                    $('#errorMessage').text('Помилка видалення відповіді. Спробуйте пізніше.');
-                    $('#errorModal').modal('show');
-                }
-            });
-        }
-    });
-
-    $(document).on('click', '.report-reply', function(e) {
-        e.preventDefault();
-        const replyId = $(this).closest('.reply').data('reply-id');
-        replyToReport = replyId;
-        $('#reportReplyModal').modal('show');
-    });
-
-    $('#confirmReportReplyButton').click(function() {
+    /*$('#confirmReportReplyButton').click(function() {
         if (replyToReport) {
             const reason = $('#reportReplyReason').val();
             const maxLength = 255;
@@ -588,7 +503,7 @@ $(document).ready(function() {
                 $('#errorModal').modal('show');
             }
         }
-    });
+    });*/
 
     $(document).on('click', '.edit-reply', function(event) {
         event.preventDefault();
@@ -670,7 +585,7 @@ $(document).ready(function() {
         $(this).closest('.reply-on-reply-form-container').hide();
     });
 
-    function createReplyElement(reply,commentId) {
+    /*function createReplyElement(reply,commentId) {
         const currentUserId = $('#comments').data('current-user-id');
         const userName = reply.userName || 'Unknown User';
         const userIcon = reply.ProfilePicture || 'https://www.riseandfall.xyz/unrevealed.png';
@@ -735,40 +650,9 @@ $(document).ready(function() {
             <button class="btn btn-primary edit-reply-cancel" style="display:none;">Скасувати</button>
         </div>
     `);
-    }
+    }*/
 
-    function formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleString('uk-UA', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
 
-    function linkifyUsernamesAndReplaceIds(text) {
-        const userIdPattern = /@(\d+)/g;
-        let match;
 
-        while ((match = userIdPattern.exec(text)) !== null) {
-            const userId = match[1];
 
-            $.ajax({
-                url: `/manga/getUsernameById`,
-                type: 'GET',
-                data: { userId: userId },
-                async: false,
-                success: function(response) {
-                    const username = response.username;
-                    text = text.replace(`@${userId}`, `<a href="/profile/${userId}" class="user-mention">@${username}</a>`);
-                },
-                error: function() {
-                    console.error(`не вдалося отримати нікнейм для ID ${userId}`);
-                }
-            });
-        }
-        return text;
-    }
 });

@@ -375,7 +375,101 @@
                                     </button>
                                 </div>
                             </div>
-                            <ul id="comments-list" class="list-group mt-3" style="padding:15px;"></ul>
+                            <ul id="comments-list" class="list-group mt-3" style="padding:15px;">
+                                <li th:if="${#lists.isEmpty(comments)}" class="list-group-nocomments-item">
+                                    <i class="fa-regular fa-face-smile-wink"></i>
+                                    Будьте першим хто залишить коментар для цієї манги.
+                                </li>
+
+                                <li th:each="comment : ${comments}" class="list-group-item-comments" th:id="'comment-' + ${comment.id}">
+                                    <div class="comment-header">
+                                        <span>
+                                            <a th:href="@{/profile/{userId}(userId=${comment.user.id})}" class="user-link">
+                                                <img th:src="${comment.user.ProfilePicture}" class="user-icon" alt="some one's icon">
+                                                <span class="user-name-comment" th:text="${comment.user.userName}"></span>
+                                            </a>
+                                        </span>
+                                        <div class="dropdown comment-options">
+                                            <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton-${comment.id}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-${comment.id}">
+                                                <li><a class="dropdown-item report-comment" href="#" data-comment-id="${comment.id}"><i class="fas fa-flag"></i>Поскаржитися</a></li>
+                                                <li>
+                                                    <form th:action="@{/comment/{commentId}/edit(commentId=${comment.id})}" method="post">
+                                                        <input type="hidden" name="comment-id" value="${comment.id}">
+                                                        <button class="dropdown-item edit-comment" type="submit"><i class="fas fa-edit"></i>Редагувати</button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form th:action="@{/comment/{commentId}/delete(commentId=${comment.id})}" method="post" onsubmit="">
+                                                        <input type="hidden" name="comment-id" value="${comment.id}">
+                                                        <button class="dropdown-item delete-comment" type="submit"><i class="fas fa-trash-alt"></i>Видалити</button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <p class="user-comment-text" th:text="${comment.text}"></p>
+                                    </div>
+                                        <div class="comment-footer">
+                                            <small class="comment-time" th:data-date="${comment.createdAt}"></small>
+                                            <i style="font-size:8px; color:gray;" class="fa-solid fa-circle"></i>
+                                            <button class="btn btn-link reply-button" th:data-comment-id="${comment.id}">Відповісти</button>
+                                            <div class="rating-controls" th:data-comment-id="${comment.id}" th:data-user-rating="${userRatings[comment.id] ?: 0}">
+                                                <button class="btn btn-link upvote-button"
+                                                        th:classappend="${userRatings[comment.id] == 1} ? 'selected'"
+                                                        th:data-comment-id="${comment.id}">
+                                                    <i class="fa-solid fa-arrow-up"></i>
+                                                </button>
+                                                <span th:id="'rating-score-' + ${comment.id}" class="rating-score"
+                                                        th:title="'Плюсів: ' + ${commentRatings[comment.id]?.upvotes ?: 0} + ' | Мінусів: ' + ${commentRatings[comment.id]?.downvotes ?: 0}"
+                                                        th:text="${commentRatings[comment.id]?.upvotes - commentRatings[comment.id]?.downvotes ?: 0}">
+                                                </span>
+                                                <button class="btn btn-link downvote-button"
+                                                        th:classappend="${userRatings[comment.id] == -1} ? 'selected'"
+                                                        th:data-comment-id="${comment.id}">
+                                                    <i class="fa-solid fa-arrow-down"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="reply-form-container" style="display: none;">
+                                            <form class="reply-form" th:data-user-id="${comment.userId}" th:data-username="${comment.userName}" th:data-parent-id="${comment.id}">
+                                                <div class="textarea-container">
+                                                    <span class="username-block" th:text="'@' + ${comment.userName}"></span>
+                                                    <textarea id="comment-user-id" name="text" class="form-control" rows="2" th:data-user="'@' + ${comment.userId}" style="padding-left:90px;" placeholder="Напишіть відповідь..." required></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary mt-3 mb-3">Відповісти</button>
+                                                <button type="button" class="btn btn-primary mt-3 mb-3 cancel-reply">Скасувати</button>
+                                            </form>
+                                        </div>
+                                        <button class="btn btn-link show-replies-button" th:data-comment-id="${comment.id}" style="display: none;">Показати відповіді (<span class="replies-count">0</span>)</button>
+                                        <div class="replies-container" style="display: none;">
+                                            <div th:each="reply : ${commentReplies[comment.id]}" class="reply" th:data-reply-id="${reply.id}">
+                                                <div class="reply-header">
+                                                    <a th:href="@{/profile/{userId}(userId=${reply.user.id})}" class="user-link">
+                                                        <img th:src="${reply.user.ProfilePicture}" class="user-icon" alt="icon">
+                                                        <span class="user-name" th:text="${reply.user.userName}"></span>
+                                                    </a>
+                                                </div>
+                                                <p class="user-reply-text" th:utext="${reply.text}"></p>
+                                                <div class="reply-footer">
+                                                    <small class="comment-time" th:data-date="${reply.createdAt}"></small>
+                                                    <button class="btn btn-link reply-on-reply-button" th:data-reply-id="${reply.id}">Відповісти</button>
+                                                </div>
+                                                <div class="reply-on-reply-form-container" style="display: none;">
+                                                    <form th:data-user-id="${reply.userId}" class="reply-form" th:data-parent-id="${comment.id}" th:data-username="${reply.user.userName}">
+                                                        <div class="textarea-container">
+                                                            <span class="username-block" th:text="'@' + ${reply.user.userName}"></span>
+                                                            <textarea name="text" class="form-control" style="padding-left: 90px;" rows="2" placeholder="Напишіть відповідь..." required></textarea>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary mt-2">Відповісти</button>
+                                                        <button type="button" class="btn btn-primary mt-2 cancel-reply-on-reply">Скасувати</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </li>
+                            </ul>
                             <div id="loading-comments-for-manga" class="loading-comments-for-manga" style="display: none;">
                                 <div class="loading">
                                     <i class="fa-solid fa-spinner fa-spin"></i> Завантаження...
@@ -401,7 +495,11 @@
 <script src="/js/confirmDelete.js"></script>
 <script src="/js/manga-details.js"></script>
 <script src="/js/carousel-details.js"></script>
-<script src="/js/manga-details-comments.js"></script>
+<script src="/js/manga/manga-details-comments-logic.js"></script>
+<script th:inline="javascript">
+    var userRatings = /*[[${userRatings}]]*/ {};
+    var commentRatings = /*[[${commentRatings}]]*/ {};
+</script>
 <script th:inline="javascript">
     window.relatedMangas = /*[[${relatedMangas}]]*/ [];
     window.similarMangas = /*[[${similarMangas}]]*/ [];

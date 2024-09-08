@@ -70,6 +70,8 @@ public class MangaController {
     @Autowired
     ChapterRepo chapterRepo;
     @Autowired
+    ReplyService replyService;
+    @Autowired
     CommentRepo commentRepo;
 
     //MANGA
@@ -327,6 +329,40 @@ public class MangaController {
                 Rating ratingValue = ratingOptional.get();
                 model.addAttribute("ratingValue", ratingValue.getRating());
             }
+
+            Pageable pageable = PageRequest.of(1 - 1, 12, Sort.by(Sort.Direction.DESC, "createdAt"));
+            Page<Comment> commentPage = commentRepo.findByMangaId(id, pageable);
+
+            Map<Long, Integer> userRatings = new HashMap<>();
+            Map<Long, Map<String, Integer>> commentRatings = new HashMap<>();
+            Map<Long, List<Replies>> commentReplies = new HashMap<>();
+
+            for (Comment comment : commentPage.getContent()) {
+                CommentRating userRating = commentRatingRepo.findByCommentIdAndUserId(comment.getId(), user.getId());
+                userRatings.put(comment.getId(), userRating != null ? userRating.getDelta() : 0);
+
+                long upvotes = commentRatingRepo.countByCommentIdAndDelta(comment.getId(), 1);
+                long downvotes = commentRatingRepo.countByCommentIdAndDelta(comment.getId(), -1);
+
+                Map<String, Integer> ratingInfo = new HashMap<>();
+                ratingInfo.put("upvotes", (int) upvotes);
+                ratingInfo.put("downvotes", (int) downvotes);
+                commentRatings.put(comment.getId(), ratingInfo);
+
+                List<Replies> replies = repliesRepo.findByParentCommentId(comment.getId());
+                for( Replies reply : replies)
+                {
+                    reply.setText(replyService.convertUserIdsToUsernames(reply.getText()));
+                }
+                commentReplies.put(comment.getId(), replies);
+            }
+
+            model.addAttribute("comments", commentPage.getContent());
+            model.addAttribute("userRatings", userRatings);
+            model.addAttribute("commentRatings", commentRatings);
+            model.addAttribute("commentReplies", commentReplies);
+
+
 
             model.addAttribute("manga", manga);
             model.addAttribute("user", user);
@@ -609,28 +645,7 @@ public class MangaController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/manga/{mangaId}/add-comment")
-    @ResponseBody
-    public ResponseEntity<Comment> addComment(@PathVariable Long mangaId, @RequestParam String text, Principal principal) {
-        Optional<Manga> mangaOptional = mangaRepo.findById(mangaId);
-        if (!mangaOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        Manga manga = mangaOptional.get();
 
-        User user = userRepo.findByUserName(principal.getName());
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
-        if (text == null || text.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        Comment comment = new Comment(text, manga, user, LocalDateTime.now());
-        commentRepo.save(comment);
-        return new ResponseEntity<>(comment, HttpStatus.CREATED);
-    }
 
     @GetMapping("/manga/getUsernameById")
     @ResponseBody

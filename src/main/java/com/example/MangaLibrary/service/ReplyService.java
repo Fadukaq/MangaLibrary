@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class ReplyService {
@@ -18,6 +20,8 @@ public class ReplyService {
     private CommentRepo commentRepo;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private UserService userService;
     @Autowired
     private MangaRepo mangaRepo;
     public Replies addReply(Long parentCommentId, String text, Long userId, Long mangaId) {
@@ -87,5 +91,24 @@ public class ReplyService {
 
         replyReportRepo.save(replyReport);
         return true;
+    }
+    public String convertUserIdsToUsernames(String text) {
+        final Pattern userIdPattern = Pattern.compile("@(\\d+)");
+        final Matcher matcher = userIdPattern.matcher(text);
+
+        StringBuffer result = new StringBuffer();
+        while (matcher.find()) {
+            long userId = Long.parseLong(matcher.group(1));
+            String username = userService.getUsernameById(userId);
+            String replacement = String.format(
+                    "<a href='/profile/%d' class='user-mention'>@%s</a>",
+                    userId,
+                    username
+            );
+            matcher.appendReplacement(result, replacement);
+        }
+        matcher.appendTail(result);
+
+        return result.toString();
     }
 }

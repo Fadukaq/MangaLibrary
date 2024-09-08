@@ -385,4 +385,8 @@ public class UserService {
             default -> userRole;
         };
     }
+    public String getUsernameById(long userId) {
+        User user = userRepo.findById(userId).orElse(null);
+        return user != null ? user.getUserName() : "Unknown";
+    }
 }

@@ -1,9 +1,7 @@
 package com.example.MangaLibrary.controllers;
 
-import com.example.MangaLibrary.models.Comment;
-import com.example.MangaLibrary.models.CommentRating;
-import com.example.MangaLibrary.models.Replies;
-import com.example.MangaLibrary.models.User;
+import ch.qos.logback.core.model.Model;
+import com.example.MangaLibrary.models.*;
 import com.example.MangaLibrary.repo.*;
 import com.example.MangaLibrary.service.CommentService;
 import com.example.MangaLibrary.service.UserService;
@@ -20,9 +18,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,58 +37,36 @@ public class CommentController {
     @Autowired
     CommentRepo commentRepo;
     @Autowired
+    MangaRepo mangaRepo;
+    @Autowired
     CommentRatingRepo commentRatingRepo;
     @Autowired
     RepliesRepo repliesRepo;
-    @GetMapping("/manga/{mangaId}/comments")
-    public @ResponseBody Map<String, Object> getComments(
-            @PathVariable Long mangaId,
-            @RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam(required = false, defaultValue = "4") int size,
-            @RequestParam(required = false, defaultValue = "byNew") String sortBy,
-            @AuthenticationPrincipal UserDetails userDetails) {
-
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        if ("byRating".equals(sortBy)) {
-            pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "rating"));
+    @PostMapping("/comment/{mangaId}/add-comment")
+    @ResponseBody
+    public ResponseEntity<Comment> addComment(@PathVariable Long mangaId, @RequestParam String text, Principal principal) {
+        Optional<Manga> mangaOptional = mangaRepo.findById(mangaId);
+        if (!mangaOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Page<Comment> commentPage = commentRepo.findByMangaId(mangaId, pageable);
+        Manga manga = mangaOptional.get();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepo.findByUserName(username);
-
-        Map<Long, Integer> userRatings = new HashMap<>();
-        Map<Long, Map<String, Integer>> commentRatings = new HashMap<>();
-        Map<Long, List<Replies>> commentReplies = new HashMap<>();
-
-        for (Comment comment : commentPage.getContent()) {
-            CommentRating userRating = commentRatingRepo.findByCommentIdAndUserId(comment.getId(), user.getId());
-            userRatings.put(comment.getId(), userRating != null ? userRating.getDelta() : 0);
-
-            long upvotes = commentRatingRepo.countByCommentIdAndDelta(comment.getId(), 1);
-            long downvotes = commentRatingRepo.countByCommentIdAndDelta(comment.getId(), -1);
-
-            Map<String, Integer> ratingInfo = new HashMap<>();
-            ratingInfo.put("upvotes", (int) upvotes);
-            ratingInfo.put("downvotes", (int) downvotes);
-            commentRatings.put(comment.getId(), ratingInfo);
-
-            List<Replies> replies = repliesRepo.findByParentCommentId(comment.getId());
-            commentReplies.put(comment.getId(), replies);
+        User user = userRepo.findByUserName(principal.getName());
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("comments", commentPage.getContent());
-        response.put("userRatings", userRatings);
-        response.put("commentRatings", commentRatings);
-        response.put("commentReplies", commentReplies);
-        response.put("hasMore", commentPage.hasNext());
+        if (text == null || text.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
-        return response;
+        Comment comment = new Comment(text, manga, user, LocalDateTime.now());
+        commentRepo.save(comment);
+        return new ResponseEntity<>(comment, HttpStatus.CREATED);
     }
 
-    @GetMapping("/manga/comment/{commentId}/rate") /////////////////////////////////////////////////////////////////////
+
+    @GetMapping("/comment/{commentId}/rate") /////////////////////////////////////////////////////////////////////
     public ResponseEntity<Map<String, Object>> updateRatingGET(@PathVariable Long commentId,
                                                                @RequestParam Long userId,
                                                                @RequestParam int delta) {
