@@ -99,7 +99,7 @@
     border: 2px solid #808080;
     border-radius: 5px;
     padding: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -121,20 +121,21 @@
     font-family: Raleway, sans-serif;
     font-size: 16px;
     font-weight: 400;
-    line-height: 18.78px;
+    line-height: 19px;
     text-align: left;
+    color: #FFFFFF;
 }
 
 .square-subtext {
-    width: 150.88px;
+    width: 151px;
     height: 16px;
     top: 34px;
-    left: 27.68px;
+    left: 28px;
     opacity: 1;
     font-family: Roboto, sans-serif;
     font-size: 12px;
     font-weight: 400;
-    line-height: 14.06px;
+    line-height: 14px;
     text-align: left;
     color: #625E5E;
     margin-left: 10px;
@@ -149,3 +150,51 @@
 #square6 { grid-row: 2; grid-column: 3; }
 #square7 { grid-row: 3; grid-column: 1; }
 #square8 { grid-row: 3; grid-column: 2; }
+
+a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.square-link {
+    display: block;
+    text-decoration: none; /* Убирает подчеркивание */
+}
+
+/* Общее оформление для ссылок */
+a.square-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%; /* Ссылка охватывает весь блок */
+    height: 100%; /* Ссылка охватывает весь блок */
+}
+
+/* Размер и стили блоков */
+.square {
+    width: 230px; /* Задайте фиксированную ширину блока, если нужно */
+    height: 90px; /* Задайте фиксированную высоту блока */
+    background-color: #333; /* Пример фона */
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    margin: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.square:hover {
+    background-color: #444; /* Пример изменения цвета при наведении */
+}
+
+/* Размеры текста внутри блоков */
+.square-text {
+    font-size: 16px;
+    color: #FFFFFF;
+}
+
+.square-subtext {
+    font-size: 16px;
+    color: #BBBBBB;
+}

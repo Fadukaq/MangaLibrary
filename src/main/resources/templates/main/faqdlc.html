@@ -1,0 +1,556 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <title>FAQDLC</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
+    <link rel="stylesheet" href="/css/faqdlc.css">
+    <link rel="stylesheet" href="/css/loader.css">
+</head>
+<body class="loading">
+<div th:insert="~{blocks/loader :: loader}"></div>
+<header th:insert="~{blocks/header :: header}"></header>
+<div class="content container-fluid">
+    <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-12 left-div">
+            <div class="text-container">
+                <a href="#manga" class="text-item manga">Манга</a>
+                <a href="#common-questions" class="text-item">Загальні питання</a>
+                <a href="#profile" class="text-item">Профіль користувача</a>
+                <a href="#read" class="text-item">Читання манги</a>
+                <a href="#problem" class="text-item">Вирішення проблем</a>
+                <a href="#rule" class="text-item">Правила</a>
+                <a href="#forum" class="text-item">Форум</a>
+                <a href="#pid" class="text-item">Підсказки</a>
+            </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const menuItems = document.querySelectorAll(".text-item");
+
+                    const initialActiveItem = document.querySelector(".text-item.manga");
+                    if (initialActiveItem) {
+                        initialActiveItem.classList.add("initial-active");
+                    }
+
+                    menuItems.forEach((item) => {
+                        item.addEventListener("click", function () {
+                            menuItems.forEach((item) => {
+                                item.classList.remove("active", "initial-active");
+                            });
+                            this.classList.add("active");
+                        });
+                    });
+
+                    const activeSection = localStorage.getItem('activeSection');
+                    if (activeSection) {
+                        const activeLink = document.querySelector(`.left-div a[href="#${activeSection}"]`);
+                        if (activeLink) {
+                            activeLink.style.color = '#A90055';
+                        }
+                        localStorage.removeItem('activeSection');
+                    }
+                });
+            </script>
+        </div>
+        <div class="col-lg-9 col-md-8 col-sm-12 right-div">
+            <div id="manga" class="manga-title">Манга</div>
+            <div class="manga-line"></div>
+
+            <div class="accordion" id="faqAccordion1">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne1" aria-expanded="false" aria-controls="collapseOne1">
+                            Додавання манги
+                        </button>
+                    </h2>
+                    <div id="collapseOne1" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Кожен користувач може додати свою мангу, ставши автором на нашому сайті. Щоб це здійснити, потрібно натиснути на плюс біля вашого аватара, якщо ви зареєстровані. Після цього вам буде запропоновано стати автором. Після того, як ви ним станете, ви можете через той самий плюс завантажувати власну мангу.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo1" aria-expanded="false" aria-controls="collapseTwo1">
+                            Модерація манги/глав
+                        </button>
+                    </h2>
+                    <div id="collapseTwo1" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Перш ніж потрапити на сайт, манга/глави від нових користувачів проходять модерацію (яка може тривати тривалий час, залежить від завантаженості модераторів).
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree1" aria-expanded="false" aria-controls="collapseThree1">
+                            Додавання розділів
+                        </button>
+                    </h2>
+                    <div id="collapseThree1" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Додавання розділів відбувається на сторінці тайтлу через меню автора. Після вибору пункту «Завантажити главу» ви переходите на сторінку додавання глави. При відсутності якоїсь інформації після завантаження у вас завжди буде можливість редагувати дану главу манги.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour1" aria-expanded="false" aria-controls="collapseFour1">
+                            Альтернативний переклад
+                        </button>
+                    </h2>
+                    <div id="collapseFour1" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            На сайті присутній переклад тільки від найкращих команд перекладачів манги, але інколи можуть траплятися й помилки. Якщо ви знайшли якусь помилку, сповістіть про це нас через наші контакти, і ми її відразу виправимо.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="common-questions" class="que-title">Загальні питання</div>
+            <div class="que-line"></div>
+
+            <div class="accordion" id="faqAccordion2">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne2" aria-expanded="false" aria-controls="collapseOne2">
+                            Як стати автором?
+                        </button>
+                    </h2>
+                    <div id="collapseOne2" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Щоб стати автором, вам необхідно натиснути на плюс біля свого аватара. Після цього ви перейдете на сторінку, яка розповість вам про всі деталі модерації щодо становлення автором на нашому сайті
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo2">
+                            Скільки часу триває модерація?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo2" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Від кількох годин до нескінченності. Сильно залежить від завантаженості модераторів або вже ніч та всі модератори сплять.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree2" aria-expanded="false" aria-controls="collapseThree2">
+                            Як зв'язатися з модератором чи адміном?
+                        </button>
+                    </h2>
+                    <div id="collapseThree2" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            1. Найкращий спосіб. Через Telegram (Зв’язок з нами)
+                            <br><br>2. Через нашу групу в Instagram.
+                            <br><br>3. Особисті повідомлення на електрону адресу. Даний варіант є менш релевантним і відповіді ви можете не отримати.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour2" aria-expanded="false" aria-controls="collapseFour2">
+                            Чому видаляються коментарі?
+                        </button>
+                    </h2>
+                    <div id="collapseFour2" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Коментарі видаляються лише за скаргами користувачів. Причини скарг:
+                            <br><br>- спойлер;
+                            <br><br>- ненормативна лексика;
+                            <br><br>- Образа користувачів;
+                            <br><br>- Коментар без сенсу;
+                            <br><br>- Спам.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFive2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive2" aria-expanded="false" aria-controls="collapseFive2">
+                            Додавання/Зміна аватара та фону профілю.
+                        </button>
+                    </h2>
+                    <div id="collapseFive2" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Додавання аватара та фону відбувається в налаштуваннях профілю.
+
+                            <br><br>Щоб додати аватар, потрібно натиснути на іконку додавання, після чого необхідно вибрати зображення на вашому пристрої.
+
+                            <br><br>Для додавання фону профілю потрібно повторити ті ж дії, що і з аватаром профілю. Саме зображення не повинно бути GIF-анімацією, а його ширина повинна бути не менше 1200 пікселів (висота автоматично підлаштовується).
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="profile" class="profile-title">Профіль користувача</div>
+            <div class="profile-line"></div>
+
+            <div class="accordion" id="faqAccordion3">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne3" aria-expanded="false" aria-controls="collapseOne3">
+                            Як увійти до профілю?
+                        </button>
+                    </h2>
+                    <div id="collapseOne3" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Щоб зайти в Свій профіль, потрібно натиснути на іконку в правому верхньому кутку і вибрати з списку Профіль користувача.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo3" aria-expanded="false" aria-controls="collapseTwo3">
+                            Функції вашого профілю
+                        </button>
+                    </h2>
+                    <div id="collapseTwo3" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            I) Профіль. Ваш список манги у вкладках "Читаю, Заплановано, Покинуто, Прочитано, Улюблені", а також ваші особисті (користувацькі) закладки. Додати мангу до своїх списків (і видалити з нього) Ви зможете на сторінці з мангою.
+                            <br><br>II) Коментарі. Ви зможете побачити весь список своїх коментарів та їх рейтинг (відповіді на форумі не беруться до уваги). Сірий індикатор – нейтральна репутація (0 лайків, 0 дизлайків), червоний – дизлайки, зелений – лайки.
+                            <br><br>III) Друзі. Тут знаходяться усі Ваші друзі.
+                            <br><br>IV) Повідомлення. Тут з'являються всілякі повідомлення (налаштувати повідомлення можна в налаштуваннях).
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree3" aria-expanded="false" aria-controls="collapseThree3">
+                            Налаштування профілю
+                        </button>
+                    </h2>
+                    <div id="collapseThree3" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Для того, щоб потрапити в налаштування, потрібно натиснути кнопку Налаштування, розташовану у вашому профілі.
+                            <br><br>У налаштуваннях ми бачимо такі вкладки:
+                            <br><br>Інформація: Тут ви вказуєте інформацію про себе та завантажуєте аватар.
+                            <br><br>Безпека та вхід: Тут ви можете змінити свою електронну пошту та пароль.
+                            <br><br>Фон: У вкладці «Фон» ви можете змінити свій задній фон сайту, вибравши один з 6 варіантів.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="read" class="read-title">Читання манги</div>
+            <div class="read-line"></div>
+
+            <div class="accordion" id="faqAccordion4">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne4">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne4" aria-expanded="false" aria-controls="collapseOne4">
+                            Як додати сторінки до закладок?
+                        </button>
+                    </h2>
+                    <div id="collapseOne4" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Це робиться за рахунок сторінки тайтлу де ви можете вибрати додавання самої манги в бажану закладку
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo4">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo4" aria-expanded="false" aria-controls="collapseTwo4">
+                            Як повідомити про непрацюючу сторінку?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo4" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Ви можете повідомити нас про проблему зі сторінкою через меню «Зворотний зв'язок», де буде вибір наших контактів для звернення.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree4">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree4" aria-expanded="false" aria-controls="collapseThree4">
+                            Де налаштування читання?
+                        </button>
+                    </h2>
+                    <div id="collapseThree4" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Ви можете налаштувати стиль читання під час прочитання самої манги через функцію загалом доступно три стилі читання манги
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour4">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour4" aria-expanded="false" aria-controls="collapseFour4">
+                            Не вантажаться сторінки манги?
+                        </button>
+                    </h2>
+                    <div id="collapseFour4" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Рішення даної проблеми має кілька варіантів. Відкрийте іншу мангу; якщо вона завантажилася, почекайте деяку годину і спробуйте знову відкрити мангу, яку бажали прочитати. Якщо це не допомогло, перезавантажте пристрій або сайт, або перегляньте новини — можливо, це може бути пов'язане з технічними роботами на сайті.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="problem" class="problem-title">Вирішення проблем</div>
+            <div class="problem-line"></div>
+
+            <div class="accordion" id="faqAccordion5">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne5">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne5" aria-expanded="false" aria-controls="collapseOne6">
+                            Чому сторінка манги завантажується не чітко/розмито чи вилітає?
+                        </button>
+                    </h2>
+                    <div id="collapseOne5" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            При перегляді з телефону або планшета, швидше за все, через нестачу оперативної пам'яті або інших ресурсів (CPU, GPU).
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo5">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo5" aria-expanded="false" aria-controls="collapseTwo5">
+                            Не завантажуються сторінки?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo5" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Проблема може бути пов'язана з кешем, який потрібно очистити на вашому пристрої, або з проведенням технічних робіт на сайті.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree5">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree5" aria-expanded="false" aria-controls="collapseThree5">
+                            Скидання пароля або зміна пошти
+                        </button>
+                    </h2>
+                    <div id="collapseThree5" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Все це ви можете зробити через свій профіль в кладці безпека та вхід
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="rule" class="rule-title">Правила</div>
+            <div class="rule-line"></div>
+
+            <div class="accordion" id="faqAccordion6">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne6">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne6" aria-expanded="false" aria-controls="collapseOne6">
+                            Загальні правила сайту / Причини
+                        </button>
+                    </h2>
+                    <div id="collapseOne6" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <span class="white-text">Заборонено будь-які образи як</span>
+                            <br><br>1. Прямі образи.
+                            <br>2. Образи питанням.
+                            <br>3. Завуальовані образи. Приклад: «пнх», «муд*к» іншою мовою.
+                            <br>4. Образи груп користувачів.
+                            <br>5. Образи родичів та близьких.
+                            <br>6. Образи у вигляді зображень (це стосується форуму або зображень у розділі).
+                            <br>7. Образи національності, раси, кольору шкіри, політичних поглядів тощо.
+                            <br>8. Розпалювання міжнаціональної ворожнечі.
+
+                            <br><br><span class="white-text">Не залишайте безглуздих коментарів. До них відносяться</span>
+                            <br><br>1. Коментарі, що не несуть смислового навантаження та/або заважають обговоренню.
+                            <br>2. Повідомлення, які можна замінити оцінкою коментаря. Приклад: «++++», «Плюсую» і т.п.
+                            <br>3. Безглуздий набір символів.
+                            <br>4. Надмірне або недоречне використання капсу.
+
+                            <br><br><span class="white-text">Спойлери</span>
+                            <br><br>Текст є спойлером, якщо його зміст є передчасно розкритою сюжетною інформацією. Посилання на оригінал теж є спойлером, якщо розділ ще не було перекладено.
+
+                            <br><br><span class="white-text">Реклама / Спам </span>
+                            <br><br>1.  Посилання, назви або згадки сайтів-конкурентів у російському сегменті.
+                            <br>2.  Посилання на роботу іншої команди, якщо вона не вказана на сторінці тайтлу чи розділу.
+                            <br>3.  Заклики йти читати на інший сайт або згадка (навіть без конкретного джерела), що десь є більше розділів.
+                            <br>4.  Заклики перейти, підписатися, проголосувати тощо.
+                            <br>5.  Реклама послуг, товарів та сторонніх ресурсів.
+                            <br>6.  Розіграші чогось, якщо вони не узгоджені з адміністрацією.
+
+                            <br><br><span class="white-text">Провокації / Конфлікти </span>
+                            <br><br>Будь-які теми щодо релігії, політики, ідеологій.
+                            <br><br>Ці теми не підходять під тематику сайту. Скористайтеся для цього іншими ресурсами. Винятком можуть бути обговорення, якщо це частина сюжету манги/ранобе/аніме.
+                            <br><br>Сайт <span class="pink-text">Manga</span>Library завжди залишався та залишається антиполітичним майданчиком для поширення та читання перекладів японського художнього мистецтва
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo6">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo6" aria-expanded="false" aria-controls="collapseTwo6">
+                            Правила форуму / Причини банів
+                        </button>
+                    </h2>
+                    <div id="collapseTwo6" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Цей форум переважно створений для обговорення аніме, манги та ранобе. Утримуйтеся від інших тем, якщо не хочете випадкового бану.
+                            <br><br><span class="white-text">1. Беззмістовна / Порожня тема</span>
+                            <br><br>Модератор має право сам вирішувати, чи є тема беззмістовною. Видалення теми є попередженням, тому варто утриматися від повторного створення або скарги на те, що її видалили.
+
+                            <br><br><span class="white-text">Які теми не варто створювати:</span>
+                            <br><br>- Сімейні / Особисті проблеми, зокрема сварки чи конфлікти між вами та вашими близькими або друзями. Вирішіть це між собою.
+                            <br><br>- Пошук людей для відносин. Використовуйте інші ресурси, призначені для цього.
+                            <br><br>- Якщо ви створюєте тему з досить дурним питанням або обговоренням, то тема буде видалена.
+                            <br><br>- Якщо ви хочете поспілкуватися, зробіть це явно, без питань на кшталт: "А скільки зараз у вас часу?", "Я поїв, а ви?", "Нудно, розсмішіть мене"... Можна зробити так: "Привіт, давайте поспілкуємося, пропоную на тему..."
+                            <br><br>- Категорія поста не відповідає його змісту або заголовку.
+
+                            <br><br><span class="white-text">2. Не створюйте дублікатів</span>
+                            <br><br>Можливо, на ваше питання вже була відповідь, і немає сенсу його повторювати, тому не лінуйтеся переглянути старі теми або скористатися пошуком по форуму.
+                            <br><br>Через створення дублікатів може виникнути дезінформація.
+                            <br><br>Пояснення: мова йде про дублікати, які створені за останні 2 дні.
+
+                            <br><br><span class="white-text">3. Некоректний заголовок </span>
+                            <br><br>Приклади:
+                            <br><br>- Заголовок не відображає зміст теми (Тема: "Смачні печеньки та багато яою" до пошуку кадрів);
+                            <br><br>- Більша частина заголовка не повинна складатися з капса або символів, смайлів, емодзі (ПОМОЖІТЬ НАЙТИ; ІЩУ ТАЙТЛ допоможіть);
+                            <br><br>- Містить нецензурну лексику.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree6">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree6" aria-expanded="false" aria-controls="collapseThree6">
+                            Правила для авторів
+                        </button>
+                    </h2>
+                    <div id="collapseThree6" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Правила для авторів, які завантажують мангу на сайт
+                            <br><br><span class="white-text">1. Загальні вимоги</span>
+                            <br><br>- Завантажуйте тільки ті роботи, на які у вас є авторські права або дозвіл на публікацію.
+                            <br>- Заборонено завантажувати роботи, які порушують авторські права інших осіб або організацій.
+
+                            <br><br><span class="white-text">2. Якість сканів та перекладу</span>
+                            <br><br>- Забезпечте високу якість сканів манги (мінімальна роздільна здатність 300 DPI).
+                            <br>- Переклад має бути грамотним і без помилок. Використовуйте літературну українську мову.
+                            <br>- Звертайте увагу на форматування тексту, зокрема розміщення в бульбашках та відповідність шрифтів оригіналу.
+
+                            <br><br><span class="white-text">3. Назви та метадані</span>
+                            <br><br>- Указуйте точні назви манги, розділів та авторів.
+                            <br>- Додавайте всі необхідні метадані (жанр, рік випуску, автор тощо).
+                            <br>- Заборонено змінювати оригінальні назви та імена без вагомої причини.
+
+                            <br><br><span class="white-text">4. Оформлення та редагування</span>
+                            <br><br>- Видаляйте всі сторонні об'єкти, які можуть заважати читанню (водяні знаки, логотипи скан-груп тощо).
+                            <br>- Використовуйте єдиний стиль оформлення для всіх розділів однієї манги.
+                            <br>- Перевіряйте всі сторінки на наявність артефактів, смуг, плям тощо.
+
+                            <br><br><span class="white-text">5. Актуальність та частота оновлень</span>
+                            <br><br>- Намагайтеся завантажувати розділи регулярно, щоб підтримувати інтерес читачів.
+                            <br>- У разі затримки або припинення роботи над мангою, повідомте про це адміністрацію сайту та читачів.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour6">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour6" aria-expanded="false" aria-controls="collapseFour6">
+                            Правила для тайтлів
+                        </button>
+                    </h2>
+                    <div id="collapseFour6" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Правила додавання тайтлів для аніме та манги
+                            <br><br><span class="white-text">1. Загальні вимоги</span>
+                            <br><br>- Додавайте тільки ті тайтли, які відповідають тематиці сайту (аніме, манга, ранобе).
+                            <br>- Переконайтеся, що інформація є точною та повною перед додаванням.
+
+                            <br><br><span class="white-text">2. Назва тайтлу</span>
+                            <br><br>- Використовуйте оригінальну назву тайтлу (японською або англійською мовою) та її переклад українською.
+                            <br>- Уникайте некоректних або неповних назв.
+
+                            <br><br><span class="white-text">3. Опис та метадані</span>
+                            <br><br>- Додавайте детальний опис тайтлу (сюжет, головні персонажі, жанр тощо).
+                            <br>- Вказуйте всю доступну інформацію про тайтл: автора, студію, рік випуску, жанр, кількість епізодів або томів.
+                            <br>- Використовуйте правильні теги та категорії, щоб полегшити пошук тайтлу.
+
+                            <br><br><span class="white-text">4. Зображення та медіа</span>
+                            <br><br>- Додавайте якісні обкладинки та зображення, що відповідають тайтлу.
+                            <br>- Заборонено використовувати зображення, що містять водяні знаки інших сайтів або груп.
+
+                            <br><br><span class="white-text">5. Правильне форматування</span>
+                            <br><br>- Переконайтеся, що текст не містить граматичних та орфографічних помилок.
+                            <br>- Використовуйте стандартизоване форматування для всіх описів та метаданих.
+
+                            <br><br><span class="white-text">6. Джерела та посилання</span>
+                            <br><br>- Уникайте додавання посилань на сторонні ресурси або конкуренти.
+                            <br>- Якщо використовуєте інформацію з інших джерел, переконайтеся, що вона є достовірною та правильною.
+
+                            <br><br><span class="white-text">7. Актуальність інформації</span>
+                            <br><br>- Слідкуйте за актуальністю доданої інформації та вчасно оновлюйте її у разі змін.
+                            <br>- Видаляйте або редагуйте тайтли, які більше не відповідають вимогам або мають застарілу інформацію.
+
+                            <br><br><span class="white-text">8. Спілкування з адміністрацією</span>
+                            <br><br>- У разі виникнення питань або необхідності внесення змін зв'яжіться з адміністрацією сайту.
+                            <br>- Дотримуйтесь правил етикету та поваги у спілкуванні.
+
+                            <br><br><span class="white-text">9. Правила авторського права</span>
+                            <br><br>- Дотримуйтесь авторських прав та уникайте додавання контенту, що порушує ці права.
+                            <br>- Якщо виникають питання щодо правомірності додавання певного тайтлу, звертайтеся до адміністрації для отримання роз’яснень.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="forum" class="forum-title">Форум</div>
+            <div class="forum-line"></div>
+            <div class="accordion" id="faqAccordion7">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne7">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne7" aria-expanded="false" aria-controls="collapseOne7">
+                            Не можу писати на форумі
+                        </button>
+                    </h2>
+                    <div id="collapseOne7" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Для появи можливості писати на форумі достатньо просто мати підтверджений email на нашому сайті
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="pid" class="pid-title">Підказки</div>
+            <div class="pid-line"></div>
+            <div class="accordion" id="faqAccordion8">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne8">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne8" aria-expanded="false" aria-controls="collapseOne8">
+                            Що таке випадкова манга?
+                        </button>
+                    </h2>
+                    <div id="collapseOne8" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Функція "Випадкова манга" на аніме сайті манги призначена для того, щоб допомогти користувачам знайти нові та цікаві тайтли, які вони могли б пропустити або не знати про їхнє існування. Коли користувач натискає на кнопку "Випадкова манга", система випадковим чином обирає один із доступних на сайті тайтлів і відображає його інформацію.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo8">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo8" aria-expanded="false" aria-controls="collapseTwo8">
+                            Що таке сповіщення?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo8" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Сповіщення – це функція, метою якої є інформування користувача про оновлення обраного тайтлу або інформування користувача про діяльність того чи іншого автора манги.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree8">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree8" aria-expanded="false" aria-controls="collapseThree8">
+                            Налаштування фону
+                        </button>
+                    </h2>
+                    <div id="collapseThree8" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Кожен користувач на нашому сайті має можливість змінити свій фон на інший. Загалом на вибір є 6 підібраних фонів, які не псують атмосферу та вигляд дизайну всього сайту.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer th:insert="~{/blocks/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+<script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
+<script src="/js/loader-spinner.js"></script>
+</body>
+</html>
