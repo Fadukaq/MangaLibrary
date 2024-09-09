@@ -62,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const reportReplyForm = document.getElementById('reportReplyForm');
     const reportReplyModalElement = document.getElementById('reportReplyModal');
     const reportReplyModal = new bootstrap.Modal(reportReplyModalElement);
     const confirmReportReplyButton = document.getElementById('confirmReportReplyButton');
@@ -82,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     confirmReportReplyButton.addEventListener('click', () => {
         const reason = document.getElementById('reportReplyReason').value;
+        const replyIdReport = document.getElementById('reportReplyId').value;
+        const reportReplyForm = document.getElementById(`reportReplyForm-${replyIdReport}`);
         const maxLength = 255;
 
         if (!reason || reason.trim() === '') {
@@ -97,7 +98,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        document.getElementById('reportReasonReplyForm').value = reason;
+        reportReplyForm.querySelector('input[name="reason"]').value = reason;
+
+        const formData = new FormData(reportReplyForm);
         fetch(reportReplyForm.action, {
             method: 'POST',
             body: new FormData(reportReplyForm)

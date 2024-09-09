@@ -1,6 +1,5 @@
 //Comments
 document.addEventListener('DOMContentLoaded', () => {
-    const reportCommentForm = document.getElementById('reportCommentForm');
     const reportCommentModalElement = document.getElementById('reportCommentModal');
     const reportCommentModal = new bootstrap.Modal(reportCommentModalElement);
     const submitReportButton = document.getElementById('submitReport');
@@ -10,16 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const form = button.closest('form');
             const commentId = form.querySelector('#commentIdForm').value;
             const userId = form.querySelector('#userIdForm').value;
-            document.getElementById('reportCommentForm').querySelector('input[name="commentId"]').value = commentId;
-            document.getElementById('reportCommentForm').querySelector('input[name="userId"]').value = userId;
+            document.getElementById('reportCommentId').value = commentId;
+            document.getElementById('reportUserId').value = userId;
             reportCommentModal.show();
         });
     });
 
     submitReportButton.addEventListener('click', () => {
         const reason = document.getElementById('reportReasonComment').value;
-        const maxLength = 255;
+        const commentIdReport = document.getElementById('reportCommentId').value;
+        const reportCommentForm = document.getElementById(`reportCommentForm-${commentIdReport}`);
 
+        const maxLength = 255;
         if (!reason || reason.trim() === '') {
             reportCommentModal.hide();
             $('#errorMessage').text('Будь ласка, введіть причину скарги');
@@ -32,9 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('reportReasonComment').value = '';
             return;
         }
-        document.getElementById('reportReasonCommentForm').value = reason;
+        reportCommentForm.querySelector('input[name="reason"]').value = reason;
 
-
+        const formData = new FormData(reportCommentForm);
         fetch(reportCommentForm.action, {
             method: 'POST',
             body: new FormData(reportCommentForm)

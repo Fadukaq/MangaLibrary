@@ -551,7 +551,7 @@
                                                     </button>
                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-${comment.id}">
                                                         <li th:if="${user != currentUser}">
-                                                            <form id="reportCommentForm" action="#" th:action="@{/comment/report}" method="post" class="report-comment-form" onsubmit="return false;">
+                                                            <form th:id="'reportCommentForm-' + ${comment.id}" action="#" th:action="@{/comment/report}" method="post" class="report-comment-form" onsubmit="return false;">
                                                                 <input type="hidden" id="commentIdForm" name="commentId" th:value="${comment.id}" />
                                                                 <input type="hidden" id="userIdForm" name="userId" th:value="${currentUser.id}" />
                                                                 <input type="hidden" name="reason" id="reportReasonCommentForm" value="" />
@@ -627,7 +627,7 @@
                                                     </button>
                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-${reply.id}">
                                                         <li th:if="${user != currentUser}">
-                                                            <form id="reportReplyForm" action="#" th:action="@{/reply/report}" method="post" class="report-reply-form" onsubmit="return false;">
+                                                            <form th:id="'reportReplyForm-' + ${reply.id}" action="#" th:action="@{/reply/report}" method="post" class="report-reply-form" onsubmit="return false;">
                                                                 <input type="hidden" id="replyIdFormReply" name="replyId" th:value="${reply.id}" />
                                                                 <input type="hidden" id="userIdFormReply" name="userId" th:value="${currentUser.id}" />
                                                                 <input type="hidden" name="reason" id="reportReasonReplyForm" value="" />
