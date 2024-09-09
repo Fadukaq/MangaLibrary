@@ -97,18 +97,32 @@ public class ReplyService {
         final Matcher matcher = userIdPattern.matcher(text);
 
         StringBuffer result = new StringBuffer();
+        int lastMatchEnd = 0;
+        boolean hasMatched = false;
         while (matcher.find()) {
             long userId = Long.parseLong(matcher.group(1));
             String username = userService.getUsernameById(userId);
+            if (!hasMatched) {
+                result.append(text.substring(lastMatchEnd, matcher.start()));
+                hasMatched = true;
+            } else {
+                result.append("<span class='user-text'>")
+                        .append(text.substring(lastMatchEnd, matcher.start()))
+                        .append("</span>");
+            }
             String replacement = String.format(
                     "<a href='/profile/%d' class='user-mention'>@%s</a>",
                     userId,
                     username
             );
-            matcher.appendReplacement(result, replacement);
+            result.append(replacement);
+            lastMatchEnd = matcher.end();
         }
-        matcher.appendTail(result);
-
+        if (lastMatchEnd < text.length()) {
+            result.append("<span class='user-text'>")
+                    .append(text.substring(lastMatchEnd))
+                    .append("</span>");
+        }
         return result.toString();
     }
 }

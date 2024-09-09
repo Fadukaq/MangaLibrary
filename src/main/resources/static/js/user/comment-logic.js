@@ -88,15 +88,17 @@ document.addEventListener('DOMContentLoaded', function() {
             })
                 .then(response => {
                 if (response.ok) {
-                    const commentElement = document.querySelector(`.comment-item input[name="comment-id"][value="${commentIdToDelete}"]`).closest('.comment-item');
-                    if (commentElement) {
-                        console.log("Удаление элемента:", commentElement);
-                        commentElement.remove();
+                    const commentElementMangaDetails = document.querySelector(`#comment-${commentIdToDelete}`);
+                    if (commentElementMangaDetails) {
+                        commentElementMangaDetails.style.display = 'none';
+                        commentElementMangaDetails.remove();
                         modalCommentDelete.hide();
                     } else {
-                        modalCommentDelete.hide();
-                        $('#errorMessage').text(`Элемент с ID ${commentIdToDelete} не найден.`);
-                        $('#errorModal').modal('show');
+                        const commentElement = document.querySelector(`.comment-item input[name="comment-id"][value="${commentIdToDelete}"]`)?.closest('.comment-item');
+                        if (commentElement) {
+                            commentElement.remove();
+                            modalCommentDelete.hide();
+                        }
                     }
                 } else {
                     alert('Помилка під час видалення коментаря.');
@@ -110,7 +112,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const editCommentForm = document.getElementById('editCommentForm');
     const editCommentModalElement = document.getElementById('editCommentModal');
     const editCommentModal = new bootstrap.Modal(editCommentModalElement);
     const confirmEditCommentButton = document.getElementById('confirmEditCommentButton');
@@ -122,8 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const commentText = formCommentEdit.querySelector('#commentTextEdit').value;
             document.getElementById('edit-comment-id').value = commentIdEdit;
             document.getElementById('edit-comment-text').value = commentText;
-            document.getElementById('editCommentForm').querySelector('input[name="commentIdEdit"]').value = commentIdEdit;
-            document.getElementById('editCommentForm').querySelector('input[name="text"]').value = commentText;
             editCommentModal.show();
         });
     });
@@ -131,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     confirmEditCommentButton.addEventListener('click', () => {
         const commentIdEdit = document.getElementById('edit-comment-id').value;
         const commentText = document.getElementById('edit-comment-text').value;
+        const editCommentForm = document.getElementById(`editCommentForm-${commentIdEdit}`);
 
         if (!commentText.trim()) {
             editCommentModal.hide();
@@ -149,16 +149,22 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then(response => response.text().then(text => {
             if (response.ok) {
-                const commentTextElement = $(`#comments-list li.comment-item[data-comment-id="${commentIdEdit}"] .comment-text`);
-                if (commentTextElement.length) {
-                    const hiddenInput = document.getElementById('commentTextEdit');
-                    hiddenInput.value = commentText;
-                    commentTextElement.text(commentText);
+                const commentElementMangaDetails = document.querySelector(`#comment-${commentIdEdit}`);
+                if (commentElementMangaDetails) {
+                    const commentElementMangaDetailsText = commentElementMangaDetails.querySelector('.user-comment-text');
+                    if (commentElementMangaDetailsText) {
+                        commentElementMangaDetailsText.textContent = commentText;
+                    }
+                } else {
+                    const commentTextElement = $(`#comments-list li.comment-item[data-comment-id="${commentIdEdit}"] .comment-text`);
+                    if (commentTextElement.length) {
+                        commentTextElement.text(commentText);
+                    }
                 }
                 editCommentModal.hide();
                 $('#successMessage').text(text);
                 $('#successModal').modal('show');
-            } else {
+            }else {
                 throw new Error('Ошибка: ' + response.status);
             }
         }))

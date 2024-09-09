@@ -30,14 +30,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                     .then(response => {
                     if (response.ok) {
-                        const replyElement = document.querySelector(`.reply-item input[name="reply-id"][value="${replyIdToDelete}"]`).closest('.reply-item');
-                        if (replyElement) {
-                            replyElement.remove();
+                        const replyElementMangaDetails = document.querySelector(`#reply-${replyIdToDelete}`);
+                        if (replyElementMangaDetails) {
+                            replyElementMangaDetails.style.display = 'none';
+                            replyElementMangaDetails.remove();
                             modalDeleteReply.hide();
                         } else {
-                            $('#errorMessage').text(`Елемент з ID ${replyIdToDelete} не знайдений.`);
-                            $('#errorMessage').modal('show');
-                            console.error(`Елемент з ID ${replyIdToDelete} не знайдений.`);
+                            const replyElement = document.querySelector(`.reply-item input[name="reply-id"][value="${replyIdToDelete}"]`).closest('.reply-item');
+                            if (replyElement) {
+                                replyElement.remove();
+                                modalDeleteReply.hide();
+                            }
                         }
                     } else {
                         modalDeleteReply.hide();
@@ -125,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const formReplyEdit = document.getElementById('editReplyForm');
     const editReplyModalElement = document.getElementById('editReplyModal');
     const editReplyModal = new bootstrap.Modal(editReplyModalElement);
     const editReplyForm = document.getElementById('edit-reply-form');
@@ -133,22 +135,36 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.edit-reply').forEach(button => {
         button.addEventListener('click', () => {
             const replyFormEdit = button.closest('form');
-
             const replyId = replyFormEdit.querySelector('#replyIdEdit').value;
             const replyText = replyFormEdit.querySelector('#replyTextEdit').value;
-
-            document.getElementById('edit-reply-id').value = replyId;
-            document.getElementById('edit-reply-text').value = replyText;
-            document.getElementById('editReplyForm').querySelector('input[name="replyIdEdit"]').value = replyId;
-            document.getElementById('editReplyForm').querySelector('input[name="text"]').value = replyText;
+            const replyElement = document.querySelector(`.user-reply-text[data-reply-id="${replyId}"]`);
+            if (replyElement) {
+                const mention = replyElement.querySelector('.user-mention') ?
+                replyElement.querySelector('.user-mention').textContent.trim() : "";
+                const textAfterMention = replyElement.querySelector('.user-text') ?
+                replyElement.querySelector('.user-text').textContent.trim() : "";
+                const combinedText = `${mention} ${textAfterMention}`.trim();
+                if(combinedText==''){
+                    document.getElementById('edit-reply-text').value = replyText;
+                }else{
+                    document.getElementById('edit-reply-id').value = replyId;
+                    document.getElementById('edit-reply-text').value = combinedText;
+                }
+                editReplyModal.show();
+            }
+            else{
+                document.getElementById('edit-reply-id').value = replyId;
+                document.getElementById('edit-reply-text').value = replyText;
+            }
             editReplyModal.show();
         });
     });
+
     editReplyForm.addEventListener('submit', (event) => {
         event.preventDefault();
-
         const replyId = document.getElementById('edit-reply-id').value;
         const replyText = document.getElementById('edit-reply-text').value.trim();
+        const formReplyEdit = document.getElementById(`editReplyForm-${replyId}`);
 
         if (!replyText) {
             editReplyModal.hide();
@@ -174,15 +190,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
             .then(data => {
-            const replyTextElement = document.querySelector(`.reply-item[data-reply-id="${replyId}"] .reply-text`);
-            if (replyTextElement) {
-                const hiddenInput = document.getElementById('replyTextEdit');
-                hiddenInput.value = replyText;
-                replyTextElement.textContent = replyText;
+            const replyElementMangaDetails = document.querySelector(`#reply-${replyId}`);
+            if (replyElementMangaDetails) {
+                const replyTextElement = replyElementMangaDetails.querySelector('.user-reply-text');
+                if (replyTextElement) {
+                    replyTextElement.textContent = replyText;
+                }
+            }else {
+                const replyElement = document.querySelector(`.reply-item[data-reply-id="${replyId}"]`);
+                if (replyElement) {
+                    const replyTextElement = replyElement.querySelector('.reply-text');
+                    if (replyTextElement) {
+                        replyTextElement.textContent = replyText;
+                    }
+                }
             }
             editReplyModal.hide();
-            $('#successMessage').text('Відповідь успішно відредагована');
-            $('#successModal').modal('show');
         })
             .catch(error => {
             console.error('Error:', error);

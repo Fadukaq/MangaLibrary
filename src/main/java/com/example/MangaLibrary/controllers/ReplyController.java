@@ -41,7 +41,7 @@ public class ReplyController {
     @Autowired
     ReplyService replyService;
 
-    @GetMapping("/manga/comment/reply") ///////////////////////////////////////////////////////////////////////////////
+    @PostMapping("/manga/comment/reply")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> addReply(
             @RequestParam("text") String text,

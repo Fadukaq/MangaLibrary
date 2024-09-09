@@ -143,15 +143,18 @@ public class UserController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             User currentUser = userRepo.findByUserName(username);
+            String formattedUserRole = userService.formattingUserRole(user.getUserRole());
 
             if(userSettings.getProfilePrivacy().equals("private") && userSettings.getUser().getId() != currentUser.getId()) {
                 model.addAttribute("user", user);
+                model.addAttribute("currentUser", currentUser);
+                model.addAttribute("formattedUserRole", formattedUserRole);
                 model.addAttribute("profilePrivacy", "private");
                 return "user/user-profile";
             }
 
             Pageable pageable = PageRequest.of(page - 1, size);
-            Pageable pageableComment = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+            Pageable pageableComment = PageRequest.of(page - 1, 4, Sort.by(Sort.Direction.DESC, "createdAt"));
 
             Page<Comment> commentsUser = userService.findCommentsByUserId(user, pageableComment);
             List<Replies> repliesUser = userService.findRepliesByUser(user);
@@ -171,7 +174,6 @@ public class UserController {
             }
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm", new Locale("uk", "UA"));
             String formattedRegisterDate = user.getRegistrationDate().format(formatter);
-            String formattedUserRole = userService.formattingUserRole(user.getUserRole());
 
             List<FriendRequest> friendRequests = friendRequestRepo.findByReceiverAndStatus(currentUser, RequestStatus.PENDING);
             List<FriendRequest> sentRequests = friendRequestRepo.findBySenderAndStatus(currentUser,RequestStatus.PENDING);

@@ -802,3 +802,47 @@ a {
 .status-inactive {
     color: #f44336;
 }
+
+.tab-pane-friends {
+    background-color: #1c1c1c;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.list-group-item-friends {
+    background-color: #2a2a2a;
+    color: #fff;
+    border: none;
+    border-bottom: 1px solid #444;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.list-group-item-friends img {
+    border: 2px solid #555;
+}
+.form-friends {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+.no-content-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+    color: #ff0080;
+    padding: 20px;
+    background-color: #2a2a2a;
+    border-radius: 5px;
+}
+
+.no-content-message p {
+    font-size:17px;
+    font-weight:bold;
+    margin: 0;
+}

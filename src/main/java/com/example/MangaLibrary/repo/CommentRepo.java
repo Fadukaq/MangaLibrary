@@ -15,4 +15,6 @@ public interface CommentRepo extends JpaRepository<Comment, Long> {
     Page<Comment> findByUserId(Long userId, Pageable pageable);
 
     Page<Comment> findByUser(User user, Pageable pageable);
+
+    List<Comment> findByMangaIdOrderByCreatedAtDesc(Long id);
 }

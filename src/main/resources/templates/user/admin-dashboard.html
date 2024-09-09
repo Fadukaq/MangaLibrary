@@ -55,7 +55,7 @@
                             <a th:href="@{/manga/edit/{id}(id=${manga.id})}" title="Редагувати">
                                 <i class="fa fa-edit"></i>
                             </a>
-                            <form th:action="@{/manga/delete/{id}(id=${manga.id})}" method="POST" class="delete-form" style="display:none;">
+                            <form th:action="@{/manga/deleteByAdmin/{id}(id=${manga.id})}" method="POST" class="delete-form" style="display:none;">
                                 <input type="hidden" name="_method" value="DELETE"/>
                                 <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                                 <button class="btn btn-delete mb-2" type="submit" style="width: 150px;">Видалити</button>

@@ -73,8 +73,6 @@ public class MangaController {
     ReplyService replyService;
     @Autowired
     CommentRepo commentRepo;
-
-    //MANGA
     @GetMapping("/manga")
     public String mangas(
             @RequestParam(name = "page", defaultValue = "1") int page,
@@ -200,10 +198,10 @@ public class MangaController {
         return "redirect:/manga/"+id;
     }
 
-    @GetMapping("/manga/delete/{id}") ///////////////////////////////////////////////////////////////////////////////////
-    public String MangaDelete(@PathVariable(value ="id") long id,Model model) {
+    @PostMapping("/manga/delete/{id}")
+    public String deleteManga(@PathVariable("id") long id, Model model) {
         Optional<Manga> mangaToDelete = mangaRepo.findById(id);
-        if(mangaToDelete.isPresent()) {
+        if (mangaToDelete.isPresent()) {
             mangaRepo.delete(mangaToDelete.get());
             mangaService.deleteFolder(mangaToDelete.get().getId());
             Iterable<User> usersIterable = userRepo.findAll();
@@ -211,12 +209,13 @@ public class MangaController {
             usersIterable.forEach(users::add);
             userService.deleteMangaFromUsersList(users, id);
             return "redirect:/manga";
-        }else {
+        } else {
             model.addAttribute("errorMessage", "Такої манги не знайдено!");
             return "main/error";
         }
     }
-    @PostMapping("/manga/delete/{id}")
+
+    @PostMapping("/manga/deleteByAdmin/{id}")
     public String mangaDelete(@PathVariable(value = "id") long id) {
             Optional<Manga> mangaToDelete = mangaRepo.findById(id);
             if (mangaToDelete.isPresent()) {
@@ -330,14 +329,13 @@ public class MangaController {
                 model.addAttribute("ratingValue", ratingValue.getRating());
             }
 
-            Pageable pageable = PageRequest.of(1 - 1, 12, Sort.by(Sort.Direction.DESC, "createdAt"));
-            Page<Comment> commentPage = commentRepo.findByMangaId(id, pageable);
+            List<Comment> comments = commentRepo.findByMangaIdOrderByCreatedAtDesc(id);
 
             Map<Long, Integer> userRatings = new HashMap<>();
             Map<Long, Map<String, Integer>> commentRatings = new HashMap<>();
             Map<Long, List<Replies>> commentReplies = new HashMap<>();
 
-            for (Comment comment : commentPage.getContent()) {
+            for (Comment comment : comments) {
                 CommentRating userRating = commentRatingRepo.findByCommentIdAndUserId(comment.getId(), user.getId());
                 userRatings.put(comment.getId(), userRating != null ? userRating.getDelta() : 0);
 
@@ -349,19 +347,17 @@ public class MangaController {
                 ratingInfo.put("downvotes", (int) downvotes);
                 commentRatings.put(comment.getId(), ratingInfo);
 
-                List<Replies> replies = repliesRepo.findByParentCommentId(comment.getId());
-                for( Replies reply : replies)
-                {
+                List<Replies> replies = repliesRepo.findByParentCommentIdOrderByCreatedAtDesc(comment.getId());
+                for (Replies reply : replies) {
                     reply.setText(replyService.convertUserIdsToUsernames(reply.getText()));
                 }
                 commentReplies.put(comment.getId(), replies);
             }
 
-            model.addAttribute("comments", commentPage.getContent());
+            model.addAttribute("comments", comments);
             model.addAttribute("userRatings", userRatings);
             model.addAttribute("commentRatings", commentRatings);
             model.addAttribute("commentReplies", commentReplies);
-
 
 
             model.addAttribute("manga", manga);
@@ -391,143 +387,6 @@ public class MangaController {
             model.addAttribute("errorMessage", "Такої манги не знайдено!");
             return "main/error";
         }
-    }
-
-    //Chapter
-    @GetMapping("/manga/{mangaId}/chapter/add")
-    public String chapterAddGet(@PathVariable Long mangaId, ChapterForm chapterForm, Model model) {
-        Optional<Manga> manga = mangaRepo.findById(mangaId);
-        if(manga.isPresent()) {
-            chapterForm.setManga(manga.get());
-            model.addAttribute("chapterForm", chapterForm);
-            model.addAttribute("mangaId", mangaId);
-            return "manga/manga-add-chapter";
-        }else {
-            model.addAttribute("errorMessage", "Такої манги не знайдено!");
-            return "main/error";
-        }
-    }
-
-    @PostMapping("/manga/{mangaId}/chapter/add")
-    public String chapterAddPost(@PathVariable Long mangaId, @Valid @ModelAttribute ChapterForm chapterForm,
-                                 BindingResult result, RedirectAttributes redirectAttributes, Model model) throws IOException {
-        if (!chapterService.isValidChapterFormAdd(chapterForm, result)) {
-            model.addAttribute("mangaId", mangaId);
-            return "manga/manga-add-chapter";
-        }
-
-        Optional<Manga> thisManga = mangaRepo.findById(mangaId);
-        if (thisManga.isPresent()) {
-            Manga manga = thisManga.get();
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-            User user = userRepo.findByUserName(username);
-
-            chapterService.addChapter(chapterForm, manga, user);
-            return "redirect:/manga/" + mangaId;
-        } else {
-            model.addAttribute("errorMessage", "Такої манги не знайдено!");
-            return "main/error";
-        }
-    }
-
-    @GetMapping("/manga/{mangaId}/chapter/{chapterId}")
-    public String viewChapter(@PathVariable Long mangaId, @PathVariable Long chapterId, Model model) {
-        Optional<Manga> mangaOptional = mangaRepo.findById(mangaId);
-        Optional<Chapter> chapterOptional = chapterRepo.findById(chapterId);
-
-        if (mangaOptional.isPresent() && chapterOptional.isPresent()) {
-            Manga manga = mangaOptional.get();
-            Chapter chapter = chapterOptional.get();
-            String[] chapterImageFileNames = chapter.getChapterPages().split(",");
-
-            String[] chapterImageUrls = new String[chapterImageFileNames.length];
-            for (int i = 0; i < chapterImageFileNames.length; i++) {
-                chapterImageUrls[i] = String.format("/images/mangas/%s/chapters/%s/%s", mangaId, chapter.getId(), chapterImageFileNames[i]);
-            }
-
-            model.addAttribute("manga", manga);
-            model.addAttribute("chapter", chapter);
-            model.addAttribute("chapterImageUrls", chapterImageUrls);
-
-            return "manga/manga-chapter-view";
-        } else {
-            model.addAttribute("errorMessage", "Такої манги або глави не знайдено!");
-            return "main/error";
-        }
-    }
-
-    @GetMapping("/manga/{mangaId}/chapter/edit/{chapterId}")
-    public String chapterEditGet(@PathVariable Long mangaId, @PathVariable Long chapterId, Model model) {
-        Optional<Manga> mangaOptional = mangaRepo.findById(mangaId);
-        Optional<Chapter> chapterOptional = chapterRepo.findById(chapterId);
-
-        if (mangaOptional.isPresent() && chapterOptional.isPresent()) {
-            Manga manga = mangaOptional.get();
-            Chapter chapter = chapterOptional.get();
-            String[] chapterImageFileNames = chapter.getChapterPages().split(",");
-
-            String[] chapterImageUrls = new String[chapterImageFileNames.length];
-            for (int i = 0; i < chapterImageFileNames.length; i++) {
-                chapterImageUrls[i] = String.format("/images/mangas/%d/chapters/%d/%s", mangaId, chapterId, chapterImageFileNames[i]);
-            }
-
-            ChapterForm chapterForm = new ChapterForm();
-            chapterForm.setManga(manga);
-            chapterForm.setChapter(chapter);
-            model.addAttribute("chapterForm", chapterForm);
-            model.addAttribute("manga", manga);
-            model.addAttribute("chapter", chapter);
-            model.addAttribute("chapterImageUrls", chapterImageUrls);
-            return "manga/manga-chapter-edit";
-        } else {
-            model.addAttribute("errorMessage", "Такої глави, або манги не знайдено!");
-            return "main/error";
-        }
-    }
-
-    @PostMapping("/manga/{mangaId}/chapter/edit/{chapterId}")
-    public String chapterEditPost(@PathVariable Long mangaId, @PathVariable Long chapterId,
-                                  @Valid @ModelAttribute("chapterForm") ChapterForm chapterForm,
-                                  BindingResult result, RedirectAttributes redirectAttributes,
-                                  Model model) throws IOException {
-        Optional<Manga> mangaOptional = mangaRepo.findById(mangaId);
-        Optional<Chapter> chapterOptional = chapterRepo.findById(chapterId);
-
-        if (mangaOptional.isEmpty() || chapterOptional.isEmpty()) {
-            model.addAttribute("errorMessage", "Такої глави, або манги не знайдено!");
-            return "main/error";
-        }
-
-        Manga manga = mangaOptional.get();
-        Chapter chapter = chapterOptional.get();
-
-        if (!chapterService.isValidChapterForm(chapterForm , result)) {
-            chapterService.addChapterDataToModel(model, manga, chapter, chapterForm);
-            return "manga/manga-chapter-edit";
-        }
-
-        try {
-            chapterService.editChapter(chapterForm, manga, chapter);
-            redirectAttributes.addFlashAttribute("message", "Главу успішно оновлено");
-        } catch (IOException e) {
-            model.addAttribute("errorMessage", "Помилка під час оновлення глави: " + e.getMessage());
-            return "main/error";
-        }
-
-        return "redirect:/manga/"+mangaId;
-    }
-
-    @PostMapping("/manga/{mangaId}/chapter/delete/{chapterId}")
-    public String deleteChapter(@PathVariable Long mangaId, @PathVariable Long chapterId, RedirectAttributes redirectAttributes) {
-        try {
-            chapterService.deleteChapter(mangaId, chapterId);
-            redirectAttributes.addFlashAttribute("message", "Главу успішно видалено");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Помилка видалення глави: " + e.getMessage());
-        }
-        return "redirect:/manga/"+mangaId+"#chapters";
     }
 
     @PostMapping("/manga/add-to-list")
@@ -645,8 +504,6 @@ public class MangaController {
         return ResponseEntity.ok(response);
     }
 
-
-
     @GetMapping("/manga/getUsernameById")
     @ResponseBody
     public ResponseEntity<Map<String, String>> getUsernameById(@RequestParam("userId") Long userId) {
@@ -661,6 +518,7 @@ public class MangaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
+
     @GetMapping("/random")
     public String getRandomMangaId(Model model) {
 

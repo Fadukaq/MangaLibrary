@@ -144,3 +144,84 @@ document.addEventListener('DOMContentLoaded', function() {
         button.style.display = 'none';
     }
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const items = Array.from(document.querySelectorAll('#comments-list .list-group-item-comments'));
+    if(items.length > 0)
+    {
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const itemsPerPage = 4;
+        let currentIndex = 0;
+        let loading = false;
+
+        function showMoreItems() {
+            if (loading) return;
+            loading = true;
+            loadingIndicator.style.display = 'block';
+            setTimeout(() => {
+                const endIndex = Math.min(currentIndex + itemsPerPage, items.length);
+                for (let i = currentIndex; i < endIndex; i++) {
+                    items[i].style.display = 'block';
+                }
+                currentIndex = endIndex;
+                loadingIndicator.style.display = 'none';
+                loading = false;
+
+                if (currentIndex >= items.length) {
+                    window.removeEventListener('scroll', onScroll);
+                }
+            }, 500);
+        }
+
+        function onScroll() {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            if (scrollTop + windowHeight >= documentHeight - 100) {
+                showMoreItems();
+            }
+        }
+
+        function onTabChange(event) {
+            if (event.target.getAttribute('href') === '#comments') {
+                showMoreItems();
+            }
+        }
+        if (document.getElementById('comments').classList.contains('show')) {
+            showMoreItems();
+        }
+        document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', onTabChange);
+        });
+        window.addEventListener('scroll', onScroll);
+        showMoreItems();
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    let deleteForm = null;
+    document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
+        button.addEventListener('click', function() {
+            deleteForm = this.closest('form');
+        });
+    });
+
+    document.getElementById('confirmDeleteButton').addEventListener('click', function() {
+        if (deleteForm) {
+            deleteForm.submit();
+        }
+    });
+});
+document.addEventListener('DOMContentLoaded', function() {
+    function updateSortButtonState() {
+        const comments = document.querySelectorAll('#comments-list .list-group-item-comments');
+        const sortButton = document.getElementById('dropdownMenuButton');
+        if (comments.length === 0) {
+            sortButton.disabled = true;
+            sortButton.classList.add('disabled');
+        } else {
+            sortButton.disabled = false;
+            sortButton.classList.remove('disabled');
+        }
+    }
+    updateSortButtonState();
+});

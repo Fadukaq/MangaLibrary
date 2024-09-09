@@ -78,32 +78,39 @@ function updateRatingDisplay(commentId, newRating, ratingTitle) {
     ratingElement.attr('title', ratingTitle);
 }
 
-$('#comments-list').on('click', '.upvote-button, .downvote-button', function() { ////////////////////////////////////
-    const commentId = $(this).data('comment-id');
-    const userId = $('#comments').data('current-user-id');
-    const delta = $(this).hasClass('upvote-button') ? 1 : -1;
-    const currentButton = $(this);
+$(document).ready(function() {
+    $('.rate-form').on('submit', function(event) {
+        event.preventDefault();
 
-    $.ajax({
-        url: `/comment/${commentId}/rate`,
-        method: 'GET',
-        data: {
-            userId: userId,
-            delta: delta
-        },
-        success: function(response) {
-            updateRatingDisplay(commentId, response.newRatingScore, response.ratingTitle);
-            if (currentButton.hasClass('selected')) {
-                currentButton.removeClass('selected');
-            } else {
-                currentButton.addClass('selected');
-                currentButton.siblings('.upvote-button, .downvote-button').removeClass('selected');
+        const form = $(this);
+        const url = form.attr('action');
+        const formData = form.serialize();
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                const commentId = form.find('input[name="commentId"]').val();
+                const newRatingScore = response.newRatingScore;
+                const ratingTitle = response.ratingTitle;
+                updateRatingDisplay(commentId, newRatingScore, ratingTitle)
+
+                if (form.hasClass('upvote-form')) {
+                    form.find('.upvote-button').addClass('selected');
+                    form.closest('.rating-controls').find('.downvote-button').removeClass('selected');
+                } else {
+                    form.find('.downvote-button').addClass('selected');
+                    form.closest('.rating-controls').find('.upvote-button').removeClass('selected');
+                }
+            },
+            error: function() {
+                console.error("Ошибка при голосовании");
             }
-        },
-        error: function() {
-        }
+        });
     });
 });
+
 $(document).ready(function() {
     $('.show-replies-button').each(function() {
         $(this).on('click', function() {
@@ -190,10 +197,10 @@ $('#comments-list').on('submit', '.reply-form', function(event) {
     formDataObject.parentCommentId = parentId;
     formDataObject.mangaId = mangaId;
 
-    const queryString = $.param(formDataObject);
     $.ajax({
-        type: 'GET',
-        url: '/manga/comment/reply?' + queryString,
+        type: 'POST',
+        url: '/manga/comment/reply',
+        data: formDataObject,
         success: function(response) {
             if (response.success) {
                 const newReply = response.reply;
@@ -201,19 +208,19 @@ $('#comments-list').on('submit', '.reply-form', function(event) {
                 const replyText = linkifyUsernamesAndReplaceIds(newReply.text);
                 console.log(replyText);
                 const newReplyHtml = `
-                                    <div class="comment reply" id="comment-${newReply.id}">
-                                        <div class="reply-header">
-                                            <a href="/profile/${newReply.userId}" class="user-link">
-                                                <img src="${newReply.ProfilePicture}" class="user-icon" alt="${newReply.userName}'s icon">
-                                                <span class="user-name">${newReply.userName}</span>
-                                            </a>
-                                        </div>
-                                        <p class="user-reply-text">${replyText}</p>
-                                        <div class="reply-footer">
-                                            <small class="comment-time">${formattedDate}</small>
-                                        </div>
-                                    </div>
-                                `;
+                    <div class="comment reply" id="comment-${newReply.id}">
+                        <div class="reply-header">
+                            <a href="/profile/${newReply.userId}" class="user-link">
+                                <img src="${newReply.ProfilePicture}" class="user-icon" alt="${newReply.userName}'s icon">
+                                <span class="user-name">${newReply.userName}</span>
+                            </a>
+                        </div>
+                        <p class="user-reply-text">${replyText}</p>
+                        <div class="reply-footer">
+                            <small class="comment-time">${formattedDate}</small>
+                        </div>
+                    </div>
+                `;
                 $(`#comment-${parentId}`).append(newReplyHtml);
 
                 $form.closest('.reply-form-container').hide();
@@ -227,6 +234,7 @@ $('#comments-list').on('submit', '.reply-form', function(event) {
             console.error('Помилка під час додавання відповіді:', textStatus, errorThrown);
         }
     });
+
     function formatDate(dateString) {
         const date = new Date(dateString);
         return date.toLocaleString('uk-UA', {
@@ -253,15 +261,64 @@ $(document).on('click', '.reply-on-reply-button', function() {
 
     $formContainer.toggle();
 });
+
 $('#comments-list').on('click', '.cancel-reply-on-reply', function() {
     $(this).closest('.reply-on-reply-form-container').hide();
 });
+
 document.addEventListener("DOMContentLoaded", function() {
     const replyElement = document.querySelector('.user-reply-text');
-    const originalText = replyElement.getAttribute('data-text');
-
-    if (originalText) {
-        const updatedText = originalText;
-        replyElement.innerHTML = updatedText;
+    if(replyElement){
+        const originalText = replyElement.getAttribute('data-text');
+        if (originalText) {
+            const updatedText = originalText;
+            replyElement.innerHTML = updatedText;
+        }
     }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const sortDropdown = document.querySelector('.dropdown-menu-sortBy');
+    const commentsList = document.getElementById('comments-list');
+
+    function sortComments(criteria) {
+        event.preventDefault();
+        const comments = Array.from(commentsList.querySelectorAll('.list-group-item-comments'));
+
+        comments.sort((a, b) => {
+            const dateA = new Date(a.querySelector('.comment-time').getAttribute('data-date'));
+            const dateB = new Date(b.querySelector('.comment-time').getAttribute('data-date'));
+
+            if (criteria === 'byNew') {
+                return dateB - dateA;
+            } else if (criteria === 'byRating') {
+                const ratingA = parseInt(a.querySelector('.rating-score').textContent, 10);
+                const ratingB = parseInt(b.querySelector('.rating-score').textContent, 10);
+                return ratingB - ratingA;
+            }
+        });
+        commentsList.innerHTML = '';
+        comments.forEach(comment => commentsList.appendChild(comment));
+    }
+
+    function setActiveMenuItem(criteria) {
+        const items = sortDropdown.querySelectorAll('.dropdown-item');
+        items.forEach(item => {
+            if (item.getAttribute('data-sort') === criteria) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    sortDropdown.addEventListener('click', function(event) {
+        if (event.target.classList.contains('dropdown-item')) {
+            const sortBy = event.target.getAttribute('data-sort');
+            const dropdownText = document.getElementById('dropdownMenuText');
+            dropdownText.textContent = event.target.textContent;
+            sortComments(sortBy);
+            setActiveMenuItem(sortBy);
+        }
+    });
 });

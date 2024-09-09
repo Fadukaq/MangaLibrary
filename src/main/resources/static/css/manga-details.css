@@ -1498,3 +1498,23 @@ textarea {
     margin-bottom:15px;
     border-bottom: 2px dotted #3d3d3d;
 }
+.comment-footer {
+    display: flex;
+    align-items: center;
+}
+.rating-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.rating-score {
+    flex-grow: 1;
+    text-align: center;
+}
+.loading-indicator {
+    text-align: center;
+    padding: 10px;
+    font-size: 16px;
+    color: #ff0080;
+}

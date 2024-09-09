@@ -4,6 +4,7 @@ import ch.qos.logback.core.model.Model;
 import com.example.MangaLibrary.models.*;
 import com.example.MangaLibrary.repo.*;
 import com.example.MangaLibrary.service.CommentService;
+import com.example.MangaLibrary.service.ReplyService;
 import com.example.MangaLibrary.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class CommentController {
     CommentRatingRepo commentRatingRepo;
     @Autowired
     RepliesRepo repliesRepo;
+    @Autowired
+    ReplyService replyService;
+
     @PostMapping("/comment/{mangaId}/add-comment")
     @ResponseBody
     public ResponseEntity<Comment> addComment(@PathVariable Long mangaId, @RequestParam String text, Principal principal) {
@@ -66,10 +70,10 @@ public class CommentController {
     }
 
 
-    @GetMapping("/comment/{commentId}/rate") /////////////////////////////////////////////////////////////////////
-    public ResponseEntity<Map<String, Object>> updateRatingGET(@PathVariable Long commentId,
-                                                               @RequestParam Long userId,
-                                                               @RequestParam int delta) {
+    @PostMapping("/comment/{commentId}/rate")
+    public ResponseEntity<Map<String, Object>> updateRatingPOST(@PathVariable Long commentId,
+                                                                @RequestParam Long userId,
+                                                                @RequestParam int delta) {
         commentService.updateRating(commentId, userId, delta);
 
         Map<String, Object> ratingInfo = new HashMap<>();

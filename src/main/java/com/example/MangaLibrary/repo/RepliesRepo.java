@@ -17,4 +17,6 @@ public interface RepliesRepo extends JpaRepository<Replies, Long> {
     List<Replies> findByParentCommentId(long id);
 
     List<Replies> findByUser(User user);
+
+    List<Replies> findByParentCommentIdOrderByCreatedAtDesc(long id);
 }
