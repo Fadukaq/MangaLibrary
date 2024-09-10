@@ -1,79 +1,100 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
-    <title th:text="${title}"></title>
+    <title>Налаштування</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/token-alerts.css">
-    <link rel="stylesheet" href="/css/transparent-container.css">
     <link rel="stylesheet" href="/css/loader.css">
-    <link rel="stylesheet" href="/css/user-settings.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/user/user-settings.css">
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
-<div class="container transparent-container mt-5 mb-5">
-    <h1>Settings</h1>
-    <form method="POST" th:action="@{/profile/settings/{id}(id=${user.id})}" th:object="${userSettings}">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        <input type="hidden" id="selectedImageInput" name="selectedImage" th:value="${selectedImage}">
-        <input type="hidden" id="GetBackGroundImgUser" th:value="${GetBackGroundImgUser}">
-        <div class="backgroundImg" id="backgroundImagesContainer">
-            <div class="row mt-3">
-                <div class="col-md-4 mb-3">
-                    <img src="/images/settingsPicture/backGroundSettings1.jpg" alt="Image 1" class="img-fluid" onclick="selectImage(this)">
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav flex-column nav-tabs" id="settingsTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab">Інформація</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="security-tab" data-toggle="tab" href="#security" role="tab">Безпека та вхід</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="background-tab" data-toggle="tab" href="#background" role="tab">Фон</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-md-9">
+            <div class="tab-content settings-block" id="settingsContent">
+                <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                    <div class="d-flex align-items-start">
+                        <div class="custom-file-upload-wrapper me-4">
+                            <div class="custom-file-upload-container" onclick="document.getElementById('posterImage').click();">
+                                <input type="file" th:field="*{user.profilePicture}" id="posterImage" accept="image/jpeg, image/png" style="display: none;" onchange="previewImage(event, 'posterImagePreview', 'posterUploadIcon');">
+                                <img id="posterImagePreview" class="preview-image" alt="Avatar Preview" style="display:none;">
+                                <i id="posterUploadIcon" class="fas fa-upload"></i>
+                            </div>
+                            <p class="text-center mt-2">Аватарка</p>
+                            <div style="color:red" th:if="${#fields.hasErrors('user.profilePicture')}" th:errors="*{user.profilePicture}">profilePicture error</div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <label class="form-label" title="Змініть свій нікнейм">Нік: <span style="color:red">*</span></label>
+                            <input type="text" name="user.userName" th:value="*{user.userName}" class="form-control" autocomplete="off">
+                            <div style="color:red" th:if="${#fields.hasErrors('user.userName')}" th:errors="*{user.userName}">userName error</div>
+
+                            <label class="form-label mt-3" for="privacySelect">Приватність</label>
+                            <select class="custom-select" id="privacySelect" style="width: 200px;">
+                                <option value="public">Публічний</option>
+                                <option value="friendly">Дружній</option>
+                                <option value="private">Приватний</option>
+                            </select>
+
+                            <label class="form-label mt-3" for="readStyle">Стиль читання</label>
+                            <select class="custom-select" id="readStyle" style="width: 200px;">
+                                <option value="scroll-down">Вниз</option>
+                                <option value="left-to-right">Свайп</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="user-about mt-3 d-flex-none" style="padding-left:15px;padding-right: 15px;">
+                        <label class="form-label" title="Розкажіть щось про себе!">Про себе: <span style="color:red">*</span></label>
+                        <textarea name="user.about" placeholder="Введіть щось про себе" class="form-control" th:text="*{user.about}" autocomplete="off"></textarea>
+                        <div style="color:red" th:if="${#fields.hasErrors('user.about')}" th:errors="*{user.about}">user about error</div>
+                    </div>
+                    <div class="form-check mt-3" style="padding-left: 40px;">
+                        <input class="form-check-input" type="checkbox" id="ageConsent" required>
+                        <label class="form-check-label" for="ageConsent">
+                            Я погоджуюсь із контентом 18+
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-custom-subscribe mt-2 mb-4" style="padding:5px 15px; float:right;">Зберегти</button>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <img src="/images/settingsPicture/backGroundSettings2.jpg" alt="Image 2" class="img-fluid" onclick="selectImage(this)">
+
+                <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+                    <p style="color: white;">Контент для вкладки Безпека та вхід.</p>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <img src="/images/settingsPicture/backGroundSettings3.jpg" alt="Image 3" class="img-fluid" onclick="selectImage(this)">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <img src="/images/settingsPicture/backGroundSettings4.jpg" alt="Image 4" class="img-fluid" onclick="selectImage(this)">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <img src="/images/settingsPicture/backGroundSettings5.jpg" alt="Image 5" class="img-fluid" onclick="selectImage(this)">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <img src="/images/settingsPicture/backGroundSettings6.jpg" alt="Image 6" class="img-fluid" onclick="selectImage(this)">
+
+                <div class="tab-pane fade" id="background" role="tabpanel" aria-labelledby="background-tab">
+                    <p style="color: white;">Контент для вкладки Фон.</p>
                 </div>
             </div>
         </div>
-        <span style="font-weight: bold; color: red" th:if="${#fields.hasErrors('backgroundImage')}" th:errors="*{backgroundImage}"></span>
-        <br>
-        <br>
-        <label for="profilePrivacy">Privacy:</label>
-        <select class="custom-select-settings" id="profilePrivacy" name="profilePrivacy">
-            <option value="public" th:selected="${userSettings.profilePrivacy == 'public'}">Public</option>
-            <option value="friendly" th:selected="${userSettings.profilePrivacy == 'friendly'}">Friendly</option>
-            <option value="private" th:selected="${userSettings.profilePrivacy == 'private'}">Private</option>
-        </select>
-        <span style="font-weight: bold; color: red" th:if="${#fields.hasErrors('profilePrivacy')}" th:errors="*{profilePrivacy}"></span>
-        <br>
-        <label class="mt-4" for="readStyle">Style:</label>
-        <select class="custom-select" id="readStyle" name="readStyle">
-            <option value="scroll-down" th:selected="${userSettings.readStyle == 'scroll-down'}">Scroll Down</option>
-            <option value="left-to-right" th:selected="${userSettings.readStyle == 'left-to-right'}">Left-to-Right</option>
-        </select>
-        <span style="font-weight: bold; color: red" th:if="${#fields.hasErrors('readStyle')}" th:errors="*{readStyle}"></span>
-        <br>
-        <div class="form-check mt-4">
-            <label class="form-check-label" for="adultContentAgreement">
-                Я згоден із контентом для дорослих (18+)
-            </label>
-            <input class="form-check-input" type="checkbox" id="adultContentAgreement" name="adultContentAgreement" th:checked="${userSettings.adultContentAgreement}" />
-        </div>
-        <button type="submit" class="btn btn-success mt-3">Зберегти</button>
-    </form>
+    </div>
 </div>
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
-<script src="/js/user-settings.js"></script>
+<script src="/js/user/user-settings.js"></script>
+<!--<script src="/js/user-settings.js"></script>!-->
 </body>
 </html>

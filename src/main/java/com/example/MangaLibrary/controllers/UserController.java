@@ -206,7 +206,6 @@ public class UserController {
         }
     }
 
-
     @GetMapping("/profile/edit/{id}")
     public String userEditProfile(@PathVariable("id") long id ,
                                     Model model){
