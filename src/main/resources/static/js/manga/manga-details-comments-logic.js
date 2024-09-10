@@ -70,9 +70,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function updateRatingDisplay(commentId, newRating, ratingTitle) {
-    console.log(commentId);
-    console.log(newRating);
-    console.log(ratingTitle);
     const ratingElement = $(`#rating-score-${commentId}`);
     ratingElement.text(newRating);
     ratingElement.attr('title', ratingTitle);
