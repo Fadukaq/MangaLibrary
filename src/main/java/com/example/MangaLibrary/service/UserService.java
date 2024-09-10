@@ -307,7 +307,7 @@ public class UserService {
                 backGroundImg.equals("/images/settingsPicture/backGroundSettings6.jpg");
     }
     private boolean isValidProfilePrivacy(String privacy) {
-        return privacy.equals("public") || privacy.equals("private");
+        return privacy.equals("public") || privacy.equals("private") || privacy.equals("friendly");
     }
     private boolean isValidReadStyles(String readStyle) {
         return readStyle.equals("scroll-down") || readStyle.equals("left-to-right");

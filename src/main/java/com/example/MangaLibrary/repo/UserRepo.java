@@ -50,4 +50,8 @@ public interface UserRepo extends CrudRepository<User, Long> {
 
     @Query("SELECT COUNT(r) FROM Rating r WHERE r.manga.id = :mangaId AND r.rating = 5")
     long countByMangaFiveStar(@Param("mangaId") Long mangaId);
+    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END " +
+            "FROM User u JOIN u.friends f " +
+            "WHERE u = :user AND f = :friend")
+    boolean getIsFriends(@Param("user") User user, @Param("friend") User friend);
 }

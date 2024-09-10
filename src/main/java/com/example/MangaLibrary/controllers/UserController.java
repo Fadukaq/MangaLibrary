@@ -145,7 +145,15 @@ public class UserController {
             User currentUser = userRepo.findByUserName(username);
             String formattedUserRole = userService.formattingUserRole(user.getUserRole());
 
+            boolean isFriends = userRepo.getIsFriends(user, currentUser);
+
             if(userSettings.getProfilePrivacy().equals("private") && userSettings.getUser().getId() != currentUser.getId()) {
+                model.addAttribute("user", user);
+                model.addAttribute("currentUser", currentUser);
+                model.addAttribute("formattedUserRole", formattedUserRole);
+                model.addAttribute("profilePrivacy", "private");
+                return "user/user-profile";
+            }else if(userSettings.getProfilePrivacy().equals("friendly") && userSettings.getUser().getId() != currentUser.getId() && !isFriends){
                 model.addAttribute("user", user);
                 model.addAttribute("currentUser", currentUser);
                 model.addAttribute("formattedUserRole", formattedUserRole);
@@ -172,13 +180,11 @@ public class UserController {
                     }
                 }
             }
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm", new Locale("uk", "UA"));
-            String formattedRegisterDate = user.getRegistrationDate().format(formatter);
-
             List<FriendRequest> friendRequests = friendRequestRepo.findByReceiverAndStatus(currentUser, RequestStatus.PENDING);
             List<FriendRequest> sentRequests = friendRequestRepo.findBySenderAndStatus(currentUser,RequestStatus.PENDING);
-
             List<User> userFriends = user.getFriends();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm", new Locale("uk", "UA"));
+            String formattedRegisterDate = user.getRegistrationDate().format(formatter);
             model.addAttribute("user", user);
             model.addAttribute("currentUser", currentUser);
             model.addAttribute("formattedRegisterDate", formattedRegisterDate);
@@ -499,7 +505,7 @@ public class UserController {
                 response.put("message", "Скаргу успішно надіслано.");
             } catch (IllegalArgumentException e) {
                 response.put("status", "error");
-                response.put("message", e.getMessage());
+                response.put("message", "Помилка надсилання скарги");
             }
         } else {
             response.put("status", "error");
