@@ -90,7 +90,8 @@
                             <label class="form-label mt-3" title="Введіть ваш пароль щоб зберегти всі зміненні дані!">Пароль: <span style="color:red">*</span></label>
                             <input type="password" name="currentPassword"  placeholder="Введіть ваш пароль" class="form-control" autocomplete="off">
                             <p style="color:red" th:if="${errorMessage}" th:text="${errorMessage}"></p>
-                            <button type="submit" class="btn btn-custom-subscribe mt-3 mb-4" style="padding:5px 15px; float:right;">Зберегти</button>
+                            <p class="mt-3">Якщо ви не пам'ятаєте поточний пароль, скористайтеся скиданням пароля <a class="reset-link" href="/reset-password">скиданням пароля</a></p>
+                            <button type="submit" class="btn btn-custom-subscribe mt-1" style="padding:5px 15px; float:left;">Зберегти</button>
                         </div>
                         <div class="new-email mt-3">
                             <h2>Зміна пошти</h2>
@@ -112,7 +113,7 @@
                             <label class="form-label mt-3" title="Введіть ваш пароль щоб зберегти всі зміненні дані!">Пароль: <span style="color:red">*</span></label>
                             <input type="password" name="currentPassword" placeholder="Введіть ваш пароль" class="form-control" autocomplete="off">
                             <p style="color:red" th:if="${errorMessage}" th:text="${errorMessage}"></p>
-                            <button type="submit" class="btn btn-custom-subscribe mt-3 mb-4" style="padding:5px 15px; float:right;">Зберегти</button>
+                            <button type="submit" class="btn btn-custom-subscribe mt-4" style="padding:5px 15px; float:left;">Зберегти</button>
                         </div>
                     </div>
 
@@ -144,7 +145,7 @@
                                 </div>
                             </div>
                             <!--<span style="font-weight: bold; color: red" th:if="${#fields.hasErrors('backgroundImage')}" th:errors="*{backgroundImage}"></span>!-->
-                            <button type="submit" class="btn btn-custom-subscribe mt-3 mb-4" style="padding:5px 15px; float:right;">Зберегти</button>
+                            <button type="submit" class="btn btn-custom-subscribe mb-3" style="padding:5px 15px; float:left;">Зберегти</button>
                         </div>
                     </div>
                 </div>

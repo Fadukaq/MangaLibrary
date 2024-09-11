@@ -73,7 +73,10 @@ public class UserController {
     @Autowired
     FriendRequestRepo friendRequestRepo;
     @GetMapping("/registration")
-    public String registration(Model model) {
+    public String registration(Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "redirect:/";
+        }
         model.addAttribute("user", new User());
         return "registration";
     }
@@ -101,7 +104,10 @@ public class UserController {
     }
     @GetMapping("/login")
     public String login(@RequestParam(value = "error", required = false) String error,
-                        HttpServletRequest request, Model model) {
+                        HttpServletRequest request, Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "redirect:/";
+        }
         if (error != null) {
             HttpSession session = request.getSession(false);
             String errorMessage = null;
