@@ -42,7 +42,7 @@ $(document).ready(function() {
         $this.tab('show');
 
         if (paramName === 'tab') {
-            location.reload();
+            //location.reload();
         } else {
             updateContent(paramName, target);
         }

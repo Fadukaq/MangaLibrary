@@ -5,7 +5,7 @@ body{
     width:100%;
     max-width: 1300px;
 }
-.settings-block {
+.settings-info {
     background-color: #212121;
     padding: 20px;
     border-radius: 5px;
@@ -35,6 +35,7 @@ body{
 
 .tab-content {
     border: none;
+    height: 100%;
 }
 
 .custom-file-upload-wrapper {
@@ -44,15 +45,15 @@ body{
     max-width: 225px;
     width: 100%;
     margin: 10px;
-    margin-left: 5%;
+    margin-left: 6%;
 }
 
 .preview-image {
     max-width: 100%;
     max-height: 100%;
-    border-radius: 40%;
+    border-radius: 5%;
     display: block;
-    width: 206px;
+    width: 221px;
     height: 200px;
     object-fit: cover;
 }
@@ -61,10 +62,10 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 210px;
+    width: 225px;
     height: 200px;
     border: 2px solid #d3d3d3;
-    border-radius: 40%;
+    border-radius: 6%;
     cursor: pointer;
     transition: border-color 0.3s ease;
 }
@@ -91,7 +92,7 @@ body{
 }
 .flex-grow-1 {
     max-width: 470px;
-    margin-left: 5%;
+    margin-left: 7%;
 }
 
 .select2-container .select2-selection--single {
@@ -170,7 +171,79 @@ body{
         margin-left: 25%;
         text-align: center;
     }
-    .settings-block {
+    .settings-info {
         max-height: 732px;
+    }
+}
+.backgroundImg img {
+    width:100%;
+    height:100%;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.backgroundImg img:hover {
+    border: 1px solid #ff0080;
+    cursor: pointer;
+}
+.selected {
+    border: 1px solid #ff0080;
+}
+.btn-outline-info {
+    border-color: #ff4fa7 !important;
+    color: #ff4fa7 !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-info:hover {
+    background-color: #ff4fa7 !important;
+    color: #ffffff !important;
+    border-color: #de006f !important;
+}
+
+.btn-outline-info:focus, .btn-outline-info:active {
+    background-color: #ff4fa7 !important;
+    color: #ffffff !important;
+    border-color: #de006f !important;
+    box-shadow: none !important;
+}
+.tab-content>.active {
+    height:100%;
+}
+.settings-info {
+    background-color: #212121;
+    padding: 20px;
+    border-radius: 5px;
+    height: 100%;
+    max-height: 725px;
+}
+.new-password{
+    background-color:#212121;
+    padding:20px;
+    border-radius: 5px;
+    height: 100%;
+    max-height: 300px;
+}
+.new-email{
+    background-color:#212121;
+    padding:20px;
+    border-radius: 5px;
+    height: 100%;
+    max-height: 380px;
+}
+.settings-bg {
+    padding: 20px;
+    background-color: #212121;
+    border-radius: 10px;
+    height: 100%;
+    max-height: 520px;
+}
+@media (max-width: 767px) {
+    .settings-bg {
+        max-height: none;
+    }
+    .backgroundImg img {
+        max-width: 100%;
+        height: auto;
     }
 }
