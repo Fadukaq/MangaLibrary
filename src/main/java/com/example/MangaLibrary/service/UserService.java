@@ -270,31 +270,24 @@ public class UserService {
         return String.format("%06d", new Random().nextInt(999999));
     }
 
-    public boolean validateUserSettings(UserSettings userSettings,String imgPath, BindingResult bindingResult) {
+    public boolean validateUserSettings(UserForm userForm, BindingResult bindingResult) {
         boolean isValid = true;
 
-        if (!isValidBackgroundImg(imgPath)) {
-            bindingResult.rejectValue("backgroundImage", "error.backgroundImage",
-                    "Виберіть правильне зображення і не змінюйте його розташування!");
-            isValid = false;
-        }
-
-        if (!isValidProfilePrivacy(userSettings.getProfilePrivacy())) {
-            bindingResult.rejectValue("profilePrivacy", "error.profilePrivacy",
+        if (!isValidProfilePrivacy(userForm.getUserSettings().getProfilePrivacy())) {
+            bindingResult.rejectValue("userSettings.profilePrivacy", "error.profilePrivacy",
                     "Виберіть правильну опцію для приватності профілю і не змінюйте внутрішні дані!");
             isValid = false;
         }
 
-        if (!isValidReadStyles(userSettings.getReadStyle())) {
-            bindingResult.rejectValue("readStyle", "error.readStyle",
+        if (!isValidReadStyles(userForm.getUserSettings().getReadStyle())) {
+            bindingResult.rejectValue("userSettings.readStyle", "error.readStyle",
                     "Виберіть правильну опцію для стилю читання і не змінюйте внутрішні дані!");
             isValid = false;
         }
-
         return isValid;
     }
 
-    private boolean isValidBackgroundImg(String backGroundImg) {
+    public boolean isValidBackgroundImg(String backGroundImg) {
         if (backGroundImg == null) {
             return false;
         }
@@ -396,5 +389,36 @@ public class UserService {
     public String getUsernameById(long userId) {
         User user = userRepo.findById(userId).orElse(null);
         return user != null ? user.getUserName() : "Unknown";
+    }
+
+    public void updateUserSettingInfo(User userToUpdate, UserForm userForm, UserSettings userSettings) {
+        User existingUser = userRepo.findByUserName(userForm.getUser().getUserName());
+        if (existingUser != null && existingUser.getId() != userToUpdate.getId()) {
+            throw new IllegalArgumentException("Нік вже зайнятий іншим користувачем");
+        }
+
+        if (userForm.getProfilePicture().getProfileImage() != null && !userForm.getProfilePicture().getProfileImage().isEmpty()) {
+            String rootPath = directoryLocator.getResourcePathProfilePicture();
+            String userPath = loadProfilePicture(userForm.getProfilePicture().getProfileImage(), userForm.getUser(), rootPath);
+            userToUpdate.setProfilePicture(userPath);
+        }
+
+        userToUpdate.setUserName(userForm.getUser().getUserName());
+        userToUpdate.setAbout(userForm.getUser().getAbout());
+
+        userSettings.setAdultContentAgreement(userForm.getUserSettings().getAdultContentAgreement());
+        userSettings.setProfilePrivacy(userForm.getUserSettings().getProfilePrivacy());
+        userSettings.setReadStyle(userForm.getUserSettings().getReadStyle());
+
+        userRepo.save(userToUpdate);
+    }
+    public void updateUserSettingsBackground(User user, UserSettings userSettings, String selectedImage){
+        String relativeImagePath = selectedImage.substring(selectedImage.indexOf("/images"));
+        if(isValidBackgroundImg(relativeImagePath)){
+            userSettings.setBackgroundImage(relativeImagePath);
+            userSettingsRepo.save(userSettings);
+            user.setUserSettings(userSettings);
+            userRepo.save(user);
+        }
     }
 }

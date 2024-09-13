@@ -20,89 +20,94 @@
             <div class="col-md-2">
                 <ul class="nav flex-column nav-tabs" id="settingsTabs" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab">Інформація</a>
+                        <a class="nav-link nav-link-settings active" id="info-tab" data-toggle="tab" href="#info" role="tab">Інформація</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="security-tab" data-toggle="tab" href="#security" role="tab">Безпека та вхід</a>
+                        <a class="nav-link nav-link-settings" id="security-tab" data-toggle="tab" href="#security" role="tab">Безпека та вхід</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="background-tab" data-toggle="tab" href="#background" role="tab">Фон</a>
+                        <a class="nav-link nav-link-settings" id="background-tab" data-toggle="tab" href="#background" role="tab">Фон</a>
                     </li>
                 </ul>
             </div>
 
             <div class="col-md-9 mb-5">
-                <div class="tab-content settings-block" id="settingsContent">
-                    <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
-                        <div class="settings-info">
-                            <div class="d-flex align-items-start">
-                                <div class="custom-file-upload-wrapper me-4">
-                                    <div class="custom-file-upload-container" onclick="document.getElementById('posterImage').click();">
-                                        <input type="file" th:field="*{user.profilePicture}" id="posterImage" accept="image/jpeg, image/png" style="display: none;" onchange="previewImage(event, 'posterImagePreview', 'posterUploadIcon');">
-                                        <img id="posterImagePreview" class="preview-image" alt="Avatar Preview" style="display:none;">
-                                        <i id="posterUploadIcon" class="fas fa-upload"></i>
+                <div class="tab-content settings-block mb-5" id="settingsContent">
+                        <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                            <form th:action="@{/profile/settings/info/{id}(id=${user.id})}" style="height:100%;" method="post" th:object="${userForm}" enctype="multipart/form-data">
+                                <div class="settings-info">
+                                    <div class="d-flex align-items-start">
+                                        <div class="custom-file-upload-wrapper me-4">
+                                            <div class="custom-file-upload-container" onclick="document.getElementById('posterImage').click();">
+                                                <input type="hidden" th:field="*{user}" />
+                                                <input type="file" name="ProfilePicture.profileImage" id="posterImage" accept="image/jpeg, image/png" style="display: none;" onchange="previewImage(event, 'posterImagePreview', 'posterUploadIcon');">
+                                                <img id="posterImagePreview" th:src="${user.profilePicture}" class="preview-image" alt="Avatar Preview">
+                                                <i id="posterUploadIcon" class="fas fa-upload" style="display:none;"></i>
+                                            </div>
+                                            <p class="text-center mt-2">Аватарка</p>
+                                            <div style="color:red" th:if="${#fields.hasErrors('user.profilePicture')}" th:errors="*{user.profilePicture}">profilePicture error</div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <label class="form-label" title="Змініть свій нікнейм"> <i class="fas fa-circle pink-dot"></i> Нік:</label>
+                                            <input type="text" name="user.userName" th:value="*{user.userName}" class="form-control" autocomplete="off">
+                                            <div style="color:red" th:if="${#fields.hasErrors('user.userName')}" th:errors="*{user.userName}">userName error</div>
+
+                                            <label class="form-label mt-3" for="privacySelect"> <i class="fas fa-circle pink-dot"></i>Приватність</label>
+                                            <select class="custom-select" id="privacySelect" name="userSettings.profilePrivacy">
+                                                <option value="public" th:text="'Публічний'" th:value="'public'" th:selected="${userSettings.profilePrivacy == 'public'}">Публічний</option>
+                                                <option value="friendly" th:text="'Дружній'" th:value="'friendly'" th:selected="${userSettings.profilePrivacy == 'friendly'}">Дружній</option>
+                                                <option value="private" th:text="'Приватний'" th:value="'private'" th:selected="${userSettings.profilePrivacy == 'private'}">Приватний</option>
+                                            </select>
+                                            <div style="color:red" th:if="${#fields.hasErrors('userSettings.profilePrivacy')}" th:errors="*{userSettings.profilePrivacy}">Ошибка приватности профиля</div>
+
+                                            <label class="form-label mt-3" for="readStyle"> <i class="fas fa-circle pink-dot"></i>Стиль читання</label>
+                                            <select class="custom-select" id="readStyle" name="userSettings.readStyle">
+                                                <option value="scroll-down" th:selected="${userSettings.readStyle == 'scroll-down'}">Вниз</option>
+                                                <option value="left-to-right" th:selected="${userSettings.readStyle == 'left-to-right'}">Свайп</option>
+                                            </select>
+                                            <div style="color:red" th:if="${#fields.hasErrors('userSettings.readStyle')}" th:errors="*{userSettings.readStyle}">Ошибка стиля чтения</div>
+                                        </div>
                                     </div>
-                                    <p class="text-center mt-2">Аватарка</p>
-                                    <div style="color:red" th:if="${#fields.hasErrors('user.profilePicture')}" th:errors="*{user.profilePicture}">profilePicture error</div>
+                                    <div class="user-about mt-3 d-flex-none" style="padding-left:15px;padding-right: 15px;">
+                                        <label class="form-label" title="Розкажіть щось про себе!"> <i class="fas fa-circle pink-dot"></i>Про себе: </label>
+                                        <textarea name="user.about" placeholder="Введіть щось про себе" class="form-control" th:text="*{user.about}" autocomplete="off"></textarea>
+                                        <div style="color:red" th:if="${#fields.hasErrors('user.about')}" th:errors="*{user.about}">user about error</div>
+                                    </div>
+                                    <div class="form-check mt-3" style="padding-left: 40px;">
+                                        <input class="form-check-input" type="checkbox" id="ageConsent" name="userSettings.adultContentAgreement" th:checked="${userSettings.adultContentAgreement}" />
+                                        <label class="form-check-label" for="ageConsent">
+                                            Я погоджуюсь із контентом 18+
+                                        </label>
+                                    </div>
+                                    <button type="submit" class="btn btn-custom-subscribe mt-2 mb-4" style="padding:5px 15px; float:right;">Зберегти</button>
                                 </div>
-                                <div class="flex-grow-1">
-                                    <label class="form-label" title="Змініть свій нікнейм">Нік: <span style="color:red">*</span></label>
-                                    <input type="text" name="user.userName" th:value="*{user.userName}" class="form-control" autocomplete="off">
-                                    <div style="color:red" th:if="${#fields.hasErrors('user.userName')}" th:errors="*{user.userName}">userName error</div>
-
-                                    <label class="form-label mt-3" for="privacySelect">Приватність</label>
-                                    <select class="custom-select" id="privacySelect" style="width: 200px;">
-                                        <option value="public">Публічний</option>
-                                        <option value="friendly">Дружній</option>
-                                        <option value="private">Приватний</option>
-                                    </select>
-
-                                    <label class="form-label mt-3" for="readStyle">Стиль читання</label>
-                                    <select class="custom-select" id="readStyle" style="width: 200px;">
-                                        <option value="scroll-down">Вниз</option>
-                                        <option value="left-to-right">Свайп</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="user-about mt-3 d-flex-none" style="padding-left:15px;padding-right: 15px;">
-                                <label class="form-label" title="Розкажіть щось про себе!">Про себе: <span style="color:red">*</span></label>
-                                <textarea name="user.about" placeholder="Введіть щось про себе" class="form-control" th:text="*{user.about}" autocomplete="off"></textarea>
-                                <div style="color:red" th:if="${#fields.hasErrors('user.about')}" th:errors="*{user.about}">user about error</div>
-                            </div>
-                            <div class="form-check mt-3" style="padding-left: 40px;">
-                                <input class="form-check-input" type="checkbox" id="ageConsent" required>
-                                <label class="form-check-label" for="ageConsent">
-                                    Я погоджуюсь із контентом 18+
-                                </label>
-                            </div>
-                            <button type="submit" class="btn btn-custom-subscribe mt-2 mb-4" style="padding:5px 15px; float:right;">Зберегти</button>
+                            </form>
                         </div>
-                    </div>
 
                     <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
                         <div class="new-password mt-2">
-                            <h2>Зміна паролю</h2>
+                            <h4>Зміна паролю</h4>
                             <div id="newPasswordField">
-                                <label class="form-label mt-1" title="Введіть ваш новий пароль!">Новий пароль: <span style="color:red">*</span></label>
+                                <label class="form-label mt-1" title="Введіть ваш новий пароль!"> <i class="fas fa-circle pink-dot"></i>Новий пароль:</label>
                                 <input type="password" name="userPasswordNew" placeholder="Введіть ваш новий пароль" class="form-control" autocomplete="off">
                                 <p style="color:red" th:if="${errorPassword}" th:text="${errorPassword}"></p>
                             </div>
-                            <label class="form-label mt-3" title="Введіть ваш пароль щоб зберегти всі зміненні дані!">Пароль: <span style="color:red">*</span></label>
+                            <label class="form-label mt-3" title="Введіть ваш пароль щоб зберегти всі зміненні дані!"> <i class="fas fa-circle pink-dot"></i>Пароль: </label>
                             <input type="password" name="currentPassword"  placeholder="Введіть ваш пароль" class="form-control" autocomplete="off">
                             <p style="color:red" th:if="${errorMessage}" th:text="${errorMessage}"></p>
                             <p class="mt-3">Якщо ви не пам'ятаєте поточний пароль, скористайтеся скиданням пароля <a class="reset-link" href="/reset-password">скиданням пароля</a></p>
                             <button type="submit" class="btn btn-custom-subscribe mt-1" style="padding:5px 15px; float:left;">Зберегти</button>
                         </div>
                         <div class="new-email mt-3">
-                            <h2>Зміна пошти</h2>
+                            <h4>Зміна пошти</h4>
                             <div id="newEmailField">
-                                <label class="form-label" title="Введіть вашу нову пошту!">Нова пошта:</label>
+                                <label class="form-label" title="Введіть вашу нову пошту!"> <i class="fas fa-circle pink-dot"></i>Нова пошта:</label>
                                 <input type="email" name="newEmail" placeholder="Введіть вашу нову пошту" class="form-control" autocomplete="off">
                                 <p style="color:red" th:if="${errorEmail}" th:text="${errorEmail}"></p>
                             </div>
 
                             <div id="confirmationCodeField" class="mt-3">
-                                <label for="confirmationCode" class="form-label">Код підтвердження:</label>
+                                <label for="confirmationCode" class="form-label"> <i class="fas fa-circle pink-dot"></i>Код підтвердження:</label>
                                 <div class="input-group">
                                     <input type="text" name="confirmationCode" id="confirmationCode" class="form-control" placeholder="Введіть код підтвердження" autocomplete="off">
                                     <button type="button" name="action" value="getConfirmationCode" class="btn btn-outline-info" onclick="sendConfirmationCode()">Отримати код</button>
@@ -110,7 +115,7 @@
                                 <p style="color:red" th:if="${errorCode}" th:text="${errorCode}"></p>
                             </div>
 
-                            <label class="form-label mt-3" title="Введіть ваш пароль щоб зберегти всі зміненні дані!">Пароль: <span style="color:red">*</span></label>
+                            <label class="form-label mt-3" title="Введіть ваш пароль щоб зберегти всі зміненні дані!"> <i class="fas fa-circle pink-dot"></i>Пароль: </label>
                             <input type="password" name="currentPassword" placeholder="Введіть ваш пароль" class="form-control" autocomplete="off">
                             <p style="color:red" th:if="${errorMessage}" th:text="${errorMessage}"></p>
                             <button type="submit" class="btn btn-custom-subscribe mt-4" style="padding:5px 15px; float:left;">Зберегти</button>
@@ -118,36 +123,38 @@
                     </div>
 
                     <div class="tab-pane fade" id="background" role="tabpanel" aria-labelledby="background-tab">
-                        <div class="settings-bg">
-                            <input type="hidden" id="GetBackGroundImgUser" th:value="${GetBackGroundImgUser}">
-                            <input type="hidden" id="selectedImageInput" name="selectedImage" th:value="${selectedImage}">
-                            <div class="backgroundImg" id="backgroundImagesContainer">
-                                <h3>Зміна фону</h3>
-                                <div class="row mt-3">
-                                    <div class="col-md-4 mb-3">
-                                        <img src="/images/settingsPicture/backGroundSettings1.jpg" alt="Image 1" class="img-fluid" onclick="selectImage(this)">
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <img src="/images/settingsPicture/backGroundSettings2.jpg" alt="Image 2" class="img-fluid" onclick="selectImage(this)">
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <img src="/images/settingsPicture/backGroundSettings3.jpg" alt="Image 3" class="img-fluid" onclick="selectImage(this)">
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <img src="/images/settingsPicture/backGroundSettings4.jpg" alt="Image 4" class="img-fluid" onclick="selectImage(this)">
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <img src="/images/settingsPicture/backGroundSettings5.jpg" alt="Image 5" class="img-fluid" onclick="selectImage(this)">
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <img src="/images/settingsPicture/backGroundSettings6.jpg" alt="Image 6" class="img-fluid" onclick="selectImage(this)">
+                        <form method="POST" style="height:100%;" th:action="@{/profile/settings/background/{id}(id=${user.id})}" th:object="${userSettings}">
+                            <div class="settings-bg">
+                                <input type="hidden" id="GetBackGroundImgUser" th:value="${GetBackGroundImgUser}">
+                                <input type="hidden" id="selectedImageInput" name="backgroundImage" th:value="${selectedImage}">
+                                <div class="backgroundImg" id="backgroundImagesContainer">
+                                    <h3>Зміна фону</h3>
+                                    <div class="row mt-3">
+                                        <div class="col-md-4 mb-3">
+                                            <img src="/images/settingsPicture/backGroundSettings1.jpg" alt="Image 1" class="img-fluid" onclick="selectImage(this)">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <img src="/images/settingsPicture/backGroundSettings2.jpg" alt="Image 2" class="img-fluid" onclick="selectImage(this)">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <img src="/images/settingsPicture/backGroundSettings3.jpg" alt="Image 3" class="img-fluid" onclick="selectImage(this)">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <img src="/images/settingsPicture/backGroundSettings4.jpg" alt="Image 4" class="img-fluid" onclick="selectImage(this)">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <img src="/images/settingsPicture/backGroundSettings5.jpg" alt="Image 5" class="img-fluid" onclick="selectImage(this)">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <img src="/images/settingsPicture/backGroundSettings6.jpg" alt="Image 6" class="img-fluid" onclick="selectImage(this)">
+                                        </div>
                                     </div>
                                 </div>
+                                <button type="submit" class="btn btn-custom-subscribe mb-3" style="padding:5px 15px; float:left;">Зберегти</button>
                             </div>
-                            <!--<span style="font-weight: bold; color: red" th:if="${#fields.hasErrors('backgroundImage')}" th:errors="*{backgroundImage}"></span>!-->
-                            <button type="submit" class="btn btn-custom-subscribe mb-3" style="padding:5px 15px; float:left;">Зберегти</button>
-                        </div>
+                        </form>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -161,6 +168,41 @@
 <script src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
 <script src="/js/user/user-settings.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tabs = document.querySelectorAll('#settingsTabs .nav-link');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        function activateTab(tabId) {
+            tabs.forEach(tab => {
+                if (tab.getAttribute('href') === '#' + tabId) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+
+            tabPanes.forEach(pane => {
+                if (pane.id === tabId) {
+                    pane.classList.add('show', 'active');
+                } else {
+                    pane.classList.remove('show', 'active');
+                }
+            });
+        }
+
+        function handleHashChange(e) {
+            e.preventDefault();
+            const hash = window.location.hash.substring(1);
+            activateTab(hash);
+        }
+
+        const initialTab = window.location.hash.substring(1) || 'info';
+        activateTab(initialTab);
+
+        window.addEventListener('hashchange', handleHashChange);
+    });
+</script>
 <!--<script src="/js/user-settings.js"></script>!-->
 </body>
 </html>

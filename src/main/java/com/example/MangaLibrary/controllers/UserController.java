@@ -29,6 +29,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -287,15 +288,20 @@ public class UserController {
         return "user/user-edit-profile";
     }
 
+
     @GetMapping("/profile/settings/{id}")
     public String userSettings(@PathVariable("id") Long id, Model model) {
         Optional<User> userOptional = userRepo.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             UserSettings userSettings = userSettingsRepo.findByUser(user);
+            UserForm userForm = new UserForm();
+            userForm.setUser(user);
+
             model.addAttribute("user", user);
+            model.addAttribute("userForm", userForm);
             model.addAttribute("userSettings", userSettings);
-            if (userSettings != null && userSettings.getBackgroundImage() != null) {
+            if (userSettings.getBackgroundImage() != null) {
                 model.addAttribute("GetBackGroundImgUser", userSettings.getBackgroundImage());
             }
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -310,46 +316,66 @@ public class UserController {
         return "user/user-profile";
     }
 
-    @PostMapping("/profile/settings/{id}")
-    public String userSettingsPost(@PathVariable("id") Long id,
-                                   @RequestParam("selectedImage") String selectedImage,
-                                   @RequestParam(value = "adultContentAgreement", required = false) Boolean adultContentAgreement,
-                                   @ModelAttribute("userSettings") UserSettings userSettings,
-                                   BindingResult bindingResult,
-                                   Model model) {
-
+    @PostMapping("/profile/settings/info/{id}")
+    public String userSettingsPostInfo(@PathVariable("id") Long id,
+                                       @Valid @ModelAttribute("userForm") UserForm userForm,
+                                       BindingResult bindingResult,
+                                       Model model, HttpSession session) {
         Optional<User> userOptional = userRepo.findById(id);
-        if (userOptional.isEmpty()) {
-            return "redirect:/manga";
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+            userForm.setUser(user);
+            UserSettings userSettings = userSettingsRepo.findByUser(user);
+            if (bindingResult.hasErrors()) {
+                model.addAttribute("user",user);
+                model.addAttribute("userForm", userForm);
+                model.addAttribute("userSettings", userSettings);
+                return "user/user-settings";
+            }
+            if(userService.validateUserSettings(userForm, bindingResult)){
+                userService.updateUserSettingInfo(user, userForm, userSettings);
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String username = authentication.getName();
+                if(!Objects.equals(user.getUserName(), username)){
+                    session.invalidate();
+                    return "redirect:/login";
+                }
+                return "redirect:/profile/settings/" + user.getId()+"#info";
+            }else{
+                model.addAttribute("user",user);
+                model.addAttribute("userForm", userForm);
+                model.addAttribute("userSettings", userSettings);
+                return "user/user-settings";
+            }
         }
-        User user = userOptional.get();
-        UserSettings existingSettings = user.getUserSettings();
-
-        String relativeImagePath = selectedImage.substring(selectedImage.indexOf("/images"));
-        if (!userService.validateUserSettings(userSettings, relativeImagePath, bindingResult)) {
-            model.addAttribute("user", user);
-            model.addAttribute("userSettings", userSettings);
-            model.addAttribute("GetBackGroundImgUser", existingSettings != null ? existingSettings.getBackgroundImage() : null);
-            model.addAttribute("selectedImage", existingSettings != null ? existingSettings.getBackgroundImage() : null);
-            return "user/user-settings";
-        }
-
-        if (existingSettings != null) {
-            existingSettings.setBackgroundImage(relativeImagePath);
-            existingSettings.setAdultContentAgreement(adultContentAgreement != null && adultContentAgreement);
-            existingSettings.setProfilePrivacy(userSettings.getProfilePrivacy());
-            existingSettings.setReadStyle(userSettings.getReadStyle());
-        } else {
-            userSettings.setBackgroundImage(relativeImagePath);
-            userSettings.setAdultContentAgreement(adultContentAgreement != null && adultContentAgreement);
-            user.setUserSettings(userSettings);
-            userSettings.setUser(user);
-        }
-
-        userRepo.save(user);
-
-        return "redirect:/profile/settings/" + id;
+        return "user/user-settings";
     }
+
+    @PostMapping("/profile/settings/security/{id}")
+    public String updateSecurity(@PathVariable("id") Long id,
+                                 Model model) {
+        Optional<User> userOptional = userRepo.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            return "redirect:/profile/settings/" + user.getId()+"#security";
+        }
+        return "user/user-settings";
+    }
+
+    @PostMapping("/profile/settings/background/{id}")
+    public String updateBackground(@PathVariable("id") Long id,
+                                   @RequestParam("backgroundImage") String selectedImage) {
+        Optional<User> userOptional = userRepo.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            UserSettings userSettings = userSettingsRepo.findByUser(user);
+            userService.updateUserSettingsBackground(user,userSettings,selectedImage);
+            return "redirect:/profile/settings/" + user.getId()+"#background";
+        }
+        return "user/user-settings";
+    }
+
     @PostMapping("/profile/delete-from-list/{mangaId}")
     public String deleteFromListPost(@PathVariable("mangaId") long mangaId,
                                         Principal principal,

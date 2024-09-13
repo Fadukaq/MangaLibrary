@@ -54,7 +54,7 @@
 
                 <span th:if="${#authentication.name == user.userName}" class="user-settings">
                     <i class="fa-solid fa-gear"></i>
-                    <a class="btn-custom-settings" th:href="@{'/profile/edit/' + ${user.id}}">Налаштування</a>
+                    <a class="btn-custom-settings" th:href="@{'/profile/settings/' + ${user.id}}">Налаштування</a>
                 </span>
             </div>
             <div class="footer-info">

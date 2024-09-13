@@ -255,3 +255,17 @@ body{
     color:#ff168a;
     text-decoration:underline;
 }
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color:white !important;
+    border-color:#ff0080 !important;
+}
+label.form-label {
+    display: flex;
+    align-items: center;
+    color: #dfdfdf;
+}
+.pink-dot{
+    font-size:10px;
+    color:#ff0080;
+    margin-right:7px;
+}
