@@ -139,6 +139,7 @@ public class UserService {
         user.getMangaReading().removeIf(id -> id.equals(String.valueOf(manga.getId())));
         user.getMangaWantToRead().removeIf(id -> id.equals(String.valueOf(manga.getId())));
         user.getMangaStoppedReading().removeIf(id -> id.equals(String.valueOf(manga.getId())));
+        user.getMangaFavorites().removeIf(id -> id.equals(String.valueOf(manga.getId())));
         user.getMangaRecited().removeIf(id -> id.equals(String.valueOf(manga.getId())));
     }
     public void deleteMangaFromUsersList(List<User> users, long mangaId){
@@ -405,8 +406,11 @@ public class UserService {
 
         userToUpdate.setUserName(userForm.getUser().getUserName());
         userToUpdate.setAbout(userForm.getUser().getAbout());
-
-        userSettings.setAdultContentAgreement(userForm.getUserSettings().getAdultContentAgreement());
+        if(userForm.getUserSettings().getAdultContentAgreement()==null){
+            userSettings.setAdultContentAgreement(false);
+        }else{
+            userSettings.setAdultContentAgreement(userForm.getUserSettings().getAdultContentAgreement());
+        }
         userSettings.setProfilePrivacy(userForm.getUserSettings().getProfilePrivacy());
         userSettings.setReadStyle(userForm.getUserSettings().getReadStyle());
 

@@ -146,8 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 document.addEventListener('DOMContentLoaded', function() {
     const items = Array.from(document.querySelectorAll('#comments-list .list-group-item-comments'));
-    if(items.length > 0)
-    {
+    if (items.length > 0) {
         const loadingIndicator = document.getElementById('loading-indicator');
         const itemsPerPage = 4;
         let currentIndex = 0;
@@ -176,24 +175,33 @@ document.addEventListener('DOMContentLoaded', function() {
             const scrollTop = window.scrollY || document.documentElement.scrollTop;
             const windowHeight = window.innerHeight;
             const documentHeight = document.documentElement.scrollHeight;
-            if (scrollTop + windowHeight >= documentHeight - 100) {
+
+            if (scrollTop + windowHeight >= documentHeight - 100 && document.getElementById('comments').classList.contains('show')) {
                 showMoreItems();
             }
         }
 
         function onTabChange(event) {
-            if (event.target.getAttribute('href') === '#comments') {
+            const targetTab = event.target.getAttribute('href');
+            if (targetTab === '#comments') {
+                currentIndex = 0;
+                items.forEach(item => item.style.display = 'none');
                 showMoreItems();
+                window.addEventListener('scroll', onScroll);
+            } else {
+                window.removeEventListener('scroll', onScroll);
             }
         }
+
         if (document.getElementById('comments').classList.contains('show')) {
             showMoreItems();
         }
+
         document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tab => {
             tab.addEventListener('shown.bs.tab', onTabChange);
         });
+
         window.addEventListener('scroll', onScroll);
-        showMoreItems();
     }
 });
 

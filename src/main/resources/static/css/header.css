@@ -437,7 +437,7 @@ body {
   position: absolute;
   top: 25px;
   right: 10px;
-  color: #fff;
+  color: #ffd72f;
   padding: 5px 10px;
   border-radius: 5px;
   font-size: 18px;
@@ -466,7 +466,7 @@ body {
   color: #ffffff;
   background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(5px);
-  border: 1px solid #2f0296;
+  border: 1px solid #ff0080;
   border-radius: 5px;
 }
 @media (max-width: 991px) {

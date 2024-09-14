@@ -128,7 +128,7 @@ public class MangaService {
     private boolean isValidMangaStatus(String status) {
         return status.equals("release") || status.equals("ongoing") || status.equals("completed");
     }
-    public void saveManga(MangaForm mangaForm,User user) throws IOException {
+    public void saveManga(MangaForm mangaForm, Long secondMangaId, User user) throws IOException {
         Manga existingManga = mangaRepo.findByMangaName(mangaForm.getManga().getMangaName());
         if (existingManga != null) {
             throw new IllegalArgumentException("Манга з такою назвою вже існує");
@@ -144,7 +144,9 @@ public class MangaService {
 
         Manga manga = mangaForm.getManga();
         mangaRepo.save(manga);
-
+        if(secondMangaId != null){
+            setRelatedMangas(manga.getId(),secondMangaId);
+        }
         String rootPath = mangaLibraryManager.getResourcePathManga();
         String mangaFolderPath = createFolderForManga(manga.getId(), rootPath);
 
@@ -161,8 +163,7 @@ public class MangaService {
 
         mangaRepo.save(manga);
     }
-    public void updateManga(long id, MangaForm mangaForm) {
-
+    public void updateManga(long id, MangaForm mangaForm , Long secondMangaId) {
         Manga mangaToUpdate = mangaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid manga Id:" + id));
         mangaToUpdate.setMangaName(mangaForm.getManga().getMangaName());
@@ -172,6 +173,11 @@ public class MangaService {
         mangaToUpdate.setAuthor(mangaForm.getManga().getAuthor());
         mangaToUpdate.setAdultContent(mangaForm.getManga().getAdultContent());
         mangaToUpdate.setMangaStatus(mangaForm.getManga().getMangaStatus());
+        if(secondMangaId != null){
+            setRelatedMangas(mangaToUpdate.getId(), secondMangaId);
+        }else{
+            removeRelatedMangas(mangaToUpdate.getId());
+        }
         if (mangaForm.getMangaImage().getBackGroundMangaImg() != null && !mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()) {
             String mangaFolderPath = mangaLibraryManager.getResourcePathManga() + File.separator + id;
             String backgroundImgPath = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), mangaToUpdate, mangaFolderPath);
@@ -377,6 +383,20 @@ public class MangaService {
         relatedMangas.addAll(reverseRelatedMangas);
 
         return relatedMangas;
+    }
+    public void setRelatedMangas(Long firstMangaId, Long secondMangaId) {
+        Manga firstManga = mangaRepo.findById(firstMangaId)
+                .orElseThrow(() -> new RuntimeException("Manga not found: " + firstMangaId));
+        Manga secondManga = mangaRepo.findById(secondMangaId)
+                .orElseThrow(() -> new RuntimeException("Manga not found: " + secondMangaId));
+
+        firstManga.getRelatedMangas().add(secondManga);
+        mangaRepo.save(firstManga);
+    }
+    private void removeRelatedMangas(Long mangaId) {
+        Manga manga = mangaRepo.findById(mangaId).orElseThrow(() -> new RuntimeException("Manga not found"));
+        manga.getRelatedMangas().clear();
+        mangaRepo.save(manga);
     }
     public long getCountByReading(String mangaId) {
         return userRepo.countByMangaReading(mangaId);

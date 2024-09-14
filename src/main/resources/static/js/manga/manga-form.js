@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', function() {
             closeOnSelect: true,
             minimumResultsForSearch: Infinity
         });
+        $('#relatedMangaSelect').select2({
+            width: '100%',
+            closeOnSelect: true
+        });
     });
 
     $('#genreSelect').select2({

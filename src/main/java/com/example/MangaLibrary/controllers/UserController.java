@@ -385,7 +385,6 @@ public class UserController {
             User user = userRepo.findByUserName(username);
             userService.deleteMangaFromUserList(user, mangaId);
             userRepo.save(user);
-
             return "redirect:/profile/" + user.getId() + panel;
         }
         return "redirect:/error";

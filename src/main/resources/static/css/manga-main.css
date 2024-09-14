@@ -90,13 +90,19 @@ body {
 .custom-genres {
     display: flex;
     align-items: center;
+    max-width: 220px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .custom-genre {
     font-size: 14px;
     color: gray;
-    margin-left:5px;
-    margin-top:5px;
+    margin-left: 5px;
+    margin-top: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .manga-grid .custom-container img {

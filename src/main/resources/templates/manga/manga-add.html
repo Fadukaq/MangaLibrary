@@ -64,7 +64,7 @@
             <div class="form-group" style="position: relative; padding-bottom: 38px; margin-bottom:0px;">
                 <label for="genreSelect"><i class="fas fa-circle pink-dot"></i> Жанри & Категорії</label>
                 <select id="genreSelect" name="genres" class="form-control" multiple="multiple">
-                    <option value="" disabled>Оберіть жанри йцу</option>
+                    <option value="" disabled>Оберіть жанри</option>
                     <option th:each="genre : ${genres}"
                             th:value="${genre.id}"
                             th:text="${genre.genreName}"></option>
@@ -74,7 +74,7 @@
                 <a class="link-to-add" href="/genre/add">Немає потрібного жанру & категорії?</a>
             </div>
             <div class="form-group">
-                <label for="mangaStatus">Статус манги:</label>
+                <label for="mangaStatus"><i class="fas fa-circle pink-dot"></i>Статус манги:</label>
                 <select class="custom-select" id="mangaStatus" name="manga.mangaStatus">
                     <option value="release" selected>Реліз</option>
                     <option value="ongoing">Онгоїнг</option>
@@ -83,8 +83,16 @@
                 <span th:if="${#fields.hasErrors('manga.mangaStatus')}" th:errors="*{manga.mangaStatus}" class="text-danger"></span>
             </div>
 
+            <div class="form-group" style="position: relative;">
+                <label for="relatedMangaSelect"><i class="fas fa-circle pink-dot"></i> Зв'яза манга</label>
+                <select id="relatedMangaSelect" name="secondMangaId" class="form-control">
+                    <option value="" selected>Немає</option>
+                    <option th:each="manga : ${mangas}" th:value="${manga.id}" th:text="${manga.mangaName}"></option>
+                </select>
+            </div>
+
             <div class="form-group">
-                <label for="adultContentSelect">Вміст для дорослих:</label>
+                <label for="adultContentSelect"><i class="fas fa-circle pink-dot"></i>Вміст для дорослих:</label>
                 <select class="custom-select" id="adultContentSelect" name="manga.adultContent">
                     <option value="no">Ні</option>
                     <option value="yes">18+</option>

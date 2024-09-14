@@ -114,21 +114,26 @@ public class MangaController {
         model.addAttribute("maxYear", maxYear);
         List<Genre> genres = genreRepo.findAll();
         List<Author> authors = authorRepo.findAll();
+        List<Manga> mangas = (List<Manga>) mangaRepo.findAll();
 
+        model.addAttribute("mangas", mangas);
         model.addAttribute("authors", authors);
         model.addAttribute("genres", genres);
         return "manga/manga-add";
     }
 
     @PostMapping("/manga/add")
-    public String addManga(@ModelAttribute("mangaForm") @Valid MangaForm mangaForm, BindingResult bindingResult, Model model) throws IOException {
+    public String addManga(@ModelAttribute("mangaForm") @Valid MangaForm mangaForm, BindingResult bindingResult,
+                           @RequestParam(required = false) Long secondMangaId,
+                           Model model) throws IOException {
         int maxYear = Year.now().getValue();
         List<Genre> genres = genreRepo.findAll();
         List<Author> authors = authorRepo.findAll();
-
+        List<Manga> mangas = (List<Manga>) mangaRepo.findAll();
         model.addAttribute("maxYear", maxYear);
         model.addAttribute("genres", genres);
         model.addAttribute("authors", authors);
+        model.addAttribute("mangas", mangas);
 
         if (!mangaService.isValidAddMangaForm(mangaForm, bindingResult)) {
             return "manga/manga-add";
@@ -137,7 +142,7 @@ public class MangaController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             User user = userRepo.findByUserName(username);
-            mangaService.saveManga(mangaForm, user);
+            mangaService.saveManga(mangaForm, secondMangaId ,user);
         } catch (IllegalArgumentException e) {
             bindingResult.rejectValue("manga.mangaName", "error.manga", e.getMessage());
             return "manga/manga-add";
@@ -152,15 +157,25 @@ public class MangaController {
         int maxYear = Year.now().getValue();
         List<Genre> genres = genreRepo.findAll();
         List<Author> authors = authorRepo.findAll();
+        List<Manga> mangas = (List<Manga>) mangaRepo.findAll();
         if (optionalManga.isPresent()) {
             Manga manga = optionalManga.get();
             MangaForm mangaForm = new MangaForm();
             mangaForm.setManga(manga);
+            List<Long> relatedMangaId = new ArrayList<>();
+            Set<Manga> relatedMangas = manga.getRelatedMangas();
+
+            for (Manga relatedManga : relatedMangas) {
+                relatedMangaId.add(relatedManga.getId());
+            }
+            Long firstRelatedMangaId = relatedMangaId.isEmpty() ? null : relatedMangaId.get(0);
 
             model.addAttribute("manga", manga);
+            model.addAttribute("mangas", mangas);
             model.addAttribute("maxYear", maxYear);
             model.addAttribute("genres", genres);
             model.addAttribute("authors", authors);
+            model.addAttribute("relatedMangaId", firstRelatedMangaId);
             model.addAttribute("mangaForm", mangaForm);
             model.addAttribute("posterImageUrl", manga.getMangaPosterImg());
             model.addAttribute("backGroundImageUrl", manga.getMangaBackGround());
@@ -173,7 +188,9 @@ public class MangaController {
     @PostMapping("/manga/edit/{id}")
     public String mangaPostUpdate(@PathVariable("id") long id,
                                   @ModelAttribute("mangaForm") @Valid MangaForm mangaForm,
-                                  BindingResult bindingResult, Model model) {
+                                  BindingResult bindingResult,
+                                  @RequestParam(required = false) Long secondMangaId,
+                                  Model model) {
         List<Long> genreIds = mangaForm.getManga().getGenres().stream()
                 .map(Genre::getId)
                 .toList();
@@ -182,19 +199,21 @@ public class MangaController {
             int maxYear = Year.now().getValue();
             List<Genre> genres = genreRepo.findAll();
             List<Author> authors = authorRepo.findAll();
+            List<Manga> mangas = (List<Manga>) mangaRepo.findAll();
 
             model.addAttribute("id", id);
             model.addAttribute("manga", mangaForm.getManga());
             model.addAttribute("maxYear", maxYear);
             model.addAttribute("genres", genres);
             model.addAttribute("authors", authors);
+            model.addAttribute("mangas", mangas);
             model.addAttribute("mangaForm", mangaForm);
             if (genreIds.isEmpty()) {
                 bindingResult.rejectValue("genres", "error.genres", "Будь ласка, оберіть хоча б один жанр.");
             }
             return "manga/manga-edit";
         }
-        mangaService.updateManga(id,mangaForm);
+        mangaService.updateManga(id,mangaForm,secondMangaId);
         return "redirect:/manga/"+id;
     }
 
