@@ -8,6 +8,7 @@ $(document).ready(function() {
         theme: 'default',
         minimumResultsForSearch: Infinity,
     });
+
     $('.select2').on('select2:open', function() {
         var $container = $(this).parent();
         var containerWidth = $container.outerWidth();
@@ -59,3 +60,99 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.selectImage = selectImage;
 });
+document.addEventListener('DOMContentLoaded', function () {
+    const tabs = document.querySelectorAll('#settingsTabs .nav-link');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    function activateTab(tabId) {
+        tabs.forEach(tab => {
+            if (tab.getAttribute('href') === '#' + tabId) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+
+        tabPanes.forEach(pane => {
+            if (pane.id === tabId) {
+                pane.classList.add('show', 'active');
+            } else {
+                pane.classList.remove('show', 'active');
+            }
+        });
+    }
+
+    function handleHashChange(e) {
+        e.preventDefault();
+        const hash = window.location.hash.substring(1);
+        activateTab(hash);
+    }
+
+    const initialTab = window.location.hash.substring(1) || 'info';
+    activateTab(initialTab);
+
+    window.addEventListener('hashchange', handleHashChange);
+});
+
+function submitForm(action) {
+    const form = document.getElementById('mainForm');
+    const formData = new FormData(form);
+    formData.append('action', action);
+    fetch(form.action, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(text);
+            });
+        }
+        return response.text();
+    })
+        .then(data => {
+        try {
+            const jsonData = JSON.parse(data);
+            handleJsonResponse(jsonData);
+        } catch (e) {
+            handleHtmlResponse(data);
+        }
+    })
+        .catch(error => {
+        let errorMessage = error.message;
+        try {
+            const errorJson = JSON.parse(error.message);
+            if (errorJson && errorJson.message) {
+                errorMessage = errorJson.message;
+            }
+        } catch (e) {
+        }
+
+        console.error('Error:', error);
+        showMessage(errorMessage, 'error');
+    });
+}
+function handleJsonResponse(data) {
+    if (data.success) {
+        showMessage(data.message, 'success');
+    } else {
+        showMessage(data.message, 'error');
+    }
+}
+function handleHtmlResponse(html) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const successMessage = tempDiv.querySelector('[th\\:if="${successMessageEmail}"]');
+    const errorMessage = tempDiv.querySelector('[th\\:if="${errorMessagePasswordOrCode}"]');
+    if (successMessage) {
+        showMessage(successMessage.textContent, 'success');
+    } else if (errorMessage) {
+        showMessage(errorMessage.textContent, 'error');
+    } else {
+        document.getElementById('mainForm').innerHTML = tempDiv.querySelector('#mainForm').innerHTML;
+    }
+}
+function showMessage(message, type) {
+    const messageArea = document.getElementById('messageArea');
+    messageArea.innerHTML = `<div class="${type === 'success' ? 'text-success' : 'text-error'}" role="alert">${message}</div>`;
+}

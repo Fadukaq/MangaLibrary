@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.*;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -99,37 +101,7 @@ public class UserService {
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("averageRating").descending());
         return mangaRepo.findAllByIdIn(ids, sortedPageable);
     }
-    public User updateUserProfile(long id, UserForm userForm, String currentPassword, String userPasswordNew, boolean changePasswordCheckbox) {
-        User userToUpdate = userRepo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
 
-        String realUserPassword = userToUpdate.getUserPassword();
-        boolean isPasswordMatch = passwordEncoder.matches(currentPassword, realUserPassword);
-
-        if (isPasswordMatch) {
-            User existingUser = userRepo.findByUserName(userForm.getUser().getUserName());
-
-            if (existingUser != null && existingUser.getUserName().equals(userForm.getUser().getUserName())) {
-                throw new IllegalArgumentException("Нік вже зайнятий іншим користувачем");
-            }
-            if (!userForm.getProfilePicture().getProfileImage().isEmpty()) {
-                String rootPath = directoryLocator.getResourcePathProfilePicture();
-                String userPath = loadProfilePicture(userForm.getProfilePicture().getProfileImage(), userForm.getUser(), rootPath);
-                userToUpdate.setProfilePicture(userPath);
-            }
-            if (changePasswordCheckbox && isValidResetPass(userPasswordNew)) {
-                String hashedPassword = hashPassword(userPasswordNew);
-                userToUpdate.setUserPassword(hashedPassword);
-            }
-            userToUpdate.setUserName(userForm.getUser().getUserName());
-            userToUpdate.setAbout(userForm.getUser().getAbout());
-            userRepo.save(userToUpdate);
-        }
-        if (!isPasswordMatch) {
-            return null;
-        }
-        return userToUpdate;
-    }
     public String hashPassword(String pass){
         return passwordEncoder.encode(pass);
     }
@@ -424,5 +396,58 @@ public class UserService {
             user.setUserSettings(userSettings);
             userRepo.save(user);
         }
+    }
+
+    public void updateEmail(User user, String newEmail, String confirmationCode, String currentPassword) {
+        if (!passwordEncoder.matches(currentPassword, user.getUserPassword())) {
+            throw new BadCredentialsException("Невірний поточний пароль");
+        }
+
+        if (!confirmationCode.equals(user.getEmailCode())) {
+            throw new BadCredentialsException("Невірний код підтвердження");
+        }
+
+        user.setEmail(newEmail);
+        user.setEmailCode(null);
+        userRepo.save(user);
+    }
+    public void updatePassword(User user, String newPassword, String currentPassword) {
+        if (!passwordEncoder.matches(currentPassword, user.getUserPassword())) {
+            throw new BadCredentialsException("Невірний поточний пароль");
+        }
+        user.setUserPassword(passwordEncoder.encode(newPassword));
+        userRepo.save(user);
+    }
+    public String sendConfirmationCode(User user, String newEmail) {
+        String confirmationCode = generateConfirmationCode();
+        user.setEmailCode(confirmationCode);
+        userRepo.save(user);
+        mailSender.send(newEmail, "Код підтвердження для зміни email", "Ваш код підтвердження: " + confirmationCode);
+        return (confirmationCode);
+    }
+
+    private String generateConfirmationCode() {
+        return String.format("%06d", new Random().nextInt(999999));
+    }
+
+    public boolean isValidNewPassword(String newPassword) {
+        if (newPassword.length() < 10 || newPassword.length() > 255) {
+            throw new BadCredentialsException("Новий пароль має складатись від 10 до 255 символів.");
+        }
+        return true;
+    }
+
+    public boolean isValidNewEmail(String newEmail) {
+        if (newEmail == null || newEmail.isEmpty()) {
+            throw new BadCredentialsException("Нова пошта не може бути пустою");
+        }
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        if (!newEmail.matches(emailRegex)) {
+            throw new BadCredentialsException("Невірний формат нової пошти");
+        }
+        if (userRepo.existsByEmail(newEmail)) {
+            throw new BadCredentialsException("Ця пошта вже використовується");
+        }
+        return true;
     }
 }

@@ -54,4 +54,6 @@ public interface UserRepo extends CrudRepository<User, Long> {
             "FROM User u JOIN u.friends f " +
             "WHERE u = :user AND f = :friend")
     boolean getIsFriends(@Param("user") User user, @Param("friend") User friend);
+
+    boolean existsByEmail(String newEmail);
 }

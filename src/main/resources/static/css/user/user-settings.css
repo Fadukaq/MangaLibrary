@@ -269,3 +269,11 @@ label.form-label {
     color:#ff0080;
     margin-right:7px;
 }
+.text-success{
+    color:green;
+    margin-bottom:5px;
+}
+.text-error{
+    color:red;
+    margin-bottom:5px;
+}

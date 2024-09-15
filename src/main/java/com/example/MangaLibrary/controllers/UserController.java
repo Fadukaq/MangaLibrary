@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -213,82 +214,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/profile/edit/{id}")
-    public String userEditProfile(@PathVariable("id") long id ,
-                                    Model model){
-        Optional<User> userOptional = userRepo.findById(id);
-        if(userOptional.isPresent()){
-            User user = userOptional.get();
-            UserForm userForm = new UserForm();
-            userForm.setUser(user);
-
-            model.addAttribute("user",user);
-            model.addAttribute("userForm", userForm);
-            model.addAttribute("userProfilePicture",user.getProfilePicture());
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-            User currentUser = userRepo.findByUserName(username);
-            if(!Objects.equals(user.getId(), currentUser.getId())){
-                model.addAttribute("errorMessage", "У вас немає доступу до налаштувань цього профілю!");
-                return "main/error";
-            }
-
-            return "user/user-edit-profile";
-        }
-        return "user/user-profile";
-    }
-
-    @PostMapping("/profile/edit/{id}")
-    public String userEditProfilePost(@PathVariable("id") long id, @Valid @ModelAttribute("userForm") UserForm userForm,
-                                      BindingResult bindingResult,
-                                      @RequestParam String currentPassword,
-                                      @RequestParam(name = "userPasswordNew", required = false) String userPasswordNew,
-                                      @RequestParam(name = "changePasswordCheckbox", required = false) boolean changePasswordCheckbox,
-                                      RedirectAttributes redirectAttributes,
-                                      HttpSession session,
-                                      Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("user", userForm.getUser());
-            model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
-            model.addAttribute("userForm", userForm);
-            model.addAttribute("validationErrors", bindingResult.getAllErrors());
-            return "user/user-edit-profile";
-        }
-        try {
-            User updatedUser = userService.updateUserProfile(id, userForm, currentPassword, userPasswordNew, changePasswordCheckbox);
-            if (updatedUser == null) {
-                model.addAttribute("errorMessage", "Обов'язково введіть правильний пароль!");
-                model.addAttribute("user", userForm.getUser());
-                model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
-                model.addAttribute("userForm", userForm);
-                return "user/user-edit-profile";
-            }
-            if (changePasswordCheckbox && !userService.isValidResetPass(userPasswordNew)) {
-                model.addAttribute("changePasswordCheckbox", "on");
-                model.addAttribute("errorPassword", "Поле Новий пароль повинно бути від 10 символів до 255!");
-                model.addAttribute("user", userForm.getUser());
-                model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
-                model.addAttribute("userForm", userForm);
-                return "user/user-edit-profile";
-            }
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-            if(!Objects.equals(updatedUser.getUserName(), username)){
-                session.invalidate();
-                return "redirect:/login";
-            }
-        } catch (IllegalArgumentException e) {
-            bindingResult.rejectValue("user.userName", "error.user", e.getMessage());
-            model.addAttribute("user", userForm.getUser());
-            model.addAttribute("userProfilePicture", userForm.getUser().getProfilePicture());
-            model.addAttribute("userForm", userForm);
-            return "user/user-edit-profile";
-        }
-        return "user/user-edit-profile";
-    }
-
-
     @GetMapping("/profile/settings/{id}")
     public String userSettings(@PathVariable("id") Long id, Model model) {
         Optional<User> userOptional = userRepo.findById(id);
@@ -350,18 +275,59 @@ public class UserController {
         }
         return "user/user-settings";
     }
-
-    @PostMapping("/profile/settings/security/{id}")
-    public String updateSecurity(@PathVariable("id") Long id,
-                                 Model model) {
+    @PostMapping("/profile/settings/securityPassword/{id}")
+    public String updateSecurityPass(@PathVariable("id") Long id,
+                                     @RequestParam("userPasswordNew") String newPassword,
+                                     @RequestParam("currentPassword") String currentPassword,
+                                     RedirectAttributes redirectAttributes) {
         Optional<User> userOptional = userRepo.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-
-            return "redirect:/profile/settings/" + user.getId()+"#security";
+            try {
+                userService.isValidNewPassword(newPassword);
+                userService.updatePassword(user, newPassword, currentPassword);
+                redirectAttributes.addFlashAttribute("successMessagePassword", "Пароль успішно оновлено");
+            }
+            catch (BadCredentialsException e) {
+                redirectAttributes.addFlashAttribute("errorMessagePassword", e.getMessage());
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("errorMessagePassword", "Помилка при оновленні пароля");
+            }
+            return "redirect:/profile/settings/" + user.getId() + "#security";
         }
         return "user/user-settings";
     }
+
+    @PostMapping("/profile/settings/securityMail/{id}")
+    public ResponseEntity<String> updateSecurityMail(@PathVariable("id") Long id,
+                                                     @RequestParam("newEmail") String newEmail,
+                                                     @RequestParam(value = "confirmationCode", required = false) String confirmationCode,
+                                                     @RequestParam(value = "currentPassword", required = false) String currentPassword,
+                                                     @RequestParam("action") String action) {
+        Optional<User> userOptional = userRepo.findById(id);
+        if (userOptional.isPresent()) {
+            try {
+                User user = userOptional.get();
+                if ("getConfirmationCode".equals(action)) {
+                    userService.isValidNewEmail(newEmail);
+                    String generatedCode = userService.sendConfirmationCode(user, newEmail);
+                    user.setEmailCode(generatedCode);
+                    userRepo.save(user);
+                    return ResponseEntity.ok("{\"success\":true,\"message\":\"Код підтвердження відправлено на вашу нову електронну адресу.\"}");
+                } else if ("updateEmail".equals(action)) {
+                    userService.isValidNewEmail(newEmail);
+                    userService.updateEmail(user, newEmail, confirmationCode, currentPassword);
+                    return ResponseEntity.ok("{\"success\":true,\"message\":\"Пошту успішно оновлено!\"}");
+                }
+            } catch (BadCredentialsException e) {
+                return ResponseEntity.badRequest().body("{\"success\":false,\"message\":\"" + e.getMessage() + "\"}");
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body("{\"success\":false,\"message\":\"Помилка при оновленні пошти\"}");
+            }
+        }
+        return ResponseEntity.badRequest().body("{\"success\":false,\"message\":\"Користувача не знайдено\"}");
+    }
+
 
     @PostMapping("/profile/settings/background/{id}")
     public String updateBackground(@PathVariable("id") Long id,
