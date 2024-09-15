@@ -128,7 +128,7 @@ public class MangaService {
     private boolean isValidMangaStatus(String status) {
         return status.equals("release") || status.equals("ongoing") || status.equals("completed");
     }
-    public void saveManga(MangaForm mangaForm, Long secondMangaId, User user) throws IOException {
+    public void saveManga(MangaForm mangaForm, List<Long> relatedMangaIds, User user) throws IOException {
         Manga existingManga = mangaRepo.findByMangaName(mangaForm.getManga().getMangaName());
         if (existingManga != null) {
             throw new IllegalArgumentException("Манга з такою назвою вже існує");
@@ -144,8 +144,8 @@ public class MangaService {
 
         Manga manga = mangaForm.getManga();
         mangaRepo.save(manga);
-        if(secondMangaId != null){
-            setRelatedMangas(manga.getId(),secondMangaId);
+        if (relatedMangaIds != null && !relatedMangaIds.isEmpty()) {
+            setRelatedMangas(manga.getId(), relatedMangaIds);
         }
         String rootPath = mangaLibraryManager.getResourcePathManga();
         String mangaFolderPath = createFolderForManga(manga.getId(), rootPath);
@@ -163,7 +163,7 @@ public class MangaService {
 
         mangaRepo.save(manga);
     }
-    public void updateManga(long id, MangaForm mangaForm , Long secondMangaId) {
+    public void updateManga(long id, MangaForm mangaForm, List<Long> relatedMangaIds) {
         Manga mangaToUpdate = mangaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid manga Id:" + id));
         mangaToUpdate.setMangaName(mangaForm.getManga().getMangaName());
@@ -173,11 +173,8 @@ public class MangaService {
         mangaToUpdate.setAuthor(mangaForm.getManga().getAuthor());
         mangaToUpdate.setAdultContent(mangaForm.getManga().getAdultContent());
         mangaToUpdate.setMangaStatus(mangaForm.getManga().getMangaStatus());
-        if(secondMangaId != null){
-            setRelatedMangas(mangaToUpdate.getId(), secondMangaId);
-        }else{
-            removeRelatedMangas(mangaToUpdate.getId());
-        }
+        updateRelatedMangas(mangaToUpdate, relatedMangaIds);
+
         if (mangaForm.getMangaImage().getBackGroundMangaImg() != null && !mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()) {
             String mangaFolderPath = mangaLibraryManager.getResourcePathManga() + File.separator + id;
             String backgroundImgPath = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), mangaToUpdate, mangaFolderPath);
@@ -384,19 +381,35 @@ public class MangaService {
 
         return relatedMangas;
     }
-    public void setRelatedMangas(Long firstMangaId, Long secondMangaId) {
-        Manga firstManga = mangaRepo.findById(firstMangaId)
-                .orElseThrow(() -> new RuntimeException("Manga not found: " + firstMangaId));
-        Manga secondManga = mangaRepo.findById(secondMangaId)
-                .orElseThrow(() -> new RuntimeException("Manga not found: " + secondMangaId));
+    public void setRelatedMangas(Long mangaId, List<Long> relatedMangaIds) {
+        Manga manga = mangaRepo.findById(mangaId)
+                .orElseThrow(() -> new RuntimeException("Manga not found: " + mangaId));
 
-        firstManga.getRelatedMangas().add(secondManga);
-        mangaRepo.save(firstManga);
-    }
-    private void removeRelatedMangas(Long mangaId) {
-        Manga manga = mangaRepo.findById(mangaId).orElseThrow(() -> new RuntimeException("Manga not found"));
-        manga.getRelatedMangas().clear();
+        List<Manga> relatedMangas = (List<Manga>) mangaRepo.findAllById(relatedMangaIds);
+
+        manga.getRelatedMangas().addAll(relatedMangas);
         mangaRepo.save(manga);
+
+        for (Manga relatedManga : relatedMangas) {
+            relatedManga.getRelatedMangas().add(manga);
+            mangaRepo.save(relatedManga);
+        }
+    }
+    private void updateRelatedMangas(Manga manga, List<Long> relatedMangaIds) {
+        for (Manga relatedManga : new ArrayList<>(manga.getRelatedMangas())) {
+            relatedManga.getRelatedMangas().remove(manga);
+            manga.getRelatedMangas().remove(relatedManga);
+            mangaRepo.save(relatedManga);
+        }
+
+        if (relatedMangaIds != null && !relatedMangaIds.isEmpty()) {
+            List<Manga> relatedMangas = (List<Manga>) mangaRepo.findAllById(relatedMangaIds);
+            for (Manga relatedManga : relatedMangas) {
+                manga.getRelatedMangas().add(relatedManga);
+                relatedManga.getRelatedMangas().add(manga);
+                mangaRepo.save(relatedManga);
+            }
+        }
     }
     public long getCountByReading(String mangaId) {
         return userRepo.countByMangaReading(mangaId);

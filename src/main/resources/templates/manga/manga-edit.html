@@ -69,10 +69,15 @@
                 </div>
 
                 <div class="form-group" style="position: relative;">
-                    <label for="relatedMangaSelect"><i class="fas fa-circle pink-dot"></i> Зв'яза манга</label>
-                    <select id="relatedMangaSelect" name="secondMangaId" class="form-control">
-                        <option value="" th:selected="${relatedMangaId == null}">Немає</option>
-                        <option th:each="manga : ${mangas}" th:value="${manga.id}" th:text="${manga.mangaName}" th:selected="${manga.id == relatedMangaId}"></option>
+                    <label for="relatedMangaSelect"><i class="fas fa-circle pink-dot"></i> Связанная манга</label>
+                    <select id="relatedMangaSelect" name="relatedMangaIds" class="form-control" multiple>
+                        <option value="" disabled>Выберите связанные манги</option>
+                        <option th:each="relatedManga : ${mangas}"
+                                th:if="${relatedManga.id != manga.id}"
+                                th:value="${relatedManga.id}"
+                                th:text="${relatedManga.mangaName}"
+                                th:selected="${relatedMangaIds != null and relatedMangaIds.contains(relatedManga.id)}">
+                        </option>
                     </select>
                 </div>
 

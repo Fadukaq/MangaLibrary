@@ -12,7 +12,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         $('#relatedMangaSelect').select2({
             width: '100%',
-            closeOnSelect: true
+            closeOnSelect: true,
+            templateResult: function (data) {
+                if (!data.text) {
+                    return data;
+                }
+
+                var truncatedText = data.text.length > 88 ? data.text.substring(0, 88) + '...' : data.text;
+                return $('<span>' + truncatedText + '</span>');
+            },
+            templateSelection: function (data) {
+                var truncatedText = data.text.length > 88 ? data.text.substring(0, 88) + '...' : data.text;
+                return truncatedText;
+            }
         });
     });
 
