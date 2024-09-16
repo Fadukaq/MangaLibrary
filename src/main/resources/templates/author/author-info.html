@@ -45,7 +45,7 @@
                     <div id="mangaBiographyContainer">
                         <p class="short-description" th:text="${#strings.length(author.biography) <= 128 ? author.biography : author.biography.substring(0, 128) + '...'}"></p>
                         <p class="full-description" th:text="${author.biography}"></p>
-                        <button id="toggleDescriptionBtn" class="btn btn-primary">Показать больше</button>
+                        <button id="toggleDescriptionBtn" class="btn btn-primary" th:if="${#strings.length(author.biography) > 128}">Показати більше</button>
                     </div>
                     <span class="author-total-mangas" th:text="${authorMangasCount}"></span>
                     <span class="author-total-subscribes" style="">20 Підписників</span>
@@ -127,5 +127,6 @@
 <script src="/js/loader-spinner.js"></script>
 <script src="/js/confirmDelete.js"></script>
 <script src="/js/main/star-grade-manga.js"></script>
+<script src="/js/author/author-info.js"></script>
 </body>
 </html>
