@@ -25,7 +25,7 @@ public class AuthorController {
     MangaRepo mangaRepo;
     @Autowired
     AuthorRepo authorRepo;
-    private static final int PAGE_SIZE = 6;
+    private static final int PAGE_SIZE = 10;
 
     @GetMapping("/author/{id}")
     public String getAuthorMangas(@PathVariable("id") long id,
@@ -40,19 +40,11 @@ public class AuthorController {
             return "main/error";
         }
 
-        if (mangaPage.isEmpty()) {
-            model.addAttribute("author", author);
-            model.addAttribute("noAuthor", false);
-            model.addAttribute("noMangas", true);
-        } else {
-            List<Manga> mangaList = mangaPage.getContent();
-            model.addAttribute("noAuthor", false);
-            model.addAttribute("noMangas", false);
-            model.addAttribute("author", author);
-            model.addAttribute("mangas", mangaList);
-            model.addAttribute("page", mangaPage);
-        }
-
+        List<Manga> mangaList = mangaPage.getContent();
+        model.addAttribute("authorMangasCount", mangaPage.getTotalElements()+" Тайтла");
+        model.addAttribute("page", mangaPage);
+        model.addAttribute("mangas", mangaList);
+        model.addAttribute("author", author);
         return "author/author-info";
     }
 
