@@ -75,8 +75,9 @@
 .author-right-content {
     position: relative;
     float: right;
+    width: 100%;
+    max-width: 1045px;
 }
-
 .subscribe-form {
     position: absolute;
     top: 10px;

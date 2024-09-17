@@ -56,14 +56,15 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('mangaBiographyContainer');
     const toggleBtn = document.getElementById('toggleDescriptionBtn');
-
-    toggleBtn.addEventListener('click', function () {
-        if (container.classList.contains('description-expanded')) {
-            container.classList.remove('description-expanded');
-            toggleBtn.textContent = 'Показати більше';
-        } else {
-            container.classList.add('description-expanded');
-            toggleBtn.textContent = 'Приховати';
-        }
-    });
+    if(toggleBtn){
+        toggleBtn.addEventListener('click', function () {
+            if (container.classList.contains('description-expanded')) {
+                container.classList.remove('description-expanded');
+                toggleBtn.textContent = 'Показати більше';
+            } else {
+                container.classList.add('description-expanded');
+                toggleBtn.textContent = 'Приховати';
+            }
+        });
+    }
 });
