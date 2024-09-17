@@ -107,14 +107,17 @@ document.addEventListener('DOMContentLoaded', function() {
             data: { sort, direction, page },
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             success: function(data) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(() => {
                 $('.manga-grid').html($(data).find('.manga-grid').html());
+                $('.manga-grid').addClass('switching');
                 $('.pagination').html($(data).find('.pagination').html());
                 history.pushState(null, '', `/manga?sort=${sort}&direction=${direction}&page=${page}`);
-                $('.manga-grid').addClass('switching');
                 updateStarRatings();
-                setTimeout(() => {
-                    $('.manga-grid').removeClass('switching');
-                }, 500);
+                    setTimeout(() => {
+                        $('.manga-grid').removeClass('switching');
+                    }, 800);
+                }, 800);
             }
         });
     }
