@@ -16,26 +16,21 @@
     color: #999;
 }
 
-.custom-select-settings {
-    background-color: #f3e5f5;
-    border: 2px solid #9c27b0;
-    color: #4a148c;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 16px;
-    font-family: Arial, sans-serif;
-    appearance: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    cursor: pointer;
+.btn-outline-info {
+    border-color: #ff4fa7 !important;
+    color: #ff4fa7 !important;
+    background-color: transparent !important;
 }
 
-.custom-select-settings:focus {
-    outline: none;
-    border-color: #7b1fa2;
+.btn-outline-info:hover {
+    background-color: #ff4fa7 !important;
+    color: #ffffff !important;
+    border-color: #de006f !important;
 }
 
-.custom-select-settings option {
-    background-color: #f3e5f5;
-    color: #4a148c;
+.btn-outline-info:focus, .btn-outline-info:active {
+    background-color: #ff4fa7 !important;
+    color: #ffffff !important;
+    border-color: #de006f !important;
+    box-shadow: none !important;
 }

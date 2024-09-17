@@ -1,14 +1,13 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
-    <title>Admin Panel</title>
+    <title>Адмін Панель</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/token-alerts.css">
     <link rel="stylesheet" href="/css/loader.css">
-    <link rel="stylesheet" href="/css/transparent-container.css">
     <link rel="stylesheet" href="/css/admin-panel.css">
     <link rel="stylesheet" href="/css/form-styles.css">
 </head>
@@ -16,71 +15,427 @@
 <div th:insert="~{blocks/loader :: loader}"></div>
 <header th:insert="~{blocks/header :: header}"></header>
 <input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
-<div class="container mt-5 mb-5">
-    <div class="transparent-container">
-        <h1 class="highlight">Admin Panel</h1>
-
-        <form th:action="@{/admin-panel}" method="get" class="mb-3">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Пошук по імені" name="username"
-                        aria-label="Search by username" aria-describedby="button-search">
-                <button class="btn btn-outline-info" type="submit" id="button-search">Пошук</button>
+<div class="container mt-5 mb-5 d-flex">
+    <ul class="nav nav-pills flex-column me-3" id="adminTabs" role="tablist" style="min-width: 150px;">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" style="border-radius: 5px;" id="admin-panel-tab" data-bs-toggle="tab" href="#admin-panel" role="tab" aria-controls="admin-panel" aria-selected="true">Адмін панель</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="complaints-tab" data-bs-toggle="tab" href="#complaints" role="tab" aria-controls="complaints" aria-selected="false">Скарги</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" style="border-radius: 5px;" id="resolved-complaints-tab" data-bs-toggle="tab" href="#resolved-complaints" role="tab" aria-controls="resolved-complaints" aria-selected="false">Вирішені скарги</a>
+        </li>
+    </ul>
+    <div class="tab-content w-100">
+        <div class="tab-pane fade " id="admin-panel" role="tabpanel" aria-labelledby="admin-panel-tab">
+            <div class="admin-panel">
+                <form th:action="@{/admin-panel}" method="get" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Пошук по імені" name="username"
+                               aria-label="Search by username" aria-describedby="button-search">
+                        <button class="btn btn-outline-info" type="submit" id="button-search">Пошук</button>
+                    </div>
+                </form>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ім'я користувача</th>
+                        <th>Пошта</th>
+                        <th>Роль</th>
+                        <th>Статус</th>
+                        <th>Про себе</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td class="link">
+                            <a th:href="@{/profile/{userId}(userId=${user.id})}">
+                                <span th:text="${user.userName}"></span>
+                            </a>
+                        </td>
+                        <td th:text="${user.email}"></td>
+                        <td>
+                            <form th:action="@{/admin-panel/update-user}" method="post">
+                                <input type="hidden" name="userId" th:value="${user.id}" />
+                                <input type="hidden" name="panel" value="#admin-panel" />
+                                <select name="role" class="form-select"
+                                        th:disabled="${#authentication.name} == ${user.userName} or ${!user.enabled}"
+                                        onchange="this.form.submit()">
+                                    <option th:value="USER" th:text="'USER'" th:selected="${user.userRole == 'USER'}"></option>
+                                    <option th:value="ADMIN" th:text="'ADMIN'" th:selected="${user.userRole == 'ADMIN'}"></option>
+                                    <option th:value="MODERATOR" th:text="'MODERATOR'" th:selected="${user.userRole == 'MODERATOR'}"></option>
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin-panel/update-user}" method="post">
+                                <input type="hidden" name="userId" th:value="${user.id}" />
+                                <input type="hidden" name="mainPanel" value="#admin-panel" />
+                                <select name="enabled" class="form-select"
+                                        th:disabled="${user.userRole == 'ADMIN'} or (${#authentication.name} == ${user.userName} and ${user.userRole} == 'ADMIN')"
+                                        onchange="this.form.submit()">
+                                    <option th:value="true" th:text="'Активованний'" th:selected="${user.enabled}"></option>
+                                    <option th:value="false" th:text="'Деактивовано'" th:selected="${!user.enabled}"></option>
+                                </select>
+                            </form>
+                        </td>
+                        <td th:text="${user.about}"></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </form>
+        </div>
 
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Enabled</th>
-                <th>About</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="user : ${users}">
-                <td th:text="${user.id}"></td>
-                <td class="link">
-                    <a th:href="@{/profile/{userId}(userId=${user.id})}">
-                        <span th:text="${user.userName}"></span>
-                    </a>
-                </td>
-                <td th:text="${user.email}"></td>
-                <td>
-                    <form th:action="@{/admin-panel/update-user}" method="post">
-                        <input type="hidden" name="userId" th:value="${user.id}" />
-                        <select name="role" class="form-select"
-                                th:disabled="${#authentication.name} == ${user.userName} or ${!user.enabled}"
-                                onchange="this.form.submit()">
-                            <option th:value="USER" th:text="'USER'" th:selected="${user.userRole == 'USER'}"></option>
-                            <option th:value="ADMIN" th:text="'ADMIN'" th:selected="${user.userRole == 'ADMIN'}"></option>
-                            <option th:value="MODERATOR" th:text="'MODERATOR'" th:selected="${user.userRole == 'MODERATOR'}"></option>
-                        </select>
-                    </form>
-                </td>
-                <td>
-                    <form th:action="@{/admin-panel/update-user}" method="post">
-                        <input type="hidden" name="userId" th:value="${user.id}" />
-                        <select name="enabled" class="form-select"
-                                th:disabled="${user.userRole == 'ADMIN'} or (${#authentication.name} == ${user.userName} and ${user.userRole} == 'ADMIN')"
-                                onchange="this.form.submit()">
-                            <option th:value="true" th:text="'Enabled'" th:selected="${user.enabled}"></option>
-                            <option th:value="false" th:text="'Disabled'" th:selected="${!user.enabled}"></option>
-                        </select>
-                    </form>
-                </td>
-                <td th:text="${user.about}"></td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="tab-pane fade" id="complaints" role="tabpanel" aria-labelledby="complaints-tab">
+            <ul class="nav nav-pills mb-3" id="complaintsSubTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" style="border-radius: 5px;" id="user-complaints-tab" data-bs-toggle="tab" href="#user-complaints" role="tab" aria-controls="user-complaints" aria-selected="true">На користувачів</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" style="border-radius: 5px;" id="comment-complaints-tab" data-bs-toggle="tab" href="#comment-complaints" role="tab" aria-controls="comment-complaints" aria-selected="false">На коментарі</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" style="border-radius: 5px;" id="reply-complaints-tab" data-bs-toggle="tab" href="#reply-complaints" role="tab" aria-controls="reply-complaints" aria-selected="false">На відповіді</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade" id="user-complaints" role="tabpanel" aria-labelledby="user-complaints-tab">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Скарга від</th>
+                            <th>Скарга до</th>
+                            <th>Причина скарги</th>
+                            <th>Дата</th>
+                            <th>Статус аккаунта</th>
+                            <th>Статус заяви</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="report : ${usersReported}">
+                            <td th:text="${report.id}"></td>
+                            <td th:text="${report.reporterUser.userName}"></td>
+                            <td th:text="${report.reportedUser.userName}"></td>
+                            <td th:text="${report.reason}"></td>
+                            <td th:data-date="${report.reportedAt}"></td>
+                            <td>
+                                <form th:action="@{/admin-panel/update-user}" method="post">
+                                    <input type="hidden" name="userId" th:value="${report.reportedUser.id}" />
+                                    <input type="hidden" name="mainPanel" value="#complaints" />
+                                    <input type="hidden" name="secondPanel" value="#user-complaints" />
+                                    <select name="enabled" class="form-select"
+                                            th:disabled="${report.reportedUser.userRole == 'ADMIN'} or (${#authentication.name} == ${report.reportedUser.userName} and ${report.reportedUser.userRole} == 'ADMIN')"
+                                            onchange="this.form.submit()">
+                                        <option th:value="true" th:text="'Активованний'" th:selected="${report.reportedUser.enabled}"></option>
+                                        <option th:value="false" th:text="'Деактивовано'" th:selected="${!report.reportedUser.enabled}"></option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td>
+                                <form th:action="@{/admin-panel/update-status-user}" method="post">
+                                    <input type="hidden" name="reportId" th:value="${report.id}" />
+                                    <input type="hidden" name="mainPanel" value="#complaints" />
+                                    <input type="hidden" name="secondPanel" value="#user-complaints" />
+                                    <select name="status" class="form-select"
+                                            onchange="this.form.submit()">
+                                        <option th:value="PENDING" th:text="'Очікує'" th:selected="${report.status == 'PENDING'}"></option>
+                                        <option th:value="RESOLVED" th:text="'Вирішенний'" th:selected="${report.status == 'RESOLVED'}"></option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="comment-complaints" role="tabpanel" aria-labelledby="comment-complaints-tab">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Скарга від</th>
+                            <th>Скарга до</th>
+                            <th>Коментар</th>
+                            <th>Причина скарги</th>
+                            <th>Дата</th>
+                            <th>Статус аккаунта</th>
+                            <th>Статус заяви</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="report : ${commentsReport}">
+                            <td th:text="${report.id}"></td>
+                            <td th:text="${report.user.userName}"></td>
+                            <td th:text="${report.comment.user.userName}"></td>
+                            <td th:text="${report.comment.text}"></td>
+                            <td th:text="${report.reason}"></td>
+                            <td th:data-date="${report.reportedAt}"></td>
+                            <td>
+                                <form th:action="@{/admin-panel/update-user}" method="post">
+                                    <input type="hidden" name="userId" th:value="${report.comment.user.id}" />
+                                    <input type="hidden" name="mainPanel" value="#complaints" />
+                                    <input type="hidden" name="secondPanel" value="#comment-complaints" />
+                                    <select name="enabled" class="form-select"
+                                            th:disabled="${report.comment.user.userRole == 'ADMIN'} or (${#authentication.name} == ${report.comment.user.userName} and ${report.comment.user.userRole} == 'ADMIN')"
+                                            onchange="this.form.submit()">
+                                        <option th:value="true" th:text="'Активованний'" th:selected="${report.comment.user.enabled}"></option>
+                                        <option th:value="false" th:text="'Деактивовано'" th:selected="${!report.comment.user.enabled}"></option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td>
+                                    <form th:action="@{/admin-panel/update-status-comment}" method="post">
+                                    <input type="hidden" name="reportId" th:value="${report.id}" />
+                                    <input type="hidden" name="mainPanel" value="#complaints" />
+                                    <input type="hidden" name="secondPanel" value="#comment-complaints" />
+                                    <select name="status" class="form-select"
+                                            onchange="this.form.submit()">
+                                        <option th:value="PENDING" th:text="'Очікує'" th:selected="${report.status == 'PENDING'}"></option>
+                                        <option th:value="RESOLVED" th:text="'Вирішенний'" th:selected="${report.status == 'RESOLVED'}"></option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="reply-complaints" role="tabpanel" aria-labelledby="reply-complaints-tab">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Скарга від</th>
+                            <th>Скарга до</th>
+                            <th>Відповідь</th>
+                            <th>Причина скарги</th>
+                            <th>Дата</th>
+                            <th>Статус аккаунта</th>
+                            <th>Статус заяви</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="report : ${repliesReport}">
+                                <td th:text="${report.id}"></td>
+                                <td th:text="${report.user.userName}"></td>
+                                <td th:text="${report.reply.user.userName}"></td>
+                                <td th:text="${report.reply.text}"></td>
+                                <td th:text="${report.reason}"></td>
+                                <td th:data-date="${report.reportedAt}"></td>
+                                <td>
+                                    <form th:action="@{/admin-panel/update-user}" method="post">
+                                        <input type="hidden" name="userId" th:value="${report.reply.user.id}" />
+                                        <input type="hidden" name="mainPanel" value="#complaints" />
+                                        <input type="hidden" name="secondPanel" value="#reply-complaints" />
+                                        <select name="enabled" class="form-select"
+                                                th:disabled="${report.reply.user.userRole == 'ADMIN'} or (${#authentication.name} == ${report.reply.user.userName} and ${report.reply.user.userRole} == 'ADMIN')"
+                                                onchange="this.form.submit()">
+                                            <option th:value="true" th:text="'Активованний'" th:selected="${report.reply.user.enabled}"></option>
+                                            <option th:value="false" th:text="'Деактивовано'" th:selected="${!report.reply.user.enabled}"></option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form th:action="@{/admin-panel/update-status-reply}" method="post">
+                                        <input type="hidden" name="reportId" th:value="${report.id}" />
+                                        <input type="hidden" name="mainPanel" value="#complaints" />
+                                        <input type="hidden" name="secondPanel" value="#reply-complaints" />
+                                        <select name="status" class="form-select"
+                                                onchange="this.form.submit()">
+                                            <option th:value="PENDING" th:text="'Очікує'" th:selected="${report.status == 'PENDING'}"></option>
+                                            <option th:value="RESOLVED" th:text="'Вирішенний'" th:selected="${report.status == 'RESOLVED'}"></option>
+                                        </select>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="resolved-complaints" role="tabpanel" aria-labelledby="resolved-complaints-tab">
+                <ul class="nav nav-pills mb-3" id="resolvedComplaintsSubTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" style="border-radius: 5px;" id="resolved-profile-tab" data-bs-toggle="tab" href="#resolved-profile" role="tab" aria-controls="resolved-profile" aria-selected="true">Профіль</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" style="border-radius: 5px;" id="resolved-comments-tab" data-bs-toggle="tab" href="#resolved-comments" role="tab" aria-controls="resolved-comments" aria-selected="false">Коментарі</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" style="border-radius: 5px;" id="resolved-replies-tab" data-bs-toggle="tab" href="#resolved-replies" role="tab" aria-controls="resolved-replies" aria-selected="false">Відповіді</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade" id="resolved-profile" role="tabpanel" aria-labelledby="resolved-profile-tab">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Користувач</th>
+                                <th>Причина</th>
+                                <th>Дата</th>
+                                <th>Статус</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="report : ${usersResolved}">
+                                    <td th:text="${report.id}"></td>
+                                    <td th:text="${report.reportedUser.userName}"></td>
+                                    <td th:text="${report.reason}"></td>
+                                    <td th:data-date="${report.reportedAt}"></td>
+                                    <td>
+                                        <form th:action="@{/admin-panel/update-status-user}" method="post">
+                                            <input type="hidden" name="reportId" th:value="${report.id}" />
+                                            <input type="hidden" name="mainPanel" value="#resolved-complaints" />
+                                            <input type="hidden" name="secondPanel" value="#resolved-profile" />
+                                            <select name="status" class="form-select" onchange="this.form.submit()">
+                                                <option th:value="PENDING" th:text="'Очікує'" th:selected="${report.status == 'PENDING'}"></option>
+                                                <option th:value="RESOLVED" th:text="'Вирішенний'" th:selected="${report.status == 'RESOLVED'}"></option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="resolved-comments" role="tabpanel" aria-labelledby="resolved-comments-tab">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Коментар</th>
+                                <th>Причина</th>
+                                <th>Дата</th>
+                                <th>Статус</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="report : ${commentsResolved}">
+                                <td th:text="${report.id}"></td>
+                                <td th:text="${report.comment.text}"></td>
+                                <td th:text="${report.reason}"></td>
+                                <td th:data-date="${report.reportedAt}"></td>
+                                <td>
+                                    <form th:action="@{/admin-panel/update-status-comment}" method="post">
+                                        <input type="hidden" name="reportId" th:value="${report.id}" />
+                                        <input type="hidden" name="mainPanel" value="#resolved-complaints" />
+                                        <input type="hidden" name="secondPanel" value="#resolved-comments" />
+                                        <select name="status" class="form-select" onchange="this.form.submit()">
+                                            <option th:value="PENDING" th:text="'Очікує'" th:selected="${report.status == 'PENDING'}"></option>
+                                            <option th:value="RESOLVED" th:text="'Вирішенний'" th:selected="${report.status == 'RESOLVED'}"></option>
+                                        </select>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="resolved-replies" role="tabpanel" aria-labelledby="resolved-replies-tab">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Відповідь</th>
+                                <th>Причина</th>
+                                <th>Дата</th>
+                                <th>Статус</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="report : ${repliesResolved}">
+                                <td th:text="${report.id}"></td>
+                                <td th:text="${report.reply.text}"></td>
+                                <td th:text="${report.reason}"></td>
+                                <td th:data-date="${report.reportedAt}"></td>
+                                <td>
+                                    <form th:action="@{/admin-panel/update-status-reply}" method="post">
+                                        <input type="hidden" name="reportId" th:value="${report.id}" />
+                                        <input type="hidden" name="mainPanel" value="#resolved-complaints" />
+                                        <input type="hidden" name="secondPanel" value="#resolved-replies" />
+                                        <select name="status" class="form-select" onchange="this.form.submit()">
+                                            <option th:value="PENDING" th:text="'Очікує'" th:selected="${report.status == 'PENDING'}"></option>
+                                            <option th:value="RESOLVED" th:text="'Вирішенний'" th:selected="${report.status == 'RESOLVED'}"></option>
+                                        </select>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        </div>
     </div>
 </div>
+
 <footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
+<script src="/js/user/admin-panel.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentURL = new URL(window.location.href);
+        const hashParts = currentURL.hash.split('#');
+        const mainTab = hashParts[1];
+        const subTab = hashParts[2];
+
+        function activateTab(tabSelector, tabContainer) {
+            const tabLink = document.querySelector(`a[href="${tabSelector}"]`);
+            const tabPane = document.querySelector(tabSelector);
+
+            if (tabLink && tabPane) {
+                tabContainer.querySelectorAll('.nav-link').forEach(function (link) {
+                    link.classList.remove('active');
+                });
+                tabContainer.querySelectorAll('.tab-pane').forEach(function (pane) {
+                    pane.classList.remove('show', 'active');
+                });
+
+                tabLink.classList.add('active');
+                tabPane.classList.add('show', 'active');
+            }
+        }
+
+        if (mainTab) {
+            activateTab(`#${mainTab}`, document.querySelector('#adminTabs'));
+        } else {
+            activateTab('#admin-panel', document.querySelector('#adminTabs'));
+        }
+
+        if (mainTab === 'resolved-complaints' && subTab) {
+            activateTab(`#${subTab}`, document.querySelector('#resolvedComplaintsSubTabs'));
+        } else if (mainTab === 'complaints' && subTab) {
+            activateTab(`#${subTab}`, document.querySelector('#complaintsSubTabs'));
+        }
+
+        document.querySelectorAll('#adminTabs .nav-link').forEach(function (mainTabLink) {
+            mainTabLink.addEventListener('click', function () {
+                const newMainTab = this.getAttribute('href').substring(1);
+                const currentSubTab = window.location.hash.split('#')[2] || '';
+                history.replaceState(null, '', `#${newMainTab}#${currentSubTab}`);
+            });
+        });
+
+        document.querySelectorAll('#complaintsSubTabs .nav-link').forEach(function (subTabLink) {
+            subTabLink.addEventListener('click', function () {
+                const newSubTab = this.getAttribute('href').substring(1);
+                const currentMainTab = window.location.hash.split('#')[1] || '';
+                history.replaceState(null, '', `#${currentMainTab}#${newSubTab}`);
+            });
+        });
+
+        document.querySelectorAll('#resolvedComplaintsSubTabs .nav-link').forEach(function (subTabLink) {
+            subTabLink.addEventListener('click', function () {
+                const newSubTab = this.getAttribute('href').substring(1);
+                const currentMainTab = window.location.hash.split('#')[1] || '';
+                history.replaceState(null, '', `#${currentMainTab}#${newSubTab}`);
+            });
+        });
+    });
+</script>
 </body>
 </html>

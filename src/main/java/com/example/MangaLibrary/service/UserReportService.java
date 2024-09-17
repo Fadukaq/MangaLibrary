@@ -20,6 +20,7 @@ public class UserReportService {
             userReport.setReportedUser(reportedUser);
             userReport.setReporterUser(reporterUser);
             userReport.setReason(reason);
+            userReport.setStatus("PENDING");
             userReport.setReportedAt(LocalDateTime.now());
             userReportRepo.save(userReport);
         } else {

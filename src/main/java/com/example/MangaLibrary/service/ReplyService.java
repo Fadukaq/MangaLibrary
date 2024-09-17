@@ -88,6 +88,7 @@ public class ReplyService {
         replyReport.setUser(user);
         replyReport.setReportedAt(LocalDateTime.now());
         replyReport.setReason(reason);
+        replyReport.setStatus("PENDING");
 
         replyReportRepo.save(replyReport);
         return true;

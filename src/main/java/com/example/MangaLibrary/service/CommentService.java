@@ -100,7 +100,7 @@ public class CommentService {
         report.setUser(user);
         report.setReportedAt(LocalDateTime.now());
         report.setReason(reason);
-
+        report.setStatus("PENDING");
         commentReportRepo.save(report);
         return true;
     }

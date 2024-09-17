@@ -62,3 +62,16 @@ $(document).ready(function () {
     }
     activateTab($('.nav-tabs .nav-link:first'));
 });
+$(document).ready(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab') || 'mangaTable';
+
+    $('#myTab a[href="#' + activeTab + '"]').tab('show');
+
+    $('#myTab a').on('click', function (e) {
+        e.preventDefault();
+        const target = $(this).attr('href').substring(1);
+        history.pushState(null, null, '?tab=' + target);
+        $(this).tab('show');
+    });
+});
