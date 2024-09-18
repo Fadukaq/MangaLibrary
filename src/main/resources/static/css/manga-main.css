@@ -58,7 +58,8 @@ body {
 .custom-container {
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: -11px 7px 8px rgb(98 98 98 / 12%);
+    border-radius: 4px;
 }
 
 .manga-grid .custom-title {

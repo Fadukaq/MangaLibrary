@@ -198,4 +198,18 @@ public class ChapterService {
     private String getChapterFolderPath(Long mangaId, Long chapterId) {
         return mangaLibraryManager.getResourcePathManga() + File.separator + mangaId + File.separator + "chapters" + File.separator + chapterId;
     }
+
+    public Chapter findPreviousChapter(Long mangaId, Long currentChapterId) {
+        return chapterRepo.findTopByMangaIdAndIdLessThanOrderByIdDesc(mangaId, currentChapterId)
+                .orElse(null);
+    }
+
+    public Chapter findNextChapter(Long mangaId, Long currentChapterId) {
+        return chapterRepo.findTopByMangaIdAndIdGreaterThanOrderByIdAsc(mangaId, currentChapterId)
+                .orElse(null);
+    }
+
+    public List<Chapter> findAllChaptersByMangaId(Long mangaId) {
+        return chapterRepo.findByMangaId(mangaId);
+    }
 }

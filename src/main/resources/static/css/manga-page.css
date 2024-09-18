@@ -1,7 +1,314 @@
-.fixed-right {
-        position: fixed;
-        right: 20px;
-        bottom: 20px;
-        z-index: 1000;
-        width: 150px;
+.link-chapter-manga{
+    color:#eeeeee;
+    padding:8px;
+}
+.link-chapter-manga:hover{
+    color:#ff0080;
+}
+.link-chapter-disabled {
+    color: #aaa;
+    cursor: default;
+    text-decoration: none;
+    font-size: 20px;
+    padding:8px;
+}
+.chapter-title{
+    padding:11px;
+    transition: background-color 0.3s ease;
+    border-radius:8px;
+}
+.chapter-title:hover{
+    background-color: #444444;
+    color:#fff;
+    cursor:pointer;
+}
+.link-arrow{
+    font-size: 20px;
+}
+.chapter-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.chapter-list li {
+    margin-bottom: 10px;
+}
+@media (max-width: 991.98px) {
+    .navbar-brand {
+        margin-left: 0;
+        margin-right: 0px !important;
+    }
+}
+@media (max-width: 768px) {
+    .link-chapter-manga{
+        padding:0px;
+    }
+}
+
+.modal-dialog-right {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width:100%;
+    max-width: 400px;
+    margin: 0;
+    border-radius: 0;
+}
+
+.modal-content {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.chapter-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.chapter-list li {
+    margin-bottom: 10px;
+}
+.link-chapters {
+    display: block;
+    width: 100%;
+    padding: 7px;
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #444444;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+.link-chapters:hover {
+    background-color: #2f2f2f;
+}
+.main-link{
+    border-radius:8px;
+    transition: background-color 0.3s ease;
+    padding: 8px;
+}
+.main-link:hover{
+    background-color: #444444;
+    color:#fff;
+}
+.container {
+    padding: 0 0px;
+}
+.fixed-header {
+    transition: top 0.3s ease-in-out;
+}
+
+.container-info {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 20px;
+}
+
+.block-manga-info, .block-author-info {
+    flex: 1;
+    padding: 10px;
+    box-sizing: border-box;
+    max-width: 420px;
+    max-height: 200px;
+    border: 1px solid gray;
+    border-radius:5px;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.block-manga-info {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+.block-manga-info::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.65);
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.block-manga-info .bg-manga-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius:5px;
+}
+
+.block-manga-info .poster-manga-img {
+    width: 120px;
+    height: 160px;
+    position: absolute;
+    top: 28%;
+    left: 15%;
+    transform: translate(-30%, -20%);
+    border-radius: 5px;
+    z-index: 2;
+    filter: brightness(0.96);
+}
+
+.block-manga-info .manga-title {
+    position: absolute;
+    top: 30px;
+    right: 80px;
+    z-index: 2;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+    max-width: 200px;
+}
+
+.block-manga-info .manga-genres {
+    position: absolute;
+    top: 52px;
+    right: 145px;
+    z-index: 2;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+    max-width: 200px;
+}
+
+.block-manga-info .manga-description {
+    position: absolute;
+    top: 82px;
+    right: 55px;
+    z-index: 2;
+    font-size: 16px;
+    color: #fff;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+    max-width: 200px;
+}
+.block-manga-info:hover,
+.block-author-info:hover{
+    border-color:#ff0080;
+    cursor:pointer;
+}
+
+.block-author-info {
+    position: relative;
+    overflow: hidden;
+}
+.block-author-info .author-picture-img {
+    width: 120px;
+    height: 160px;
+    position: absolute;
+    top: 28%;
+    left: 15%;
+    transform: translate(-30%, -20%);
+    border-radius: 5px;
+    z-index: 2;
+    filter: brightness(0.96);
+}
+
+.block-author-info .author-name {
+    position: absolute;
+    top: 30px;
+    right: 100px;
+    z-index: 2;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+    max-width: 200px;
+}
+.block-author-info .author-biography {
+    position: absolute;
+    top: 58px;
+    right: 50px;
+    z-index: 2;
+    font-size: 16px;
+    color: #fff;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+    max-width: 200px;
+}
+@media (max-width: 1239px) {
+    .current-total{
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+}
+
+@media (max-width: 852px) {
+    .block-manga-info .manga-title,
+    .block-manga-info .manga-genres,
+    .block-manga-info .manga-description{
+        display:none;
+    }
+    .block-author-info .author-name,
+    .block-author-info .author-biography{
+        display:none;
+    }
+}
+
+.one-page-view .manga-container {
+    display: block;
+}
+
+.one-page-view .page {
+    display: none;
+}
+
+.one-page-view .mb-3 {
+    margin-bottom: 30px;
+}
+
+.two-page-view .manga-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.two-page-view .page {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    max-width: 1200px;
+    margin-bottom: 20px;
+    border-left: 5px solid #ddd;
+    border-right: 5px solid #ddd;
+    padding: 10px;
+    background-color: #f5f5f5;
+}
+
+.two-page-view .page img {
+    width: 580px;
+    height: 790px;
+}
+.current-total{
+    padding-left: 500px;
+    padding-right: 500px;
+}
+@media (max-width: 99px) {
+    .user-settings{
+        display:none;
+    }
+}
+.select2-container{
+    z-index: 10000;
+}
+.user-settings{
+    padding:9px;
+    border-radius: 8px;
+}
+.user-settings:hover{
+    cursor:pointer;
+    background-color: #444444;
+}
+.pagination {
+    margin-top: 10px;
 }

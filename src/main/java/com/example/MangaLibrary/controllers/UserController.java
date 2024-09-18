@@ -279,6 +279,7 @@ public class UserController {
         }
         return "user/user-settings";
     }
+
     @PostMapping("/profile/settings/securityPassword/{id}")
     public String updateSecurityPass(@PathVariable("id") Long id,
                                      @RequestParam("userPasswordNew") String newPassword,
@@ -345,7 +346,22 @@ public class UserController {
         }
         return "user/user-settings";
     }
-
+    @PostMapping("/update/user-view/{id}")
+    public String updateUserSettings(@PathVariable("id") Long id,
+                                     @RequestParam("user.userSettings.readStyle") String readStyle,
+                                     @RequestParam("user.userSettings.pageStyle") String pageStyle,
+                                     String url) {
+        Optional<User> userOptional = userRepo.findById(id);
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+            if(userService.isValidReadStyles(readStyle) && userService.isValidPageStyles(pageStyle)){
+                user.getUserSettings().setReadStyle(readStyle);
+                user.getUserSettings().setPageStyle(pageStyle);
+                userRepo.save(user);
+            }
+        }
+        return "redirect:" + url;
+    }
     @PostMapping("/profile/delete-from-list/{mangaId}")
     public String deleteFromListPost(@PathVariable("mangaId") long mangaId,
                                         Principal principal,

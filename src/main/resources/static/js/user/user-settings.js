@@ -8,6 +8,10 @@ $(document).ready(function() {
         theme: 'default',
         minimumResultsForSearch: Infinity,
     });
+    $('#pageStyle').select2({
+        theme: 'default',
+        minimumResultsForSearch: Infinity,
+    });
 
     $('.select2').on('select2:open', function() {
         var $container = $(this).parent();

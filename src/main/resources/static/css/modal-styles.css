@@ -31,7 +31,7 @@
 }
 
 .btn-close-modal {
-    background-color: #282828 !important;
+    background-color: #313131 !important;
     color: white;
     text-align: center;
     text-decoration: none;
@@ -42,7 +42,7 @@
     transition: background-color 0.3s ease;
 }
 .btn-close-modal:hover {
-    background-color: #2f2f2f !important;
+    background-color: #2d2d2d !important;
 }
 .btn-close-modal:focus, .btn-primary:active {
     background-color: #282828 !important;

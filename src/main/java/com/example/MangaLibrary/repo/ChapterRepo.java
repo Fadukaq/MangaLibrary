@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ChapterRepo extends JpaRepository<Chapter, Long> {
     List<Chapter> findByMangaId(Long mangaId);
@@ -17,4 +18,8 @@ public interface ChapterRepo extends JpaRepository<Chapter, Long> {
 
     @Query("SELECT c FROM Chapter c ORDER BY c.creationTime DESC")
     List<Chapter> findLatestChapters(Pageable pageable);
+
+    Optional<Chapter> findTopByMangaIdAndIdLessThanOrderByIdDesc(Long mangaId, Long currentChapterId);
+
+    Optional<Chapter> findTopByMangaIdAndIdGreaterThanOrderByIdAsc(Long mangaId, Long currentChapterId);
 }

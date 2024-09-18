@@ -1,0 +1,41 @@
+<div th:fragment="settingsModal">
+    <link rel="stylesheet" href="/css/modal-styles.css">
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-right">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="settingsModalLabel">Налаштування</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/update/user-view/{id}(id=${user.id})}" method="post">
+                        <label class="form-label mt-3" for="readStyle">
+                            <i class="fas fa-circle pink-dot"></i>Стиль читання
+                        </label>
+                        <select class="custom-select" id="readStyle" name="user.userSettings.readStyle">
+                            <option value="scroll-down" th:selected="${user.userSettings.readStyle == 'scroll-down'}">Вниз</option>
+                            <option value="left-to-right" th:selected="${user.userSettings.readStyle == 'left-to-right'}">Свайп</option>
+                        </select>
+                        <div style="color:red" th:if="${#fields.hasErrors('user.userSettings.readStyle')}" th:errors="*{userSettings.readStyle}">
+                            Помилка стилю читання
+                        </div>
+
+                        <label class="form-label mt-3" for="pageStyle">
+                            <i class="fas fa-circle pink-dot"></i>Стиль сторінки
+                        </label>
+                        <select class="custom-select" id="pageStyle" name="user.userSettings.pageStyle">
+                            <option value="book-view" th:selected="${user.userSettings.pageStyle == 'book-view'}">Книжка</option>
+                            <option value="single-page-view" th:selected="${user.userSettings.pageStyle == 'single-page-view'}">Стрічка</option>
+                        </select>
+                        <div style="color:red" th:if="${#fields.hasErrors('user.userSettings.pageStyle')}" th:errors="*{user.userSettings.pageStyle}">
+                            Помилка стилю сторінки
+                        </div>
+                        <input type="hidden" name="url" th:value="${currentUrl}"/>
+                        <button type="submit" class="btn btn-custom-confirm mt-3">Зберегти</button>
+                        <button type="button" class="btn btn-close-modal mt-3" data-bs-dismiss="modal">Закрити</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,33 +1,133 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Manga Pages</title>
+    <title th:text="${manga.mangaName}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="/images/icons/MangaLibraryLogo.png">
     <link rel="stylesheet" href="/css/home.css">
-    <link rel="stylesheet" href="/css/manga-page.css">
     <link rel="stylesheet" href="/css/loader.css">
+    <link rel="stylesheet" href="/css/pagination.css">
+    <link rel="stylesheet" href="/css/user/user-settings.css">
+    <link rel="stylesheet" href="/css/manga-page.css">
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
-<header th:insert="~{blocks/header :: header}"></header>
-<input type="hidden" id="backGroundImg" th:value="${backGroundImgUser}" />
+<header th:insert="~{blocks/header-chapter-view :: header-chapter-view}"></header>
+<div th:insert="~{blocks/modals/chaptersModal :: chaptersModal}"></div>
+<div th:insert="~{blocks/modals/settingsModalView :: settingsModal}"></div>
+
 <div class="container mt-5 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10 col-sm-12 text-center">
-            <div class="manga-container">
-                <div th:each="imageUrl : ${chapterImageUrls}">
-                    <img th:src="@{${imageUrl}}" alt="Chapter Image" width="500">
+    <div th:if="${user.userSettings.readStyle=='scroll-down'}">
+
+        <div th:if="${user.userSettings.pageStyle=='single-page-view'}">
+            <div class="row justify-content-center one-page-view">
+                <div class="text-center">
+                    <div class="manga-container">
+                        <div class="mb-3" th:each="imageUrl : ${chapterImageUrls}">
+                            <img th:src="@{${imageUrl}}" alt="Chapter Image" width="580" height="790">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${user.userSettings.pageStyle=='book-view'}">
+            <div class="row justify-content-center two-page-view">
+                <div class="text-center">
+                    <div class="manga-container">
+                        <div class="page" th:each="imageUrl, stat : ${chapterImageUrls}">
+                            <img th:src="@{${imageUrl}}" alt="Chapter Image" width="580" height="790">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div th:if="${user.userSettings.readStyle=='left-to-right'}">
+
+        <div th:if="${user.userSettings.pageStyle == 'single-page-view'}">
+            <div class="row justify-content-center one-page-view">
+                <div class="text-center">
+                    <div class="manga-container">
+                        <div class="mb-3" th:each="imageUrl : ${chapterImageUrls}">
+                            <img th:src="@{${imageUrl}}" alt="Chapter Image" width="580" height="790">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${user.userSettings.pageStyle == 'book-view'}">
+            <div class="row justify-content-center two-page-view">
+                <div class="text-center">
+                    <div class="manga-container">
+                        <div class="page" th:each="imageUrl, stat : ${chapterImageUrls}">
+                            <img th:src="@{${imageUrl}}" alt="Chapter Image" width="580" height="790">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${totalPages > 1}" class="pagination">
+            <ul class="pagination">
+                <li th:if="${currentPage > 1}" class="page-item">
+                    <a th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id}, page=${currentPage - 1})}" class="page-link">
+                        <i class="fa-solid fa-arrow-left"></i> Назад
+                    </a>
+                </li>
+                <li class="current-total">
+                    <span th:text="${currentPage}"></span>
+                    <span>/</span>
+                    <span th:text="${totalPages}"></span>
+                </li>
+                <li th:if="${currentPage < totalPages}" class="page-item">
+                    <a th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id}, page=${currentPage + 1})}" class="page-link">
+                        Далі <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container-info">
+        <div class="block-manga-info">
+            <a th:href="@{/manga/{mangaId}(mangaId=${manga.id})}">
+                <img class="bg-manga-img" th:src="${manga.mangaBackGround}" alt="">
+                <img class="poster-manga-img" th:src="${manga.mangaPosterImg}" alt="">
+                <h2 class="manga-title" th:text="${manga.mangaName}"></h2>
+                <div class="manga-genres">
+                    <span class="manga-genre" th:text="${manga.genres[0].genreName}"></span>
+                    <span class="manga-genre" th:if="${manga.genres.size() >= 2}">
+                    <span style="color:gray;">-</span>
+                    <span class="manga-genre" th:text="${manga.genres[1].genreName}"></span>
+                </span>
+                </div>
+                <p class="manga-description" th:text="${manga.mangaDescription.length() > 94} ? ${manga.mangaDescription.substring(0, 94)} + '...' : ${manga.mangaDescription}"></p>
+            </a>
+        </div>
+
+        <div class="block-author-info">
+            <a th:href="@{/author/{authorId}(authorId=${manga.author.id})}">
+                <img class="author-picture-img" th:src="${manga.author.urlPicture}" alt="">
+                <h2 class="author-name" th:text="${manga.author.name}"></h2>
+                <p class="author-biography" th:text="${manga.author.biography.length() > 94} ? ${manga.author.biography.substring(0, 94)} + '...' : ${manga.author.biography}"></p>
+            </a>
+        </div>
+    </div>
+
 </div>
-<a th:href="@{/manga/{mangaId}(mangaId=${manga.id})}" class="btn btn-primary fixed-right">Повернутись</a>
+
+<footer th:insert="~{/blocks/footer :: footer}"></footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script src="/js/burger-menu.js"></script>
 <script src="/js/loader-spinner.js"></script>
+<script src="/js/manga/manga-chapter-view.js"></script>
 </body>
 </html>

@@ -66,6 +66,13 @@
                                                 <option value="left-to-right" th:selected="${userSettings.readStyle == 'left-to-right'}">Свайп</option>
                                             </select>
                                             <div style="color:red" th:if="${#fields.hasErrors('userSettings.readStyle')}" th:errors="*{userSettings.readStyle}">Ошибка стиля чтения</div>
+
+                                            <label class="form-label mt-3" for="pageStyle"> <i class="fas fa-circle pink-dot"></i>Стиль сторінки</label>
+                                            <select class="custom-select" id="pageStyle" name="userSettings.pageStyle">
+                                                <option value="book-view" th:selected="${userSettings.pageStyle == 'book-view'}">Книжка</option>
+                                                <option value="single-page-view" th:selected="${userSettings.pageStyle == 'single-page-view'}">Стрічка</option>
+                                            </select>
+                                            <div style="color:red" th:if="${#fields.hasErrors('userSettings.pageStyle')}" th:errors="*{userSettings.pageStyle}">Ошибка стиля сторінки</div>
                                         </div>
                                     </div>
                                     <div class="user-about mt-3 d-flex-none" style="padding-left:15px;padding-right: 15px;">

@@ -8,6 +8,7 @@ import com.example.MangaLibrary.repo.ChapterRepo;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
 import com.example.MangaLibrary.service.ChapterService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -15,13 +16,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -73,23 +74,59 @@ public class ChapterController {
     }
 
     @GetMapping("/manga/{mangaId}/chapter/{chapterId}")
-    public String viewChapter(@PathVariable Long mangaId, @PathVariable Long chapterId, Model model) {
+    public String viewChapter(@PathVariable Long mangaId, @PathVariable Long chapterId,
+                              @RequestParam(defaultValue = "1") int page,
+                              Principal principal,
+                              Model model,
+                              HttpServletRequest request) {
         Optional<Manga> mangaOptional = mangaRepo.findById(mangaId);
         Optional<Chapter> chapterOptional = chapterRepo.findById(chapterId);
 
         if (mangaOptional.isPresent() && chapterOptional.isPresent()) {
             Manga manga = mangaOptional.get();
             Chapter chapter = chapterOptional.get();
+            User user = userRepo.findByUserName(principal.getName());
             String[] chapterImageFileNames = chapter.getChapterPages().split(",");
+            String[] chapterImageUrls;
 
-            String[] chapterImageUrls = new String[chapterImageFileNames.length];
-            for (int i = 0; i < chapterImageFileNames.length; i++) {
-                chapterImageUrls[i] = String.format("/images/mangas/%s/chapters/%s/%s", mangaId, chapter.getId(), chapterImageFileNames[i]);
+            if(user.getUserSettings().getReadStyle().equals("scroll-down")){
+                chapterImageFileNames = chapter.getChapterPages().split(",");
+
+                chapterImageUrls = new String[chapterImageFileNames.length];
+                for (int i = 0; i < chapterImageFileNames.length; i++) {
+                    chapterImageUrls[i] = String.format("/images/mangas/%s/chapters/%s/%s", mangaId, chapter.getId(), chapterImageFileNames[i]);
+                }
+                model.addAttribute("chapterImageUrls", chapterImageUrls);
+            }else{
+                int imagesPerPage;
+                if(user.getUserSettings().getPageStyle().equals("book-view")){
+                    imagesPerPage = 2;
+                }else{
+                    imagesPerPage = 1;
+                }
+                int startIndex = (page - 1) * imagesPerPage;
+                int endIndex = Math.min(startIndex + imagesPerPage, chapterImageFileNames.length);
+
+                chapterImageUrls = Arrays.stream(Arrays.copyOfRange(chapterImageFileNames, startIndex, endIndex))
+                        .map(fileName -> String.format("/images/mangas/%s/chapters/%s/%s", mangaId, chapter.getId(), fileName))
+                        .toArray(String[]::new);
+
+                model.addAttribute("currentPage", page);
+                model.addAttribute("totalPages", (int) Math.ceil((double) chapterImageFileNames.length / imagesPerPage));
             }
+            String currentUrl = request.getRequestURI();
+            List<Chapter> chapterList = chapterService.findAllChaptersByMangaId(mangaId);
+            Chapter previousChapter = chapterService.findPreviousChapter(mangaId, chapterId);
+            Chapter nextChapter = chapterService.findNextChapter(mangaId, chapterId);
 
+            model.addAttribute("user", user);
             model.addAttribute("manga", manga);
             model.addAttribute("chapter", chapter);
+            model.addAttribute("nextChapter", nextChapter);
+            model.addAttribute("chapterList", chapterList);
+            model.addAttribute("previousChapter", previousChapter);
             model.addAttribute("chapterImageUrls", chapterImageUrls);
+            model.addAttribute("currentUrl", currentUrl);
 
             return "manga/manga-chapter-view";
         } else {

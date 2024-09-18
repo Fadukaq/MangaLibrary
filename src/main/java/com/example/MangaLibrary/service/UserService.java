@@ -68,6 +68,7 @@ public class UserService {
         userSettings.setBackgroundImage("/images/settingsPicture/backGroundSettings1.jpg");
         userSettings.setProfilePrivacy("public");
         userSettings.setReadStyle("left-to-right");
+        userSettings.setPageStyle("book-view");
         userSettings.setAdultContentAgreement(false);
         user.setUserSettings(userSettings);
         userSettings.setUser(user);
@@ -257,6 +258,11 @@ public class UserService {
                     "Виберіть правильну опцію для стилю читання і не змінюйте внутрішні дані!");
             isValid = false;
         }
+        if (!isValidPageStyles(userForm.getUserSettings().getPageStyle())) {
+            bindingResult.rejectValue("userSettings.pageStyle", "error.pageStyle",
+                    "Виберіть правильну опцію для стилю сторінки і не змінюйте внутрішні дані!");
+            isValid = false;
+        }
         return isValid;
     }
 
@@ -275,8 +281,11 @@ public class UserService {
     private boolean isValidProfilePrivacy(String privacy) {
         return privacy.equals("public") || privacy.equals("private") || privacy.equals("friendly");
     }
-    private boolean isValidReadStyles(String readStyle) {
+    public boolean isValidReadStyles(String readStyle) {
         return readStyle.equals("scroll-down") || readStyle.equals("left-to-right");
+    }
+    public boolean isValidPageStyles(String pageStyle) {
+        return pageStyle.equals("book-view") || pageStyle.equals("single-page-view");
     }
     public boolean isValidResetPass(String pass) {
         if (pass == null || pass.isEmpty()) {
@@ -385,6 +394,7 @@ public class UserService {
         }
         userSettings.setProfilePrivacy(userForm.getUserSettings().getProfilePrivacy());
         userSettings.setReadStyle(userForm.getUserSettings().getReadStyle());
+        userSettings.setPageStyle(userForm.getUserSettings().getPageStyle());
 
         userRepo.save(userToUpdate);
     }

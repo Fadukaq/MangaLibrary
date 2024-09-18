@@ -1,0 +1,20 @@
+<div th:fragment="chaptersModal">
+    <div class="modal fade" id="chaptersModal" tabindex="-1" aria-labelledby="chaptersModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-right">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chaptersModalLabel">Список глав</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="chapter-list">
+                        <li th:each="chapter : ${chapterList}">
+                            <a class="link-chapters" th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${chapter.id})}"
+                               th:text="${chapter.title}"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

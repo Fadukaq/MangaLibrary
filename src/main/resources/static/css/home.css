@@ -398,7 +398,7 @@ body {
 .manga-card-genres,
 .manga-card.featured{
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(38, 38, 38, 0.2);
+    box-shadow: 0 4px 8px rgb(38 38 38 / 82%);
 }
 .containerGenre {
     width: 100%;

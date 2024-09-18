@@ -1,0 +1,60 @@
+<div th:fragment="header-chapter-view">
+    <div class="fixed-header">
+        <link rel="stylesheet" href="/css/header.css">
+        <link rel="stylesheet" href="/css/modal-styles.css">
+        <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/burger-menu.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <script th:if="${#authorization.expression('isAuthenticated()')}" src="/js/dropdown-animation.js"></script>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    <img src="/images/icons/MangaLibraryIcon.png" alt="MangaLibrary Logo">
+                </a>
+
+                <a class="link-chapter-manga main-link" th:href="@{/manga/{mangaId}(mangaId=${manga.id})}" th:text="${manga.mangaName}"></a>
+
+                <div class="chapter-pagination">
+                    <a class="link-chapter-manga link-arrow"
+                       th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${previousChapter.id})}"
+                       th:if="${previousChapter != null}">&lt;</a>
+                    <span class="link-chapter-disabled" th:if="${previousChapter == null}">&lt;</span>
+
+                    <span class="chapter-title" th:text="${chapter.title}" data-bs-toggle="modal" data-bs-target="#chaptersModal"></span>
+
+                    <a class="link-chapter-manga link-arrow"
+                       th:href="@{/manga/{mangaId}/chapter/{chapterId}(mangaId=${manga.id}, chapterId=${nextChapter.id})}"
+                       th:if="${nextChapter != null}">&gt;</a>
+                    <span class="link-chapter-disabled link-arrow" th:if="${nextChapter == null}">&gt;</span>
+                </div>
+
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <span class="user-settings me-auto" data-bs-toggle="modal" data-bs-target="#settingsModal">Налаштування</span>
+                    <ul class="navbar-nav burger-menu">
+                        <li th:if="${#authorization.expression('isAuthenticated()')}" class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img th:src="@{${userImageUrl}}" alt="User Image" class="user-image">
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-start">
+                                <li class="nav-item">
+                                    <a th:href="@{/profile/{userId}?page=1&list=reading(userId=${userId})}" class="dropdown-item">Профіль</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a th:href="@{/profile/settings/{userId}(userId=${userId})}" class="dropdown-item">Налаштування</a>
+                                </li>
+                                <li class="nav-item">
+                                    <form th:action="@{/logout}" method="post" class="d-inline">
+                                        <button type="submit" class="dropdown-item btn-exit btn btn-danger">Вийти</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
