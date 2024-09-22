@@ -35,6 +35,8 @@ public class ChapterService {
     private MangaRepo mangaRepo;
     @Autowired
     private MangaLibraryManager mangaLibraryManager;
+    @Autowired
+    private NotificationService notificationService;
     public boolean isValidChapterFormAdd(ChapterForm chapterForm, BindingResult bindingResult) {
         boolean isValid = true;
 
@@ -65,7 +67,7 @@ public class ChapterService {
         return isValid;
     }
 
-    public void addChapter(ChapterForm chapterForm, Manga manga, User user) throws IOException {
+    public Chapter addChapter(ChapterForm chapterForm, Manga manga, User user) throws IOException {
         Chapter chapter = new Chapter();
         chapter.setTitle(chapterForm.getChapter().getTitle());
         chapter.setManga(manga);
@@ -74,9 +76,9 @@ public class ChapterService {
         chapterRepo.save(chapter);
 
         List<String> imageUrls = createPagesManga(chapterForm.getChapterImage().getPagesImage(), manga, chapter);
-
         chapter.setChapterPages(String.join(",", imageUrls));
         chapterRepo.save(chapter);
+        return chapter;
     }
 
     public void editChapter(ChapterForm chapterForm, Manga manga, Chapter chapter) throws IOException {

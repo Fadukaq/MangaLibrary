@@ -865,3 +865,12 @@ a {
 .delete-button:hover span {
     color: #ff0080;
 }
+.no-notifications{
+    text-align: center;
+    color:#ff0080;
+}
+#loaderNotify{
+    display: none;
+    text-align: center;
+    color: #ff0080;
+}

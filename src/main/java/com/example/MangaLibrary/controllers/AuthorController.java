@@ -1,11 +1,17 @@
 package com.example.MangaLibrary.controllers;
 
 import com.example.MangaLibrary.models.Manga;
+import com.example.MangaLibrary.models.Subscription;
+import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.MangaRepo;
+import com.example.MangaLibrary.repo.SubscriptionRepo;
+import com.example.MangaLibrary.repo.UserRepo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import com.example.MangaLibrary.models.Author;
 import com.example.MangaLibrary.repo.AuthorRepo;
@@ -25,6 +31,10 @@ public class AuthorController {
     MangaRepo mangaRepo;
     @Autowired
     AuthorRepo authorRepo;
+    @Autowired
+    UserRepo userRepo;
+    @Autowired
+    SubscriptionRepo subscriptionRepo;
     private static final int PAGE_SIZE = 10;
 
     @GetMapping("/author/{id}")
@@ -34,17 +44,21 @@ public class AuthorController {
         Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending());
         Page<Manga> mangaPage = mangaRepo.findAllByAuthorIdPagination(id, pageable);
         Author author = authorRepo.findById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepo.findByUserName(username);
 
         if (author == null) {
             model.addAttribute("errorMessage", "Автора не знайдено!");
             return "main/error";
         }
-
+        boolean isSubscribed = subscriptionRepo.existsByUserAndAuthor(user, author);
         List<Manga> mangaList = mangaPage.getContent();
         model.addAttribute("authorMangasCount", mangaPage.getTotalElements()+" Тайтла");
         model.addAttribute("page", mangaPage);
         model.addAttribute("mangas", mangaList);
         model.addAttribute("author", author);
+        model.addAttribute("subscribed", isSubscribed);
         return "author/author-info";
     }
 

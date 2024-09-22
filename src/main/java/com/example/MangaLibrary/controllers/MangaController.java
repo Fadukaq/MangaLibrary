@@ -64,6 +64,8 @@ public class MangaController {
     @Autowired
     MangaService mangaService;
     @Autowired
+    NotificationRepo notificationRepo;
+    @Autowired
     ChapterService chapterService;
     @Autowired
     CommentService commentService;
@@ -343,7 +345,6 @@ public class MangaController {
                 Rating ratingValue = ratingOptional.get();
                 model.addAttribute("ratingValue", ratingValue.getRating());
             }
-
             List<Comment> comments = commentRepo.findByMangaIdOrderByCreatedAtDesc(id);
 
             Map<Long, Integer> userRatings = new HashMap<>();
@@ -369,11 +370,12 @@ public class MangaController {
                 commentReplies.put(comment.getId(), replies);
             }
 
+
+
             model.addAttribute("comments", comments);
             model.addAttribute("userRatings", userRatings);
             model.addAttribute("commentRatings", commentRatings);
             model.addAttribute("commentReplies", commentReplies);
-
 
             model.addAttribute("manga", manga);
             model.addAttribute("user", user);

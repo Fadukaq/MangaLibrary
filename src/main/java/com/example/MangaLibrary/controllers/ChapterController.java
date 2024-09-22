@@ -8,6 +8,7 @@ import com.example.MangaLibrary.repo.ChapterRepo;
 import com.example.MangaLibrary.repo.MangaRepo;
 import com.example.MangaLibrary.repo.UserRepo;
 import com.example.MangaLibrary.service.ChapterService;
+import com.example.MangaLibrary.service.NotificationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class ChapterController {
     private UserRepo userRepo;
     @Autowired
     ChapterRepo chapterRepo;
+    @Autowired
+    NotificationService notificationService;
     @GetMapping("/manga/{mangaId}/chapter/add")
     public String chapterAddGet(@PathVariable Long mangaId, ChapterForm chapterForm, Model model) {
         Optional<Manga> manga = mangaRepo.findById(mangaId);
@@ -65,7 +68,8 @@ public class ChapterController {
             String username = authentication.getName();
             User user = userRepo.findByUserName(username);
 
-            chapterService.addChapter(chapterForm, manga, user);
+            Chapter chapter = chapterService.addChapter(chapterForm, manga, user);
+            notificationService.notifyUsersAboutNewChapter(manga, chapter);
             return "redirect:/manga/" + mangaId;
         } else {
             model.addAttribute("errorMessage", "Такої манги не знайдено!");

@@ -48,7 +48,7 @@
                         <button id="toggleDescriptionBtn" class="btn btn-primary" th:if="${#strings.length(author.biography) > 128}">Показати більше</button>
                     </div>
                     <span class="author-total-mangas" th:text="${authorMangasCount}"></span>
-                    <span class="author-total-subscribes" style="">20 Підписників</span>
+                    <span class="author-total-subscribes" style=""></span>
                     <div class="dropdown author-options">
                         <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton-${reply.id}" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-ellipsis-v"></i>
@@ -69,8 +69,12 @@
                         </ul>
                     </div>
                 </div>
-                <form class="subscribe-form" th:action="@{/subscribeAuthor/{author.id}(author.id=${author.id})}" method="post">
-                    <button type="submit" class="btn btn-custom-subscribe mt-2" style="padding:5px 15px; float:right;"><i class="fa-solid fa-bell"></i>Підписатись</button>
+                <form class="subscribe-form" th:action="@{/subscribe}" method="post" onsubmit="return false;">
+                    <input type="hidden" name="authorId" th:value="${author.id}" />
+                    <button type="submit" class="btn btn-custom-subscribe mt-2" style="padding:5px 15px; float:right;">
+                        <i class="fa-solid" th:classappend="${subscribed ? 'fa-bell-slash' : 'fa-bell'}"></i>
+                        <span th:text="${subscribed ? 'Відписатись' : 'Підписатись'}"></span>
+                    </button>
                 </form>
                 <div class="author-manga-content mt-4">
                     <input type="text" class="form-control mb-3 input-filter" placeholder="Пошук по назві манги" id="filterInput">
@@ -128,5 +132,41 @@
 <script src="/js/confirmDelete.js"></script>
 <script src="/js/main/star-grade-manga.js"></script>
 <script src="/js/author/author-info.js"></script>
+<script>
+    document.querySelectorAll('.subscribe-form').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const actionUrl = this.getAttribute('action');
+            const formData = new FormData(this);
+            const button = this.querySelector('button');
+            const icon = button.querySelector('i');
+            const text = button.querySelector('span');
+
+            fetch(actionUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                if (data.subscribed) {
+                    icon.classList.remove('fa-bell');
+                    icon.classList.add('fa-bell-slash');
+                    text.textContent = 'Відписатись';
+                    alert("Ви успішно підписалися на автора!");
+                } else {
+                    icon.classList.remove('fa-bell-slash');
+                    icon.classList.add('fa-bell');
+                    text.textContent = 'Підписатись';
+                    alert("Ви відписалися від автора.");
+                }
+            })
+                .catch(error => console.error("Error:", error));
+        });
+    });
+</script>
 </body>
 </html>

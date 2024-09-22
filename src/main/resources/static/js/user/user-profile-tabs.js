@@ -29,12 +29,10 @@ $(document).ready(function() {
         urlParams.set('page', '1');
 
         if (paramName !== 'list') {
-            console.log("t");
             urlParams.delete('list');
         }
 
         if (paramName !== 'tab') {
-            console.log("e");
             urlParams.set('tab', $('#myTab .nav-link.active').attr('href').substring(1));
         }
 

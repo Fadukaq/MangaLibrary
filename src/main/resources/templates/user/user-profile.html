@@ -9,6 +9,106 @@
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/pagination.css">
     <meta name="_csrf" content="${_csrf.token}" />
+    <style>
+        .right-block-notifications{
+            background-color:#212121;
+            padding:20px;
+            border-radius:5px;
+            border:1px solid #313131;
+        }
+        .right-block-notifications ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .notification-block {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .notification-block li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .notification-block img {
+            width: 150px;
+            height: 200px;
+            margin-right: 10px;
+            border-radius:5px;
+        }
+
+        .notification-block a {
+            display: flex;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .notification-block span {
+            display: block;
+            margin-left: 10px;
+        }
+        .main-content-notification{
+            font-size:14px;
+            color:#625E5E
+        }
+        .author-name{
+            font-size:24px;
+        }
+        .manga-release{
+            font-size:18px;
+        }
+
+        .manga-description{
+            color:#625E5E;
+            font-size:18px;
+        }
+
+        .notification-text {
+            max-width: 760px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+        }
+
+        .author-title,
+        .manga-release,
+        .manga-description {
+            display: block;
+            margin: 0;
+            margin-bottom: 7px;
+        }
+        .notification-element{
+            padding:15px;
+            background-color:#1e1e1e;
+            border:1px solid #383838;
+            border-radius:5px;
+            transition: background-color 0.3s ease;
+        }
+        .notification-element:hover{
+            background-color:#1a1a1a;
+        }
+        .notification-text {
+            width: 100%;
+            min-width: 100px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            line-height: 1.5;
+        }
+        @media (max-width: 1290px) {
+            .right-block-notifications {
+                width: 100%;
+            }
+        }
+        @media (max-width: 729px) {
+            .right-block-notifications {
+                margin-left: 0px;
+            }
+        }
+    </style>
 </head>
 <body class="loading">
 <div th:insert="~{blocks/loader :: loader}"></div>
@@ -441,10 +541,6 @@
                             </div>
                         </div>
                         <div class="right-block">
-                            <div class="input-wrapper">
-                                <input type="text" class="form-control mb-3 input-filter" placeholder="Пошук за Ім'ям користувача">
-                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                            </div>
                             <div class="tab-content" id="tabContent">
                                 <div class="tab-pane tab-pane-friends fade" id="friends-content" role="tabpanel">
                                     <div th:if="${#lists.isEmpty(userFriends)}" class="no-content-message">
@@ -703,25 +799,54 @@
                     <div class="notifications">
                         <ul class="nav nav-tabs nav-tabs-notifications" id="myTabNotification" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="user-link nav-link" id="manga-notification-tab" href="#" data-bs-toggle="tab" data-list="manga-notification">Сповіщення манги</a>
+                                <a class="user-link nav-link" id="manga-notification-tab" href="#" data-bs-toggle="tab" data-list="manga-notification">Тайтли</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="user-link nav-link" id="author-notification-tab" href="#" data-bs-toggle="tab" data-list="author-notification">Сповіщення автора</a>
+                                <a class="user-link nav-link" id="author-notification-tab" href="#" data-bs-toggle="tab" data-list="author-notification">Автори</a>
                             </li>
                         </ul>
                     </div>
                 </div>
-                <div class="right-block">
-                    <div class="input-wrapper">
-                        <input type="text" class="form-control mb-3 input-filter" placeholder="Пошук за Ім'ям користувача">
-                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    </div>
+                <div class="right-block right-block-notifications">
                     <div class="tab-content" id="tabContentNotifications">
                         <div class="tab-pane tab-pane-notification fade" id="manga-notification" role="tabpanel">
-                            <p>Тут відображатимуться сповіщення стосовно манги.</p>
+                            <ul class="notification-block">
+                                <li class="notification-element notification-element-manga" th:each="notificationManga : ${notifications}" th:if="${notificationManga.notifyType == 'MANGA'}" style="display: none;">
+                                    <a th:href="@{/manga/{id}(id=${notificationManga.manga.id})}">
+                                        <img th:src="${notificationManga.manga.mangaPosterImg}" alt="" />
+                                        <div class="notification-text">
+                                            <span class="main-content-notification" >Тайтл</span>
+                                            <span class="author-title" th:text="${#strings.length(notificationManga.manga.mangaName) > 89 ? #strings.substring(notificationManga.manga.mangaName, 0, 89) + '...' : notificationManga.manga.mangaName}"></span>
+                                            <span class="manga-release" th:text="${#strings.length(notificationManga.chapter.title) > 66 ? 'Додана нова глава: ' + #strings.substring(notificationManga.chapter.title, 0, 66) + '...' : 'Додана нова глава: ' + notificationManga.chapter.title}"></span>
+                                            <span class="manga-description" th:text="${#strings.length(notificationManga.manga.mangaDescription) > 250 ? #strings.substring(notificationManga.manga.mangaDescription, 0, 250) + '...' : notificationManga.manga.mangaDescription}"></span>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div th:if="${(notifications.?[notifyType == 'MANGA']).isEmpty()}" class="no-notifications">
+                                <p>У вас немає нових повідомлень стосовно манг.</p>
+                            </div>
                         </div>
                         <div class="tab-pane tab-pane-notification fade" id="author-notification" role="tabpanel">
-                            <p>Тут відображатимуться сповіщення стосовно автора.</p>
+                            <ul class="notification-block">
+                                <li class="notification-element notification-element-author" th:each="notificationAuthor : ${notifications}" th:if="${notificationAuthor.notifyType == 'AUTHOR'}" style="display: none;">
+                                    <a th:href="@{/author/{id}(id=${notificationAuthor.author.id})}">
+                                        <img th:src="${notificationAuthor.author.urlPicture}" alt="" />
+                                        <div class="notification-text">
+                                            <span class="main-content-notification" >Автор</span>
+                                            <span class="author-title" th:text="${#strings.length(notificationAuthor.author.name) > 89 ? #strings.substring(notificationAuthor.author.name, 0, 89) + '...' : notificationAuthor.author.name}"></span>
+                                            <span class="manga-release" th:text="${#strings.length(notificationAuthor.manga.mangaName) > 66 ? 'Додав новий тайтл: ' + #strings.substring(notificationAuthor.manga.mangaName, 0, 66) + '...' : 'Додав новий тайтл: ' + notificationAuthor.manga.mangaName}"></span>
+                                            <span class="manga-description" th:text="${#strings.length(notificationAuthor.manga.mangaDescription) > 230 ? #strings.substring(notificationAuthor.manga.mangaDescription, 0, 230) + '...' : notificationAuthor.manga.mangaDescription}"></span>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div th:if="${(notifications.?[notifyType == 'AUTHOR']).isEmpty()}" class="no-notifications">
+                                <p>У вас немає нових повідомлень стосовно автора.</p>
+                            </div>
+                        </div>
+                        <div id="loaderNotify">
+                            <p>Завантаження...</p>
                         </div>
                     </div>
                 </div>
@@ -749,5 +874,61 @@
 <script src="/js/user/friends-functionality.js"></script>
 <script src="/js/user/report-functionality.js"></script>
 <script src="/js/main/star-grade-manga.js"></script>
+<script>
+    let currentMangaIndex = 2;
+    let currentAuthorIndex = 2;
+    const mangaNotificationElements = document.querySelectorAll('.notification-element-manga');
+    const authorNotificationElements = document.querySelectorAll('.notification-element-author');
+    const loadCount = 2;
+    const loaderNotify = document.getElementById('loaderNotify');
+
+    function showNotifications(type) {
+        if ((type === 'manga' && currentMangaIndex >= mangaNotificationElements.length) ||
+        (type === 'author' && currentAuthorIndex >= authorNotificationElements.length)) {
+            return;
+        }
+
+        loaderNotify.style.display = 'block';
+
+        setTimeout(() => {
+            if (type === 'manga') {
+                for (let i = 0; i < loadCount && currentMangaIndex < mangaNotificationElements.length; i++, currentMangaIndex++) {
+                    mangaNotificationElements[currentMangaIndex].style.display = 'block';
+                }
+            } else if (type === 'author') {
+                for (let i = 0; i < loadCount && currentAuthorIndex < authorNotificationElements.length; i++, currentAuthorIndex++) {
+                    authorNotificationElements[currentAuthorIndex].style.display = 'block';
+                }
+            }
+            loaderNotify.style.display = 'none';
+        }, 500);
+    }
+
+    function showInitialNotifications() {
+        for (let i = 0; i < 2 && i < mangaNotificationElements.length; i++) {
+            mangaNotificationElements[i].style.display = 'block';
+        }
+
+        for (let i = 0; i < 2 && i < authorNotificationElements.length; i++) {
+            authorNotificationElements[i].style.display = 'block';
+        }
+    }
+
+    window.addEventListener('scroll', () => {
+        const activeTab = document.querySelector('.tab-pane-notification.active');
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+            if (activeTab && activeTab.id === 'manga-notification') {
+                showNotifications('manga');
+            } else if (activeTab && activeTab.id === 'author-notification') {
+                showNotifications('author');
+            }
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        showInitialNotifications();
+    });
+</script>
+
 </body>
 </html>

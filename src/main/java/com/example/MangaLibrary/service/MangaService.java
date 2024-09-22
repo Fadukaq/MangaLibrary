@@ -40,6 +40,8 @@ public class MangaService {
     private AuthorRepo authorRepo;
     @Autowired
     private RatingRepo ratingRepo;
+    @Autowired
+    private NotificationService notificationService;
     private static final Map<String, String> statusTranslation = new HashMap<>();
 
     static {
@@ -160,8 +162,8 @@ public class MangaService {
         } else {
             manga.setMangaBackGround("/images/mangas/defaultBackGroundManga.jpg");
         }
-
         mangaRepo.save(manga);
+        notificationService.notifyUsersAboutNewManga(manga.getAuthor(),manga);
     }
     public void updateManga(long id, MangaForm mangaForm, List<Long> relatedMangaIds) {
         Manga mangaToUpdate = mangaRepo.findById(id)

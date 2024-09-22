@@ -70,6 +70,8 @@ public class UserController {
     @Autowired
     private ReplyReportRepo replyReportRepo;
     @Autowired
+    private NotificationRepo notificationRepo;
+    @Autowired
     private UserReportService userReportService;
     private List<Manga> readingManga = new ArrayList<>();
     private List<Manga> recitedManga = new ArrayList<>();
@@ -194,10 +196,13 @@ public class UserController {
             }
             List<FriendRequest> friendRequests = friendRequestRepo.findByReceiverAndStatus(currentUser, RequestStatus.PENDING);
             List<FriendRequest> sentRequests = friendRequestRepo.findBySenderAndStatus(currentUser,RequestStatus.PENDING);
+            List<Notification> notifications = notificationRepo.findByUser(user);
+
             List<User> userFriends = user.getFriends();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm", new Locale("uk", "UA"));
             String formattedRegisterDate = user.getRegistrationDate().format(formatter);
             model.addAttribute("user", user);
+            model.addAttribute("notifications", notifications);
             model.addAttribute("currentUser", currentUser);
             model.addAttribute("formattedRegisterDate", formattedRegisterDate);
             model.addAttribute("formattedUserRole", formattedUserRole);
