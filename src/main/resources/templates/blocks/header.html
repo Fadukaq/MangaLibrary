@@ -63,9 +63,6 @@
               <li class="nav-item">
                 <a class="dropdown-item" style="color:white;" href="/news">Новини</a>
               </li>
-              <!--<li class="nav-item">
-                <a class="dropdown-item" href="/shop">Магазин</a>
-              </li>!-->
             </ul>
           </li>
           <li class="nav-item">
@@ -93,7 +90,7 @@
         </div>
 
         <div th:if="${#authorization.expression('isAuthenticated()')}" class="user-info-container">
-          <a href="#">
+          <a th:href="@{/profile/{userId}?&tab=userNotification(userId=${userId})}">
             <i class="fa-regular fa-bell"></i>
           </a>
         </div>

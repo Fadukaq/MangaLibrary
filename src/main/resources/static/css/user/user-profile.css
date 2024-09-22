@@ -874,3 +874,101 @@ a {
     text-align: center;
     color: #ff0080;
 }
+.right-block-notifications{
+    background-color:#212121;
+    padding:20px;
+    border-radius:5px;
+    border:1px solid #313131;
+}
+.right-block-notifications ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+.notification-block {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notification-block li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.notification-block img {
+    width: 150px;
+    height: 200px;
+    margin-right: 10px;
+    border-radius:5px;
+}
+
+.notification-block a {
+    display: flex;
+    text-decoration: none;
+    color: inherit;
+}
+
+.notification-block span {
+    display: block;
+    margin-left: 10px;
+}
+.main-content-notification{
+    font-size:14px;
+    color:#625E5E
+}
+.author-name{
+    font-size:24px;
+}
+.manga-release{
+    font-size:18px;
+}
+
+.manga-description{
+    color:#625E5E;
+    font-size:18px;
+}
+
+.notification-text {
+    max-width: 760px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+.author-title,
+.manga-release,
+.manga-description {
+    display: block;
+    margin: 0;
+    margin-bottom: 7px;
+}
+.notification-element{
+    padding:15px;
+    background-color:#1e1e1e;
+    border:1px solid #383838;
+    border-radius:5px;
+    transition: background-color 0.3s ease;
+}
+.notification-element:hover{
+    background-color:#1a1a1a;
+}
+.notification-text {
+    width: 100%;
+    min-width: 100px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    line-height: 1.5;
+}
+@media (max-width: 1290px) {
+    .right-block-notifications {
+        width: 100%;
+    }
+}
+@media (max-width: 729px) {
+    .right-block-notifications {
+        margin-left: 0px;
+    }
+}
