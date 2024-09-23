@@ -20,7 +20,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/registration", "/manga", "/activate/*", "/reset-password", "/about", "/faq", "/contact-us", "/images/**", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/", "/registration", "/manga", "/activate/*", "/reset-password", "/about", "/faq","/faqdlc", "/contact-us", "/images/**", "/css/**", "/js/**","/filter-manga","/genres-filter","/authors-filter").permitAll()
                         .requestMatchers("/manga/add").hasAnyAuthority("ADMIN", "MODERATOR")
                         .requestMatchers("/manga/edit/{mangaId}").hasAnyAuthority("ADMIN", "MODERATOR")
                         .requestMatchers("/manga/delete/{mangaId}").hasAnyAuthority("ADMIN", "MODERATOR")
@@ -37,6 +37,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/news/edit/{newsId}").hasAnyAuthority("ADMIN", "MODERATOR")
                         .requestMatchers("/news/delete/{newsId}").hasAnyAuthority("ADMIN", "MODERATOR")
                         .requestMatchers("/admin-panel").hasAuthority("ADMIN")
+                        .requestMatchers("/admin-dashboard").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form

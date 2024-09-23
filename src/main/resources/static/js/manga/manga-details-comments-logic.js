@@ -29,8 +29,7 @@ $('#submit-comment').click(function(event) {
             location.reload();
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Error adding comment:', textStatus, errorThrown);
-            alert('Произошла ошибка. Попробуйте снова.');
+            console.error('Помилка додавання коментаря:', textStatus, errorThrown);
         },
         complete: function() {
             setTimeout(() => {
@@ -102,7 +101,7 @@ $(document).ready(function() {
                 }
             },
             error: function() {
-                console.error("Ошибка при голосовании");
+                console.error("Помилка під час голосування");
             }
         });
     });
@@ -203,7 +202,6 @@ $('#comments-list').on('submit', '.reply-form', function(event) {
                 const newReply = response.reply;
                 const formattedDate = formatDate(newReply.createdAt);
                 const replyText = linkifyUsernamesAndReplaceIds(newReply.text);
-                console.log(replyText);
                 const newReplyHtml = `
                     <div class="comment reply" id="comment-${newReply.id}">
                         <div class="reply-header">

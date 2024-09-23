@@ -76,14 +76,14 @@ public class AdminPanelController {
 
             if (userToUpdate.getUserName().equals(currentUserName) && userToUpdate.getUserRole().equals("ADMIN")) {
                 model.addAttribute("users", userRepo.findAll());
-                return "redirect:/admin-panel" + mainPanel +secondPanel;
+                return "redirect:/admin-panel" + mainPanel + secondPanel;
             }
 
             Boolean enabledValue = Boolean.valueOf(enabled);
 
             if (!userService.isValidateRoleAndEnabled(userToUpdate, role, enabled)) {
                 model.addAttribute("users", userRepo.findAll());
-                return "redirect:/admin-panel" + mainPanel +secondPanel;
+                return "redirect:/admin-panel" + mainPanel + secondPanel;
             }
 
             if (role != null && userToUpdate.isEnabled()) {
@@ -97,7 +97,7 @@ public class AdminPanelController {
             }
         }
         model.addAttribute("users", userRepo.findAll());
-        if(secondPanel!=null){
+        if(secondPanel != null){
             return "redirect:/admin-panel" + mainPanel +secondPanel;
         } else{
             return "redirect:/admin-panel" + mainPanel;

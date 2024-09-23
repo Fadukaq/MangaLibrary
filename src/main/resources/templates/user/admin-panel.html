@@ -60,7 +60,7 @@
                         <td>
                             <form th:action="@{/admin-panel/update-user}" method="post">
                                 <input type="hidden" name="userId" th:value="${user.id}" />
-                                <input type="hidden" name="panel" value="#admin-panel" />
+                                <input type="hidden" name="mainPanel" value="#admin-panel" />
                                 <select name="role" class="form-select"
                                         th:disabled="${#authentication.name} == ${user.userName} or ${!user.enabled}"
                                         onchange="this.form.submit()">

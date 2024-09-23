@@ -582,50 +582,7 @@
 <script src="/js/manga-details-statistics.js"></script>
 <script th:if="${manga.adultContent and not userSettings.adultContentAgreement}" src="/js/adultContentAlert.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var form = document.getElementById("subscribeForm");
-        var subscribeButton = document.getElementById("subscribeButton");
 
-        var mangaId = document.querySelector("input[name='mangaId']").value;
-
-        function updateButton(isSubscribed) {
-            if (isSubscribed) {
-                subscribeButton.textContent = "Подписку оформлено";
-                subscribeButton.classList.add("subscribed");
-            } else {
-                subscribeButton.textContent = "Подписаться";
-                subscribeButton.classList.remove("subscribed");
-            }
-        }
-
-        fetch(`/check-subscription?mangaId=${mangaId}`)
-            .then(response => response.json())
-            .then(data => {
-            updateButton(data.subscribed);
-        });
-
-        subscribeButton.addEventListener("click", function() {
-            var formData = new FormData(form);
-            var actionUrl = form.getAttribute("action");
-
-            fetch(actionUrl, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                if (data.subscribed !== undefined) {
-                    updateButton(data.subscribed);
-                } else {
-                    alert("Произошла ошибка.");
-                }
-            })
-                .catch(error => console.error("Error:", error));
-        });
-    });
 </script>
 </body>
 </html>

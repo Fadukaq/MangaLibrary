@@ -200,7 +200,10 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tab => {
             tab.addEventListener('shown.bs.tab', onTabChange);
         });
-
+        const activeTab = document.querySelector('.tab-pane.active');
+        if (activeTab && activeTab.getAttribute('id') === 'comments') {
+            showMoreItems();
+        }
         window.addEventListener('scroll', onScroll);
     }
 });
@@ -232,4 +235,48 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     updateSortButtonState();
+});
+document.addEventListener("DOMContentLoaded", function() {
+    var form = document.getElementById("subscribeForm");
+    var subscribeButton = document.getElementById("subscribeButton");
+
+    var mangaId = document.querySelector("input[name='mangaId']").value;
+
+    function updateButton(isSubscribed) {
+        if (isSubscribed) {
+            subscribeButton.textContent = "Підписку оформлено";
+            subscribeButton.classList.add("subscribed");
+        } else {
+            subscribeButton.textContent = "Підписатись";
+            subscribeButton.classList.remove("subscribed");
+        }
+    }
+
+    fetch(`/check-subscription?mangaId=${mangaId}`)
+        .then(response => response.json())
+        .then(data => {
+        updateButton(data.subscribed);
+    });
+
+    subscribeButton.addEventListener("click", function() {
+        var formData = new FormData(form);
+        var actionUrl = form.getAttribute("action");
+
+        fetch(actionUrl, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+            if (data.subscribed !== undefined) {
+                updateButton(data.subscribed);
+            } else {
+                alert("Сталася помилка.");
+            }
+        })
+            .catch(error => console.error("Error:", error));
+    });
 });
