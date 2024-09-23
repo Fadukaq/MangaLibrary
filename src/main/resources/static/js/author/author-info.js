@@ -68,3 +68,35 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+document.querySelectorAll('.subscribe-form').forEach(form => {
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const actionUrl = this.getAttribute('action');
+        const formData = new FormData(this);
+        const button = this.querySelector('button');
+        const icon = button.querySelector('i');
+        const text = button.querySelector('span');
+
+        fetch(actionUrl, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+            if (data.subscribed) {
+                icon.classList.remove('fa-bell');
+                icon.classList.add('fa-bell-slash');
+                text.textContent = 'Відписатись';
+            } else {
+                icon.classList.remove('fa-bell-slash');
+                icon.classList.add('fa-bell');
+                text.textContent = 'Підписатись';
+            }
+        })
+            .catch(error => console.error("Error:", error));
+    });
+});

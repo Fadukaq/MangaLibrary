@@ -132,41 +132,5 @@
 <script src="/js/confirmDelete.js"></script>
 <script src="/js/main/star-grade-manga.js"></script>
 <script src="/js/author/author-info.js"></script>
-<script>
-    document.querySelectorAll('.subscribe-form').forEach(form => {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const actionUrl = this.getAttribute('action');
-            const formData = new FormData(this);
-            const button = this.querySelector('button');
-            const icon = button.querySelector('i');
-            const text = button.querySelector('span');
-
-            fetch(actionUrl, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                if (data.subscribed) {
-                    icon.classList.remove('fa-bell');
-                    icon.classList.add('fa-bell-slash');
-                    text.textContent = 'Відписатись';
-                    alert("Ви успішно підписалися на автора!");
-                } else {
-                    icon.classList.remove('fa-bell-slash');
-                    icon.classList.add('fa-bell');
-                    text.textContent = 'Підписатись';
-                    alert("Ви відписалися від автора.");
-                }
-            })
-                .catch(error => console.error("Error:", error));
-        });
-    });
-</script>
 </body>
 </html>
