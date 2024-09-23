@@ -401,7 +401,7 @@ public class UserController {
         User user = userRepo.findByEmail(email);
 
         if (user == null) {
-            model.addAttribute("errorEmail", "Email not found.");
+            model.addAttribute("errorEmail", "Email не знайдено.");
             return "user/user-reset-password";
         }
 
@@ -410,7 +410,7 @@ public class UserController {
             user.setResetCode(generatedCode);
             userRepo.save(user);
             userService.sendResetCode(user, user.getResetCode());
-            model.addAttribute("successEmail", "Reset code sent to your email.");
+            model.addAttribute("successEmail", "Код скидання надіслано на вашу електронну пошту.");
         } else if ("resetPassword".equals(action)) {
             if (resetCode != null && resetCode.equals(user.getResetCode())) {
                 if (newPassword != null) {
@@ -448,7 +448,7 @@ public class UserController {
             userService.setAdultContentAgreement(username, request.isAgreement());
             return ResponseEntity.ok(Map.of("success", true));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "User not authenticated"));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("success", false, "message", "Користувач не пройшов автентифікацію"));
     }
     @GetMapping("/admin-dashboard")
     public String showDashboard(Model model) {
@@ -482,15 +482,4 @@ public class UserController {
         }
         return response;
     }
-
-     /*@GetMapping("/manga/user/{userId}/role")
-    public ResponseEntity<User> getUserRole(@PathVariable Long userId) {
-        Optional<User> userOptional = userRepo.findById(userId);
-        if(userOptional.isPresent())
-        {
-            User user = userOptional.get();
-            return ResponseEntity.ok(user);
-        }
-        return ResponseEntity.ok(null);
-    }*/
 }

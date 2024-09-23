@@ -232,7 +232,7 @@ public class UserService {
     public void sendResetCode(User user, String resetCode) {
         String message = String.format(
                 "Вітаю, %s! \n"+
-                        "Код для оновлення паролю Reset Code: %s!", user.getUserName(), resetCode
+                        "Код для оновлення паролю: %s!", user.getUserName(), resetCode
         );
         mailSender.send(user.getEmail(), "Відновлення паролю", message);
     }
@@ -429,16 +429,13 @@ public class UserService {
         userRepo.save(user);
     }
     public String sendConfirmationCode(User user, String newEmail) {
-        String confirmationCode = generateConfirmationCode();
+        String confirmationCode = generateResetCode();
         user.setEmailCode(confirmationCode);
         userRepo.save(user);
         mailSender.send(newEmail, "Код підтвердження для зміни email", "Ваш код підтвердження: " + confirmationCode);
         return (confirmationCode);
     }
 
-    private String generateConfirmationCode() {
-        return String.format("%06d", new Random().nextInt(999999));
-    }
 
     public boolean isValidNewPassword(String newPassword) {
         if (newPassword.length() < 10 || newPassword.length() > 255) {
