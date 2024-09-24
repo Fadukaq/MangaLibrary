@@ -98,7 +98,7 @@
             <a th:href="@{/manga/{mangaId}(mangaId=${manga.id})}">
                 <img class="bg-manga-img" th:src="${manga.mangaBackGround}" alt="">
                 <img class="poster-manga-img" th:src="${manga.mangaPosterImg}" alt="">
-                <h2 class="manga-title" th:text="${manga.mangaName}"></h2>
+                <h2 class="manga-title" th:text="${manga.mangaName.length() > 16} ? ${manga.mangaName.substring(0, 16)} + '...' : ${manga.mangaName}"></h2>
                 <div class="manga-genres">
                     <span class="manga-genre" th:text="${manga.genres[0].genreName}"></span>
                     <span class="manga-genre" th:if="${manga.genres.size() >= 2}">
@@ -106,7 +106,7 @@
                     <span class="manga-genre" th:text="${manga.genres[1].genreName}"></span>
                 </span>
                 </div>
-                <p class="manga-description" th:text="${manga.mangaDescription.length() > 94} ? ${manga.mangaDescription.substring(0, 94)} + '...' : ${manga.mangaDescription}"></p>
+                <p class="manga-description" th:text="${manga.mangaDescription.length() > 74} ? ${manga.mangaDescription.substring(0, 74)} + '...' : ${manga.mangaDescription}"></p>
             </a>
         </div>
 

@@ -1537,3 +1537,10 @@ textarea {
     opacity: 0.5;
     cursor: not-allowed;
 }
+.disabled {
+    pointer-events: none;
+    background-color: #b90058;
+    color: #cbcbcb;
+    border-color: #af0057;
+    cursor: not-allowed;
+}

@@ -126,6 +126,7 @@
     background-position: center;
     background-repeat: no-repeat;
     overflow: hidden;
+    min-height: 200px;
 }
 
 .block-manga-info::before {
@@ -174,7 +175,7 @@
 .block-manga-info .manga-genres {
     position: absolute;
     top: 52px;
-    right: 145px;
+    right: 120px;
     z-index: 2;
     font-size: 18px;
     font-weight: bold;
@@ -238,8 +239,8 @@
 }
 @media (max-width: 1239px) {
     .current-total{
-        padding-left: 50px;
-        padding-right: 50px;
+        padding-left: 50px !important;
+        padding-right: 50px !important;
     }
 }
 
