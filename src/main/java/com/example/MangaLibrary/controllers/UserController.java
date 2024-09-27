@@ -267,7 +267,15 @@ public class UserController {
                 return "user/user-settings";
             }
             if(userService.validateUserSettings(userForm, bindingResult)){
-                userService.updateUserSettingInfo(user, userForm, userSettings);
+                try {
+                    userService.updateUserSettingInfo(user, userForm, userSettings);
+                } catch (IllegalArgumentException e) {
+                    bindingResult.rejectValue("user.userName", "error.user", e.getMessage());
+                    model.addAttribute("user", user);
+                    model.addAttribute("userForm", userForm);
+                    model.addAttribute("userSettings", userSettings);
+                    return "user/user-settings";
+                }
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 String username = authentication.getName();
                 if(!Objects.equals(user.getUserName(), username)){

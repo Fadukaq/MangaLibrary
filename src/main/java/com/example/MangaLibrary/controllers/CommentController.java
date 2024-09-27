@@ -60,7 +60,7 @@ public class CommentController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        if (text == null || text.isEmpty()) {
+        if (text == null || text.isEmpty() || text.length() > 1000) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -128,6 +128,9 @@ public class CommentController {
     public ResponseEntity<String> editComment(
             @RequestParam Long commentIdEdit,
             @RequestParam String text) {
+        if (text == null || text.isEmpty() || text.length() > 1000) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         boolean success = commentService.updateComment(commentIdEdit, text);
         if (success) {
             return ResponseEntity.ok("Коментар успішно відредаговано.");
