@@ -51,7 +51,7 @@
     <div th:each="entry, iterStat : ${mangaByGenre}">
         <h2 class="genre-title">
             <span class="genre-label" th:text="${entry.key}"></span>
-            <a th:href="@{'/search?q=' + ${entry.key} + '&type=genre'}" class="genre-link">
+            <a href="/manga" class="genre-link">
                 Більше <i class="fas fa-arrow-right"></i>
             </a>
         </h2>
