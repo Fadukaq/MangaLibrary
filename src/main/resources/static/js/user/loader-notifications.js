@@ -1,8 +1,8 @@
-let currentMangaIndex = 2;
-let currentAuthorIndex = 2;
+let currentMangaIndex = 3;
+let currentAuthorIndex = 3;
 const mangaNotificationElements = document.querySelectorAll('.notification-element-manga');
 const authorNotificationElements = document.querySelectorAll('.notification-element-author');
-const loadCount = 2;
+const loadCount = 3;
 const loaderNotify = document.getElementById('loaderNotify');
 
 function showNotifications(type) {
@@ -28,11 +28,11 @@ function showNotifications(type) {
 }
 
 function showInitialNotifications() {
-    for (let i = 0; i < 2 && i < mangaNotificationElements.length; i++) {
+    for (let i = 0; i < 3 && i < mangaNotificationElements.length; i++) {
         mangaNotificationElements[i].style.display = 'block';
     }
 
-    for (let i = 0; i < 2 && i < authorNotificationElements.length; i++) {
+    for (let i = 0; i < 3 && i < authorNotificationElements.length; i++) {
         authorNotificationElements[i].style.display = 'block';
     }
 }

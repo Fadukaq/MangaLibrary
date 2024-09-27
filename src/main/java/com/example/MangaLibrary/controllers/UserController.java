@@ -48,13 +48,7 @@ public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
-    private MangaService mangaService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
     private MangaRepo mangaRepo;
-    @Autowired
-    private MangaLibraryManager directoryLocator;
     @Autowired
     private UserSettingsRepo userSettingsRepo;
     @Autowired
@@ -64,20 +58,9 @@ public class UserController {
     @Autowired
     private GenreRepo genreRepo;
     @Autowired
-    private UserReportRepo userReportRepo;
-    @Autowired
-    private CommentReportRepo commentReportRepo;
-    @Autowired
-    private ReplyReportRepo replyReportRepo;
-    @Autowired
     private NotificationRepo notificationRepo;
     @Autowired
     private UserReportService userReportService;
-    private List<Manga> readingManga = new ArrayList<>();
-    private List<Manga> recitedManga = new ArrayList<>();
-    private List<Manga> wantToReadManga = new ArrayList<>();
-    private List<Manga> favoriteManga = new ArrayList<>();
-    private List<Manga> stoppedReadingManga = new ArrayList<>();
     @Autowired
     FriendRequestRepo friendRequestRepo;
     @GetMapping("/registration")
@@ -196,11 +179,12 @@ public class UserController {
             }
             List<FriendRequest> friendRequests = friendRequestRepo.findByReceiverAndStatus(currentUser, RequestStatus.PENDING);
             List<FriendRequest> sentRequests = friendRequestRepo.findBySenderAndStatus(currentUser,RequestStatus.PENDING);
-            List<Notification> notifications = notificationRepo.findByUser(user);
+            List<Notification> notifications = notificationRepo.findByUserOrderByIdDesc(user);
 
             List<User> userFriends = user.getFriends();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm", new Locale("uk", "UA"));
             String formattedRegisterDate = user.getRegistrationDate().format(formatter);
+
             model.addAttribute("user", user);
             model.addAttribute("notifications", notifications);
             model.addAttribute("currentUser", currentUser);

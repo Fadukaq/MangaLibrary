@@ -5,8 +5,6 @@ import com.example.MangaLibrary.models.FriendRequest;
 import com.example.MangaLibrary.models.User;
 import com.example.MangaLibrary.repo.FriendRequestRepo;
 import com.example.MangaLibrary.repo.UserRepo;
-import com.example.MangaLibrary.service.FriendRequestService;
-import com.example.MangaLibrary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +23,6 @@ public class FriendsController {
     FriendRequestRepo friendRequestRepo;
     @Autowired
     UserRepo userRepo;
-    @Autowired
-    private FriendRequestService friendRequestService;
-    @Autowired
-    private UserService userService;
     @PostMapping("/friends/sendFriendRequest")
     public ResponseEntity<?> sendFriendRequest(@RequestParam Long currentUserId, @RequestParam Long userId, Principal principal) {
         User currentUser = userRepo.findById(currentUserId)

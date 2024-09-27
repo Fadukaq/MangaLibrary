@@ -41,11 +41,6 @@ public class CommentController {
     MangaRepo mangaRepo;
     @Autowired
     CommentRatingRepo commentRatingRepo;
-    @Autowired
-    RepliesRepo repliesRepo;
-    @Autowired
-    ReplyService replyService;
-
     @PostMapping("/comment/{mangaId}/add-comment")
     @ResponseBody
     public ResponseEntity<Comment> addComment(@PathVariable Long mangaId, @RequestParam String text, Principal principal) {
