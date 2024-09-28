@@ -59,7 +59,7 @@
 
 .manga-author {
     font-size: 13px;
-    color: #cd7bff;
+    color: #e7007b;
     margin: 0;
 }
 
@@ -80,11 +80,11 @@ a {
 .genre-link {
     font-size: 17px;
     font-weight: bold;
-    color: #8d4dc2;
+    color: #de0077;
     text-decoration: none;
 }
 .genre-link:hover {
-    color: #c676ff;
+    color: #ff0089;
     text-decoration: underline;
 }
 .newManga-section {
