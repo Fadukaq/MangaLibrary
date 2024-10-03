@@ -218,7 +218,7 @@ public class UserService {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return "redirect:/manga";
+            return "/images/defaultProfilePicture/defaultAvatar.png";
         }
     }
 

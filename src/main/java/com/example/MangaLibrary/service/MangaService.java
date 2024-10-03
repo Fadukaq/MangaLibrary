@@ -168,6 +168,7 @@ public class MangaService {
     public void updateManga(long id, MangaForm mangaForm, List<Long> relatedMangaIds) {
         Manga mangaToUpdate = mangaRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid manga Id:" + id));
+
         mangaToUpdate.setMangaName(mangaForm.getManga().getMangaName());
         mangaToUpdate.setMangaDescription(mangaForm.getManga().getMangaDescription());
         mangaToUpdate.setReleaseYear(mangaForm.getManga().getReleaseYear());
@@ -177,13 +178,14 @@ public class MangaService {
         mangaToUpdate.setMangaStatus(mangaForm.getManga().getMangaStatus());
         updateRelatedMangas(mangaToUpdate, relatedMangaIds);
 
+        String mangaFolderPath = mangaLibraryManager.getResourcePathManga() + File.separator + id;
+        createFolderForManga(id, mangaLibraryManager.getResourcePathManga());
+        System.out.println(mangaFolderPath);
         if (mangaForm.getMangaImage().getBackGroundMangaImg() != null && !mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()) {
-            String mangaFolderPath = mangaLibraryManager.getResourcePathManga() + File.separator + id;
             String backgroundImgPath = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), mangaToUpdate, mangaFolderPath);
             mangaToUpdate.setMangaBackGround(backgroundImgPath);
         }
         if (mangaForm.getMangaImage().getPosterImage() != null && !mangaForm.getMangaImage().getPosterImage().isEmpty()) {
-            String mangaFolderPath = mangaLibraryManager.getResourcePathManga() + File.separator + id;
             String posterImgPath = createPosterManga(mangaForm.getMangaImage().getPosterImage(), mangaToUpdate, mangaFolderPath);
             mangaToUpdate.setMangaPosterImg(posterImgPath);
         }
@@ -225,28 +227,20 @@ public class MangaService {
             String mangaId = String.valueOf(thisManga.getId());
             String fileName = mangaId + "_Poster.png";
 
-            File targetFile = new File(mangaFolderPath + "/" + fileName);
-
-            if (targetFile.exists()) {
-                targetFile.delete();
-            }
-
-            try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
-                outputStream.write(bytes);
-                System.out.println("Poster saved successfully: " + targetFile.getAbsolutePath());
-            }
-
             String targetRootPath = mangaLibraryManager.getTargetPathManga();
             File targetFolder = new File(targetRootPath + File.separator + mangaId);
             if (!targetFolder.exists()) {
                 targetFolder.mkdirs();
-                System.out.println("Created target folder: " + targetFolder.getAbsolutePath());
             }
 
             File sourceFile = new File(targetFolder + File.separator + fileName);
             try (FileOutputStream targetOutputStream = new FileOutputStream(sourceFile)) {
                 targetOutputStream.write(bytes);
-                System.out.println("Source file saved successfully: " + sourceFile.getAbsolutePath());
+            }
+
+            File targetFile = new File(mangaFolderPath + "/" + fileName);
+            try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
+                outputStream.write(bytes);
             }
 
             return "/images/mangas/" + mangaId + "/" + fileName;
@@ -263,18 +257,14 @@ public class MangaService {
 
             String fileName = mangaId + "_BackGround.png";
 
-            File targetFile = new File(mangaFolderPath + "/" + fileName);
-            FileOutputStream outputStream = new FileOutputStream(targetFile);
-            outputStream.write(bytes);
-            outputStream.close();
-
             String targetRootPath = mangaLibraryManager.getTargetPathManga();
             File targetFolder = new File(targetRootPath + File.separator + mangaId);
             if (!targetFolder.exists()) {
                 targetFolder.mkdirs();
             }
-            File sourceFile = new File(targetFolder + File.separator + fileName);
-            FileOutputStream targetOutputStream = new FileOutputStream(sourceFile);
+
+            File targetFile = new File(targetFolder, fileName);
+            FileOutputStream targetOutputStream = new FileOutputStream(targetFile);
             targetOutputStream.write(bytes);
             targetOutputStream.close();
 
