@@ -254,7 +254,6 @@ public class MangaService {
         try {
             byte[] bytes = backgroundImg.getBytes();
             String mangaId = String.valueOf(thisManga.getId());
-
             String fileName = mangaId + "_BackGround.png";
 
             String targetRootPath = mangaLibraryManager.getTargetPathManga();
@@ -262,11 +261,19 @@ public class MangaService {
             if (!targetFolder.exists()) {
                 targetFolder.mkdirs();
             }
-
             File targetFile = new File(targetFolder, fileName);
-            FileOutputStream targetOutputStream = new FileOutputStream(targetFile);
-            targetOutputStream.write(bytes);
-            targetOutputStream.close();
+            try (FileOutputStream targetOutputStream = new FileOutputStream(targetFile)) {
+                targetOutputStream.write(bytes);
+            }
+
+            File resourcesFolder = new File(mangaFolderPath + File.separator + mangaId);
+            if (!resourcesFolder.exists()) {
+                resourcesFolder.mkdirs();
+            }
+            File resourcesFile = new File(resourcesFolder, fileName);
+            try (FileOutputStream resourcesOutputStream = new FileOutputStream(resourcesFile)) {
+                resourcesOutputStream.write(bytes);
+            }
 
             return "/images/mangas/" + mangaId + "/" + fileName;
         } catch (IOException e) {

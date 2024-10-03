@@ -144,7 +144,6 @@ public class MangaController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             User user = userRepo.findByUserName(username);
-            System.out.println("POSTER: " + mangaForm.getMangaImage().getPosterImage());
             mangaService.saveManga(mangaForm, relatedMangaIds, user);
             return "redirect:/manga";
         } catch (IllegalArgumentException e) {
