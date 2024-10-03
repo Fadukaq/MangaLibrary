@@ -223,8 +223,12 @@ public class MangaService {
         try {
             byte[] bytes = posterImg.getBytes();
             String mangaId = String.valueOf(thisManga.getId());
-
             String fileName = mangaId + "_Poster.png";
+
+            File mangaDir = new File(mangaFolderPath);
+            if (!mangaDir.exists()) {
+                mangaDir.mkdirs();
+            }
 
             File targetFile = new File(mangaFolderPath + "/" + fileName);
             FileOutputStream outputStream = new FileOutputStream(targetFile);
@@ -236,6 +240,7 @@ public class MangaService {
             if (!targetFolder.exists()) {
                 targetFolder.mkdirs();
             }
+
             File sourceFile = new File(targetFolder + File.separator + fileName);
             FileOutputStream targetOutputStream = new FileOutputStream(sourceFile);
             targetOutputStream.write(bytes);
@@ -244,9 +249,10 @@ public class MangaService {
             return "/images/mangas/" + mangaId + "/" + fileName;
         } catch (IOException e) {
             e.printStackTrace();
-            return "redirect:/manga/add";
+            return "none";
         }
     }
+
     public String createBackGroundManga(MultipartFile backgroundImg, Manga thisManga, String mangaFolderPath) {
         try {
             byte[] bytes = backgroundImg.getBytes();
