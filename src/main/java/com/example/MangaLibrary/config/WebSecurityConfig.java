@@ -20,24 +20,13 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/registration", "/manga", "/activate/*", "/reset-password", "/about", "/faq","/faqdlc", "/contact-us", "/images/**", "/css/**", "/js/**","/filter-manga","/genres-filter","/authors-filter").permitAll()
-                        .requestMatchers("/manga/add").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/manga/edit/{mangaId}").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/manga/delete/{mangaId}").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/genre/add").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/genre/edit/{genreId}").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/genre/delete/{genreId}").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/author/add").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/author/edit/{authorId}").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/author/delete/{authorId}").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/manga/{mangaId}/chapter/add").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/manga/{mangaId}/chapter/edit/{chapterId}").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/manga/{mangaId}/chapter/delete/{chapterId}").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/news/add").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/news/edit/{newsId}").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/news/delete/{newsId}").hasAnyAuthority("ADMIN", "MODERATOR")
-                        .requestMatchers("/admin-panel").hasAuthority("ADMIN")
-                        .requestMatchers("/admin-dashboard").hasAuthority("ADMIN")
+                        .requestMatchers("/", "/registration", "/login", "/reset-password", "/about", "/faq", "/faqdlc", "/contact-us", "/images/**", "/css/**", "/js/**", "/filter-manga", "/genres-filter", "/authors-filter").permitAll()
+                        .requestMatchers("/manga/add", "/manga/edit/{mangaId}", "/manga/delete/{mangaId}",
+                                "/genre/add", "/genre/edit/{genreId}", "/genre/delete/{genreId}",
+                                "/author/add", "/author/edit/{authorId}", "/author/delete/{authorId}",
+                                "/manga/{mangaId}/chapter/add", "/manga/{mangaId}/chapter/edit/{chapterId}", "/manga/{mangaId}/chapter/delete/{chapterId}",
+                                "/news/add", "/news/edit/{newsId}", "/news/delete/{newsId}",
+                                "/admin-panel", "/admin-dashboard").hasAnyAuthority("ADMIN", "MODERATOR")
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
