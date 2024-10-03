@@ -82,7 +82,7 @@ public class UserService {
         if(!user.getEmail().isEmpty()){
             String message = String.format(
                     "Привіт, %s! \n"+
-                            "Ласкаво просимо до MangaLibrary. Будь ласка, перейдіть за цим посиланням, щоб активувати акаунт: http://localhost:8080/activate/%s", user.getUserName(),user.getVerificationToken()
+                            "Ласкаво просимо до MangaLibrary. Будь ласка, перейдіть за цим посиланням, щоб активувати акаунт: http://mangalibrary-production.up.railway.app/activate/%s", user.getUserName(),user.getVerificationToken()
             );
             mailSender.send(user.getEmail(), "Активація облікового запису", message);
         }
