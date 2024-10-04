@@ -236,7 +236,6 @@ public class MangaService {
             try (FileOutputStream targetOutputStream = new FileOutputStream(sourceFile)) {
                 targetOutputStream.write(bytes);
             }
-            System.out.println("Poster saved in target path: " + sourceFile.getAbsolutePath());
 
             File resourcesFolder = new File(mangaFolderPath);
             if (!resourcesFolder.exists()) {
@@ -246,8 +245,6 @@ public class MangaService {
             try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
                 outputStream.write(bytes);
             }
-            System.out.println("Poster saved in resources path: " + targetFile.getAbsolutePath());
-
             return "/images/mangas/" + mangaId + "/" + fileName;
         } catch (IOException e) {
             e.printStackTrace();
