@@ -238,7 +238,7 @@ public class MangaService {
             }
             System.out.println("Poster saved in target path: " + sourceFile.getAbsolutePath());
 
-            File resourcesFolder = new File(mangaFolderPath + File.separator + mangaId);
+            File resourcesFolder = new File(mangaFolderPath);
             if (!resourcesFolder.exists()) {
                 resourcesFolder.mkdirs();
             }
