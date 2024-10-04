@@ -232,16 +232,21 @@ public class MangaService {
             if (!targetFolder.exists()) {
                 targetFolder.mkdirs();
             }
-
             File sourceFile = new File(targetFolder + File.separator + fileName);
             try (FileOutputStream targetOutputStream = new FileOutputStream(sourceFile)) {
                 targetOutputStream.write(bytes);
             }
+            System.out.println("Poster saved in target path: " + sourceFile.getAbsolutePath());
 
-            File targetFile = new File(mangaFolderPath + "/" + fileName);
+            File resourcesFolder = new File(mangaFolderPath + File.separator + mangaId);
+            if (!resourcesFolder.exists()) {
+                resourcesFolder.mkdirs();
+            }
+            File targetFile = new File(resourcesFolder, fileName);
             try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
                 outputStream.write(bytes);
             }
+            System.out.println("Poster saved in resources path: " + targetFile.getAbsolutePath());
 
             return "/images/mangas/" + mangaId + "/" + fileName;
         } catch (IOException e) {
@@ -249,6 +254,7 @@ public class MangaService {
             return "none";
         }
     }
+
 
     public String createBackGroundManga(MultipartFile backgroundImg, Manga thisManga, String mangaFolderPath) {
         try {
