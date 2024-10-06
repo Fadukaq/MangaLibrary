@@ -112,7 +112,6 @@ public class UserService {
         user.getMangaReading().removeIf(id -> id.equals(String.valueOf(manga.getId())));
         user.getMangaWantToRead().removeIf(id -> id.equals(String.valueOf(manga.getId())));
         user.getMangaStoppedReading().removeIf(id -> id.equals(String.valueOf(manga.getId())));
-        user.getMangaFavorites().removeIf(id -> id.equals(String.valueOf(manga.getId())));
         user.getMangaRecited().removeIf(id -> id.equals(String.valueOf(manga.getId())));
     }
     public void deleteMangaFromUsersList(List<User> users, long mangaId){
