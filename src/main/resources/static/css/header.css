@@ -519,12 +519,12 @@ body {
   box-shadow: none !important;
 }
 
-.user-settings {
+.user-settings-chapter-view {
   margin-right: auto;
 }
 
 @media (max-width: 768px) {
-  .user-settings {
+  .user-settings-chapter-view {
     display: block;
     text-align: center;
     margin: 0 auto;
