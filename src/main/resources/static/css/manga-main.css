@@ -669,7 +669,7 @@ input::placeholder {
 }
 @media (max-width: 499px) {
     .manga-grid {
-        width: 90% !important;
+    /* width: 90% !important; */
     }
     .catalog-title{
         display:none;
@@ -677,10 +677,10 @@ input::placeholder {
 }
 @media (max-width: 453px) {
     .manga-grid {
-        width: 78% !important;
+    /* width: 78% !important; */
     }
     .manga-grid .manga-list {
-        width: 80% !important;
+    /* width: 90% !important; */
     }
     .manga-list .stars{
         display:none;
