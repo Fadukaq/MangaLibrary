@@ -170,7 +170,7 @@
                                                     <div class="custom-grade-details" th:data-rating="${el.averageRating}">
                                                         <span class="stars"></span>
                                                         <span class="rating-number"></span>
-                                                        <form class="form-delete-from-list" th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${el.id})}" method="post">
+                                                        <form th:unless="${user != currentUser}" class="form-delete-from-list" th:action="@{/profile/delete-from-list/{mangaId}(mangaId=${el.id})}" method="post">
                                                             <input type="hidden" name="panel" value="?list=reading&page=1&tab=userList">
                                                             <button type="submit" class="delete-button">
                                                                 <span style="float: right;">&times;</span>
