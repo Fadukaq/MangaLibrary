@@ -518,3 +518,20 @@ body {
   color: #ffffff !important;
   box-shadow: none !important;
 }
+
+.user-settings {
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .user-settings {
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    padding: 10px 0;
+  }
+  .navbar-nav {
+    width: 100%;
+    text-align: center;
+  }
+}

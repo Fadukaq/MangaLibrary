@@ -180,7 +180,6 @@ public class MangaService {
 
         String mangaFolderPath = mangaLibraryManager.getResourcePathManga() + File.separator + id;
         createFolderForManga(id, mangaLibraryManager.getResourcePathManga());
-        System.out.println(mangaFolderPath);
         if (mangaForm.getMangaImage().getBackGroundMangaImg() != null && !mangaForm.getMangaImage().getBackGroundMangaImg().isEmpty()) {
             String backgroundImgPath = createBackGroundManga(mangaForm.getMangaImage().getBackGroundMangaImg(), mangaToUpdate, mangaFolderPath);
             mangaToUpdate.setMangaBackGround(backgroundImgPath);
@@ -269,7 +268,7 @@ public class MangaService {
                 targetOutputStream.write(bytes);
             }
 
-            File resourcesFolder = new File(mangaFolderPath + File.separator + mangaId);
+            File resourcesFolder = new File(mangaFolderPath);
             if (!resourcesFolder.exists()) {
                 resourcesFolder.mkdirs();
             }
@@ -284,6 +283,7 @@ public class MangaService {
             return "none";
         }
     }
+
 
     public Long getRandomMangaId() {
         Iterable<Manga> mangas = mangaRepo.findAll();
